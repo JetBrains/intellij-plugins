@@ -88,7 +88,7 @@ public final class GaugeExceptionHandler extends Thread {
   }
 
   private static Notification createNotification(@NlsSafe String stacktrace, int exitValue) {
-    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId(GaugeConstants.PLUGIN_ID));
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.getId(GaugeConstants.PLUGIN_ID));
     @NlsSafe String apiVersion = ApplicationInfo.getInstance().getApiVersion();
     @NlsSafe String gaugeVersion = GaugeVersion.getVersion(false).version;
     String pluginVersion = plugin == null ? "" : plugin.getVersion();

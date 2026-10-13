@@ -241,7 +241,7 @@ public final class KarmaServer {
           // It helps to have updated test's code between reruns the Karma runner.
           // Without it, the user has to restart the Karma server after editing the code.
           // The Karma's watch option will be set as 'false' in the IJ Karma's config.
-          // See https://jetbrains.team/p/ij/repositories/ultimate/files/76354725b39c8f27b7b364367ca6b6e24153a018/contrib/js-karma/resources/js_reporter/karma-intellij/lib/intellij.conf.js?tab=source&line=164
+          // See https://jetbrains.team/p/ij/repositories/ultimate/files/76354725b39c8f27b7b364367ca6b6e24153a018/contrib/js-karma/js_reporter/karma-intellij/lib/intellij.conf.js?tab=source&line=164
           commandLine.addParameter("--watch");
 
           // Note about passing `source-maps` in 21. The option was missed during the generalization wrappers above.

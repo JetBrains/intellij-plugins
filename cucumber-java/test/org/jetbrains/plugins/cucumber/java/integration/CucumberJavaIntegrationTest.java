@@ -4,6 +4,7 @@ package org.jetbrains.plugins.cucumber.java.integration;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.ExecutionTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.jetbrains.plugins.cucumber.java.run.CucumberJavaFeatureRunConfigurationProducer;
 
@@ -86,6 +87,6 @@ public abstract class CucumberJavaIntegrationTest extends JavaTestFrameworkInteg
   protected RunConfiguration getRunConfiguration() {
     CucumberJavaFeatureRunConfigurationProducer runConfigurationProducer = new CucumberJavaFeatureRunConfigurationProducer();
     PsiElement element = PlatformTestUtil.findElementBySignature("my feature", "src/test/resources/test.feature", getProject());
-    return PlatformTestUtil.getRunConfiguration(element, runConfigurationProducer);
+    return ExecutionTestUtil.getRunConfiguration(element, runConfigurationProducer);
   }
 }

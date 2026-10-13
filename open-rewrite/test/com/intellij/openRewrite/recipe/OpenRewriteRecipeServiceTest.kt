@@ -6,13 +6,17 @@ import com.intellij.openRewrite.RECIPE_CLASS_NAME
 import com.intellij.openRewrite.RECIPE_FILE_NAME
 import com.intellij.openRewrite.STYLE_CLASS_NAME
 import com.intellij.openapi.application.readAction
+import com.intellij.testFramework.common.timeoutRunBlocking
 import org.jetbrains.yaml.psi.YAMLFile
-import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
-  override fun runInDispatchThread(): Boolean = false
-
-  fun testJavaRecipeDescriptor() = runBlocking {
+  @Test
+  fun testJavaRecipeDescriptor(): Unit = timeoutRunBlocking {
     val recipeClass = myFixture.addClass("""
       package com;
 
@@ -39,7 +43,8 @@ class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
     }
   }
 
-  fun testJavaOptionDescriptor() = runBlocking {
+  @Test
+  fun testJavaOptionDescriptor(): Unit = timeoutRunBlocking {
     val recipeClass = myFixture.addClass("""
       package com;
 
@@ -68,7 +73,7 @@ class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
       assertEquals("My Option", option!!.displayName)
       assertEquals("My option description", option.description)
       assertEquals("value1", option.example)
-      assertOrderedEquals(option.valid, "value1", "value2")
+      assertEquals(listOf("value1", "value2"), option.valid)
       assertTrue(option.required)
       assertEquals("java.lang.String", option.typePointer.type!!.canonicalText)
       val optionField = recipeClass.fields.find { it.name == "option" }
@@ -77,7 +82,8 @@ class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
     }
   }
 
-  fun testYamlRecipeDescriptor() = runBlocking {
+  @Test
+  fun testYamlRecipeDescriptor(): Unit = timeoutRunBlocking {
     val recipeFile = myFixture.addFileToProject(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.first
@@ -105,7 +111,8 @@ class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
     }
   }
 
-  fun testJavaStyleDescriptor() = runBlocking {
+  @Test
+  fun testJavaStyleDescriptor(): Unit = timeoutRunBlocking {
     val styleClass = myFixture.addClass("""
       package com;
 
@@ -122,7 +129,8 @@ class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
       assertFalse(descriptor.isComposite)
       assertEquals(styleClass, descriptor.declaration.retrieve())
 
-      val option = assertOneElement(descriptor.options)
+      assertEquals(1, descriptor.options.size)
+      val option = descriptor.options.single()
       assertEquals("option", option.name)
       assertFalse(option.required)
       assertEquals("java.lang.String", option.typePointer.type!!.canonicalText)
@@ -132,7 +140,8 @@ class OpenRewriteRecipeServiceTest : OpenRewriteLightHighlightingTestCase() {
     }
   }
 
-  fun testYamlStyleDescriptor() = runBlocking {
+  @Test
+  fun testYamlStyleDescriptor(): Unit = timeoutRunBlocking {
     val styleFile = myFixture.addFileToProject(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/style
       name: com.first

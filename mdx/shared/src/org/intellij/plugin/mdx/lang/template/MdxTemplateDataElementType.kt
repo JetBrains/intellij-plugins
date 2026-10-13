@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.templateLanguages.TemplateDataElementType
 import com.intellij.psi.templateLanguages.TemplateDataModifications
-import com.intellij.psi.tree.TokenSet
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -22,7 +21,6 @@ import org.intellij.plugin.mdx.lang.parse.MdxMarkdownLibElementTypes
 import org.intellij.plugin.mdx.lang.parse.MdxTextRangeSet
 import org.intellij.plugin.mdx.lang.parse.MdxTokenTypes
 import org.intellij.plugin.mdx.lang.parse.mdxCancellableText
-import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
 object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
                                     JSEmbeddedBlockElementType {
@@ -38,11 +36,7 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
   override fun collectTemplateModifications(sourceCode: CharSequence, baseLexer: Lexer): TemplateDataModifications {
     val source = mdxCancellableText(sourceCode)
     val structure = collectTemplateStructure(source)
-    val comments = collectHtmlComments(source, baseLexer, structure.opaqueRanges)
-    val invalidComments = comments.invalid
-    val embeddedRanges = MdxTextRangeSet.of(
-      MdxTextRangeSet.of(structure.pieces.map { it.range }).subtract(comments.opaque) + invalidComments,
-    )
+    val embeddedRanges = MdxTextRangeSet.of(structure.pieces.map { it.range })
 
     val operations = mutableListOf<Modification>()
     var offset = 0
@@ -56,12 +50,6 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
       operations.add(Modification.Outer(TextRange(offset, source.length)))
     }
 
-    // JavaScript accepts `<!--` as a legacy line-comment opener. MDX explicitly rejects HTML
-    // comments, so hide one dash and let the existing JSX parser report malformed markup.
-    for (range in invalidComments) {
-      operations.add(Modification.Outer(TextRange(range.startOffset + 3, range.startOffset + 4)))
-    }
-
     for (index in structure.pieces.indices) {
       val piece = structure.pieces[index]
       if (!piece.rootKind.requiresStatementSeparator) continue
@@ -71,12 +59,6 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
         operations.add(Modification.Remove(piece.range.endOffset, ";"))
       }
     }
-    for (comment in invalidComments) {
-      if (!endsWithSemicolon(source, comment)) {
-        operations.add(Modification.Remove(comment.endOffset, ";"))
-      }
-    }
-
     val modifications = TemplateDataModifications()
     for (operation in operations.sortedWith(compareBy<Modification> { it.offset }.thenBy { it.priority })) {
       when (operation) {
@@ -191,68 +173,6 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
     }
   }
 
-  private fun collectHtmlComments(
-    sourceCode: CharSequence,
-    baseLexer: Lexer,
-    opaqueRanges: MdxTextRangeSet,
-  ): HtmlComments {
-    val hardRanges = mutableListOf<TextRange>()
-    baseLexer.start(sourceCode)
-    while (baseLexer.tokenType != null) {
-      ProgressManager.checkCanceled()
-      if (baseLexer.tokenType in HARD_CODE_TOKENS) {
-        hardRanges.add(TextRange(baseLexer.tokenStart, baseLexer.tokenEnd))
-      }
-      baseLexer.advance()
-    }
-    val codeRanges = MdxTextRangeSet.of(hardRanges + opaqueRanges)
-
-    val invalid = mutableListOf<TextRange>()
-    val opaque = mutableListOf<TextRange>()
-    var codeRangeIndex = 0
-    var start = findMarker(sourceCode, "<!--", 0)
-    while (start >= 0) {
-      val endMarker = findMarker(sourceCode, "-->", start + 4)
-      if (endMarker < 0) break
-      val end = endMarker + 3
-      val singleLine = hasNoLineBreak(sourceCode, start, end)
-      while (codeRangeIndex < codeRanges.size && codeRanges[codeRangeIndex].endOffset <= start) {
-        codeRangeIndex++
-      }
-      val codeRange = codeRanges.getOrNull(codeRangeIndex)
-      val inCode = codeRange != null && codeRange.startOffset <= start && end <= codeRange.endOffset
-      if (!inCode) {
-        (if (singleLine) invalid else opaque).add(TextRange(start, end))
-      }
-      start = findMarker(sourceCode, "<!--", end)
-    }
-    return HtmlComments(invalid, MdxTextRangeSet.of(opaque))
-  }
-
-  private fun findMarker(sourceCode: CharSequence, marker: String, startOffset: Int): Int {
-    var offset = startOffset.coerceAtLeast(0)
-    val lastStart = sourceCode.length - marker.length
-    while (offset <= lastStart) {
-      var markerOffset = 0
-      while (markerOffset < marker.length && sourceCode[offset + markerOffset] == marker[markerOffset]) {
-        markerOffset++
-      }
-      if (markerOffset == marker.length) return offset
-      offset++
-    }
-    return -1
-  }
-
-  private fun hasNoLineBreak(sourceCode: CharSequence, startOffset: Int, endOffset: Int): Boolean {
-    var offset = startOffset
-    while (offset < endOffset) {
-      val hasLineBreak = sourceCode[offset] == '\n'
-      offset++
-      if (hasLineBreak) return false
-    }
-    return true
-  }
-
   private fun IElementType.rootKind(): RootKind? = when (this) {
     MdxMarkdownLibElementTypes.MDX_ESM_BLOCK -> RootKind.ESM
     MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
@@ -277,8 +197,6 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
   private data class TemplateRoot(val range: TextRange, val kind: RootKind)
 
   private data class EmbeddedPiece(val range: TextRange, val rootKind: RootKind)
-
-  private data class HtmlComments(val invalid: List<TextRange>, val opaque: MdxTextRangeSet)
 
   private sealed class Modification(val offset: Int, val priority: Int) {
     class Remove(offset: Int, val text: String) : Modification(offset, 0)
@@ -344,15 +262,6 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
       MarkdownElementTypes.CODE_BLOCK,
       MarkdownElementTypes.CODE_FENCE,
       MarkdownElementTypes.CODE_SPAN,
-    )
-
-    private val HARD_CODE_TOKENS = TokenSet.create(
-      MarkdownTokenTypes.CODE_FENCE_START,
-      MarkdownTokenTypes.CODE_FENCE_CONTENT,
-      MarkdownTokenTypes.CODE_FENCE_END,
-      MarkdownTokenTypes.BACKTICK,
-      MarkdownTokenTypes.ESCAPED_BACKTICKS,
-      MarkdownTokenTypes.CODE_LINE,
     )
   }
 }

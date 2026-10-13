@@ -1,4 +1,0 @@
-package {
-interface AuxInterface {
-}
-}

@@ -27,6 +27,8 @@
     <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.openRewrite.gradle" scope="TEST" />
     <orderEntry type="module" module-name="intellij.openRewrite.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.microservices.jvm" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.openRewrite.gradle" />

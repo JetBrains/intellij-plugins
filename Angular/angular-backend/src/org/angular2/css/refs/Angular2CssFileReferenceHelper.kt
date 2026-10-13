@@ -3,6 +3,7 @@ package org.angular2.css.refs
 
 import com.intellij.javascript.library.JSLibraryVersions
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.frameworks.modules.langs.TildeFileSystemItemCompletion
 import com.intellij.lang.javascript.frameworks.modules.langs.getSyntheticResolveContext
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
@@ -22,12 +23,15 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.Processor
 import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.cli.config.AngularProject
+import org.angular2.lang.Angular2LangUtil
 
 class Angular2CssFileReferenceHelper : FileReferenceHelper() {
 
   override fun isMine(project: Project, hostFile: VirtualFile): Boolean {
     val psiFile = getPsiFileSystemItem(project, hostFile)
-    return psiFile is StylesheetFile || CssSupportLoader.isInFileThatSupportsEmbeddedCss(psiFile)
+    return psiFile is StylesheetFile
+           || CssSupportLoader.isInFileThatSupportsEmbeddedCss(psiFile)
+           || (psiFile is JSFile && Angular2LangUtil.isAngular2Context(project, hostFile))
   }
 
   override fun processContexts(
@@ -36,11 +40,14 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
     bind: Boolean,
     processor: Processor<in PsiFileSystemItem>,
   ): Boolean {
+    val element = parameters.element
+    // In a JS or TS host file, handle only the references from the injected inline styles
+    if (getPsiFileSystemItem(element.project, hostFile) is JSFile && element.containingFile !is StylesheetFile) return true
+
     val pathString = parameters.pathString
     val hasTilde = pathString.startsWith("~")
 
-    val element = parameters.element
-    val angularProject = angularProject(element)
+    val angularProject = AngularConfigProvider.findAngularProject(element.project, hostFile)
     if (angularProject == null) return true
 
     angularProject.sourceDir?.let { element.manager.findDirectory(it) }?.let { processor.process(it)}
@@ -124,9 +131,4 @@ private fun getOverrideContextFiles(angularProject: AngularProject, element: Psi
     angularProject.cssResolveRootDir?.let { result.add(it) }
   }
   return result
-}
-
-private fun angularProject(element: PsiElement): AngularProject? {
-  val file = PsiUtilCore.getVirtualFile(element) ?: return null
-  return AngularConfigProvider.findAngularProject(element.project, file)
 }

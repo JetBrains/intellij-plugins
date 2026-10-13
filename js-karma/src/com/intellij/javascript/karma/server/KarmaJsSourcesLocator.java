@@ -44,7 +44,7 @@ public final class KarmaJsSourcesLocator {
       relativePathToResources = "karma";
     }
     else {
-      relativePathToResources = "js-karma/resources";
+      relativePathToResources = "js-karma";
     }
     try {
       return JSPluginPathManager.getPluginResource(

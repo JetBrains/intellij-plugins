@@ -4,6 +4,7 @@ package org.angular2.lang.html.lexer
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.types.JSWhiteSpaceTokenType
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.jetbrains.annotations.ApiStatus
@@ -47,6 +48,12 @@ interface Angular2HtmlTokenTypes {
     @JvmField
     val BLOCK_PARAMETERS_END: IElementType = JSTokenTypes.RPAR
 
+    @JvmField
+    val IN_ELEMENT_LINE_COMMENT: IElementType = Angular2HtmlTokenType("NG:IN_ELEMENT_LINE_COMMENT")
+
+    @JvmField
+    val IN_ELEMENT_BLOCK_COMMENT: IElementType = Angular2HtmlTokenType("NG:IN_ELEMENT_BLOCK_COMMENT")
+
     // Highlight only tokens - TODO consider removing special highlighting for Angular expressionsxs
     @JvmField
     val EXPRESSION_WHITE_SPACE: IElementType = object : IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language), JSWhiteSpaceTokenType {}
@@ -56,5 +63,10 @@ interface Angular2HtmlTokenTypes {
 
     @JvmField
     val EXPANSION_FORM_COMMA: IElementType = IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage)
+
+    // --- Token Sets ---
+
+    @JvmField
+    val IN_ELEMENT_COMMENTS: TokenSet = TokenSet.create(IN_ELEMENT_LINE_COMMENT, IN_ELEMENT_BLOCK_COMMENT)
   }
 }

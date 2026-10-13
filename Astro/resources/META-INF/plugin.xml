@@ -57,6 +57,7 @@
     <module name="intellij.platform.indexing.impl"/>
     <module name="intellij.platform.lang"/>
     <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.lsp"/>
     <module name="intellij.platform.polySymbols"/>
     <module name="intellij.platform.polySymbols.backend"/>
     <module name="intellij.platform.polySymbols.web"/>
@@ -101,7 +102,8 @@
 
     <lang.syntaxHighlighterFactory language="Astro"
                                    implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
-    <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
+    <colorSettings implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"
+                   bundle="messages.AstroBundle" key="astro.colors.title"/>
     <braceMatcher filetype="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
     <quoteHandler fileType="Astro" className="com.intellij.javascript.JSQuoteHandler"/>
     <lang.commenter language="Astro" implementationClass="com.intellij.lang.xml.XmlCommenter" />

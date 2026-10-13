@@ -22,8 +22,6 @@ import org.intellij.plugins.postcss.inspections.PostCssHighlightingTest;
 import org.intellij.plugins.postcss.inspections.PostCssMediaRangeInspectionTest;
 import org.intellij.plugins.postcss.inspections.PostCssNestingInspectionTest;
 import org.intellij.plugins.postcss.inspections.PostCssNestingQuickFixTest;
-import org.intellij.plugins.postcss.lexer.PostCssLexerTest;
-import org.intellij.plugins.postcss.lexer.highlighting.PostCssHighlightingLexerTest;
 import org.intellij.plugins.postcss.parser.PostCssIncrementalParserTest;
 import org.intellij.plugins.postcss.parser.PostCssParsingCustomMediaTest;
 import org.intellij.plugins.postcss.parser.PostCssParsingCustomSelectorTest;
@@ -61,13 +59,11 @@ public final class PostCssTestSuite {
   public static final class Fast {
     public static Test suite() {
       TestSuite suite = new TestSuite("Fast PostCSS");
-      suite.addTestSuite(PostCssLexerTest.class);
       suite.addTestSuite(PostCssParsingNestingTest.class);
       suite.addTestSuite(PostCssParsingCustomSelectorTest.class);
       suite.addTestSuite(PostCssParsingCustomMediaTest.class);
       suite.addTestSuite(PostCssParsingMediaRangesTest.class);
       suite.addTestSuite(PostCssParsingOtherTest.class);
-      suite.addTestSuite(PostCssHighlightingLexerTest.class);
       return suite;
     }
   }

@@ -1,7 +1,0 @@
-class A {
-    function xxx() {
-        var a = XXX
-    }
-
-    public static const XXX:String = "XXX_YYY ZZZ";
-}

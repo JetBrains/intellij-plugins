@@ -11,7 +11,9 @@ import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_INSPECTIONS_NAMES
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -53,15 +55,15 @@ internal class ReverseScopedScriptFactory : QodanaScriptFactory {
 
   override fun parseParameters(parameters: String): Map<String, String> =
     if (parameters.isBlank()) {
-      throw QodanaException("Cannot start $scriptName script without scope file and stage")
+      throw QodanaConfigurationException("Cannot start $scriptName script without scope file and stage")
     }
     else {
       val split = parameters.split(",", limit = 2)
       if (Stage.entries.none { it.name == split[0] }) {
-        throw QodanaException("Cannot start $scriptName script: Unknown stage ${split[0]}, expected one of ${Stage.entries.joinToString { it.name }}")
+        throw QodanaConfigurationException("Cannot start $scriptName script: Unknown stage ${split[0]}, expected one of ${Stage.entries.joinToString { it.name }}")
       }
       if (split.size != 2) {
-        throw QodanaException("Cannot start $scriptName script: Stage $STAGE_ARG should be followed by scope file path")
+        throw QodanaConfigurationException("Cannot start $scriptName script: Stage $STAGE_ARG should be followed by scope file path")
       }
       mapOf(STAGE_ARG to split[0], SCOPE_ARG to split[1])
     }
@@ -76,7 +78,7 @@ internal class ReverseScopedScriptFactory : QodanaScriptFactory {
       val p = Path(parameters.require<String>(SCOPE_ARG))
       if (p.isAbsolute) p else config.projectPath.resolve(p)
     }
-    if (path.notExists()) throw QodanaException("Scope file $path does not exist")
+    if (path.notExists()) throw QodanaConfigurationException("Scope file $path does not exist")
     val stage = Stage.valueOf(parameters.require<String>(STAGE_ARG))
 
     val runContextFactory = when (stage) {
@@ -92,7 +94,7 @@ internal class ReverseScopedScriptFactory : QodanaScriptFactory {
 }
 
 internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContextFactory) :
-  ReverseScopedScript(false, runContextFactory) {
+  ReverseScopedScript(QodanaCoverageComputationState.INCREMENTAL_REPORT, runContextFactory) {
   private val scopeFile: Path = runContextFactory.scopeFile
 
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
@@ -102,7 +104,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
-    val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run)
+    val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run, COVERAGE_INSPECTIONS_NAMES)
     preserveShouldSkipState(run, requireFurtherAnalysis)
     if (requireFurtherAnalysis) {
       val root = VfsUtil.findFile(runContext.config.projectPath, false)
@@ -119,7 +121,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
 }
 
 internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContextFactory) :
-  ReverseScopedScript(true, runContextFactory) {
+  ReverseScopedScript(QodanaCoverageComputationState.SKIP_COMPUTE, runContextFactory) {
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val baselineReport = getScopedBaselineReport(runContext)
     if (baselineReport == null) {
@@ -142,7 +144,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
 
 
 internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunContextFactory) :
-  ReverseScopedScript(true, runContextFactory) {
+  ReverseScopedScript(QodanaCoverageComputationState.SKIP_COMPUTE, runContextFactory) {
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val baselineReport = getScopedBaselineReport(runContext)
     if (baselineReport == null) {
@@ -156,16 +158,13 @@ internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunConte
   }
 }
 
-internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean, runContextFactory: ReverseScopedRunContextFactory) :
+internal abstract class ReverseScopedScript(
+  val computationState: QodanaCoverageComputationState,
+  runContextFactory: ReverseScopedRunContextFactory
+) :
   DefaultScript(runContextFactory, AnalysisKind.INCREMENTAL) {
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext): QodanaGlobalInspectionContext {
-    val computationState = if (skipCoverageComputation) {
-      QodanaCoverageComputationState.SKIP_COMPUTE
-    }
-    else {
-      QodanaCoverageComputationState.SKIP_REPORT
-    }
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 

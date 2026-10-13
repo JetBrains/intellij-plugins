@@ -27,7 +27,7 @@ internal object VueScriptLangs {
       return VueTSParserDefinition.Util.createLexer(project)
     }
     else {
-      return VueJSParserDefinition.Util.createLexer(project)
+      return VueJSParserDefinition.Util.createLexer()
     }
   }
 

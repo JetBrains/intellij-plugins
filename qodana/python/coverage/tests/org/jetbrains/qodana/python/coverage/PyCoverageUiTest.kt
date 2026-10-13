@@ -90,7 +90,11 @@ class PyCoverageUiTest : QodanaCoverageUiTestBase("PyCoverageInspectionTest") {
 
     openFileInEditor("src/FooCls.py")
     assertEquals(
-      mapOf(11 to LineCoverage.FULL, 12 to LineCoverage.FULL, 13 to LineCoverage.FULL),
+      mapOf(
+        20 to LineCoverage.FULL, 21 to LineCoverage.FULL, 22 to LineCoverage.FULL,
+        23 to LineCoverage.NONE, 24 to LineCoverage.NONE, 25 to LineCoverage.NONE,
+        26 to LineCoverage.NONE, 27 to LineCoverage.NONE, 28 to LineCoverage.NONE,
+      ),
       gutterCoverage("src/FooCls.py"),
     )
 

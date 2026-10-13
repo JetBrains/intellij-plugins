@@ -46,7 +46,8 @@
     <codeStyleSettingsProvider implementation="com.intellij.jhipster.JdlCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.jhipster.JdlLanguageCodeStyleSettingsProvider"/>
 
-    <colorSettingsPage implementation="com.intellij.jhipster.JdlColorSettingsPage"/>
+    <colorSettings implementation="com.intellij.jhipster.JdlColorSettingsPage"
+                   bundle="messages.JdlBundle" key="configurable.name.jhipster.jdl"/>
 
     <internalFileTemplate name="JHipster JDL File"/>
   </extensions>

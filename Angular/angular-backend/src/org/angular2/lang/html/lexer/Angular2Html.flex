@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
   private boolean tokenizeExpansionForms;
   private boolean enableBlockSyntax;
   private boolean enableLetSyntax;
+  private boolean enableInElementComments;
   private Angular2TemplateSyntax templateSyntax;
 
   private String interpolationStart;
@@ -49,6 +50,7 @@ import org.jetbrains.annotations.NotNull;
     this.tokenizeExpansionForms = templateSyntax.getTokenizeExpansionForms();
     this.enableBlockSyntax = templateSyntax.getEnableBlockSyntax();
     this.enableLetSyntax = templateSyntax.getEnableLetSyntax();
+    this.enableInElementComments = templateSyntax.getEnableInElementComments();
   }
 
   private boolean tryConsumeInterpolationBoundary(String boundary) {
@@ -180,6 +182,51 @@ import org.jetbrains.annotations.NotNull;
     }
   }
 
+  /**
+   * Consumes an attribute name, which starts with "[". The same as in Angular,
+   * every character except a new line is accepted within the square brackets,
+   * e.g. [class.left-1/2] or [class.[&>svg]:w-4].
+   * See _consumeAttributeName() in packages/compiler/src/ml_parser/lexer.ts.
+   * If the brackets are not balanced before a new line, the name ends
+   * at the last balanced position, which gives better recovery from incomplete code.
+   */
+  private void consumeBracketedAttributeName() {
+    int openBrackets = 1;
+    int balancedEnd = -1;
+    int pos = zzMarkedPos;
+    while (pos < zzEndRead) {
+      char ch = zzBuffer.charAt(pos);
+      if (ch == '[') {
+        openBrackets++;
+      }
+      else if (ch == ']') {
+        openBrackets--;
+      }
+      if (openBrackets <= 0 ? isAttributeNameEnd(ch) : ch == '\n' || ch == '\r') {
+        break;
+      }
+      pos++;
+      if (openBrackets <= 0) {
+        balancedEnd = pos;
+      }
+    }
+    if (openBrackets <= 0) {
+      zzMarkedPos = pos;
+      return;
+    }
+    if (balancedEnd > 0) {
+      zzMarkedPos = balancedEnd;
+    }
+    while (zzMarkedPos < zzEndRead && !isAttributeNameEnd(zzBuffer.charAt(zzMarkedPos))) {
+      zzMarkedPos++;
+    }
+  }
+
+  private static boolean isAttributeNameEnd(char ch) {
+    return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t' || ch == '\f'
+           || ch == '"' || ch == '\'' || ch == '<' || ch == '>' || ch == '/' || ch == '=';
+  }
+
 %}
 
 %class _Angular2HtmlLexer
@@ -195,6 +242,7 @@ import org.jetbrains.annotations.NotNull;
 %state END_TAG_NAME
 %state BEFORE_TAG_ATTRIBUTES
 %state TAG_ATTRIBUTES
+%state END_TAG_ATTRIBUTES
 %state ATTRIBUTE_VALUE_START
 %state ATTRIBUTE_VALUE_DQ
 %state ATTRIBUTE_VALUE_SQ
@@ -234,7 +282,8 @@ WHITE_SPACE_CHARS=[ \n\r\t\f\u2028\u2029\u0085]+
 
 TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 /* see http://www.w3.org/TR/html5/syntax.html#syntax-attribute-name */
-ATTRIBUTE_NAME=([^ \n\r\t\f\"\'<>/=])+
+/* An attribute name, which starts with "[", is consumed by consumeBracketedAttributeName() */
+ATTRIBUTE_NAME=[^ \n\r\t\f\"\'<>/=\[][^ \n\r\t\f\"\'<>/=]*
 
 DTD_REF= "\"" [^\"]* "\"" | "'" [^']* "'"
 DOCTYPE= "<!" (D|d)(O|o)(C|c)(T|t)(Y|y)(P|p)(E|e)
@@ -266,7 +315,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 <DOC_TYPE> ">" { yybegin(YYINITIAL); return XmlTokenType.XML_DOCTYPE_END; }
 <YYINITIAL, UNTERMINATED_INTERPOLATION> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_REAL_WHITE_SPACE; }
 <INTERPOLATION> {WHITE_SPACE_CHARS} {}
-<DOC_TYPE,TAG_ATTRIBUTES,ATTRIBUTE_VALUE_START,PROCESSING_INSTRUCTION, START_TAG_NAME, END_TAG_NAME, TAG_CHARACTERS> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_WHITE_SPACE; }
+<DOC_TYPE,TAG_ATTRIBUTES,END_TAG_ATTRIBUTES,ATTRIBUTE_VALUE_START,PROCESSING_INSTRUCTION, START_TAG_NAME, END_TAG_NAME, TAG_CHARACTERS> {WHITE_SPACE_CHARS} { return XmlTokenType.XML_WHITE_SPACE; }
 <YYINITIAL, INTERPOLATION, UNTERMINATED_INTERPOLATION> "<" {TAG_NAME} {
   if (!tryRollbackInterpolation()) {
     yybegin(START_TAG_NAME);
@@ -318,14 +367,25 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 <C_COMMENT_END> "]" { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END; }
 <C_COMMENT_END> [^] { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
 
-<START_TAG_NAME, END_TAG_NAME> {TAG_NAME} { yybegin(BEFORE_TAG_ATTRIBUTES); return XmlTokenType.XML_NAME; }
+<START_TAG_NAME> {TAG_NAME} { yybegin(BEFORE_TAG_ATTRIBUTES); return XmlTokenType.XML_NAME; }
+/* An end tag takes no in-element comments, so it gets a state of its own when the comments are enabled. */
+<END_TAG_NAME> {TAG_NAME} { yybegin(enableInElementComments ? END_TAG_ATTRIBUTES : BEFORE_TAG_ATTRIBUTES); return XmlTokenType.XML_NAME; }
 
-<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, TAG_CHARACTERS> ">" { yybegin(YYINITIAL); return XmlTokenType.XML_TAG_END; }
-<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, TAG_CHARACTERS> "/>" { yybegin(YYINITIAL); return XmlTokenType.XML_EMPTY_ELEMENT_END; }
+<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, END_TAG_ATTRIBUTES, TAG_CHARACTERS> ">" { yybegin(YYINITIAL); return XmlTokenType.XML_TAG_END; }
+<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, END_TAG_ATTRIBUTES, TAG_CHARACTERS> "/>" { yybegin(YYINITIAL); return XmlTokenType.XML_EMPTY_ELEMENT_END; }
 <BEFORE_TAG_ATTRIBUTES> {WHITE_SPACE_CHARS} { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_WHITE_SPACE;}
-<TAG_ATTRIBUTES> {ATTRIBUTE_NAME} { return XmlTokenType.XML_NAME; }
-<TAG_ATTRIBUTES> "=" { yybegin(ATTRIBUTE_VALUE_START); return XmlTokenType.XML_EQ; }
-<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, START_TAG_NAME, END_TAG_NAME> [^] { yybegin(YYINITIAL); yypushback(1); break; }
+<TAG_ATTRIBUTES, END_TAG_ATTRIBUTES> {ATTRIBUTE_NAME} { return XmlTokenType.XML_NAME; }
+<TAG_ATTRIBUTES, END_TAG_ATTRIBUTES> "[" { consumeBracketedAttributeName(); return XmlTokenType.XML_NAME; }
+<TAG_ATTRIBUTES, END_TAG_ATTRIBUTES> "=" { yybegin(ATTRIBUTE_VALUE_START); return XmlTokenType.XML_EQ; }
+<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES> "//" [^\n\r]* {
+  if (enableInElementComments) { yybegin(TAG_ATTRIBUTES); return Angular2HtmlTokenTypes.IN_ELEMENT_LINE_COMMENT; }
+  yybegin(YYINITIAL); yypushback(yylength()); break;
+}
+<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES> "/*" !([^]* "*/" [^]*) ("*/")? {
+  if (enableInElementComments) { yybegin(TAG_ATTRIBUTES); return Angular2HtmlTokenTypes.IN_ELEMENT_BLOCK_COMMENT; }
+  yybegin(YYINITIAL); yypushback(yylength()); break;
+}
+<BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES, END_TAG_ATTRIBUTES, START_TAG_NAME, END_TAG_NAME> [^] { yybegin(YYINITIAL); yypushback(1); break; }
 
 <TAG_CHARACTERS> [^] { return XmlTokenType.XML_TAG_CHARACTERS; }
 

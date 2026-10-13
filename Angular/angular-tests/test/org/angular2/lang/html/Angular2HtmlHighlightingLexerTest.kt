@@ -4,12 +4,14 @@ package org.angular2.lang.html
 import com.intellij.lexer.Lexer
 import org.angular2.Angular2TestUtil
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
+import org.junit.jupiter.api.Test
 
 open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
   override fun createLexer(): Lexer {
     return Angular2HtmlLexer(true, templateSyntax, null)
   }
 
+  @Test
   fun `testVarWith$`() {
     doTest("""
              {{ publicUsedField }}
@@ -25,6 +27,7 @@ open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
              """.trimIndent())
   }
 
+  @Test
   fun testNestedInterpolations() {
     doTest("""
              <div *ngFor='let card of cards'>
@@ -34,12 +37,14 @@ open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
              """.trimIndent())
   }
 
+  @Test
   fun testTemplateLiteral() {
     doTest("""
       {{ { obj: `template literal ${"$"}{ with + `nested text { }` } `, foo: 12} }}
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteStringInInterpolation() {
     doTest("""
       <main>
@@ -56,7 +61,6 @@ open class Angular2HtmlHighlightingLexerTest : Angular2HtmlLexerTest() {
     """.trimIndent())
   }
 
-  override fun getDirPath(): String {
-    return Angular2TestUtil.getLexerTestDirPath() + "html/highlightingLexer"
-  }
+  override val dirPath: String
+    get() = Angular2TestUtil.getLexerTestDirPath() + "html/highlightingLexer"
 }

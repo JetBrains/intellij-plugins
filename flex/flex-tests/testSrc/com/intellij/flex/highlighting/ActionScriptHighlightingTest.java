@@ -50,6 +50,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
@@ -1456,9 +1457,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public static void invokeShowImplemenationsForLineMarker(PsiElement at, int num) {
     JSClass c = PsiTreeUtil.getParentOfType(at, JSClass.class);
-    int items = (c.isInterface()
+    int items = ReadAction.computeBlocking(()->(c.isInterface()
                  ? ourInterfaceImplementationsNavHandler
-                 : ourClassInheritorsNavHandler).search(c).findAll().size();
+                 : ourClassInheritorsNavHandler).search(c).findAll().size());
     assertEquals(num, items);
   }
 

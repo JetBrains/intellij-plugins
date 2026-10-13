@@ -10,10 +10,12 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.junit.Test
 
 @TestNoService
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2RenameTest : Angular2TestCase("refactoring/rename") {
 
   @Test

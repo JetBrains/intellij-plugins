@@ -83,8 +83,8 @@
     <lang.findUsagesProvider
       language="Gherkin"
       implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFindUsagesProvider"/>
-    <colorSettingsPage
-      implementation="org.jetbrains.plugins.cucumber.psi.GherkinColorsPage"/>
+    <colorSettings implementation="org.jetbrains.plugins.cucumber.psi.GherkinColorsPage"
+                   bundle="messages.CucumberBundle" key="color.settings.gherkin.name"/>
     <psi.referenceContributor
       language="Gherkin"
       implementation="org.jetbrains.plugins.cucumber.steps.reference.CucumberReferenceContributor"/>

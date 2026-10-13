@@ -1,0 +1,11 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      PsiComment(NG:IN_ELEMENT_BLOCK_COMMENT)('/* comment\n<span></span>')
+      PsiErrorElement:Tag start is not closed
+        <empty list>

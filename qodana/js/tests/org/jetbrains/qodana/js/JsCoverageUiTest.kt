@@ -90,10 +90,15 @@ class JsCoverageUiTest : QodanaCoverageUiTestBase("JsCoverageInspectionTest") {
        FooCls.ts
     """.trimIndent())
 
-    // Incremental report: only the changed lines (19-21) of FooCls.ts are painted in the gutter.
+    // Incremental report: only the changed lines of FooCls.ts are painted in the gutter.
     openFileInEditor("FooCls.ts")
     assertEquals(
-      mapOf(19 to LineCoverage.FULL, 20 to LineCoverage.FULL, 21 to LineCoverage.FULL),
+      mapOf(
+        19 to LineCoverage.FULL, 20 to LineCoverage.FULL, 21 to LineCoverage.FULL,
+        27 to LineCoverage.NONE, 28 to LineCoverage.NONE, 30 to LineCoverage.NONE,
+        31 to LineCoverage.NONE, 32 to LineCoverage.NONE,
+        64 to LineCoverage.NONE, 65 to LineCoverage.NONE,
+      ),
       gutterCoverage("FooCls.ts"),
     )
 

@@ -75,6 +75,7 @@ jvm_library(
         "@community//libraries/grpc",
         "@community//libraries/grpc-netty-shaded",
         "@community//platform/execution",
+        "@community//platform/consoleView",
         "@community//platform/testRunner",
         "@community//platform/forms_rt:java-guiForms-rt",
         "@community//java/java-frontback-psi-api:frontback-psi",
@@ -124,8 +125,6 @@ jvm_library(
         "@community//platform/smRunner:smRunner_test_lib",
         "@community//java/openapi:java_test_lib",
         "@community//java/compiler/openapi:java-compiler_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/core-ui:core-ui_test_lib",
         "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
@@ -137,6 +136,7 @@ jvm_library(
         "@community//libraries/grpc:grpc_test_lib",
         "@community//libraries/grpc-netty-shaded:grpc-netty-shaded_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
         "@community//platform/testRunner:testRunner_test_lib",
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
         "@community//java/java-frontback-psi-api:frontback-psi_test_lib",
@@ -167,6 +167,15 @@ jvm_library(
     ),
     module_name = "intellij.gauge.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//aether-dependency-resolver/plugin",
+        "@community//plugins/coverage",
+        "@community//java/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//xml/plugin",
+    ],
 )
 
 jvm_library(
@@ -195,6 +204,12 @@ jvm_library(
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//aether-dependency-resolver/plugin:plugin_test_lib",
+        "@community//plugins/coverage:coverage_test_lib",
+        "@community//java/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
@@ -279,8 +294,12 @@ jvm_library(
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
+        "@community//platform/core-impl",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.gauge.tests` end

@@ -44,6 +44,7 @@
     <module name="intellij.platform.editor.ui"/>
     <module name="intellij.platform.execution.impl"/>
     <module name="intellij.platform.graph"/>
+    <module name="intellij.platform.graph.impl"/>
     <module name="intellij.platform.ide.core"/>
     <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.indexing"/>
@@ -137,6 +138,7 @@
                             id="AngularJSXmlCompletionContributor" order="before xmlNonFirst"/>
 
     <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor"/>
+    <headlessRenamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor"/>
     <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
     <elementDescriptionProvider order="first"
                                 implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor"/>

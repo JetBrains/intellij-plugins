@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.RELATED_LOCATIONS
 import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_CHILD_HASH
 import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_ROOT_HASH
 import com.intellij.openapi.components.PathMacroManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.UserDataHolderEx
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.PropertyBag
@@ -21,6 +22,8 @@ import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
+
+private val LOG = logger<XmlProblem>()
 
 /**
  * Provides the contract of supplying issues, produced by global/external tools, in SARIF format.
@@ -59,7 +62,7 @@ internal class XmlProblem(private val element: Element,
               loc.physicalLocation.region = Region().withStartLine(0).withStartColumn(0).withCharLength(0)
             }
           } else {
-            QodanaException("Related locations are invalid for inspection: $INCORRECT_FORMATTING_INSPECTION_ID")
+            LOG.warn("Related locations are invalid for inspection: $INCORRECT_FORMATTING_INSPECTION_ID")
           }
         }
         else -> result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR

@@ -12,6 +12,42 @@ import org.junit.jupiter.api.Timeout
 @TestApplication
 class MdxBlockProviderTest {
   @Test
+  fun importAndExportDoNotInterruptParagraphs() {
+    val lines = listOf(
+      "import these helpers before you start.",
+      "export the virtual machine as an image.",
+      "import Component from './component'",
+      "export default Component",
+    )
+    for (line in lines) {
+      for (indent in 0..3) {
+        val text = "Some prose.\n${" ".repeat(indent)}$line"
+        val nodes = parseMdxNodes(text)
+        val paragraphs = nodes.filter { it.type == MarkdownElementTypes.PARAGRAPH }
+        assertEquals(listOf(text), paragraphs.map { it.text(text) }, text)
+        assertTrue(nodes.none { it.type == MdxMarkdownLibElementTypes.MDX_ESM_BLOCK }, text)
+      }
+    }
+  }
+
+  @Test
+  fun importAndExportStartBlocks() {
+    val lines = listOf(
+      "import these helpers before you start.",
+      "export the virtual machine as an image.",
+      "import Component from './component'",
+      "export default Component",
+    )
+    for (line in lines) {
+      for (prefix in listOf("", "Some prose.\n\n", "# Heading\n")) {
+        val text = prefix + line
+        val esm = parseMdxNodes(text).filter { it.type == MdxMarkdownLibElementTypes.MDX_ESM_BLOCK }
+        assertEquals(listOf(line), esm.map { it.text(text) }, text)
+      }
+    }
+  }
+
+  @Test
   fun listDedentsInsideJsxKeepSiblingItems() {
     for (indent in listOf("", "  ", "    ", "      ", "\t")) {
       for (prefix in listOf("", "> ")) {
@@ -73,6 +109,50 @@ class MdxBlockProviderTest {
     val nodes = parseMdxNodes(text)
 
     assertTrue(nodes.any { it.type == MdxMarkdownLibElementTypes.MDX_JSX_TEXT_ELEMENT })
+  }
+
+  @Test
+  fun nestedMultilineTemplateExpressionStaysOpaque() {
+    for (body in listOf("a\nb\nc", "<ProfileCard\n  name=\"Alice Dupont\"\n  isOnline={true}\n/>")) {
+      val expression = "{`$body`}"
+      val text = "<Exercise>\n<CodeBlock language=\"tsx\">$expression</CodeBlock>\n</Exercise>"
+      val nodes = parseMdxNodes(text)
+
+      assertTrue(nodes.any { it.type == MdxMarkdownLibElementTypes.MDX_EXPRESSION && it.text(text) == expression }, text)
+      assertEquals(2, nodes.count { it.type == MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT }, text)
+    }
+  }
+
+  @Test
+  fun markdownBlocksResumeAfterMultilineJavaScript() {
+    val expression = "{\n/*\n# hidden\n- hidden\n```js\nignored\n```\n*/\n1\n}"
+    for (opening in listOf("<B>$expression", "<B value=$expression>")) {
+      val text = "<A>\n$opening\n# after\n</B>\n</A>"
+      val nodes = parseMdxNodes(text)
+      val heading = nodes.single { it.type == MarkdownElementTypes.ATX_1 }
+
+      assertEquals("# after", heading.text(text), text)
+      assertTrue(nodes.none { it.type == MarkdownElementTypes.UNORDERED_LIST || it.type == MarkdownElementTypes.CODE_FENCE }, text)
+    }
+  }
+
+  @Test
+  fun expressionClosingLineStaysOpaque() {
+    val expression = "{`a\nb\nc`}"
+    val text = "<A>\n<B>$expression\n# after\n</B>\n</A>"
+    val nodes = parseMdxNodes(text)
+
+    assertTrue(nodes.any { it.type == MdxMarkdownLibElementTypes.MDX_EXPRESSION && it.text(text) == expression })
+    assertEquals("# after", nodes.single { it.type == MarkdownElementTypes.ATX_1 }.text(text))
+    assertTrue(nodes.none { it.type == MarkdownElementTypes.PARAGRAPH && it.text(text).startsWith("c") })
+  }
+
+  @Test
+  fun nestedMultilineExpressionPrefixesRemainParseable() {
+    val text = "<A>\n<B>{`a\nb\nc`}</B>\n</A>"
+    for (end in 1..text.length) {
+      parseMdxNodes(text.take(end))
+    }
   }
 
   @Test

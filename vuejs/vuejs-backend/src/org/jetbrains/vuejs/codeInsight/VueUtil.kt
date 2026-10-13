@@ -440,11 +440,13 @@ private fun getBooleanFromPropOptions(expression: JSExpression?, propName: Strin
   ?: false
 
 fun getPropOptionality(options: JSExpression?, required: Boolean): Boolean =
-  when (val defaultType = getDefaultTypeFromPropOptions(options)) {
-    null -> if (required) false else getPropTypeFromPropOptions(options)?.substitute()?.fixPrimitiveTypes() !is JSBooleanType
-    is JSUndefinedType -> true
-    is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
-    else -> false
+  withTypeEvaluationLocation(options) {
+    when (val defaultType = getDefaultTypeFromPropOptions(options)) {
+      null -> if (required) false else getPropTypeFromPropOptions(options)?.substitute()?.fixPrimitiveTypes() !is JSBooleanType
+      is JSUndefinedType -> true
+      is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
+      else -> false
+    }
   }
 
 fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =

@@ -26,7 +26,7 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ConsoleLog
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.profile.GroupState
@@ -76,7 +76,7 @@ suspend fun QodanaRunContext.runAnalysis(
 ) {
   scope.patchToNotAnalyzeGeneratedCode(project)
   if (!GlobalInspectionContextUtil.canRunInspections(project, false) {}) {
-    throw QodanaException(InspectionsBundle.message("inspection.application.cannot.configure.project.to.run.inspections"))
+    throw QodanaConfigurationException(InspectionsBundle.message("inspection.application.cannot.configure.project.to.run.inspections"))
   }
 
   val inspectionsResults = mutableListOf<Path>()

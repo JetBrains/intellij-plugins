@@ -2,50 +2,72 @@
 
 package com.intellij.jhipster.inspections;
 
-import com.intellij.openapi.application.PathManager;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.util.List;
 
-public class JdlInspectionsTest extends BasePlatformTestCase {
-  @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + "/contrib/jhipster/backend/testData/inspections";
-  }
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.moduleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/jhipster/backend/testData/inspections")
+public class JdlInspectionsTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<Path> pathFixture = tempPathFixture();
+  @SuppressWarnings("unused")
+  private final TestFixture<Module> moduleFixture = moduleFixture(projectFixture, pathFixture, true);
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightFixture(projectFixture, pathFixture);
+
+  @Test
   public void testUnusedEntities() {
-    myFixture.enableInspections(List.of(JdlUnusedDeclarationInspection.class));
-    myFixture.configureByFile("UnusedEntities.jdl");
-    myFixture.checkHighlighting();
+    doTest(JdlUnusedDeclarationInspection.class, "UnusedEntities.jdl");
   }
 
+  @Test
   public void testUnusedEnums() {
-    myFixture.enableInspections(List.of(JdlUnusedDeclarationInspection.class));
-    myFixture.configureByFile("UnusedEnums.jdl");
-    myFixture.checkHighlighting();
+    doTest(JdlUnusedDeclarationInspection.class, "UnusedEnums.jdl");
   }
 
+  @Test
   public void testDuplicatedEntity() {
-    myFixture.enableInspections(List.of(JdlDuplicatedDeclarationInspection.class));
-    myFixture.configureByFile("DuplicatedEntity.jdl");
-    myFixture.checkHighlighting();
+    doTest(JdlDuplicatedDeclarationInspection.class, "DuplicatedEntity.jdl");
   }
 
+  @Test
   public void testDuplicatedEnum() {
-    myFixture.enableInspections(List.of(JdlDuplicatedDeclarationInspection.class));
-    myFixture.configureByFile("DuplicatedEnum.jdl");
-    myFixture.checkHighlighting();
+    doTest(JdlDuplicatedDeclarationInspection.class, "DuplicatedEnum.jdl");
   }
 
+  @Test
   public void testUnknownOption() {
-    myFixture.enableInspections(List.of(JdlUnknownOptionInspection.class));
-    myFixture.configureByFile("UnknownOptions.jdl");
-    myFixture.checkHighlighting();
+    doTest(JdlUnknownOptionInspection.class, "UnknownOptions.jdl");
   }
 
+  @Test
   public void testIncorrectOptionType() {
-    myFixture.enableInspections(List.of(JdlIncorrectOptionTypeInspection.class));
-    myFixture.configureByFile("IncorrectOptionTypes.jdl");
-    myFixture.checkHighlighting();
+    doTest(JdlIncorrectOptionTypeInspection.class, "IncorrectOptionTypes.jdl");
+  }
+
+  private void doTest(Class<? extends LocalInspectionTool> inspection, String file) {
+    EdtTestUtil.runInEdtAndWait(() -> {
+      CodeInsightTestFixture myFixture = codeInsightFixture.get();
+      myFixture.enableInspections(List.of(inspection));
+      myFixture.configureByFile(file);
+      myFixture.checkHighlighting();
+    });
   }
 }

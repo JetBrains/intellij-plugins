@@ -138,10 +138,18 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
-    assertChangedLines(mapOf("coverage.go" to setOf(3, 4, 5)))
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertChangedLines(mapOf("coverage.go" to (34..46).toSet()))
     assertCoverageProjectDataMatchesGolden("GoCoverageEngine", "GoCoverageEngine.out")
     assertGoCoverageProjectDataMatchesGolden()
+    assertSarifResults()
+  }
+
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
     assertSarifResults()
   }
 
@@ -200,14 +208,14 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
   }
 
   private companion object {
-    // Foo() spans lines 3-5; line 4 (`return x + y`) is covered, so fresh coverage is non-zero.
+    // Gaz() spans lines 34-46 and has both covered and uncovered statements.
     private const val SCOPE = """
       {
         "files" : [ {
           "path" : "coverage.go",
           "added" : [ {
-            "firstLine" : 3,
-            "count" : 3
+            "firstLine" : 34,
+            "count" : 13
           } ],
           "deleted" : [ ]
         } ]

@@ -53,6 +53,9 @@
     <orderEntry type="module" module-name="intellij.cucumber.groovy" scope="TEST" />
     <orderEntry type="module" module-name="intellij.groovy.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.groovy.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.json" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.cucumber.groovy" />

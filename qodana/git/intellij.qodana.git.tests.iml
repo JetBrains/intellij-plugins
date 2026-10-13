@@ -33,7 +33,7 @@
     <orderEntry type="module" module-name="intellij.vcs.git.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vcs.git.shared" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.git" />
 </module>

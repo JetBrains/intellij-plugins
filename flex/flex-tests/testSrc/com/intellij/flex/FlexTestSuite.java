@@ -48,8 +48,6 @@ import com.intellij.flex.refactoring.FlexChangeSignatureTest;
 import com.intellij.flex.refactoring.FlexExtractFunctionTest;
 import com.intellij.flex.refactoring.FlexInlineFunctionTest;
 import com.intellij.flex.refactoring.FlexInlineVariableTest;
-import com.intellij.flex.refactoring.FlexIntroduceConstantTest;
-import com.intellij.flex.refactoring.FlexMoveMembersTest;
 import com.intellij.flex.refactoring.FlexRenameTest;
 import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
@@ -137,8 +135,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexExtractFunctionTest.class);
     testSuite.addTestSuite(FlexInlineFunctionTest.class);
     testSuite.addTestSuite(FlexInlineVariableTest.class);
-    testSuite.addTestSuite(FlexIntroduceConstantTest.class);
-    testSuite.addTestSuite(FlexMoveMembersTest.class);
     testSuite.addTestSuite(FlexRenameTest.class);
 
     //com.intellij.flex.resolver.*

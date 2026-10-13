@@ -62,7 +62,8 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
     <lang.ast.factory language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbAstFactory"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
-    <colorSettingsPage implementation="com.dmarcotte.handlebars.pages.HbColorsPage"/>
+    <colorSettings implementation="com.dmarcotte.handlebars.pages.HbColorsPage"
+                   bundle="messages.HbBundle" key="filetype.hb.description"/>
     <lang.fileViewProviderFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.file.HbFileViewProviderFactory"/>
     <lang.commenter language="Handlebars" implementationClass="com.dmarcotte.handlebars.editor.comments.HbCommenter"/>
     <braceMatcher filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.editor.braces.HbBraceMatcher"/>
@@ -71,7 +72,10 @@ For WebStorm, you can check out this section in the <a href="https://www.jetbrai
                          implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
     <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler" order="before xmlSlash"/>
     <enterHandlerDelegate implementation="com.dmarcotte.handlebars.editor.actions.HbEnterHandler"/>
-    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"/>
+    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"
+                         id="editor.preferences.handlebarsOptions"
+                         bundle="messages.HbBundle"
+                         key="hb.pages.options.title"/>
     <codeFoldingOptionsProvider instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider" id="Handlebars" order="after Android,after C++,after General,after Go,after ObjectiveC"/>
     <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
     <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchAnnotator"/>

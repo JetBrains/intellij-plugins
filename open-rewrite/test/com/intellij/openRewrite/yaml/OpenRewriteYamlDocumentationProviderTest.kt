@@ -8,9 +8,12 @@ import com.intellij.openRewrite.RECIPE_FILE_NAME
 import com.intellij.openapi.application.runReadAction
 import com.intellij.platform.backend.documentation.DocumentationData
 import com.intellij.testFramework.PlatformTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class OpenRewriteYamlDocumentationProviderTest : OpenRewriteLightHighlightingTestCase() {
-  fun testRecipeDocumentation() {
+  @Test
+  fun testRecipeDocumentation() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.first
@@ -26,7 +29,8 @@ class OpenRewriteYamlDocumentationProviderTest : OpenRewriteLightHighlightingTes
                         "<em>My Recipe</em><br><br>My test recipe<br><br></div>")
   }
 
-  fun testOptionDocumentation() {
+  @Test
+  fun testOptionDocumentation() = onEdt {
     myFixture.addClass("""
       package com;
 
@@ -56,9 +60,10 @@ class OpenRewriteYamlDocumentationProviderTest : OpenRewriteLightHighlightingTes
 
   private fun doTestDocumentation(expected: String) {
     val targets = PlatformTestUtil.callOnBgtSynchronously({ runReadAction {
-      IdeDocumentationTargetProvider.getInstance(project).documentationTargets(editor, file, editor.caretModel.offset)
+      IdeDocumentationTargetProvider.getInstance(project).documentationTargets(myFixture.editor, myFixture.file, myFixture.editor.caretModel.offset)
     } }, 10)!!
-    val target = assertOneElement(targets)
+    assertEquals(1, targets.size, targets.toString())
+    val target = targets.single()
     val documentationData = target.computeDocumentation() as DocumentationData
     assertEquals(expected, documentationData.html)
   }

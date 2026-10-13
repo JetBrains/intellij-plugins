@@ -56,8 +56,6 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":coverage",
-        "@community//libraries/assertj-core",
-        "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/core-api:core_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
@@ -71,12 +69,6 @@ jvm_library(
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
         "@community//platform/statistics:statistics_test_lib",
         "//contrib/qodana:qodana_test_lib",
-        "@community//java/testFramework",
-        "@community//java/testFramework:testFramework_test_lib",
-        "//contrib/qodana-test-framework:qodana-testFramework",
-        "//contrib/qodana-test-framework:qodana-testFramework_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "//contrib/qodana/util:util_test_lib",
     ],
 )

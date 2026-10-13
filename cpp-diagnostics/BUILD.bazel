@@ -9,7 +9,20 @@ dev_dist_plugin(
         "intellij.clion.diagnostics.cmake",
         "intellij.clion.diagnostics.docker",
     ],
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/clion-diagnostics.jar": [
+            "intellij.clion.diagnostics",
+            "intellij.clion.diagnostics.docker",
+        ],
+    },
     main_module = "intellij.clion.diagnostics",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.clion.diagnostics.cmake",
+            "intellij.clion.diagnostics.docker",
+        ],
+    },
 )
 ### auto-generated section `dev intellij.clion.diagnostics` end
 

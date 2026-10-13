@@ -7,7 +7,6 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
-import com.intellij.lang.typescript.tsc.TypeScriptGoTypeEvaluatorMode
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.platform.lsp.testFramework.waitForDiagnosticsFromLspServer
@@ -97,10 +96,7 @@ abstract class VueTestCase(
       VueTestMode.TS_GO_PROXY -> {
         disableAstLoadingFilter()
 
-        TypeScriptServiceTestMixin.setUpTypeScriptService(
-          fixture = myFixture,
-          tsGoTypeEvaluatorMode = TypeScriptGoTypeEvaluatorMode.PROXY,
-        ) {
+        TypeScriptServiceTestMixin.setUpTypeScriptService(fixture = myFixture) {
           it::class == TypeScriptGoLspService::class
         }
 

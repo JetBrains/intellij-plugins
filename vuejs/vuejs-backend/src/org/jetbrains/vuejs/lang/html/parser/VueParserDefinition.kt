@@ -4,8 +4,6 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.html.HTMLParser
 import com.intellij.lang.html.HTMLParserDefinition
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.FileViewProvider
@@ -28,10 +26,8 @@ class VueParserDefinition : HTMLParserDefinition() {
       htmlCompatMode: Boolean,
       parentLangMode: LangMode? = null,
     ): Lexer {
-      val level = JSRootConfiguration.getInstance(project).languageLevel
       return VueParsingLexer(
         VueLexer(
-          languageLevel = if (level.isES6Compatible) level else JSLanguageLevel.ES6,
           project = project,
           interpolationConfig = interpolationConfig,
           htmlCompatMode = htmlCompatMode,

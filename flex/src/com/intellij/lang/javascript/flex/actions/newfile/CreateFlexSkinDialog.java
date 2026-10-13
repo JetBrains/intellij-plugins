@@ -1,13 +1,13 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.util.PlatformPackageUtil;
+import com.intellij.javascript.flex.refactoring.FlexRefactoringUtil;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.module.Module;
@@ -133,8 +133,8 @@ public class CreateFlexSkinDialog extends DialogWrapper {
     myHostComponentCombo.updateRecents();
     myPackageCombo.updateRecents();
 
-    myTargetDirectory = JSRefactoringUtil.chooseOrCreateDirectoryForClass(myModule.getProject(), myModule, getPackageScope(), packageName,
-                                                                          null, myContextFile.getParent(), ThreeState.UNSURE);
+    myTargetDirectory = FlexRefactoringUtil.chooseOrCreateDirectoryForClass(myModule.getProject(), myModule, getPackageScope(), packageName,
+                                                                            null, myContextFile.getParent(), ThreeState.UNSURE);
     if (myTargetDirectory != null) {
       super.doOKAction();
     }

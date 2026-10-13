@@ -126,14 +126,11 @@ differently from plain Markdown / from the current IntelliJ parser:
   thematic break.
 - **Autolinks** (`ParsingAutolink`, `<https://example.com>`) are **invalid
   MDX** — `<` starts JSX, so this is recorded as a `parseError`.
-- **HTML comments** (`ParsingHtmlComment`, `<!-- -->`) are **invalid MDX** —
-  recorded as a `parseError` (MDX expects `{/* */}`).
 - **Indented code** (`ParsingIndentedCode`) is **disabled** in MDX — the
   indented lines parse as a `paragraph`, not a `code` node.
-- **Line-leading `import` / `export`** (`ParsingImportInProse`) is always
-  treated as ESM, so a line that *starts* with `import`/`export` but is not
-  valid JavaScript is a `parseError` (acorn), **not** prose. Only `import`
-  used mid-sentence stays a `paragraph`.
+- **Block-start `import` / `export`** (`ParsingImportInProse`) starts ESM.
+  Invalid JavaScript at a block start produces a `parseError` (acorn).
+  These keywords stay Markdown text on paragraph continuation lines.
 - **Markdown inside JSX** (`ParsingMarkdownInJsx`) is parsed recursively: a
   `Callout` `mdxJsxFlowElement` contains a real `heading` and `list`.
 

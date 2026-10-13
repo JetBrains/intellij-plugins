@@ -1,9 +1,0 @@
-class A {
-    function xxx() {
-        var a = B.XXX
-    }
-}
-
-class B {
-    public static const XXX:String = "XXX_YYY ZZZ";
-}

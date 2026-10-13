@@ -19,6 +19,9 @@ internal class MdxJsxTagParser(
   private var openingTail: OpeningTagTail? = null
   private var terminalResult: Result? = null
 
+  val isOpeningTag: Boolean
+    get() = !closing
+
   fun advanceTo(limit: Int): Result {
     mdxCancellableText(text)
     require(limit in exposedEnd..scanEnd) {

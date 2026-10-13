@@ -4,10 +4,10 @@ package com.intellij.lang.javascript.validation.fixes;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.ide.util.PlatformPackageUtil;
+import com.intellij.javascript.flex.refactoring.FlexRefactoringUtil;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -115,7 +115,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
     final PsiDirectory baseDir = myElement.getContainingFile().getParent();
     final GlobalSearchScope scope =
       PlatformPackageUtil.adjustScope(baseDir, GlobalSearchScope.moduleWithDependenciesScope(module), false, true);
-    final PsiDirectory psiDirectory = JSRefactoringUtil
+    final PsiDirectory psiDirectory = FlexRefactoringUtil
       .chooseOrCreateDirectoryForClass(module.getProject(), module, scope, myPackageName, null, baseDir, ThreeState.UNSURE);
 
     return Pair.create(getFileText(), psiDirectory);

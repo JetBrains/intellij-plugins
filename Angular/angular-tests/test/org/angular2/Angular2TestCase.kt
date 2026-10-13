@@ -9,7 +9,6 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspIntegrationProvider
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
-import com.intellij.lang.typescript.tsc.TypeScriptGoTypeEvaluatorMode
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
@@ -47,7 +46,7 @@ annotation class TestTsNode
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class TestTsGoFork
+annotation class TestTsKotlin
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
@@ -63,7 +62,7 @@ annotation class SkipTsNode
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class SkipTsGoFork
+annotation class SkipTsKotlin
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
@@ -77,7 +76,7 @@ abstract class Angular2TestCase(
   enum class TypeScriptServiceKind(val annotationClass: KClass<out Annotation>, val skipTestAnnotationClass: KClass<out Annotation>) {
     None(TestNoService::class, SkipNoService::class),
     TsNode(TestTsNode::class, SkipTsNode::class),
-    TsGoFork(TestTsGoFork::class, SkipTsGoFork::class),
+    TsGoKotlin(TestTsKotlin::class, SkipTsKotlin::class),
     TsGoProxy(TestTsGoProxy::class, SkipTsGoProxy::class),
   }
 
@@ -88,7 +87,7 @@ abstract class Angular2TestCase(
   private val expectedServerClass: KClass<out TypeScriptService> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     when (serviceKind) {
       TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
-      TypeScriptServiceKind.TsGoFork -> TypeScriptGoLspService::class
+      TypeScriptServiceKind.TsGoKotlin -> TypeScriptGoLspService::class
       TypeScriptServiceKind.TsGoProxy -> TypeScriptGoLspService::class
       TypeScriptServiceKind.None -> Angular2TypeScriptService::class
     }
@@ -112,7 +111,8 @@ abstract class Angular2TestCase(
     get() = "ts"
 
   override val defaultDirName: String get() {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy
+        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
       val tsGoDirName = "$testName.tsgo"
       if (File("$testDataPath/$tsGoDirName").exists())
         return tsGoDirName
@@ -121,7 +121,8 @@ abstract class Angular2TestCase(
   }
 
   override fun getDefaultConfigureFileName(extension: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy
+        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
       val tsgoConfigureFileName = "$testName.tsgo.$extension"
       if (File("$testDataPath/$tsgoConfigureFileName").exists())
         return tsgoConfigureFileName
@@ -131,7 +132,8 @@ abstract class Angular2TestCase(
 
   override fun getGoldFileName(forcedGoldFileName: String?, testFileExt: String): String {
     val goldFileName = super.getGoldFileName(forcedGoldFileName, testFileExt)
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy
+        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
       val lastIndex = goldFileName.lastIndexOf('.')
       val tsGoGoldFileName = "${goldFileName.substring(0, lastIndex)}.tsgo${goldFileName.substring(lastIndex)}"
       if (File("$testDataPath/$tsGoGoldFileName").exists())
@@ -141,7 +143,8 @@ abstract class Angular2TestCase(
   }
 
   override fun getCodeCompletionExpectedItemsFileNameInfix(prefix: String, suffix: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy) {
+    if (serviceKind == TypeScriptServiceKind.TsGoProxy
+        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
       val tsGoItemsFileName = "${prefix}.tsgo${suffix}"
       if (File("$testDataPath/$tsGoItemsFileName").exists())
         return ".tsgo"
@@ -163,20 +166,11 @@ abstract class Angular2TestCase(
   }
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    when (serviceKind) {
-      TypeScriptServiceKind.None -> return
-      TypeScriptServiceKind.TsNode -> {}
-      TypeScriptServiceKind.TsGoFork,
-      TypeScriptServiceKind.TsGoProxy,
-        -> Registry.get("typescript.ts-go.enabled").setValue(true, testRootDisposable)
-    }
+    if (serviceKind == TypeScriptServiceKind.None) return
     configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(
       myFixture,
-      tsGoTypeEvaluatorMode = if (serviceKind == TypeScriptServiceKind.TsGoProxy)
-        TypeScriptGoTypeEvaluatorMode.PROXY
-      else
-        TypeScriptGoTypeEvaluatorMode.TS_GO_FORK
+      tsKotlin = serviceKind == TypeScriptServiceKind.TsGoKotlin,
     ) {
       it::class == expectedServerClass
     }
@@ -188,7 +182,7 @@ abstract class Angular2TestCase(
           waitEmptyServiceQueueForService(service)
         }
       }
-      TypeScriptServiceKind.TsGoFork,
+      TypeScriptServiceKind.TsGoKotlin,
       TypeScriptServiceKind.TsGoProxy,
         -> {
         triggerLspServerInit(project, TypeScriptGoLspIntegrationProvider::class.java,

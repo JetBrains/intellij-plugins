@@ -26,7 +26,7 @@ public final class MeteorClientUpdateConfigurationProvider extends UpdateConfigu
 
   @Override
   public boolean isSupported(@NotNull RunProfile runProfile) {
-    return runProfile instanceof JavaScriptDebugConfiguration &&
-           MeteorFacade.getInstance().isMeteorProject(((JavaScriptDebugConfiguration)runProfile).getProject());
+    return runProfile instanceof JavaScriptDebugConfiguration configuration &&
+           MeteorFacade.getInstance().isMeteorProject(configuration.getProject());
   }
 }

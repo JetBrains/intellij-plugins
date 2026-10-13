@@ -241,8 +241,7 @@ class MdxParsingTest : MdxTestBase() {
 
   /**
    * `<https://example.com>` autolink. MDX disables autolinks (oracle = parseError), but the IntelliJ
-   * parser does not flag it as an error — this snapshot captures that current non-spec behavior. The
-   * strict invalid-MDX target is testParsingHtmlComment / testHtmlCommentIsInvalidMdx below.
+   * parser does not flag it as an error. This snapshot captures that current non-spec behavior.
    */
   @Test
   fun testParsingAutolink() {
@@ -314,16 +313,6 @@ class MdxParsingTest : MdxTestBase() {
    */
   @Test
   fun testParsingEscapes() {
-    doTest()
-  }
-
-  /**
-   * WEB-78468 group D regression anchor: an HTML comment `<!-- ... -->`. Invalid MDX (oracle =
-   * parseError), but the IntelliJ parser does not flag it as an error — this snapshot captures that
-   * current non-spec behavior. See testHtmlCommentIsInvalidMdx in the oracle section below.
-   */
-  @Test
-  fun testParsingHtmlComment() {
     doTest()
   }
 

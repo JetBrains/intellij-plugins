@@ -15,10 +15,10 @@
     <orderEntry type="module" module-name="intellij.platform.jps.build.javac.rt" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.jetbrains.annotations" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.errorProne.jps" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.assertj.core" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.errorProne.jps" />
 </module>

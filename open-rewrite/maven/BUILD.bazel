@@ -28,8 +28,10 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/external-system-impl:externalSystem-impl",
         "@community//platform/lang-impl",
+        "@community//platform/buildView",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/execution",
+        "@community//platform/consoleView",
         "@community//platform/ide-core",
     ],
 )
@@ -53,8 +55,10 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/external-system-impl:externalSystem-impl_test_lib",
         "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/buildView:buildView_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
     ],
 )
@@ -79,6 +83,16 @@ jvm_library(
     ),
     module_name = "intellij.openRewrite.maven.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//aether-dependency-resolver/plugin",
+        "@community//xml/plugin",
+        "//plugins/microservices/microservices-jvm:jvm",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//platform/vcs/plugin",
+    ],
 )
 
 jvm_library(
@@ -101,6 +115,13 @@ jvm_library(
         # do not sort,
         ":openRewrite-maven-tests",
         "@community//platform/ide-core:ide-core_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//aether-dependency-resolver/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "//plugins/microservices/microservices-jvm:jvm_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
@@ -130,14 +151,12 @@ jvm_library(
         "@community//platform/ide-core",
         "//contrib/open-rewrite:openRewrite-tests",
         "//contrib/open-rewrite:openRewrite-tests_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
-        "@community//libraries/junit5",
-        "@community//libraries/junit5:junit5_test_lib",
-        "@community//libraries/junit5-params",
-        "@community//libraries/junit5-params:junit5-params_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
+        "@community//libraries/junit6-params",
+        "@community//libraries/junit6-params:junit6-params_test_lib",
     ],
 )
 ### auto-generated section `build intellij.openRewrite.maven.tests` end

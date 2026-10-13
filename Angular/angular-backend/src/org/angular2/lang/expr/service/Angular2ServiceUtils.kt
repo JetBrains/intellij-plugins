@@ -12,6 +12,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint.InlayHintKind
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
@@ -42,7 +43,7 @@ typealias ResponseInlayHintKind = com.intellij.lang.typescript.compiler.language
 fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   val evaluationLocation = JSTypeEvaluationLocationProvider.typeEvaluationLocation
 
-  val isAngularServiceContext = if (EDT.isCurrentThreadEdt())
+  val isAngularServiceContext = if (EDT.isCurrentThreadEdt() || ApplicationManager.getApplication().isReadAccessAllowed)
     (isAngular2Context(project, context) || (evaluationLocation != null && isAngular2Context(evaluationLocation)))
     && isAngularServiceSupport(project, context)
   else

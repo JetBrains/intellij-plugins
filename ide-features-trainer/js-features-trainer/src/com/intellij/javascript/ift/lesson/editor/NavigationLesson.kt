@@ -4,7 +4,6 @@ package com.intellij.javascript.ift.lesson.editor
 import com.intellij.ide.IdeBundle
 import com.intellij.idea.ActionsBundle
 import com.intellij.javascript.ift.JsLessonsBundle
-import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.UIBundle
@@ -47,7 +46,6 @@ class NavigationLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareRuntimeTask {
           //by default in 2020.1 "Structure" is in "top-left" state, also the state can be changed by user
           val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Structure")

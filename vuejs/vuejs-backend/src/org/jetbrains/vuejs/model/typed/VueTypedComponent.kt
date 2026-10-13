@@ -62,23 +62,38 @@ class VueTypedComponent private constructor(
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
-          ?.let { componentDefinition ->
-            when (componentDefinition) {
-              is JSTypeOwner ->
-                componentDefinition.jsType?.let {
-                  getFromVueFile(it)
-                  ?: JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(componentDefinition) {
-                    JSApplyNewType(it, it.source).substitute()
-                  }
-                }
-              is TypeScriptClass ->
-                componentDefinition.jsType
-              else -> null
-            }
-          },
-        PsiModificationTracker.MODIFICATION_COUNT)
+        getThisTypeInternal(),
+        PsiModificationTracker.MODIFICATION_COUNT,
+      )
     } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
+
+  private fun getThisTypeInternal(): JSType? {
+    val componentDefinition = resolveElementTo(
+      source,
+      TypeScriptVariable::class,
+      TypeScriptPropertySignature::class,
+      TypeScriptClass::class,
+    ) ?: return null
+
+    return when (componentDefinition) {
+      is JSTypeOwner -> {
+        val type = componentDefinition.jsType
+                   ?: return null
+
+        getFromVueFile(type)
+          ?.also { return it }
+
+        JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(componentDefinition) {
+          JSApplyNewType(type, type.source).substitute()
+        }
+      }
+
+      is TypeScriptClass ->
+        componentDefinition.jsType
+
+      else -> null
+    }
+  }
 
   private fun getFromVueFile(type: JSType): JSRecordType? {
     if (type is TypeScriptIndexedAccessJSTypeImpl

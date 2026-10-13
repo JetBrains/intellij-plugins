@@ -1,6 +1,7 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -10,6 +11,30 @@ pkg_files(
     prefix = "deno-service",
     strip_prefix = strip_prefix.from_pkg("gen-resources/deno-service"),
 )
+
+### auto-generated section `dev intellij.deno` start
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(
+        ["gen-resources/deno-service/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {
+        "deno-service": "contrib/Deno/gen-resources/deno-service",
+    },
+    files = {
+        "deno-service": "//contrib/Deno:dev_dist_resources",
+    },
+    jars = {
+        "lib/deno.jar": ["intellij.deno"],
+    },
+    main_module = "intellij.deno",
+)
+### auto-generated section `dev intellij.deno` end
 
 ### auto-generated section `build intellij.deno` start
 resourcegroup(
@@ -76,6 +101,8 @@ ij_plugin_module(
         "@community//platform/workspace/storage",
         "@community//platform/core-impl",
         "@community//platform/execution",
+        "@community//platform/consoleView",
+        "@community//platform/consoleView/impl",
         "@community//platform/script-debugger/backend",
         "@community//platform/util:util-ui",
         "@community//platform/util-ex",
@@ -117,14 +144,6 @@ jvm_library(
         "@community//platform/lang-impl:lang-impl_test_lib",
         "@community//platform/lang-api:lang_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
-        "//plugins/JavaScriptLanguage/testFramework",
-        "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
-        "@community//platform/lsp/testFramework",
-        "@community//platform/lsp/testFramework:testFramework_test_lib",
-        "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests",
-        "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests_test_lib",
         "@community//platform/xdebugger-api:debugger_test_lib",
         "//plugins/JavaScriptDebugger/backend:backend_test_lib",
         "@community//platform/core-ui:core-ui_test_lib",
@@ -135,6 +154,8 @@ jvm_library(
         "@community//platform/workspace/storage:storage_test_lib",
         "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
+        "@community//platform/consoleView/impl:impl_test_lib",
         "@community//platform/script-debugger/backend:backend_test_lib",
         "@community//platform/util:util-ui_test_lib",
         "@community//platform/util-ex:util-ex_test_lib",

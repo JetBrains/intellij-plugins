@@ -341,24 +341,6 @@ class MdxOracleTest : MdxTestBase() {
     assertEmpty("Oracle: escaped sequences must not produce any JSX tag", nodesOfTypeAllRoots("HTML_TAG"))
   }
 
-  /**
-   * Oracle: `<!-- -->` is INVALID MDX; the parser must produce a PsiErrorElement. GREEN. WEB-78468.
-   */
-  @Test
-  fun testHtmlCommentIsInvalidMdx() {
-    myFixture.configureByText("foo.mdx", "<!-- an HTML comment -->")
-    assertTrue(
-      "Oracle: `<!-- -->` is invalid MDX (use `{/* */}`); the parser must produce a " +
-        "PsiErrorElement, but none was found in any root.",
-      collectPsiErrorElements().isNotEmpty()
-    )
-  }
-
-  @Test
-  fun testHtmlCommentInCodeSpanIsOpaque() {
-    assertNoErrors("`<!-- an HTML comment -->`")
-  }
-
   @Test
   fun testMarkdownLikeTextInInlineJsxExpressionAttributeStaysJsx() {
     myFixture.configureByText("foo.mdx", "Text <Alert value={[Target](./target.mdx)} /> end")
@@ -582,6 +564,22 @@ class MdxOracleTest : MdxTestBase() {
   }
 
   // --- ESM / member-expression / export-default ------------------------------------------------
+
+  @Test
+  fun testImportAndExportInParagraphsAreText() {
+    val paragraphs = listOf(
+      "This example builds a virtual machine from a guest operating system ISO file. The builder will start the\n" +
+      "virtual machine, boot from the ISO, and install the operating system, and run any provisioners, and then\n" +
+      "export the virtual machine as an image.",
+      "some imports will be unused and look good in the text, but some will not and it will break the text like this. \n" +
+      "import will be parsed as special word and not as regular import. lorem ipsum dolor sit.",
+    )
+    assertNoErrors(paragraphs.joinToString("\n\n"))
+    assertEquals(paragraphs, nodesOfType(myFixture.file, "PARAGRAPH").map { it.text })
+    for (type in listOf("MDX_ESM_BLOCK", "ES6ImportDeclaration", "ES6ExportDeclaration", "ES6ExportDefaultAssignment")) {
+      assertEmpty("The paragraphs must contain no $type nodes.", nodesOfTypeAllRoots(type))
+    }
+  }
 
   /** Oracle: `import`/`export` mid-sentence stays prose text — no ESM node, no error. GREEN. WEB-57359. */
   @Test

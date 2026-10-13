@@ -19,6 +19,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
 import org.angular2.inspections.AngularUndefinedBindingInspection
@@ -33,6 +34,7 @@ import java.io.IOException
  */
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngModuleImport") {
 
   @Test

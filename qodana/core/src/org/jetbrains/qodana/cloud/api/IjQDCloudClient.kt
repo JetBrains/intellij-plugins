@@ -66,7 +66,7 @@ class IjQDCloudClientProviderTestImpl : IjQDCloudClientProvider {
         return qodanaCloudResponse {
           QDCloudEnvironment.Apis(
             api = listOf(QDCloudEnvironment.Apis.Api("https://tests-qodana.cloud", majorVersion = 1, minorVersion = 0)),
-            linters = emptyList()
+            linters = listOf(QDCloudEnvironment.Apis.Api("https://linters.tests-qodana.cloud", majorVersion = 1, minorVersion = 0))
           )
         }
       }

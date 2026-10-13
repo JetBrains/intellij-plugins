@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger
 private const val COV_FIELD_NAME = "coverage"
 private const val COVERAGE_FILES_PROVIDED = "qodana.coverage.files.provided"
 const val COVERAGE_DATA: String = "qodana.coverage.input"
+val COVERAGE_INSPECTIONS_NAMES: Set<String> = setOf("JsCoverageInspection", "JvmCoverageInspection", "PhpCoverageInspection",
+                                                    "PyCoverageInspection", "GoCoverageInspection", "NetCoverageInspection")
 val precomputedCoverageFiles: Key<ConcurrentMap<CoverageEngineType, Lazy<List<Path>>>> = Key.create("qodana.coverage.files")
 
 internal var Run.hasCoverageFiles: Boolean
@@ -158,6 +160,7 @@ class CoverageStatisticsData(
 enum class QodanaCoverageComputationState {
   SKIP_COMPUTE,
   SKIP_REPORT,
+  INCREMENTAL_REPORT,
   DEFAULT;
 
   fun isIncrementalAnalysis(): Boolean = this != DEFAULT

@@ -1,1 +1,1 @@
-b (typeText='string'; priority=101.0; bold)
+b (typeText=' string'; priority=4.0)

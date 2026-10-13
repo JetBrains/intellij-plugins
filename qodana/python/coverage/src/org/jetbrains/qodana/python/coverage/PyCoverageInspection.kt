@@ -80,11 +80,12 @@ class PyCoverageInspection : CoverageInspectionBase() {
                            globalContext: QodanaGlobalInspectionContext): PsiElementVisitor {
     loadClassData(data, file.virtualFile, globalContext)
     val missingDataWithoutTracking = data == null && !warnMissingCoverage
-    val dataPresentButReportingDisabled = data != null && !reportProblemsNeeded(globalContext)
+    val reportFileProblems = reportProblemsNeeded(globalContext, file, file.textRange)
+    val dataPresentButReportingDisabled = data != null && !reportFileProblems
     if (missingDataWithoutTracking || dataPresentButReportingDisabled) {
       return PsiElementVisitor.EMPTY_VISITOR
     }
-    if (reportProblemsNeeded(globalContext) &&
+    if (reportFileProblems &&
         issueWithCoverage(data, file, file.textRange, holder.project, fileThreshold, warnMissingCoverage)) {
       reportElement(holder, file.firstChild, QodanaBundle.message("file.coverage.below.threshold", file.virtualFile.presentableName, fileThreshold))
     }
@@ -93,7 +94,7 @@ class PyCoverageInspection : CoverageInspectionBase() {
         val range = computeRealFunctionRange(function)
         val isDataLoaded = data != null || loadMissingData(holder.project, range, file, warnMissingCoverage, globalContext)
         if (!isDataLoaded) return
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, range) &&
             issueWithCoverage(data, file, range, holder.project, methodThreshold, warnMissingCoverage)) {
           val message = if (function.name == "__init__")  {
             val clazz = function.containingClass
@@ -111,7 +112,7 @@ class PyCoverageInspection : CoverageInspectionBase() {
       }
 
       override fun visitPyClass(aClass: PyClass) {
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, aClass.textRange) &&
             issueWithCoverage(data, file, aClass.textRange, holder.project, classThreshold, warnMissingCoverage)) {
           reportElement(holder, highlightedElement(aClass), QodanaBundle.message("class.coverage.below.threshold",
                                                                                  aClass.name,

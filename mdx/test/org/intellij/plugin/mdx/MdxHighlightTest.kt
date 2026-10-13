@@ -200,6 +200,16 @@ class MdxHighlightTest : MdxTestBase() {
         )
     }
 
+  @Test
+  fun testNestedMultilineTemplateExpressionIsColoredAsJavaScript() {
+    val text = "<A>\n<B>{`a\nb\nc`}</B>\n</A>"
+    val tokens = editorHighlightingTokens(text)
+
+    assertEquals(text, tokens.joinToString("") { it.second })
+    assertTrue(keysAt(tokens, text.indexOf("\nb\n") + 1).any { it.contains("JS.STRING") })
+    assertNoPsiErrors()
+  }
+
     /**
      * Redesign target (WEB-78468): a block-level flow `{expression}` (`<div>{typeof window}</div>`)
      * must carry embedded-JS coloring in the editor highlighter — `typeof` a JS keyword, the braces
@@ -254,6 +264,18 @@ class MdxHighlightTest : MdxTestBase() {
             listKeys.any { it.contains("JS.KEYWORD") }
         )
     }
+
+  @Test
+  fun testImportAndExportInParagraphsAreNotColoredAsJavaScript() {
+    val text = "Some prose.\nimport these helpers before you start.\n\n" +
+               "Some more prose.\nexport the virtual machine as an image."
+    val tokens = editorHighlightingTokens(text)
+    myFixture.testHighlighting()
+    for (keyword in listOf("import", "export")) {
+      val keys = keysAt(tokens, text.indexOf(keyword))
+      assertFalse("The prose keyword '$keyword' must use Markdown colors: $keys.", keys.any { it.contains("JS.KEYWORD") })
+    }
+  }
 
     /**
      * Currently fails: an INLINE MDX text expression in prose must be colored as embedded JS, the same

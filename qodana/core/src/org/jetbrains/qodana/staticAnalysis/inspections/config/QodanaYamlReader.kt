@@ -9,7 +9,7 @@ import com.google.common.annotations.VisibleForTesting
 import kotlinx.coroutines.runInterruptible
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -60,7 +60,7 @@ object QodanaYamlReader {
       val obj = when (val parsed = parser.readTree(yaml)) {
         null, is MissingNode -> parser.createObjectNode() // don't fail on empty input
         is ObjectNode -> parsed
-        else -> throw QodanaException("Not a valid qodana.yaml configuration '$yaml'")
+        else -> throw QodanaConfigurationException("Not a valid qodana.yaml configuration '$yaml'")
       }
       val unknown = mutableListOf<String>()
       val relevantFields = knownProps
@@ -75,7 +75,7 @@ object QodanaYamlReader {
         .toList()
         .let(obj::retain)
 
-      if (unknown.isNotEmpty()) throw QodanaException("Unexpected keys in qodana.yaml: $unknown")
+      if (unknown.isNotEmpty()) throw QodanaConfigurationException("Unexpected keys in qodana.yaml: $unknown")
       parser.treeToValue(filteredObject, QodanaYamlConfig::class.java)
     }
 

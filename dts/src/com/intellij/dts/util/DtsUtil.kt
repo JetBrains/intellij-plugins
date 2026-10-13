@@ -82,7 +82,7 @@ object DtsUtil {
     }
   }
 
-  @RequiresReadLockAbsence(generateAssertion = false /* IJPL-115548 */)
+  @RequiresReadLockAbsence
   fun findFileAndRefresh(first: String, vararg more: String): VirtualFile? {
     ThreadingAssertions.assertNoReadAccess()
 

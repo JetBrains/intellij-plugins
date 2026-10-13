@@ -11,8 +11,6 @@ import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.lang.javascript.boilerplate.GithubDownloadUtil;
 import com.intellij.lang.javascript.boilerplate.GithubProjectGeneratorPeer;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.settings.JSRootConfiguration;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -64,15 +62,6 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
     return MeteorBundle.message("settings.meteor.project.generator.descr");
   }
 
-  private static void setProjectLanguageLevel(final @NotNull Project project, MeteorProjectSettings settings) {
-    String type = settings.myType;
-    JSLanguageLevel level = JSLanguageLevel.ES6;
-    if (type.contains("react")) {
-      level = JSLanguageLevel.getLevelForJSX();
-    }
-    JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(level);
-  }
-
   private static void setHandlebarsSettings(final @NotNull Project project, MeteorProjectSettings settings) {
     if (settings.myType.contains("angular")) {
       HbConfig.setShouldOpenHtmlAsHandlebars(false, project);
@@ -85,7 +74,6 @@ final class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProj
                               final @NotNull MeteorProjectSettings settings,
                               @NotNull Module module) {
     final Ref<Boolean> noErrorOnProjectCreating = Ref.create(false);
-    setProjectLanguageLevel(project, settings);
     setHandlebarsSettings(project, settings);
     MeteorFacade.getInstance().setIsMeteorProject(project);
 

@@ -30,6 +30,8 @@
     <orderEntry type="module" module-name="intellij.libraries.commons.io" />
     <orderEntry type="library" name="jetbrains.intellij.deps.jSerialComm" level="project" />
     <orderEntry type="module" module-name="intellij.platform.execution" />
+    <orderEntry type="module" module-name="intellij.platform.consoleView" />
+    <orderEntry type="module" module-name="intellij.platform.consoleView.impl" />
     <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
   </component>
 </module>

@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.InspectionApplicationException
+import com.fasterxml.jackson.core.JacksonException
 import com.intellij.openapi.diagnostic.logger
 import kotlinx.coroutines.withContext
 import org.apache.commons.cli.CommandLine
@@ -24,6 +24,7 @@ import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.logging.ConsoleHandler
@@ -38,6 +39,7 @@ class QodanaInspectionApplicationFactory {
     addOption("b", "baseline", true, QodanaBundle.message("baseline.option.description"))
     addOption(null, "baseline-include-absent", false, QodanaBundle.message("baseline.include.absent.option.description"))
     addOption(null, "fail-threshold", true, QodanaBundle.message("fail.threshold.option.description"))
+    addOption(null, "report-coverage-problems", true, QodanaBundle.message("report.coverage.problems.option.description"))
     addOption(null, "run-promo", true, QodanaBundle.message("run.promo.inspections.option.description"))
     addOption(null, "disable-sanity", false, QodanaBundle.message("disable.sanity.inspections.option.description"))
     addOption(null, "apply-fixes", false, QodanaBundle.message("apply.fixes.inspections.option.description"))
@@ -60,12 +62,7 @@ class QodanaInspectionApplicationFactory {
       dumpOptions()
       exitProcess(0)
     }
-    try {
-      return buildApplication(args) ?: exitProcess(1)
-    }
-    catch (e: QodanaException) {
-      throw InspectionApplicationException(e.message)
-    }
+    return buildApplication(args) ?: exitProcess(1)
   }
 
   private fun CommandLine.fixesStrategy(): FixesStrategy? {
@@ -90,7 +87,12 @@ class QodanaInspectionApplicationFactory {
 
 
     val projectPath = commandLine.args[0]
-    val absoluteProjectPath = Paths.get(projectPath).toRealPath()
+    val absoluteProjectPath = try {
+      Paths.get(projectPath).toRealPath()
+    }
+    catch (e: NoSuchFileException) {
+      throw QodanaConfigurationException("Project path does not exist: $projectPath", e)
+    }
 
     val configOptionValue = commandLine.getOptionValue("config")
     val configDirOptionValue = commandLine.getOptionValue("config-dir")
@@ -135,10 +137,15 @@ class QodanaInspectionApplicationFactory {
       withContext(StaticAnalysisDispatchers.IO) {
         QodanaYamlReader.load(effectiveConfig)
       }
-    }?.getOrThrow()?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
+    }?.getOrElse { e ->
+      throw if (e is JacksonException) QodanaConfigurationException("Cannot parse qodana.yaml: ${e.message}", e) else e
+    }?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
-    val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.toInt() ?: yamlConfig.failThreshold
+    val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.let {
+      it.toIntOrNull() ?: throw QodanaConfigurationException("Option --fail-threshold must be an integer, but was '$it'")
+    } ?: yamlConfig.failThreshold
+    val reportCoverageProblems = commandLine.getOptionValue("report-coverage-problems")?.toBoolean() ?: yamlConfig.coverage.reportProblems
 
     val script = determineScript(commandLine, yamlConfig)
 
@@ -158,6 +165,7 @@ class QodanaInspectionApplicationFactory {
       script = script,
       includeAbsent = includeAbsent,
       onlyDirectory = dirToAnalyze ?: yamlConfig.onlyDirectory,
+      reportCoverageProblems = reportCoverageProblems,
       failureConditions = if (failThresholdArg == null) {
         yamlConfig.failureConditions
       }
@@ -186,14 +194,19 @@ class QodanaInspectionApplicationFactory {
         return null
       }
     }
-    return QodanaInspectionApplication(qodanaConfig, projectApi)
+    val resolved = resolveBaseline(qodanaConfig.baseline, projectApi?.frontendUrl)
+    return QodanaInspectionApplication(
+      qodanaConfig.copy(baseline = resolved.path, baselineSource = resolved.source),
+      projectApi,
+      temporaryCloudBaselineFile = resolved.temporaryFile,
+    )
   }
 
   private fun determineScript(cli: CommandLine, config: QodanaYamlConfig): QodanaScriptConfig =
     cli.getOptionValue("script")?.let {
       val parsedConfig = QodanaScriptFactory.parseConfigFromArgument(it)
       if (parsedConfig == null) {
-        throw QodanaException("Can't find script implementation for '$it' value")
+        throw QodanaConfigurationException("Can't find script implementation for '$it' value")
       }
       parsedConfig
     } ?: config.script
@@ -236,12 +249,12 @@ class QodanaInspectionApplicationFactory {
     try {
       val commandLine = DefaultParser().parse(options, args.toTypedArray(), true)
       if (commandLine.argList.size != 2) {
-        throw QodanaException("Arguments should contain only PROJECT_PATH and RESULTS_PATH. Arguments: " + commandLine.argList)
+        throw QodanaConfigurationException("Arguments should contain only PROJECT_PATH and RESULTS_PATH. Arguments: " + commandLine.argList)
       }
       return commandLine
     }
     catch (e: ParseException) {
-      throw QodanaException(e.message!!)
+      throw QodanaConfigurationException(e.message!!, e)
     }
   }
 

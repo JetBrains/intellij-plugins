@@ -1,6 +1,31 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.prisma` start
+filegroup(
+    name = "dev_dist_resources",
+    srcs = glob(
+        ["gen-resources/language-server/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+
+dev_dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {
+        "language-server": "contrib/prisma/gen-resources/language-server",
+    },
+    files = {
+        "language-server": "//contrib/prisma:dev_dist_resources",
+    },
+    jars = {
+        "lib/prisma.jar": ["intellij.prisma"],
+    },
+    main_module = "intellij.prisma",
+)
+### auto-generated section `dev intellij.prisma` end
 
 ### auto-generated section `build intellij.prisma` start
 create_kotlinc_options(
@@ -12,14 +37,6 @@ create_kotlinc_options(
         "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
     ],
     x_context_parameters = True,
-)
-
-resourcegroup(
-    name = "prisma_resources",
-    srcs = glob(
-        ["gen-resources/**/*"],
-    ),
-    strip_prefix = "gen-resources",
 )
 
 jvm_library(
@@ -36,7 +53,6 @@ jvm_library(
     ),
     kotlinc_opts = ":custom_prisma",
     module_name = "intellij.prisma",
-    resource_jars = [":prisma_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -126,20 +142,6 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
         "@community//platform/lsp:lsp_test_lib",
         "@community//platform/execution:execution_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
-        "//plugins/JavaScriptLanguage/testFramework",
-        "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
-        "@community//platform/lsp/testFramework",
-        "@community//platform/lsp/testFramework:testFramework_test_lib",
-        "//ultimate/ultimate-resources:idea-ultimate-customization",
-        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
-        "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-        "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
-        "@community//platform/polySymbols",
-        "@community//platform/polySymbols:polySymbols_test_lib",
-        "@community//platform/polySymbols:polySymbols-testFramework",
-        "@community//platform/polySymbols:polySymbols-testFramework_test_lib",
         "@community//platform/util:util-ui_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
@@ -182,6 +184,7 @@ jvm_library(
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
+        "@community//platform/vcs/plugin",
         "@community//xml/plugin",
     ],
 )
@@ -215,6 +218,7 @@ jvm_library(
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
         "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [

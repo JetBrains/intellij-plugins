@@ -1,5 +1,12 @@
-load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("//build:intellij_dev_ultimate.bzl", "clion_dev_test")
+
+clion_dev_test(
+    name = "tests_test",
+    test_module = "intellij.clion.diagnostics.cmake.tests",
+)
+
+### skip generation section `test intellij.clion.diagnostics.cmake.tests`
 
 ### auto-generated section `build intellij.clion.diagnostics.cmake.tests` start
 jvm_library(
@@ -56,8 +63,8 @@ jvm_library(
         "//CIDR/clion-cmake/core:core_test_lib",
         "@community//libraries/assertj-core",
         "@community//libraries/assertj-core:assertj-core_test_lib",
-        "@community//libraries/junit5",
-        "@community//libraries/junit5:junit5_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
         "@community//libraries/kotlinx/serialization/core",
         "@community//libraries/kotlinx/serialization/core:core_test_lib",
         "@community//libraries/kotlinx/serialization/json",
@@ -88,10 +95,3 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.clion.diagnostics.cmake.tests` end
-
-### auto-generated section `test intellij.clion.diagnostics.cmake.tests` start
-jps_test(
-    name = "tests_test",
-    runtime_deps = [":tests_test_lib"],
-)
-### auto-generated section `test intellij.clion.diagnostics.cmake.tests` end

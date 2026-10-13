@@ -3,9 +3,11 @@ package org.jetbrains.vuejs.css.refs
 
 import com.intellij.javascript.backend.css.web.CssClassInJSLiteralOrIdentifierReferenceProvider
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PlatformPatterns
@@ -101,7 +103,7 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
           .takeIf {
             it !is JSFunctionItem
             && it?.name?.startsWith("$") == false
-            && (it as? JSTypeOwner)?.jsType?.substitute() !is JSFunctionType
+            && !isFunctionType((it as? JSTypeOwner)?.jsType)
           }
           ?.let {
             result.add(JSLookupUtilImpl.createLookupElement(it, it.name!!))
@@ -116,7 +118,7 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
         }
         .forEach {
           if (!it.name.startsWith("$")
-              && it.symbol?.jsType?.substitute() !is JSFunctionType)
+              && !isFunctionType(it.symbol?.jsType))
             result.add(it.buildLookupElement(myElement))
         }
 
@@ -146,6 +148,12 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
       return ""
     }
 
-  }
+    private fun isFunctionType(type: JSType?): Boolean {
+      type ?: return false
 
+      return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(myElement) {
+        type.substitute() is JSFunctionType
+      }
+    }
+  }
 }

@@ -135,20 +135,22 @@ object Angular2EntitiesProvider {
   @JvmStatic
   fun getExportedDeclarationToModuleMap(location: PsiElement): MultiMap<Angular2Declaration, Angular2Module> {
     val project = location.project
-    return JSTypeEvaluationLocationProvider.getCachedValueOnCurrentTsConfig(location) {
-      val result = MultiMap<Angular2Declaration, Angular2Module>()
-      getAllModules(project).forEach { module -> module.allExportedDeclarations.forEach { decl -> result.putValue(decl, module) } }
-      create(result, PsiModificationTracker.MODIFICATION_COUNT)
+    return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location.containingFile) {
+      CachedValuesManager.getManager(project).getCachedValue(project) {
+        create(buildDeclarationToModuleMap(project) { it.allExportedDeclarations },
+               PsiModificationTracker.MODIFICATION_COUNT)
+      }
     }
   }
 
   @JvmStatic
   fun getDeclarationToModuleMap(location: PsiElement): MultiMap<Angular2Declaration, Angular2Module> {
     val project = location.project
-    return JSTypeEvaluationLocationProvider.getCachedValueOnCurrentTsConfig(location) {
-      val result = MultiMap<Angular2Declaration, Angular2Module>()
-      getAllModules(project).forEach { module -> module.declarations.forEach { decl -> result.putValue(decl, module) } }
-      create(result, PsiModificationTracker.MODIFICATION_COUNT)
+    return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location.containingFile) {
+      CachedValuesManager.getManager(project).getCachedValue(project) {
+        create(buildDeclarationToModuleMap(project) { it.declarations },
+               PsiModificationTracker.MODIFICATION_COUNT)
+      }
     }
   }
 
@@ -163,6 +165,17 @@ object Angular2EntitiesProvider {
   @JvmStatic
   fun isDeclaredClass(typeScriptClass: TypeScriptClass): Boolean {
     return typeScriptClass.attributeList?.hasModifier(JSAttributeList.ModifierType.DECLARE) == true
+  }
+
+  private fun buildDeclarationToModuleMap(
+    project: Project,
+    getDeclarations: (Angular2Module) -> Set<Angular2Declaration>,
+  ): MultiMap<Angular2Declaration, Angular2Module> {
+    val result = MultiMap<Angular2Declaration, Angular2Module>()
+    getAllModules(project).forEach { module ->
+      getDeclarations(module).forEach { declaration -> result.putValue(declaration, module) }
+    }
+    return result
   }
 
   private fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> =

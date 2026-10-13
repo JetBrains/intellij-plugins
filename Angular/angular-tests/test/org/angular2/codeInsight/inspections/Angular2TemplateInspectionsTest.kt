@@ -19,11 +19,13 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_17_3_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
+import org.angular2.Angular2TestModule.ANGULAR_CORE_22_2_2
 import org.angular2.Angular2TestModule.ANGULAR_CORE_8_2_14
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection
 import org.angular2.inspections.AngularDeferBlockOnTriggerInspection
@@ -53,6 +55,7 @@ import org.junit.Test
  */
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template") {
 
   @Test
@@ -289,6 +292,14 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template")
            dependencies = listOf(ANGULAR_CORE_17_3_0, TS_LIB),
            configurators = listOf(Angular2TsConfigFile()),
            files = listOf("inaccessibleSymbolStrict.ts"))
+  }
+
+  @Test
+  fun testInaccessibleSymbolPrivateAllowed() {
+    doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
+           dependencies = listOf(ANGULAR_CORE_22_2_2, TS_LIB),
+           configurators = listOf(Angular2TsConfigFile()),
+           files = listOf("inaccessibleSymbolPrivateAllowed.ts"))
   }
 
   @Test

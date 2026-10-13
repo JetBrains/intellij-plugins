@@ -38,7 +38,7 @@ class AnalysisTest : IntegrationTest() {
     result1.ok.shouldBeTrue()
 
     // Second run verifies analysis works correctly on a "dirty" working directory
-    val result2 = analyze(workdir)
+    val result2 = analyze(workdir) { launchName = "dirty" }
     result2.ok.shouldBeTrue()
     result2.findIssue("RsUnusedImport", "src/main.rs:1").shouldNotBeNull()
     result2.findIssue("RsLiveness", "src/main.rs:6").shouldNotBeNull()

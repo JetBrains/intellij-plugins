@@ -1,4 +1,0 @@
-package
-{
-class Test2 {}
-}

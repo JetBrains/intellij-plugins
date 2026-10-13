@@ -64,8 +64,6 @@ jvm_library(
         "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/refactoring:refactoring_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/code-style-api:codeStyle_test_lib",
         "@community//platform/core-api:core_test_lib",
         "@community//platform/code-style-impl:codeStyle-impl_test_lib",
@@ -105,6 +103,7 @@ jvm_library(
     ),
     module_name = "intellij.jhipster.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/structure-view-impl/plugin"],
 )
 
 jvm_library(
@@ -132,6 +131,7 @@ jvm_library(
         ":jhipster-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
@@ -143,6 +143,8 @@ jvm_library(
         "@community//platform/refactoring:refactoring_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//platform/code-style-api:codeStyle",
         "@community//platform/code-style-api:codeStyle_test_lib",
         "@community//platform/core-api:core",
@@ -169,8 +171,8 @@ jvm_library(
         "@community//platform/structure-view-impl:structureView_test_lib",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.jhipster.tests` end

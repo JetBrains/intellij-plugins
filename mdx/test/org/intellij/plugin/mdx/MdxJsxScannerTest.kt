@@ -12,6 +12,25 @@ import org.junit.jupiter.api.Test
 @TestApplication
 class MdxJsxScannerTest {
   @Test
+  fun pendingJavaScriptEndsAfterItsClosingBoundary() {
+    for (text in listOf("<B>{`a\nb\nc`}\nbody\n</B>", "<B value={`a\nb\nc`}>\nbody\n</B>")) {
+      val session = MdxJsxScanner.Session(text, 0)
+      val firstLineEnd = text.indexOf('\n') + 1
+      val secondLineEnd = text.indexOf('\n', firstLineEnd) + 1
+      val closingLineEnd = text.indexOf('\n', secondLineEnd) + 1
+
+      session.advanceTo(firstLineEnd)
+      assertTrue(session.isInJavaScript, text)
+      session.advanceTo(secondLineEnd)
+      assertTrue(session.isInJavaScript, text)
+      session.advanceTo(closingLineEnd - 1)
+      assertEquals(false, session.isInJavaScript, text)
+      session.advanceTo(text.length)
+      assertEquals(false, session.isInJavaScript, text)
+    }
+  }
+
+  @Test
   fun scansMarkdownLikeTextInExpressionAttribute() {
     val text = "<Alert value={[Target](./target.mdx)} />"
 

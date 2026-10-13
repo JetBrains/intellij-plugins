@@ -6,20 +6,30 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.TestApplicationManager;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.TestDataProvider;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.util.TimeoutUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CucumberJavaRunConfigurationTest extends BasePlatformTestCase {
   public void testScenarioOutlineNameFilter() {
@@ -74,6 +84,33 @@ public class CucumberJavaRunConfigurationTest extends BasePlatformTestCase {
 
     assertEquals("--plugin teamcity --name \"^Check the \\\"Some Policy Name\\\" rule for case .*$\"",
                  runConfiguration.getProgramParameters());
+  }
+
+  public void testGlueCalculationIsCanceledByWriteAction() throws Exception {
+    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
+    CountDownLatch firstAttemptStarted = new CountDownLatch(1);
+    AtomicInteger attempts = new AtomicInteger();
+    runConfiguration.setGlueProvider(consumer -> {
+      if (attempts.incrementAndGet() == 1) {
+        firstAttemptStarted.countDown();
+        long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
+        while (System.currentTimeMillis() < deadline) {
+          ProgressManager.checkCanceled();
+          TimeoutUtil.sleep(10);
+        }
+        consumer.accept("not.canceled");
+      }
+      else {
+        consumer.accept("restarted");
+      }
+    });
+
+    Future<String> glue = ApplicationManager.getApplication().executeOnPooledThread(runConfiguration::getGlue);
+    assertTrue(firstAttemptStarted.await(10, TimeUnit.SECONDS));
+    WriteAction.run(() -> {});
+
+    assertEquals("restarted", PlatformTestUtil.waitForFuture(glue, TimeUnit.SECONDS.toMillis(20)));
+    assertEquals(2, attempts.get());
   }
 
   @Override

@@ -41,8 +41,9 @@ public class ImportCodeStyleWithPrettierIntegrationTest extends JSExternalToolIn
   private void doTestForFile(String fileName, Consumer<CodeStyleSettings> checkResult) {
     JSTestUtils.testWithTempCodeStyleSettings(myFixture.getProject(), settings -> {
       myFixture.copyDirectoryToProject(getTestName(true), "");
-      myFixture.configureFromTempProjectFile(fileName);
-      myFixture.performEditorAction(PrettierImportCodeStyleAction.ACTION_ID);
+      var file = myFixture.configureFromTempProjectFile(fileName).getVirtualFile();
+      var presentation = PrettierJSTestUtil.updateAndPerformAction(PrettierImportCodeStyleAction.ACTION_ID, getProject(), file);
+      Assert.assertTrue(presentation.isEnabledAndVisible());
       checkResult.consume(settings);
     });
   }

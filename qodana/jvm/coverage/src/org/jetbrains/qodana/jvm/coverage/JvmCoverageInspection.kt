@@ -161,7 +161,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
         val data = report.getClassData(fqn)
         val file = sourcePsi.containingFile
         loadClassData(data, file.virtualFile, globalContext)
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, file, file.textRange) &&
             issueWithCoverage(data, file, file.textRange, problemsHolder.project, classThreshold, warnMissingCoverage)) {
           reportElement(problemsHolder, highlightedElement(sourcePsi),
                         QodanaBundle.message("class.coverage.below.threshold", classNameForReports(node), classThreshold))
@@ -172,7 +172,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
         val fileData = xmlReport.getFile(XMLReportSuite.getPath(packageName, fileName))
         loadXmlFileData(fileData, sourcePsi.containingFile.virtualFile, globalContext)
 
-        if (reportProblemsNeeded(globalContext)) {
+        if (reportProblemsNeeded(globalContext, sourcePsi.containingFile, sourcePsi.containingFile.textRange)) {
           val data = xmlReport.getClass(fqn)
           if (data == null && warnMissingCoverage ||
               data != null && data.coveredLines + data.missedLines != 0 && ((data.coveredLines * 100 / (data.coveredLines + data.missedLines)) < classThreshold)) {
@@ -207,7 +207,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
           data != null || loadMissingData(problemsHolder.project, sourcePsi.textRange, sourcePsi.containingFile, warnMissingCoverage, globalContext)
         if (!isDataLoaded) return true
 
-        if (reportProblemsNeeded(globalContext) &&
+        if (reportProblemsNeeded(globalContext, sourcePsi.containingFile, sourcePsi.textRange) &&
             issueWithCoverage(data, sourcePsi.containingFile, sourcePsi.textRange, problemsHolder.project, methodThreshold, warnMissingCoverage)) {
           reportMethodCoverage(node, sourcePsi)
         }
@@ -221,7 +221,8 @@ class JvmCoverageInspection : CoverageInspectionBase() {
           data != null || loadMissingData(problemsHolder.project, sourcePsi.textRange, sourcePsi.containingFile, warnMissingCoverage, globalContext)
         if (!isDataLoaded) return true
 
-        if (reportProblemsNeeded(globalContext) && issueWithXmlMethodCoverage(data, sourcePsi.containingFile, sourcePsi.textRange, problemsHolder.project, methodThreshold)) {
+        if (reportProblemsNeeded(globalContext, sourcePsi.containingFile, sourcePsi.textRange) &&
+            issueWithXmlMethodCoverage(data, sourcePsi.containingFile, sourcePsi.textRange, problemsHolder.project, methodThreshold)) {
           reportMethodCoverage(node, sourcePsi)
         }
       }

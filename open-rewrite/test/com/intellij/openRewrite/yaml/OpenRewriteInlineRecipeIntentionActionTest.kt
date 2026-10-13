@@ -4,12 +4,16 @@ import com.intellij.openRewrite.OpenRewriteLightHighlightingTestCase
 import com.intellij.openRewrite.RECIPE_CLASS_NAME
 import com.intellij.openRewrite.RECIPE_FILE_NAME
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
 class OpenRewriteInlineRecipeIntentionActionTest : OpenRewriteLightHighlightingTestCase() {
-  fun testIntentionNotAvailableOnJavaRecipe() {
+  @Test
+  fun testIntentionNotAvailableOnJavaRecipe() = onEdt {
     myFixture.addClass("""
       package com;
-      
+
       public class MyRecipe extends $RECIPE_CLASS_NAME {
       }
     """.trimIndent())
@@ -23,7 +27,8 @@ class OpenRewriteInlineRecipeIntentionActionTest : OpenRewriteLightHighlightingT
     assertNull(intention)
   }
 
-  fun testIntention() {
+  @Test
+  fun testIntention() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.my.first

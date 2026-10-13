@@ -5,7 +5,7 @@ import com.jetbrains.cidr.lang.workspace.OCWorkspace
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ConsoleLog
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
 
 class QodanaLogCppAnalysisScope : QodanaWorkflowExtension {
@@ -16,7 +16,7 @@ class QodanaLogCppAnalysisScope : QodanaWorkflowExtension {
       val workspaceStates = wsManager.workspaces.entries.joinToString(", ") { (ws, state) ->
         "${ws.javaClass.simpleName}=$state"
       }
-      throw QodanaException(
+      throw QodanaConfigurationException(
         "Failed to calculate analysis scope from build configuration. " +
         "No OC resolve configurations were detected. " +
         "Workspace states: [$workspaceStates]. " +

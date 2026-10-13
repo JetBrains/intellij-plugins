@@ -1,8 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.util.concurrent.Striped
 import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -30,6 +28,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.applyIf
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.loader.tfJsonMapper
 import org.intellij.terraform.config.model.local.TF_DIRECTORY_NAME
 import org.intellij.terraform.config.model.version.MalformedConstraintException
 import org.intellij.terraform.config.model.version.Version
@@ -48,6 +47,7 @@ import org.intellij.terraform.hil.psi.ILPsiFile
 import org.intellij.terraform.hil.psi.ILRecursiveVisitor
 import org.intellij.terraform.hil.psi.ILVariable
 import org.intellij.terraform.opentofu.OpenTofuFileType
+import tools.jackson.databind.node.ObjectNode
 import java.net.URLEncoder
 import java.util.TreeMap
 
@@ -469,7 +469,7 @@ object ModuleDetectionUtil {
     val application = ApplicationManager.getApplication()
     try {
       val json: ObjectNode? = stream.use {
-        ObjectMapper().readTree(it) as ObjectNode?
+        tfJsonMapper.readTree(it) as? ObjectNode
       }
       if (json == null) {
         logErrorAndFailInInternalMode(application, "In file '$file' no JSON found")

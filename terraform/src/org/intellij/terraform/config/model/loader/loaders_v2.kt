@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.impl.PsiBuilderImpl
 import org.intellij.terraform.config.Constants
@@ -29,6 +28,7 @@ import org.intellij.terraform.config.model.toMap
 import org.intellij.terraform.hcl.HCLParser
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
+import tools.jackson.databind.node.ObjectNode
 import java.util.Locale
 
 object BaseLoaderV2 : BaseLoader {
@@ -150,7 +150,7 @@ object BaseLoaderV2 : BaseLoader {
       }
     }
 
-    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.textValue() }?.map { it.pool(context) }
+    val conflicts: List<String>? = value.array("ConflictsWith")?.mapNotNull { it.stringValue(null) }?.map { it.pool(context) }
 
     val deprecated = value.string("Deprecated")
     val has_default: Boolean = value.obj("Default")?.isNotEmpty() ?: false

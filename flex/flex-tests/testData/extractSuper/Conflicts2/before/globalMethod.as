@@ -1,4 +1,0 @@
-package {
-function globalMethod() {}
-}
-}

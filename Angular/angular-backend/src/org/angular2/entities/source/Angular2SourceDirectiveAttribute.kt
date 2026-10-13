@@ -53,7 +53,7 @@ class Angular2SourceDirectiveAttribute private constructor(
       }
 
   override val type: JSType?
-    get() = (typeSource as JSTypeOwner).getJSType(literal)
+    get() = (typeSource as JSTypeOwner).getJSType()
 
   override val sourceElement: PsiElement
     get() = literal

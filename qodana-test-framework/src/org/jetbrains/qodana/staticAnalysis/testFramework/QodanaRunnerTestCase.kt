@@ -9,6 +9,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.HeavyTestHelper
@@ -16,7 +17,6 @@ import com.intellij.testFramework.JavaPsiTestCase
 import com.jetbrains.qodana.sarif.model.Result
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.junit.runner.RunWith
@@ -198,9 +198,23 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
     TestCase.assertEquals(expectedEntries.joinToString("\n"), actualEntries.joinToString("\n"))
   }
 
+  /**
+   * Assert that the SARIF output contains exactly the given locations, across every result,
+   * each in the form "test-module/A.java:5". Use it when a result holds more than one location.
+   * The comparison ignores the order, because a result lists its locations in the order of the tool.
+   */
+  protected fun assertSarifResultLocations(vararg expectedEntries: String) {
+    val actualEntries = manager.sarifRun.results.orEmpty()
+      .flatMap { it.locations.orEmpty() }
+      .map { "${it.physicalLocation.artifactLocation.uri}:${it.physicalLocation.region.startLine}" }
+      .sorted()
+
+    TestCase.assertEquals(expectedEntries.sorted().joinToString("\n"), actualEntries.joinToString("\n"))
+  }
+
   protected fun registerTool(tool: InspectionProfileEntry) {
     val inspection = LocalInspectionEP().apply {
-      pluginDescriptor = DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.getClassLoader())
+      pluginDescriptor = DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.classLoader)
     }
     register(tool, inspection, LocalInspectionEP.LOCAL_INSPECTION.point)
   }
@@ -208,7 +222,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   protected fun registerGlobalTool(tool: GlobalInspectionTool) {
     val inspection = InspectionEP(
       tool.javaClass.canonicalName,
-      DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.getClassLoader())
+      DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.classLoader)
     )
 
     register(tool, inspection, InspectionEP.GLOBAL_INSPECTION.point)

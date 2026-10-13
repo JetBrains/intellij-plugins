@@ -5,7 +5,10 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
+import com.intellij.javascript.JSTypeEngineEvaluation.spteForJsEnabled
+import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.javascript.types.TSType
+import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
@@ -167,7 +170,7 @@ open class VuePluginTypeScriptService(
    */
   private fun getProjectRootPath(file: VirtualFile): @NonNls String? {
     val psiFile = PsiManager.getInstance(project).findFile(file)
-    val configFile = getPreferableConfig(psiFile, false)?.configFile
+    val configFile = getPreferableConfig(psiFile, spteForJsEnabled)?.configFile
                      ?: project.getBaseDirectories().firstOrNull { VfsUtilCore.isAncestor(it, file, false) }
 
     return configFile?.path
@@ -222,7 +225,8 @@ open class VuePluginTypeScriptService(
     virtualFile: VirtualFile,
     element: PsiElement,
   ): Boolean =
-    element.language is VueTSLanguage
+    (virtualFile.isVueFile && element.language == TypeScriptLanguageDialect)
+    || element.language == VueTSLanguage
     || super.supportsTypeEvaluation(virtualFile, element)
 
   private inner class VueCompilerServiceEvaluationSupport(
@@ -244,6 +248,11 @@ open class VuePluginTypeScriptService(
     }
 
     override val supportsTypeScriptInInjections: Boolean =
+      true
+
+    override fun isEnabledInUsageContext(
+      usageContext: JSServicePoweredTypeEngineUsageContext,
+    ): Boolean =
       true
   }
 }

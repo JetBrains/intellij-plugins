@@ -4,9 +4,11 @@ import com.intellij.openRewrite.OPTION_CLASS_NAME
 import com.intellij.openRewrite.OpenRewriteLightHighlightingTestCase
 import com.intellij.openRewrite.RECIPE_CLASS_NAME
 import com.intellij.openRewrite.RECIPE_FILE_NAME
+import org.junit.jupiter.api.Test
 
 class OpenRewriteYamlRecipeInspectionTest : OpenRewriteLightHighlightingTestCase() {
-  fun testHighlighting() {
+  @Test
+  fun testHighlighting() = onEdt {
     addRecipes()
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe

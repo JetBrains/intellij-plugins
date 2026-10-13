@@ -1,8 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.originalFileOrSelf
@@ -22,6 +20,8 @@ import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.TypeCachedValueProvider
 import org.intellij.terraform.hil.psi.impl.getHCLHost
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.ObjectNode
 
 internal fun HCLElement.getTerraformModule(): Module {
   val file = this.containingFile.originalFile
@@ -90,11 +90,15 @@ internal fun ObjectNode.array(name: String): ArrayNode? {
 }
 
 internal fun ObjectNode.string(name: String): String? {
-  return this.get(name)?.textValue()
+  val node = this.get(name) ?: return null
+  if (!node.isString) return null
+  return node.stringValue()
 }
 
 internal fun ObjectNode.number(name: String): Number? {
-  return this.get(name)?.numberValue()
+  val node = this.get(name) ?: return null
+  if (!node.isNumber) return null
+  return node.numberValue()
 }
 
 internal fun ObjectNode.boolean(name: String): Boolean? {

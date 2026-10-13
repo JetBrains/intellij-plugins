@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.nio.file.Path;
 
 public final class FlexmojosSdkType extends SdkType {
 
@@ -35,7 +36,7 @@ public final class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  public String suggestHomePath() {
+  public String suggestHomePath(@NotNull Path path) {
     return null;
   }
 

@@ -1,0 +1,4 @@
+XML_START_TAG_START ('<')
+XML_TAG_NAME ('div')
+TAG_WHITE_SPACE (' ')
+NG:IN_ELEMENT_BLOCK_COMMENT ('/* comment\n<span></span>')

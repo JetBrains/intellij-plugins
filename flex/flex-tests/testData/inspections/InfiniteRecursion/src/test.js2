@@ -1,0 +1,37 @@
+//test for inspection InfiniteRecursion
+function get g():int {
+  return g;
+}
+
+class Foo {
+  public function set service(service:Object):void {
+    doSetService(service);
+  }
+    
+  public function set service2(service:Object):void {
+    doSetService(service);
+  }
+    
+  public function set service3(service:Object):void {
+    doSetService(service);
+  }
+
+  private function doSetService(service:Object):void {
+  }
+}
+
+class Bar extends Foo {
+    override public function set service(service:Object):void {
+        super.service = service;
+    }
+
+
+    override public function set service2(service:Object):void {
+        service2 = service;
+    }
+
+
+    override public function set service3(service:Object):void {
+        this.service3 = service;
+    }
+}

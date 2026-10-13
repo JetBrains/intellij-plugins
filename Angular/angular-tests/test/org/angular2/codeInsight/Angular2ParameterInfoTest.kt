@@ -8,11 +8,13 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2ParameterInfoTest : Angular2TestCase("parameterInfo") {
   private lateinit var myHintFixture: EditorHintFixture
 

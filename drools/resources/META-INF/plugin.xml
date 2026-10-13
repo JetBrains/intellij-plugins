@@ -51,7 +51,7 @@
     <lang.parserDefinition language="Drools" implementationClass="com.intellij.plugins.drools.lang.parser.DroolsParserDefinition"/>
     <lang.syntaxHighlighter language="Drools"
                             implementationClass="com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighter"/>
-    <colorSettingsPage implementation="com.intellij.plugins.drools.lang.highlight.DroolsColorsAndFontsPage"/>
+    <colorSettings implementation="com.intellij.plugins.drools.lang.highlight.DroolsColorsAndFontsPage" displayName="Drools"/>
     <annotator language="Drools" implementationClass="com.intellij.plugins.drools.lang.highlight.DroolsColorAnnotator"/>
     <annotator language="Drools" implementationClass="com.intellij.plugins.drools.lang.highlight.DroolsReferenceResolveAnnotator"/>
 

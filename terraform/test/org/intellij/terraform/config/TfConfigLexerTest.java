@@ -4,6 +4,7 @@ package org.intellij.terraform.config;
 import com.intellij.lexer.Lexer;
 import org.intellij.terraform.hcl.HCLElementTypes;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
     return TfParserDefinition.createLexer();
   }
 
+  @Test
   public void testTerraformILWithSpecials() {
     doTest("a = \"${$()}\"", """
       ID ('a')
@@ -23,6 +25,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${$()}"')""");
   }
 
+  @Test
   public void testTerraformILWithSpecials2() {
     doTest("a = \"${{$}$}}\"", """
       ID ('a')
@@ -32,6 +35,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${{$}$}}"')""");
   }
 
+  @Test
   public void testTerraformILWithIncorrectString() {
     doTest("count = \"${call(incomplete\")}\"", """
       ID ('count')
@@ -41,6 +45,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${call(incomplete")}"')""");
   }
 
+  @Test
   public void testTerraformILWithStringWithClosingBrace() {
     doTest("a = \"${foo(\"}\")}\"", """
       ID ('a')
@@ -50,6 +55,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${foo("}")}"')""");
   }
 
+  @Test
   public void testTerraformILWithString_Unfinished() {
     doTest("a = '${\"uf)}'", """
       ID ('a')
@@ -59,6 +65,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       SINGLE_QUOTED_STRING (''${"uf)}'')""");
   }
 
+  @Test
   public void testTerraformILWithString_Unfinished2() {
     doTest("a = \"${\"uf)}\"", """
       ID ('a')
@@ -68,6 +75,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${"uf)}"')""");
   }
 
+  @Test
   public void testTerraformILWithString_Unfinished3() {
     doTest("c{a = \"${f(\"b.json\")}\"'}", """
       ID ('c')
@@ -80,6 +88,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       SINGLE_QUOTED_STRING (''}')""");
   }
 
+  @Test
   @Override
   public void testUnfinishedInterpolation2() {
     doTest("a = \"${b(\"c\")}${\"\nx=y", """
@@ -90,6 +99,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       DOUBLE_QUOTED_STRING ('"${b("c")}${"\\nx=y')""");
   }
 
+  @Test
   public void testSimpleTokens_String_With_Interpolation() {
     List<String> strings = Arrays.asList(
         "\"${file(\"foo\")}\"",
@@ -102,6 +112,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
     }
   }
 
+  @Test
   public void testMultilineString_WithInterpolation() {
     doTest("mli=\"${hello\n  world}\"", """
       ID ('mli')
@@ -110,6 +121,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
       """);
   }
 
+  @Test
   public void testNonEscapedQuoteInInterpolation() {
     doTest("""
              x=[
@@ -129,6 +141,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
              ] (']')""");
   }
 
+  @Test
   public void testEscapedQuoteInInterpolation() {
     doTest("\"${\"\\\"x\\\"\"}\"\n",
            """
@@ -137,6 +150,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
              """);
   }
 
+  @Test
   public void testForArray() {
     doTest("a = [for k, v in foo: v if true]",
            """
@@ -165,6 +179,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
              ] (']')""");
   }
 
+  @Test
   public void testSelectExpression() {
     doTest("a = foo.bar.baz",
            """
@@ -179,6 +194,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
              ID ('baz')""");
   }
 
+  @Test
   public void testIndexSelectExpression() {
     doTest("a = foo[5].baz",
            """
@@ -195,6 +211,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
   }
 
 
+  @Test
   public void testSplatExpression() {
     doTest("a = foo.*.baz",
            """
@@ -209,6 +226,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
              ID ('baz')""");
   }
 
+  @Test
   public void testFullSplatExpression() {
     doTest("a = foo[*].baz",
            """
@@ -224,6 +242,7 @@ public class TfConfigLexerTest extends HCLLexerTest {
              ID ('baz')""");
   }
 
+  @Test
   public void testTemplateInjection() {
     doTest("\"%{ for v in [\"true\"] }${v}%{ endfor }\"",
         "DOUBLE_QUOTED_STRING ('\"%{ for v in [\"true\"] }${v}%{ endfor }\"')");

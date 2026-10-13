@@ -1,4 +1,33 @@
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.serial.monitor` start
+dev_dist_plugin(
+    descriptor = "src/main/resources/META-INF/plugin.xml",
+    main_module = "intellij.serial.monitor",
+)
+
+dev_dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/serial-monitor:serial-monitor.jar": "intellij.serial.monitor",
+    },
+    descriptor = "//contrib/serial-monitor:intellij.serial.monitor_dev_descriptor",
+    execution_version = 2,
+    libraries = {
+        "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm": "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
+    },
+    main_module = "intellij.serial.monitor",
+    remainder_files = {
+        "lib/serial-monitor.jar": ["intellij.serial.monitor"],
+        "lib/jSerialComm-2.11.4.jar": [],
+    },
+    remainder_trees = ["bin"],
+    resource_inputs = {
+        "@dev_launch_jserialcomm//:files": "layout-source:resource-generator:0:0",
+    },
+)
+### auto-generated section `dev intellij.serial.monitor` end
 
 ### auto-generated section `build intellij.serial.monitor` start
 jvm_library(
@@ -15,6 +44,7 @@ jvm_library(
     resource_strip_prefix = "src/main/resources",
     resources = glob(
         ["src/main/resources/**/*"],
+        exclude = ["src/main/resources/**/icon-robots.txt"],
     ),
     visibility = ["//visibility:public"],
     deps = [
@@ -40,6 +70,8 @@ jvm_library(
         "@community//libraries/commons/io",
         "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
         "@community//platform/execution",
+        "@community//platform/consoleView",
+        "@community//platform/consoleView/impl",
         "@community//platform/forms_rt:java-guiForms-rt",
     ],
 )
@@ -75,6 +107,8 @@ jvm_library(
         "@community//libraries/jediterm-ui:jediterm-ui_test_lib",
         "@community//libraries/commons/io:io_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
+        "@community//platform/consoleView/impl:impl_test_lib",
         "@community//platform/forms_rt:java-guiForms-rt_test_lib",
     ],
 )

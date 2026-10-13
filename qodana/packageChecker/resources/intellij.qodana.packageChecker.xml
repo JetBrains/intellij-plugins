@@ -5,6 +5,7 @@
     <plugin id="org.jetbrains.security.package-checker"/>
     <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.core"/>
+    <module name="intellij.platform.monolith"/>
     <!-- endregion -->
   </dependencies>
   <projectListeners>

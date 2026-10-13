@@ -1,0 +1,10 @@
+[
+    {
+        "inspectionId": "testMakeInnerClassStatic",
+        "inspectionName": "Test inner class may be 'static'",
+        "problemOriginFilePath": "test-module/A.java",
+        "problemMessage": "4: Inner class 'InnerA' may be 'static'",
+        "fixText": "Make 'static' with ModCommand",
+        "modifiedFilePath": "test-module/A.java"
+    }
+]

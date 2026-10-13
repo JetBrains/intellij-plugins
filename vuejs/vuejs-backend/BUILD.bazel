@@ -1,13 +1,16 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.vuejs.backend` start
+content_module_jar(module = ":backend")
+
 filegroup(
     name = "dev_dist_resources",
     srcs = glob(
         [
-            "gen-resources/vue-service/**",
             "vue-language-tools/**",
+            "vue-service/**",
         ],
     ),
     visibility = ["//visibility:public"],
@@ -119,6 +122,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin",
         "@community//xml/xml-analysis-api:analysis",
         "@community//platform/execution",
+        "@community//platform/consoleView",
         "@community//platform/util:util-ui",
         "@community//libraries/kotlinx/serialization/core",
         "//plugins/JavaScriptLanguage/javascript-codeinsight",
@@ -204,6 +208,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
         "@community//xml/xml-analysis-api:analysis_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
         "@community//platform/util:util-ui_test_lib",
         "@community//libraries/kotlinx/serialization/core:core_test_lib",
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",

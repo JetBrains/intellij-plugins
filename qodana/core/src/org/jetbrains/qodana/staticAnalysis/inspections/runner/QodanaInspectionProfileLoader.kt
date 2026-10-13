@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.codeInspection.InspectionProfileLoaderBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
@@ -17,7 +18,12 @@ class QodanaInspectionProfileLoader(project: Project) : InspectionProfileLoaderB
   override fun loadProfileByPath(profilePath: String): QodanaInspectionProfile? {
     val profileManager = QodanaInspectionProfileManager.getInstance(project)
 
-    val profileFromYaml = tryLoadProfileFromYaml(profilePath, QodanaToolRegistrar.getInstance(project), profileManager)
+    val profileFromYaml = try {
+      tryLoadProfileFromYaml(profilePath, QodanaToolRegistrar.getInstance(project), profileManager)
+    }
+    catch (e: InspectionApplicationException) {
+      throw QodanaConfigurationException(e.message!!, e)
+    }
     if (profileFromYaml != null) return QodanaInspectionProfile.clone(profileFromYaml, profileFromYaml.name, profileManager)
 
     val file = Paths.get(profilePath)

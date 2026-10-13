@@ -53,7 +53,7 @@ For IntelliJ IDEA, you can check out this section in the <a href="https://www.je
     <lang.syntaxHighlighterFactory language="WebAssembly"
                                    implementationClass="com.intellij.webassembly.ide.WebAssemblySyntaxHighlighterFactory"/>
 
-    <colorSettingsPage implementation="com.intellij.webassembly.ide.colors.WebAssemblyColorSettingPage"/>
+    <colorSettings implementation="com.intellij.webassembly.ide.colors.WebAssemblyColorSettingPage" displayName="WebAssembly"/>
 
     <!-- Matcher -->
     <lang.braceMatcher language="WebAssembly"

@@ -2,9 +2,6 @@
 package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.lang.expr.VueJSParserTest
-import org.jetbrains.vuejs.lang.html.VueHighlightingLexerTest
-import org.jetbrains.vuejs.lang.html.VueIndexerTest
-import org.jetbrains.vuejs.lang.html.VueLexerTest
 import org.jetbrains.vuejs.lang.html.VueParserTest
 import org.jetbrains.vuejs.libraries.LibrariesTestSuite
 import org.jetbrains.vuejs.pug.PugTemplateTest
@@ -16,9 +13,6 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
   VueTestCommons::class,
   VueJSParserTest::class,
-  VueLexerTest::class,
-  VueHighlightingLexerTest::class,
-  VueIndexerTest::class,
   VueParserTest::class,
   VueCompletionTest::class,
   VueCompletionTest.WithoutServiceTest::class,

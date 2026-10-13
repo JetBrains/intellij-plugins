@@ -90,7 +90,11 @@ class PhpCoverageUiTest : QodanaCoverageUiTestBase("PhpCoverageInspectionTest") 
 
     openFileInEditor("src/FooCls.php")
     assertEquals(
-      mapOf(14 to LineCoverage.FULL, 15 to LineCoverage.FULL, 16 to LineCoverage.FULL),
+      mapOf(
+        21 to LineCoverage.FULL, 23 to LineCoverage.FULL, 24 to LineCoverage.FULL,
+        26 to LineCoverage.NONE, 27 to LineCoverage.NONE, 28 to LineCoverage.NONE,
+        71 to LineCoverage.NONE, 72 to LineCoverage.NONE,
+      ),
       gutterCoverage("src/FooCls.php"),
     )
 

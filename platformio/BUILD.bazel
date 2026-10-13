@@ -4,7 +4,14 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### auto-generated section `dev intellij.clion.embedded.platformio` start
 dev_dist_plugin(
     content_modules = ["intellij.clion.embedded.platformio.terminal"],
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/clion-embedded-platformio.jar": ["intellij.clion.embedded.platformio"],
+    },
     main_module = "intellij.clion.embedded.platformio",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.clion.embedded.platformio.terminal"],
+    },
 )
 ### auto-generated section `dev intellij.clion.embedded.platformio` end
 
@@ -61,6 +68,7 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/execution",
         "@community//platform/execution-impl",
+        "@community//platform/consoleView",
         "@community//platform/external-system-api:externalSystem",
         "@community//platform/external-system-impl:externalSystem-impl",
         "@community//platform/platform-api:ide",
@@ -72,6 +80,7 @@ jvm_library(
         "@community//platform/lang-api:lang",
         "@community//platform/lang-core",
         "@community//platform/lang-impl",
+        "@community//platform/buildView",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/statistics",
         "@community//platform/ui.jcef",
@@ -132,6 +141,7 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/execution:execution_test_lib",
         "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
         "@community//platform/external-system-api:externalSystem_test_lib",
         "@community//platform/external-system-impl:externalSystem-impl_test_lib",
         "@community//platform/platform-api:ide_test_lib",
@@ -143,6 +153,7 @@ jvm_library(
         "@community//platform/lang-api:lang_test_lib",
         "@community//platform/lang-core:lang-core_test_lib",
         "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/buildView:buildView_test_lib",
         "@community//platform/projectModel-api:projectModel_test_lib",
         "@community//platform/statistics:statistics_test_lib",
         "@community//platform/ui.jcef:ui.jcef_test_lib",

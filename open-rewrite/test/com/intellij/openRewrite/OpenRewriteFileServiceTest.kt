@@ -1,16 +1,43 @@
 package com.intellij.openRewrite
 
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.ui.DeferredIcon
+import com.intellij.ui.IconManager
 import com.intellij.ui.LayeredIcon
+import com.intellij.ui.icons.CoreIconManager
 import com.intellij.ui.icons.RowIcon
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.swing.Icon
 
 class OpenRewriteFileServiceTest : OpenRewriteLightHighlightingTestCase() {
-  override fun isIconRequired(): Boolean = true
+  @BeforeEach
+  fun activateIcons() {
+    // ensure that IconLoader will not use a fake empty icon
+    IconManager.activate(CoreIconManager())
+  }
 
-  fun testRecipeYaml() {
+  @AfterEach
+  fun deactivateIcons() {
+    IconManager.deactivate()
+    IconLoader.clearCacheInTests()
+  }
+
+  @Test
+  fun testRecipeYaml(): Unit = timeoutRunBlocking {
     val file = myFixture.addFileToProject(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.my.Recipe
@@ -19,11 +46,12 @@ class OpenRewriteFileServiceTest : OpenRewriteLightHighlightingTestCase() {
             oldPackageName: com
             newPackageName: org
     """.trimIndent())
-    assertTrue(isRecipe(file))
+    assertTrue(readAction { isRecipe(file) })
     assertEquals(OpenRewriteIcons.OpenRewrite, getFileIcon(file))
   }
 
-  fun testNotTypedYaml() {
+  @Test
+  fun testNotTypedYaml(): Unit = timeoutRunBlocking {
     val file = myFixture.addFileToProject(RECIPE_FILE_NAME, """
       name: com.my.Recipe
       recipeList:
@@ -31,20 +59,19 @@ class OpenRewriteFileServiceTest : OpenRewriteLightHighlightingTestCase() {
             oldPackageName: com
             newPackageName: org
     """.trimIndent())
-    assertFalse(isRecipe(file))
+    assertFalse(readAction { isRecipe(file) })
     assertNotSame(OpenRewriteIcons.OpenRewrite, getFileIcon(file))
   }
 
-  private fun getFileIcon(psiFile: PsiFile): Icon? {
-    val deferredIcon = assertInstanceOf(psiFile.getIcon(Iconable.ICON_FLAG_READ_STATUS), DeferredIcon::class.java)
-    val rowIcon = assertInstanceOf(deferredIcon.evaluate(), RowIcon::class.java)
+  // in unit tests, `ElementBase` defers the icon only on the EDT
+  private suspend fun getFileIcon(psiFile: PsiFile): Icon? = withContext(Dispatchers.EDT) {
+    val deferredIcon = assertInstanceOf(DeferredIcon::class.java, psiFile.getIcon(Iconable.ICON_FLAG_READ_STATUS))
+    val rowIcon = assertInstanceOf(RowIcon::class.java, deferredIcon.evaluate())
     val icon = rowIcon.getIcon(0)
-    if (icon is DeferredIcon) {
-      return icon.evaluate()
+    when (icon) {
+      is DeferredIcon -> icon.evaluate()
+      is LayeredIcon -> icon.getIcon(0)
+      else -> null
     }
-    if (icon is LayeredIcon) {
-      return icon.getIcon(0)
-    }
-    return null
   }
 }

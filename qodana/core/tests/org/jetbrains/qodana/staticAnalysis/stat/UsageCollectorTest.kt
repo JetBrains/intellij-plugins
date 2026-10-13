@@ -43,7 +43,12 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
     case("bitbucket", "other")
     case("aws", "other")
     case("unknown", "other")
-    case("", "other")
+    // The literal value "undefined" passed by a user is an unknown system, not a missing one.
+    case("undefined", "other")
+
+    // A missing or blank QODANA_ENV is reported as "undefined".
+    case("", "undefined")
+    case("  ", "undefined")
 
     // For known build systems, their version is recorded.
     // Each build system has its own version scheme, most use numeric versions.
@@ -82,7 +87,17 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
     }
 
     assertEvent(event, "env",
-                "system" to "other")
+                "system" to "undefined")
+  }
+
+  @Test
+  fun logEnv_empty() {
+    val event = collectEvent {
+      UsageCollector.logEnv("")
+    }
+
+    assertEvent(event, "env",
+                "system" to "undefined")
   }
 
   @Test

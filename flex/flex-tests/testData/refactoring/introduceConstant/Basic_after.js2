@@ -1,8 +1,0 @@
-class A {
-    public static const created:int = 1;
-
-    function xxx() {
-        var a = created
-        var b = created;
-    }
-}

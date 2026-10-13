@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.install
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.execution.ExecutionException
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.components.service
@@ -19,6 +18,7 @@ import com.intellij.util.io.HttpRequests
 import com.intellij.util.system.CpuArch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.intellij.terraform.config.model.loader.tfJsonMapper
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -49,8 +49,8 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
     private fun fetchTfLatestStableVersion(): String? {
       return try {
         val response = HttpRequests.request(TERRAFORM_VERSION_URL).readString()
-        val jsonNode = ObjectMapper().readTree(response)
-        jsonNode.get("current_version")?.asText()?.removePrefix("v")
+        val jsonNode = tfJsonMapper.readTree(response)
+        jsonNode.get("current_version")?.asString()?.removePrefix("v")
       }
       catch (e: Exception) {
         logger<TfBinaryInstaller>().error("Failed to fetch the latest stable Terraform version", e)
@@ -76,8 +76,8 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
     private fun fetchTofuLatestStableVersion(): String? {
       return try {
         val response = HttpRequests.request(OPENTOFU_VERSION_URL).readString()
-        val jsonNode = ObjectMapper().readTree(response)
-        jsonNode.get("versions")?.first()?.get("id")?.asText()
+        val jsonNode = tfJsonMapper.readTree(response)
+        jsonNode.get("versions")?.first()?.get("id")?.asString()
       }
       catch (e: Exception) {
         logger<TfBinaryInstaller>().error("Failed to fetch the latest stable OpenTofu version", e)
@@ -103,8 +103,8 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
     private fun fetchTerragruntStableVersion(): String? {
       return try {
         val response = HttpRequests.request(TERRAGRUNT_VERSION_URL).readString()
-        val jsonNode = ObjectMapper().readTree(response)
-        jsonNode.get("tag_name")?.asText()
+        val jsonNode = tfJsonMapper.readTree(response)
+        jsonNode.get("tag_name")?.asString()
       }
       catch (e: Exception) {
         logger<TfBinaryInstaller>().error("Failed to fetch the latest stable Terragrunt version", e)

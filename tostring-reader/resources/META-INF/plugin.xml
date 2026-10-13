@@ -52,7 +52,7 @@
 
     <annotator language="ToString" implementationClass="com.intellij.tsr.TslAnnotator"/>
 
-    <colorSettingsPage implementation="com.intellij.tsr.TslColorSettingsPage"/>
+    <colorSettings implementation="com.intellij.tsr.TslColorSettingsPage" displayName="ToString"/>
     <lang.foldingBuilder language="ToString" implementationClass="com.intellij.tsr.TslFoldingBuilder"/>
     <lang.formatter language="ToString" implementationClass="com.intellij.tsr.TslFormattingModelBuilder"/>
   </extensions>

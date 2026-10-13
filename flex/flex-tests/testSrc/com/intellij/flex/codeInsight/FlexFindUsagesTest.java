@@ -6,6 +6,16 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSAbstractFindUsagesTest;
+import com.intellij.ide.todo.TodoConfiguration;
+import com.intellij.ide.todo.nodes.TodoFileNode;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.IndexPattern;
+import com.intellij.psi.search.PsiTodoSearchHelper;
+import com.intellij.psi.search.TodoAttributesUtil;
+import com.intellij.psi.search.TodoPattern;
+import com.intellij.psi.search.searches.IndexPatternSearch;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
@@ -161,5 +171,30 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   public void testUnrelatedUnqualifiedDefinition() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as"); // IDEA-189640
     assertEquals(0, references.length);
+  }
+
+  public void testFindToDosInMxml() {
+    TodoPattern pattern = new TodoPattern("newtodo", TodoAttributesUtil.createDefault(), true);
+    TodoPattern pattern2 = new TodoPattern("newt", TodoAttributesUtil.createDefault(), true);
+    TodoConfiguration todoConfiguration = TodoConfiguration.getInstance();
+    TodoPattern[] oldPatterns = todoConfiguration.getTodoPatterns();
+    todoConfiguration.setTodoPatterns(new TodoPattern[]{pattern, pattern2});
+    PlatformTestUtil.dispatchAllEventsInIdeEventQueue();
+
+    try {
+      PsiFile file = myFixture.configureByFile("ToDos.mxml");
+      PsiTodoSearchHelper searchHelper = PsiTodoSearchHelper.getInstance(getProject());
+      assertEquals(4, searchHelper.getTodoItemsCount(file));
+
+      IndexPattern[] patterns = todoConfiguration.getIndexPatterns();
+      // prefer finding last todo patterns when both of them match
+      assertEquals(0, ReadAction.computeBlocking(() -> IndexPatternSearch.search(file, patterns[0]).findAll().size()).intValue());
+      // mxml has todos injected
+      assertEquals(1, ReadAction.computeBlocking(() -> IndexPatternSearch.search(file, patterns[1]).findAll().size()).intValue());
+      assertEquals(4, TodoFileNode.findAllTodos(file, searchHelper).size());
+    }
+    finally {
+      todoConfiguration.setTodoPatterns(oldPatterns);
+    }
   }
 }

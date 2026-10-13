@@ -30,20 +30,31 @@ class JvmMultiModuleCoverageInspectionTest : QodanaCoverageInspectionTest("JvmCo
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
     assertChangedLinesMatchesGolden()
     assertCoverageProjectDataMatchesGolden("JavaCoverageEngine", "JavaCoverageEngine.ic")
     assertSarifResults()
   }
 
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
+    assertSarifResults()
+  }
+
   private companion object {
-    // welcome() of App spans lines 6-8; line 7 (`return ...`) is covered, so fresh coverage is non-zero.
+    // The scope includes the covered welcome method and the uncovered farewell method.
     private const val SCOPE = """
       {
         "files" : [ {
           "path" : "app/src/main/kotlin/com/example/app/App.kt",
           "added" : [ {
             "firstLine" : 6,
+            "count" : 3
+          }, {
+            "firstLine" : 11,
             "count" : 3
           } ],
           "deleted" : [ ]

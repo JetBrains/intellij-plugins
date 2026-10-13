@@ -75,6 +75,8 @@ class JvmCoverageUiTest : QodanaCoverageUiTestBase("JvmCoverageInspectionTest") 
       -all
        -foo
         FooClass
+        -bar
+         BarClass
     """.trimIndent())
 
     openFileInEditor("src/foo/FooClass.java")
@@ -84,9 +86,9 @@ class JvmCoverageUiTest : QodanaCoverageUiTestBase("JvmCoverageInspectionTest") 
     )
 
     openFileInEditor("src/foo/bar/BarClass.java")
-    assertTrue(
-      "The src/foo/bar/BarClass.java should be uncovered",
-      gutterCoverage("src/foo/bar/BarClass.java").isNullOrEmpty()
+    assertEquals(
+      mapOf(9 to LineCoverage.NONE),
+      gutterCoverage("src/foo/bar/BarClass.java")
     )
 
     openFileInEditor("src/foo/bar/UncoveredClass.java")

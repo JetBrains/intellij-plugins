@@ -86,28 +86,27 @@ class VueHighlightingTest :
 
   }
 
-  @Ignore
   class WithTsGoProxyTest :
     VueHighlightingTestBase(testMode = VueTestMode.TS_GO_PROXY) {
 
     @Rule
     @JvmField
     val rule: TestRule = TrackFailedTestRule(
-      "testBooleanProps",
+      "testCompRequiredAttributesTest",
       "testCompositionApiBasic_0_4_0",
       "testCompositionApiBasic_1_0_0",
+      "testComputedTypeJS",
       "testCssSelectors",
       "testDynamicArguments",
       "testEmptyAttributeValue",
-      "testExternalMixin",
+      "testGlobalSymbols",
       "testLocalWebTypes",
-      "testPropsValidation",
+      "testRequiredAttributeWithVModel3",
       "testSlotNameBinding",
-      "testSourceScopedSlots",
       "testVBindVOnHighlighting",
+      "testVForInPug",
       "testVSlotSyntax",
       "testVueAttributeWithoutValueWithFollowingAttribute",
-      "testVueExtendSyntax",
     )
 
     override val defaultDirName: String
@@ -140,6 +139,8 @@ abstract class VueHighlightingWithPluginTestBase(
     super.setUp()
 
     disableTypeScriptServiceWarnings()
+    // The Vue plugin modes load the tree of other files
+    disableAstLoadingFilter()
   }
 
   override fun adjustConfigurators(

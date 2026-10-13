@@ -1,5 +1,4 @@
 load("@community//build:tests-options.bzl", "jps_test")
-load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -7,7 +6,7 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 filegroup(
     name = "dev_dist_resources",
     srcs = glob(
-        ["resources/js_reporter/**"],
+        ["js_reporter/**"],
     ),
     visibility = ["//visibility:public"],
 )
@@ -19,31 +18,21 @@ dev_dist_plugin(
         "intellij.javascript.karma.debug",
     ],
     descriptor = "resources/META-INF/plugin.xml",
-    descriptor_modules = [
-        "intellij.javascript.karma.coverage",
-        "intellij.javascript.karma.debug",
-    ],
-    main_module = "intellij.karma",
-)
-
-dev_dist_complex_plugin(
-    artifact_inputs = {
-        "//contrib/js-karma:karma.jar": "intellij.karma",
+    file_prefixes = {
+        "js_reporter": "contrib/js-karma/js_reporter",
     },
-    descriptor = "//contrib/js-karma:intellij.karma_dev_descriptor",
-    execution_version = 2,
-    independent_artifacts = [
-        "//contrib/js-karma/coverage:coverage_content_module_jar",
-        "//contrib/js-karma/debug:debug_content_module_jar",
-    ],
-    main_module = "intellij.karma",
-    product = "idea",
-    product_info = "//build/dev-dist-descriptors:idea_product_info",
-    source_tree_prefixes = {
-        "module-resource:0:source": "contrib/js-karma/resources/js_reporter",
+    files = {
+        "js_reporter": "//contrib/js-karma:dev_dist_resources",
     },
-    source_tree_targets = {
-        "module-resource:0:source": "//contrib/js-karma:dev_dist_resources",
+    jars = {
+        "lib/karma.jar": ["intellij.karma"],
+    },
+    main_module = "intellij.karma",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.javascript.karma.coverage",
+            "intellij.javascript.karma.debug",
+        ],
     },
 )
 ### auto-generated section `dev intellij.karma` end
@@ -105,6 +94,8 @@ jvm_library(
         "@community//platform/util:util-ui",
         "@community//xml/xml-psi-api:psi",
         "@community//platform/execution",
+        "@community//platform/consoleView",
+        "@community//platform/consoleView/impl",
         "@community//platform/lang-api:lang",
         "@community//jps/model-api:model",
         "@community//platform/testRunner",
@@ -143,12 +134,8 @@ jvm_library(
         "//plugins/js-test-common:javascript-testing_test_lib",
         "@community//libraries/gson:gson_test_lib",
         "@community//xml/xml-psi-impl:psi-impl_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui_test_lib",
         "@community//platform/script-debugger/backend:backend_test_lib",
-        "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/core-ui:core-ui_test_lib",
         "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
@@ -156,12 +143,10 @@ jvm_library(
         "@community//platform/xdebugger-api:debugger_test_lib",
         "@community//platform/util/jdom:jdom_test_lib",
         "@community//platform/util:util-ui_test_lib",
-        "//plugins/js-test-common/test:javascript-testing-tests",
-        "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
         "@community//xml/xml-psi-api:psi_test_lib",
-        "//plugins/JavaScriptLanguage/testFramework",
-        "//plugins/JavaScriptLanguage/testFramework:testFramework_test_lib",
         "@community//platform/execution:execution_test_lib",
+        "@community//platform/consoleView:consoleView_test_lib",
+        "@community//platform/consoleView/impl:impl_test_lib",
         "@community//platform/lang-api:lang_test_lib",
         "@community//jps/model-api:model_test_lib",
         "@community//platform/testRunner:testRunner_test_lib",
@@ -231,6 +216,8 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/execution-impl",
         "@community//platform/execution-impl:execution-impl_test_lib",
+        "@community//platform/consoleView",
+        "@community//platform/consoleView:consoleView_test_lib",
         "@community//platform/indexing-api:indexing",
         "@community//platform/indexing-api:indexing_test_lib",
         "@community//platform/lang-impl",

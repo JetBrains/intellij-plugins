@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.idea.IJIgnore
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -49,6 +50,7 @@ import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.Angular2TsExpectedConfigFiles
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import org.junit.Test
@@ -57,6 +59,7 @@ import java.io.IOException
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
@@ -261,7 +264,16 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testBlockSwitchExhaustiveWithExpression() = checkHighlighting(ANGULAR_CORE_22_0_8, extension = "ts")
 
   @Test
+  fun testInElementComments() = checkHighlighting(ANGULAR_CORE_22_0_8, extension = "ts")
+
+  @Test
   fun testBlockSwitchNg21_1() = checkHighlighting(ANGULAR_CORE_21_1_3, extension = "ts")
+
+  @Test
+  fun testSafeNavigationMigration() = checkHighlighting(ANGULAR_CORE_22_0_8, strictTemplates = true, extension = "ts")
+
+  @Test
+  fun testSafeNavigationMigrationNg21() = checkHighlighting(ANGULAR_CORE_21_2_0, strictTemplates = true, extension = "ts")
 
   @Test
   fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")
@@ -564,6 +576,7 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   @Test
+  @IJIgnore(issue = "IJI-3451")
   fun testCssCustomPropertyExternalTemplate() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "test.css")
 
@@ -659,6 +672,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
   fun testArrowFunctions() =
+    checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
+
+  @Test
+  fun testImplicitAnyParameters() =
     checkHighlighting(ANGULAR_CORE_21_2_0, extension = "ts")
 
   @Test

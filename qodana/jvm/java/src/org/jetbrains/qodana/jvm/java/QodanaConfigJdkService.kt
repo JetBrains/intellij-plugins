@@ -8,7 +8,7 @@ import com.intellij.util.PlatformUtils
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import kotlin.time.Duration.Companion.minutes
 
 private val LOG = logger<QodanaConfigJdkService>()
@@ -51,8 +51,8 @@ class QodanaConfigJdkService {
       .onSdkResolved { sdk ->
         if (sdk == null) {
           deferredSdk.completeExceptionally(
-            QodanaException("Can't find locally or download required in config JDK '$jdkName'. Check that you specified " +
-                            "supported version or mounted JDK compatible with ${SystemInfo.OS_NAME}/${SystemInfo.OS_ARCH}"))
+            QodanaConfigurationException("Can't find locally or download required in config JDK '$jdkName'. Check that you specified " +
+                                         "supported version or mounted JDK compatible with ${SystemInfo.OS_NAME}/${SystemInfo.OS_ARCH}"))
           LOG.info("Setting up JDK '$jdkName' from Qodana config completed with exception")
         }
         else {

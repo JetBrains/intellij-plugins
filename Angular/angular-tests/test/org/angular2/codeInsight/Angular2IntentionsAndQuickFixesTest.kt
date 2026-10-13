@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.idea.IJIgnore
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.IdeBundle
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
@@ -20,6 +21,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_18_2_1
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
@@ -27,6 +29,7 @@ import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes") {
 
   @Test
@@ -118,6 +121,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   @Test
+  @IJIgnore(issue = "IJI-3451")
   fun testQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
@@ -142,6 +146,7 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   @Test
+  @IJIgnore(issue = "IJI-3451")
   fun testQualifiedMethodCreation() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)

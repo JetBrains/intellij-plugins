@@ -1,15 +1,16 @@
 package com.jetbrains.lang.makefile
 
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.StructureViewComponentTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class MakefileStructureViewTest : BasePlatformTestCase() {
   fun testSimple() {
     val filename = "${getTestName(true)}.mk"
     myFixture.configureByFile("$basePath/$filename")
-    myFixture.testStructureView {
+    StructureViewComponentTestUtil.testStructureView(myFixture) {
       PlatformTestUtil.expandAll(it.tree)
-      PlatformTestUtil.assertTreeEqual(it.tree, "-simple.mk\n all\n hello\n world\n")
+      PlatformTestUtil.assertTreeEqual(it.tree, "-simple.mk\n -all\n -hello\n -world\n")
     }
   }
 

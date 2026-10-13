@@ -1,5 +1,0 @@
-<?xml version="1.0" ?>
-<local:Base xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*" implements="IBar">
-    <mx:Script><![CDATA[
-        ]]></mx:Script>
-</local:Base>

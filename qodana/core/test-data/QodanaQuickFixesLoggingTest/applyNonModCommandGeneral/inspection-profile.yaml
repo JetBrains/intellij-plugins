@@ -3,5 +3,5 @@ name: "My custom profile"
 baseProfile: empty
 
 inspections:
-  - inspection: InnerClassMayBeStatic
+  - inspection: testMakeInnerClassStatic
     enabled: true

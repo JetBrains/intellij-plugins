@@ -5,9 +5,11 @@ import com.intellij.codeInsight.hints.declarative.impl.views.TextInlayPresentati
 import com.intellij.openRewrite.OpenRewriteLightHighlightingTestCase
 import com.intellij.openRewrite.RECIPE_FILE_NAME
 import com.intellij.openapi.command.WriteCommandAction
+import org.junit.jupiter.api.Test
 
 class OpenRewriteRecipeInlayHintsProviderTest : OpenRewriteLightHighlightingTestCase() {
-  fun testScalarRecipeInlay() {
+  @Test
+  fun testScalarRecipeInlay() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.my.Recipe
@@ -21,7 +23,8 @@ class OpenRewriteRecipeInlayHintsProviderTest : OpenRewriteLightHighlightingTest
     doTestInlays()
   }
 
-  fun testScalarPreconditionInlay() {
+  @Test
+  fun testScalarPreconditionInlay() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.my.Recipe
@@ -35,7 +38,8 @@ class OpenRewriteRecipeInlayHintsProviderTest : OpenRewriteLightHighlightingTest
     doTestInlays()
   }
 
-  fun testScalarStyleInlay() {
+  @Test
+  fun testScalarStyleInlay() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/style
       name: com.my.Style
@@ -49,7 +53,8 @@ class OpenRewriteRecipeInlayHintsProviderTest : OpenRewriteLightHighlightingTest
     doTestInlays()
   }
 
-  fun testMappingRecipeInlay() {
+  @Test
+  fun testMappingRecipeInlay() = onEdt {
     myFixture.configureByText(RECIPE_FILE_NAME, """
       type: specs.openrewrite.org/v1beta/recipe
       name: com.my.Recipe

@@ -1,46 +1,48 @@
 package org.angularjs.lang.lexer;
 
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.testFramework.LexerTestCase;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixtures;
 import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixtureKt.lexerFixture;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSLexerTest extends LexerTestCase {
+@TestFixtures
+public class AngularJSLexerTest {
+  private final TestFixture<LexerTestFixture> lexer =
+    lexerFixture(AngularTestUtil.getBaseTestDataPath(AngularJSLexerTest.class).replaceAll("/$", ""), () -> new AngularJSLexer());
+
+  @Test
   public void testIdent() {
-    doFileTest("js");
+    lexer.get().doFileTest("js");
   }
 
+  @Test
   public void testKey_value() {
-    doFileTest("js");
+    lexer.get().doFileTest("js");
   }
 
+  @Test
   public void testExpr() {
-    doFileTest("js");
+    lexer.get().doFileTest("js");
   }
 
+  @Test
   public void testKeyword() {
-    doFileTest("js");
+    lexer.get().doFileTest("js");
   }
 
+  @Test
   public void testNumber() {
-    doFileTest("js");
+    lexer.get().doFileTest("js");
   }
 
+  @Test
   public void testString() {
-    doFileTest("js");
-  }
-
-  @Override
-  protected @NotNull Lexer createLexer() {
-    return new AngularJSLexer();
-  }
-
-  @Override
-  protected @NotNull String getDirPath() {
-    return AngularTestUtil.getBaseTestDataPath(AngularJSLexerTest.class).substring(PathManager.getHomePath().length());
+    lexer.get().doFileTest("js");
   }
 }

@@ -1,6 +1,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
+import com.intellij.lang.javascript.dialects.ECMA6LanguageDialect
+import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.kolar.KolarCodegenContext
 import com.intellij.lang.typescript.kolar.KolarFileInfo
@@ -8,14 +10,18 @@ import com.intellij.lang.typescript.kolar.KolarScriptSnapshot
 import com.intellij.lang.typescript.kolar.KolarTranspiledFile
 import com.intellij.lang.typescript.kolar.KolarTranspiler
 import com.intellij.lang.typescript.kolar.KolarVirtualCode
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ThreeState
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.hasVueFileType
 
 class VueKolarTranspiler(
@@ -27,9 +33,9 @@ class VueKolarTranspiler(
     && file.hasVueFileType
 
   override fun isEnabled(file: VirtualFile): Boolean =
-    isVueContext(file, project)
-    && file.isInLocalFileSystem
+    file.isInLocalFileSystem
     && file.hasVueFileType
+    && isVueContext(file, project)
 
   override fun getFileInfo(file: VirtualFile): KolarFileInfo? {
     if (NodeModuleUtil.hasNodeModulesDirInPath(file, null))
@@ -51,11 +57,11 @@ class VueKolarTranspiler(
   ): Boolean =
     when (element.language) {
       // setup
-      // TypeScriptLanguageDialect,
-      // ECMA6LanguageDialect,
+      TypeScriptLanguageDialect,
+      ECMA6LanguageDialect,
 
       // interpolations
-      // VueTSLanguage,
+      VueTSLanguage,
       VueJSLanguage,
         -> true
 
@@ -77,8 +83,21 @@ private data class VueTranspiledFile(
     snapshot: KolarScriptSnapshot,
     ctx: KolarCodegenContext,
   ): KolarVirtualCode? {
+    val psiFile = file.findPsiFile(project) as? VueFile
+                  ?: return null
+
+    // The mappings point into the PSI text, so they are valid only for the same text as the snapshot.
+    if (!psiFile.viewProvider.contents.contentEquals(snapshot.charSeq)) {
+      val message = "PSI text of ${file.path} differs from the Kolar script snapshot"
+      if (ApplicationManager.getApplication().isUnitTestMode)
+        thisLogger().error(message)
+      else
+        thisLogger().warn(message)
+      return null
+    }
+
     val transpiledFile = VueTranspiledFileBuilder.getInstance()
-                           .getTranspiledFile(project, file)
+                           .getTranspiledFile(psiFile)
                          ?: return null
 
     return KolarVirtualCode(

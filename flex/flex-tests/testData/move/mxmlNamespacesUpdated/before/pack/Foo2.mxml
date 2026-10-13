@@ -1,7 +1,0 @@
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:z="pack.sub.*" xmlns:pack="pack.*">
-  <pack:Bar>
-    <mx:Button/>
-    <pack:SomePrefixUsage/>
-    <pack:data/>
-  </pack:Bar>
-</mx:Application>

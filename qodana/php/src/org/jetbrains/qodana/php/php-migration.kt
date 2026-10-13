@@ -7,7 +7,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.runTaskAndLogTime
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
@@ -30,7 +30,7 @@ class PhpMigrationScriptFactory : QodanaScriptFactory {
   override fun parseParameters(parameters: String): Map<String, String> {
     val versions = parameters.split("-to-")
     if (versions.size != 2 || versions[0].isEmpty() || versions[1].isEmpty()) {
-      throw QodanaException(
+      throw QodanaConfigurationException(
         "CLI parameter for php-migration must be passed as '--script php-migration:%fromVersion%-to-%toVersion%'. " +
         "For example '--script php-migration:7.1-to-8.0'.")
     }

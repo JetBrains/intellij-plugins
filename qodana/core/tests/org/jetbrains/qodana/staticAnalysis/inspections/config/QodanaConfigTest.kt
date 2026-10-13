@@ -3,7 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.config
 import com.intellij.testFramework.assertInstanceOf
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -13,10 +13,10 @@ import java.nio.file.Path
 class QodanaConfigTest {
 
   @Test
-  fun `garbage input fail with QodanaException`() {
+  fun `garbage input fail with QodanaConfigurationException`() {
     val garbageException = QodanaYamlReader.parse("foo")
       .exceptionOrNull()
-    assertInstanceOf<QodanaException>(garbageException)
+    assertInstanceOf<QodanaConfigurationException>(garbageException)
     assertEquals("Not a valid qodana.yaml configuration 'foo'", garbageException?.message)
   }
 
@@ -42,7 +42,7 @@ class QodanaConfigTest {
         name: qodana.recommended
     """.trimIndent())
 
-    val exception = assertThrows<QodanaException> {
+    val exception = assertThrows<QodanaConfigurationException> {
       getQodanaConfig(yaml)
     }
 
@@ -57,7 +57,7 @@ class QodanaConfigTest {
         name: qodana.recommended
     """.trimIndent())
 
-    val exception = assertThrows<QodanaException> {
+    val exception = assertThrows<QodanaConfigurationException> {
       getQodanaConfig(yaml)
     }
 
@@ -74,7 +74,7 @@ class QodanaConfigTest {
       maxRuntimeNotifications: -1
     """.trimIndent())
 
-    val exception = assertThrows<QodanaException> {
+    val exception = assertThrows<QodanaConfigurationException> {
       getQodanaConfig(yaml)
     }
 
@@ -107,7 +107,7 @@ class QodanaConfigTest {
   @Test
   fun `qodana_yaml with unknown options`() {
     // Including or excluding inspections is done with 'include' and 'exclude', not 'inspections'.
-    val ex = assertThrows<QodanaException> {
+    val ex = assertThrows<QodanaConfigurationException> {
       load("""
       version: 1.0
       profile:

@@ -18,4 +18,8 @@ public class PostCssParsingOtherTest extends PostCssParsingTest {
   }
 
   public void testStartingStyleAtRule() { doTest(); }
+
+  public void testIfFunction() {
+    doTest();
+  }
 }

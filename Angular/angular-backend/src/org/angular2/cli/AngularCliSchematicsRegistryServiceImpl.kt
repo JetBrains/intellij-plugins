@@ -4,6 +4,7 @@ package org.angular2.cli
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.javascript.nodejs.library.nodeModulesDir.NodeModulesDirectoryManager
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion
@@ -93,8 +94,10 @@ class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : An
   override fun getSchematics(project: Project,
                              cliFolder: VirtualFile,
                              includeHidden: Boolean,
-                             logErrors: Boolean): List<Schematic> =
-    AngularCliUtil.findCliJson(cliFolder)
+                             logErrors: Boolean): List<Schematic> {
+    // Do not cache an empty result for an untrusted project, so that the schematics load after the user trusts it
+    if (!project.isDefault && !TrustedProjects.isProjectTrusted(project)) return emptyList()
+    return AngularCliUtil.findCliJson(cliFolder)
       ?.let { angularJson ->
         ReadAction.compute<PsiFile, RuntimeException> {
           PsiManager.getInstance(project).findFile(angularJson)
@@ -110,7 +113,8 @@ class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : An
             angularJson)
         }
       }
-    ?: emptyList()
+      ?: emptyList()
+  }
 
   override fun clearProjectSchematicsCache() {
     SCHEMATICS_CACHE_TRACKER.incModificationCount()

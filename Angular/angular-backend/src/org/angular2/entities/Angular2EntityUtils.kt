@@ -360,7 +360,7 @@ object Angular2EntityUtils {
       ?.staticJSType
       ?.asRecordType(clz)
       ?.findPropertySignature(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
-      ?.getJSType(clz)
+      ?.getJSType()
 
   private fun Collection<Angular2Entity>.render(): String =
     this.asSequence().map { it.getName() }.sorted().joinToString(", ")

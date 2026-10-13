@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.editor.ui" />
     <orderEntry type="module" module-name="intellij.platform.indexing" />
-    <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.platform.refactoring" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
@@ -22,7 +21,6 @@
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
     <orderEntry type="module" module-name="intellij.regexp" />
     <orderEntry type="module" module-name="intellij.javascript.parser" />
@@ -31,56 +29,8 @@
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.css.plugin" />
-    <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="module" module-name="intellij.libraries.gson" />
-    <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
-    <orderEntry type="module-library" scope="TEST">
-      <library name="oleaster-matcher" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-matcher:0.2.0">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar">
-              <sha256sum>cd48639040cf962886a0ed84849be7ce9071b16dacb1d20c3f4ff03c3999f8ed</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library name="oleaster-runner" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-runner:0.2.0">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar">
-              <sha256sum>039a992d5b3e336a1003f3a7b4ce75c2791f6d211a3202e3b296375a10c368f1</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module" module-name="intellij.javascript.langInjection" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.xml.langInjection" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.sass.plugin" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.less" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.postcss.plugin" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.postcss.paid" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.resharper.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.html.tools" />
     <orderEntry type="module" module-name="intellij.libraries.jackson" />
     <orderEntry type="module" module-name="intellij.libraries.jackson.databind" />
@@ -99,10 +49,8 @@
     <orderEntry type="module" module-name="intellij.platform.util.ui" />
     <orderEntry type="module" module-name="intellij.libraries.fastutil" />
     <orderEntry type="module" module-name="intellij.platform.images" />
-    <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.css.common" />
-    <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.backend.diagrams" />
     <orderEntry type="module" module-name="intellij.libraries.guava" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.collections.immutable" />

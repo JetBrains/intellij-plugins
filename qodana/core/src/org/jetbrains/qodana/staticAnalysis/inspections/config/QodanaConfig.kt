@@ -30,7 +30,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.ExcludeScopeModifi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.GitIgnoreExcludeScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.GlobalExcludeScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getOutputFormat
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
@@ -143,7 +143,7 @@ enum class FixesStrategy(val stageName: String) {
         return FixesStrategy.valueOf(value.uppercase(Locale.getDefault()))
       }
       catch (e: IllegalArgumentException) {
-        throw QodanaException("Unknown value '$value' for fixesStrategy configuration parameter")
+        throw QodanaConfigurationException("Unknown value '$value' for fixesStrategy configuration parameter")
       }
     }
   }
@@ -170,12 +170,15 @@ val Project.qodanaAnalysisConfig: QodanaConfig?
 val Application.qodanaAnalysisConfigForConfiguration: QodanaConfig?
   get() = getUserData(QODANA_CONFIG_KEY)
 
+enum class QodanaBaselineSource { LOCAL_BASELINE, CLOUD_BASELINE, NO_BASELINE }
+
 data class QodanaConfig(
   val projectPath: Path,
   val yamlFiles: QodanaYamlFiles,
   val outPath: Path,
   val resultsStorage: Path,
   val baseline: String?,
+  val baselineSource: QodanaBaselineSource = QodanaBaselineSource.NO_BASELINE,
   val profile: QodanaProfileConfig,
   val profileSource: String,
   val defaultProfileName: String,
@@ -231,6 +234,7 @@ data class QodanaConfig(
       runPromoInspections: Boolean? = yaml.runPromoInspections,
       script: QodanaScriptConfig = yaml.script,
       includeAbsent: Boolean = yaml.includeAbsent,
+      baselineSource: QodanaBaselineSource = QodanaBaselineSource.NO_BASELINE,
       outputFormat: OutputFormat = getOutputFormat(),
       license: QodanaLicense = QodanaLicense(QodanaLicenseType.ULTIMATE_PLUS, false, null),
       onlyDirectory: Path? = yaml.onlyDirectory,
@@ -240,8 +244,9 @@ data class QodanaConfig(
       maxRuntimeNotifications: Int = yaml.maxRuntimeNotifications,
       failOnErrorNotification: Boolean = yaml.failOnErrorNotification,
       failureConditions: FailureConditions = yaml.failureConditions,
+      reportCoverageProblems: Boolean = yaml.coverage.reportProblems,
       coverage: QodanaCoverageConfig = QodanaCoverageConfig(
-        reportProblems = yaml.coverage.reportProblems,
+        reportProblems = reportCoverageProblems,
         coveragePath = outPath.resolve("$COVERAGE_OUTPUT_DIR/"),
         codeCoverageLocations = yaml.coverage.codeCoverageLocations.map {
           projectPath.resolve(it)
@@ -255,7 +260,7 @@ data class QodanaConfig(
       val jvm = QodanaJvmConfig(yaml.projectJDK)
       val dependencyAnalysis = DependencyAnalysisConfig.fromYamlConfig(yaml)
 
-      if (yaml.version != "1.0") throw QodanaException("Property \"version\" in qodana.yaml must be \"1.0\", not \"${yaml.version}\"")
+      if (yaml.version != "1.0") throw QodanaConfigurationException("Property \"version\" in qodana.yaml must be \"1.0\", not \"${yaml.version}\"")
       val isCommandLineProfile = profileNameFromCli.isNotBlank() || profilePathFromCli.isNotBlank()
       return QodanaConfig(
         projectPath = projectPath,
@@ -271,6 +276,7 @@ data class QodanaConfig(
         runPromoInspections = runPromoInspections,
         script = script,
         includeAbsent = includeAbsent,
+        baselineSource = baselineSource,
         outputFormat = outputFormat,
         license = license,
         onlyDirectory = onlyDirectory,
@@ -295,9 +301,9 @@ data class QodanaConfig(
 
   init {
     // Allow non-absolute paths for windows tests, where temp://src is treatet as not absolute
-    if (!application.isUnitTestMode && !projectPath.isAbsolute) throw QodanaException("Project path \"$projectPath\" must be absolute")
+    if (!application.isUnitTestMode && !projectPath.isAbsolute) throw QodanaConfigurationException("Project path \"$projectPath\" must be absolute")
     if (failOnErrorNotification && maxRuntimeNotifications < 1) {
-      throw QodanaException("Cannot enable 'failOnErrorNotification' when 'maxRuntimeNotifications' is less than 1")
+      throw QodanaConfigurationException("Cannot enable 'failOnErrorNotification' when 'maxRuntimeNotifications' is less than 1")
     }
   }
 
@@ -347,7 +353,7 @@ enum class SkipResultStrategy {
     }
   }
 
-  suspend fun shouldSkip(run: Run): Boolean {
+  suspend fun shouldSkip(run: Run, excludedRuleIdsForAny: Set<String> = emptySet()): Boolean {
     val newByBaseline: (Result) -> Boolean = { result ->
       result.baselineState == null
       || (result.baselineState != Result.BaselineState.ABSENT
@@ -356,7 +362,7 @@ enum class SkipResultStrategy {
     return withContext(StaticAnalysisDispatchers.Default) {
       when (this@SkipResultStrategy) {
         ALWAYS -> true
-        ANY -> run.results.any { newByBaseline(it) }
+        ANY -> run.results.any { it.ruleId !in excludedRuleIdsForAny && newByBaseline(it) }
         FIXABLE -> run.results.any { newByBaseline(it) && it.hasFixes() }
         NEVER -> false
       }

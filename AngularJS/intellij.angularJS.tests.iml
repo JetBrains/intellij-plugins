@@ -24,6 +24,9 @@
     <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.regexp" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.parser" scope="TEST" />
@@ -108,6 +111,9 @@
     <orderEntry type="module" module-name="intellij.platform.concurrency" scope="TEST" />
     <orderEntry type="module" module-name="intellij.angularJS" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.problemView.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.navbar.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.angularJS" />

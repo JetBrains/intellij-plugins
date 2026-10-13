@@ -1,14 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.util.ExceptionUtil
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.staticAnalysis.testFramework.RecordingMessageReporter
 import org.jetbrains.qodana.staticAnalysis.testFramework.QODANA_LOG_CATEGORY
+import org.jetbrains.qodana.staticAnalysis.testFramework.RecordingMessageReporter
 import org.jetbrains.qodana.staticAnalysis.testFramework.logRecordsFrom
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Assert.assertEquals
@@ -436,21 +435,21 @@ class QodanaOutOfMemoryTest {
   }
 
   @Test
-  fun `an argument error with no message forwards null to the reporter`() {
-    // A null message means "pass null through", not "emit nothing", so the reporter is called unconditionally. That
-    // the operator then reads `null` is a pre-existing wart; pinned here so no `?.let` can swallow the report.
+  fun `an argument error with an empty message forwards it to the reporter`() {
+    // An empty message means "pass it through", not "emit nothing", so the reporter is called unconditionally.
+    // Pinned here so no `?.let` can swallow the report. QodanaException cannot carry a null message.
     val warnings = logRecordsFrom(QODANA_LOG_CATEGORY) {
-      assertEquals(1, handle { throw InspectionApplicationException(null) })
+      assertEquals(1, handle { throw QodanaConfigurationException("") })
     }
 
-    assertEquals(listOf<String?>(null), reporter.errorMessages)
-    assertEquals(emptyList<Pair<String, Throwable?>>(), warnings)
+    assertEquals(listOf<String?>(""), reporter.errorMessages)
+    assertEquals(listOf("Qodana configuration error"), warnings.map { it.first })
     assertEquals("", written())
   }
 
   // Rendering ==========
 
-  private fun logRecordFor(e: Throwable): Pair<String, Throwable?> = logRecord(e, memoryVerdict(e))!!
+  private fun logRecordFor(e: Throwable): Pair<String, Throwable?> = logRecord(e, memoryVerdict(e))
 
   @Test
   fun `a limit no container relieves keeps its trace attached to the log`() {

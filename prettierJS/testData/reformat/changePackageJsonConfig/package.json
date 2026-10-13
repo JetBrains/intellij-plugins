@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "prettier": "$PRETTIER_VERSION$"
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}

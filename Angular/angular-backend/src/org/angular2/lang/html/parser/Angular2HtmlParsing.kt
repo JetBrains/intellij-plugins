@@ -323,6 +323,15 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     return result
   }
 
+  override fun hasCustomTagHeaderContent(): Boolean {
+    return Angular2HtmlTokenTypes.IN_ELEMENT_COMMENTS.contains(token())
+  }
+
+  override fun parseCustomTagHeaderContent() {
+    // An in-element comment becomes a PsiComment leaf of the tag, so it needs no marker.
+    advance()
+  }
+
   override fun createHtmlTagInfo(originalTagName: String, startMarker: Marker): HtmlTagInfoImpl {
     return AngularHtmlTagInfo(normalizeTagName(originalTagName), originalTagName, startMarker)
   }

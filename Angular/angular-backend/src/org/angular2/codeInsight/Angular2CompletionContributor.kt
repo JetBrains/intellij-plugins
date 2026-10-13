@@ -382,7 +382,8 @@ class Angular2CompletionContributor : CompletionContributor() {
     }
 
     private fun calcPriority(element: JSPsiElementBase): JSLookupPriority {
-      if (Angular2StandardSymbolsScopesProvider.`$ANY` == element.name) {
+      if (Angular2StandardSymbolsScopesProvider.`$ANY` == element.name
+          || Angular2StandardSymbolsScopesProvider.`$SAFE_NAVIGATION_MIGRATION` == element.name) {
         return `NG_$ANY_PRIORITY`
       }
       return if (Angular2DecoratorUtil.isPrivateMember(element))

@@ -3,104 +3,139 @@ package org.angular2.lang.html
 
 import com.intellij.lexer.HtmlLexer
 import com.intellij.lexer.Lexer
-import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.lexerFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.TestApplication
 import org.angular2.Angular2TestUtil
-import org.angular2.AngularLexerTestCase
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.jetbrains.annotations.NonNls
+import org.junit.jupiter.api.Test
 import java.io.File
 
-open class Angular2HtmlLexerTest : AngularLexerTestCase() {
-  private var myFixture: IdeaProjectTestFixture? = null
-
+// The test application is needed for various XML extension points registration
+@TestApplication
+open class Angular2HtmlLexerTest {
   protected open val templateSyntax: Angular2TemplateSyntax
     get() = Angular2TemplateSyntax.V_2
 
-  @Throws(Exception::class)
-  override fun setUp() {
-    super.setUp()
+  protected open val dirPath: String
+    get() = Angular2TestUtil.getLexerTestDirPath() + "html/lexer"
 
-    // needed for various XML extension points registration
-    myFixture = IdeaTestFixtureFactory.getFixtureFactory()
-      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR, getTestName(false)).getFixture()
-    myFixture!!.setUp()
-  }
+  private val lexer by lexerFixture(Angular2TestUtil.getLexerTestDirPath()) { createLexer() }
 
-  @Throws(Exception::class)
-  override fun tearDown() {
-    try {
-      myFixture!!.tearDown()
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
-
+  @Test
   fun testNoNewline() {
     doTest("<t>a</t>")
   }
 
+  @Test
   fun testNewlines() {
     doTest("<t\n>\r\na\r</t>")
   }
 
+  @Test
   fun testComments() {
     doTest("<!-- {{ v }} -->")
   }
 
+  @Test
   fun testInterpolation1() {
     doTest("<t a=\"{{v}}\" b=\"s{{m}}e\" c='s{{m//c}}e'>")
   }
 
+  @Test
   fun testInterpolation2() {
     doTest("{{ a }}b{{ c // comment }}")
   }
 
+  @Test
   fun testMultiLineComment() {
     doTest("{{ a }}b{{ c // comment\non\nmultiple\nlines }}")
   }
 
+  @Test
   fun testBoundAttributes() {
     doTest("<a [src]=bla() (click)='event()'></a>")
   }
 
+  @Test
+  fun testBoundAttributesWithSlash() {
+    doTest("<div [class.left-1/2]=\"first\" [class.text-primary/80]='second' [attr.a/b]=third><img [src/set]/></div>")
+  }
+
+  @Test
+  fun testBoundAttributesIncomplete() {
+    doTest("""
+             <div [foo/>
+             <div [foo>
+             <div [foo/bar></div>
+             <div [foo/bar [baz]="a/b"></div>
+             <div [foo[bar/baz]></div>
+             <div [foo[bar>baz] [qux]="a"></div>
+             <div [foo]/bar="a"></div>
+             <div foo/bar]="a"></div>
+             """.trimIndent())
+  }
+
+  @Test
+  fun testBoundAttributesWithNestedBrackets() {
+    doTest("""
+             <div [class.[&>svg]:w-4]="a" [class.bg-[url('/a.png')]]="b" [class.content-['a_b']]='c'></div>
+             <div [class.[&_[data-x=a]]:p-2]="d" [a/b][c/d]="e" [a b]="f"></div>
+             """.trimIndent())
+  }
+
+  @Test
+  fun testBoundAttributesWithNestedBracketsIncomplete() {
+    doTest("""
+             <div [a/b]x[c/d>
+             <div [foo
+               bar]="a"></div>
+             <div [a]]/x="b"></div>
+             """.trimIndent())
+  }
+
+  @Test
   fun testMultipleInterpolations() {
     doTest("{{test}} !=bbb {{foo() - bar()}}")
   }
 
+  @Test
   fun testInterpolationIgnored() {
     doTest("<div> this is ignored {{<interpolation> }}")
   }
 
+  @Test
   fun testInterpolationIgnored2() {
     doTest("this {{ is {{ <ignored/> interpolation }}")
   }
 
+  @Test
   fun testInterpolationIgnored3() {
     doTest("<div foo=\"This {{ is {{ ignored interpolation\"> }}<a foo=\"{{\">")
   }
 
+  @Test
   fun testInterpolationIgnored4() {
     doTest("<div foo='This {{ is {{ ignored interpolation'> }}<a foo='{{'>")
   }
 
+  @Test
   fun testInterpolationEmpty() {
     doTest("{{}}<div foo='{{}}' foo='a{{}}b' bar=\"{{}}\" bar=\"a{{}}b\">{{}}</div>a{{}}b<div>a{{}}b</div>")
   }
 
+  @Test
   fun testInterpolationCharEntityRefs() {
     doTest("&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}<div foo='&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}' bar=\"&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}\">")
   }
 
+  @Test
   fun testInterpolationEntityRefs() {
     doTest("&foo;{{foo&foo;bar}}{{&foo;}}<div foo='&foo;{{foo&foo;bar}}{{&foo;}}' bar=\"&foo;{{foo&foo;bar}}{{&foo;}}\">")
   }
 
+  @Test
   fun testComplex() {
     doTest("""
              <div *ngFor="let contact of value; index as i"
@@ -118,48 +153,59 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testEscapes() {
     doTest("{{today | date:'d \\'days so far in\\' LLLL'}}" +
            "<div [input]=\"'test&quot;test\\u1234\\u123\\n\\r\\t'\">" +
            "<div [input]='\"ttt\" + &apos;str\\u1234ing&apos;'>")
   }
 
+  @Test
   fun testTextInEscapedQuotes() {
     doTest("<div [foo]=\"&quot;test&quot; + 12\">")
   }
 
+  @Test
   fun testTextInEscapedApos() {
     doTest("<div [foo]=\"&apos;test&apos; + 12\">")
   }
 
+  @Test
   fun testExpansionForm() {
     doTest("{one.two, three, =4 {four} =5 {five} foo {bar} }")
   }
 
+  @Test
   fun testExpansionFormWithTextElementsAround() {
     doTest("before{one.two, three, =4 {four}}after")
   }
 
+  @Test
   fun testExpansionFormTagSingleChild() {
     doTest("<div><span>{a, b, =4 {c}}</span></div>")
   }
 
+  @Test
   fun testExpansionFormWithTagsInIt() {
     doTest("{one.two, three, =4 {four <b>a</b>}}")
   }
 
+  @Test
   fun testExpansionFormWithInterpolation() {
     doTest("{one.two, three, =4 {four {{a}}}}")
   }
 
+  @Test
   fun testExpansionFormNested() {
     doTest("{one.two, three, =4 {{xx, yy, =x {one}} }}")
   }
 
+  @Test
   fun testExpansionFormComplex() {
     doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}")
   }
 
+  @Test
   fun testScriptSrc() {
     doTest("""
              <body>
@@ -169,6 +215,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testScript() {
     doTest("""
              <body>
@@ -178,6 +225,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testScriptAngularAttr() {
     doTest("""
              <body>
@@ -187,6 +235,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testScriptWithEventAndAngularAttr() {
     doTest("""
              <script src="//example.com" onerror="console.log(1)" (error)='console.log(1)'onload="console.log(1)" (load)='console.log(1)'>
@@ -196,6 +245,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testStyleTag() {
     doTest("""
              <style>
@@ -206,6 +256,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testStyleAngularAttr() {
     doTest("""
              <style (load)='disabled=true'>
@@ -216,6 +267,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testStyleWithEventAndAngularAttr() {
     doTest("""
              <style (load)='disabled=true' onload="this.disabled=true" (load)='disabled=true'>
@@ -226,6 +278,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testStyleAfterBinding() {
     doTest("""
              <div *foo style="width: 13px">
@@ -234,6 +287,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testStyleAfterStyle() {
     doTest("""
              <div style style *foo='bar'>
@@ -242,6 +296,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testBindingAfterStyle() {
     doTest("""
              <div style *foo='bar'>
@@ -250,6 +305,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
              """.trimIndent())
   }
 
+  @Test
   fun testEmptyStructuralDirective() {
     doTest("""
   <div *foo [bar]=""></div>
@@ -257,6 +313,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
   """.trimIndent())
   }
 
+  @Test
   fun testEmptyHtmlEvent() {
     doTest("""
   <div onclick onclick=""></div>
@@ -264,10 +321,12 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
   """.trimIndent())
   }
 
+  @Test
   fun testTextarea() {
     doTest("<textarea>with { some } {{wierd}} &nbsp; <stuff> in it</textarea>")
   }
 
+  @Test
   fun testIfBlock() {
     doTest("""
       @if ( user.isHuman ) {
@@ -282,24 +341,28 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteBlock1() {
     doTest("""
       @if something doesn't work
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteBlock2() {
     doTest("""
       @if ( this is not finished
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteBlock3() {
     doTest("""
       @if ( ) this is not finished
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteBlock4() {
     doTest("""
       @if ( ) 
@@ -307,6 +370,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteBlock5() {
     doTest("""
       @if 
@@ -314,6 +378,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testEmptyIfBlock() {
     doTest("""
       @if () {
@@ -322,6 +387,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testBlockEmptyParameters() {
     doTest("""
       @if (; ;foo;) {
@@ -330,48 +396,98 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
     """.trimIndent())
   }
 
+  @Test
   fun testBlockNameCanonicalForm() {
     doTest("""
       @block   name with     some spaces and ${'\t'} tabs   (arg)   {}
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockValid() {
     doTest("""
       @let foo = test(12); the end
     """.trimIndent())
   }
 
+  @Test
   fun testVoidKeyword() {
     doTest("""
       <div (click)='void fun()'></div>
     """)
   }
 
+  @Test
+  fun testInElementComments() {
+    doTest("""
+      <div
+        // comment 1
+        attr1="value1"
+        /* comment 2 */ [input]="value2" /*
+          comment 3
+        */
+        (output)="handler()" // comment 4
+      ></div>
+      <div attr// glued
+      ></div>
+      <div // swallows the tag end ></div>
+      <span></span>
+    """.trimIndent())
+  }
+
+  @Test
+  fun testInElementCommentInEndTag() {
+    doTest("""
+      <div></div // comment>
+      <span></span>
+    """.trimIndent())
+  }
+
+  @Test
+  fun testInElementCommentUnterminated() {
+    doTest("""
+      <div /* comment
+      <span></span>
+    """.trimIndent())
+  }
+
+  @Test
+  fun testInElementCommentsWithBracketedNames() {
+    doTest("""
+      <div
+        [class.left-1/2]="a"// comment 1
+        [class.[&>svg]:w-4]="b"/* comment 2 */
+        [class.a//b]="c"
+        [foo // comment 3
+        [bar /* comment 4 */
+      ></div>
+      <div></div [baz] // comment 5>
+      <span></span>
+    """.trimIndent())
+  }
+
+  @Test
   fun testPowerOperator() {
     doTest("""
       <div (click)='12 ** 2 ** 3'></div>
     """)
   }
 
-  override fun doTest(text: @NonNls String) {
-    super.doTest(text)
+  protected fun doTest(text: @NonNls String) {
+    PlatformTestUtil.assertSameLinesWithFile(getExpectedFilePath(), lexer.printTokens(text, 0))
+    lexer.checkCorrectRestart(text)
     if ((createLexer() as? HtmlLexer)?.isHighlighting == false) {
-      checkCorrectRestartUsingPosition(text)
+      lexer.checkCorrectRestartUsingPosition(text)
     }
   }
 
-  override fun createLexer(): Lexer {
+  protected open fun createLexer(): Lexer {
     return Angular2HtmlLexer(false, templateSyntax, null)
   }
 
-  override fun getDirPath(): String {
-    return Angular2TestUtil.getLexerTestDirPath() + "html/lexer"
-  }
-
-  override fun getPathToTestDataFile(extension: String): String {
+  private fun getExpectedFilePath(): String {
     val basePath = dirPath
-    val fileName = getTestName(true) + extension
+    val fileName = lexer.testName + ".txt"
     // Iterate over syntax versions starting from the `templateSyntax` down to V_2
     return Angular2TemplateSyntax.entries.toList().asReversed().asSequence()
              .dropWhile { it != templateSyntax }

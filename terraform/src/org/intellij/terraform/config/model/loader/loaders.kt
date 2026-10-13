@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
 import org.intellij.terraform.config.model.ActionType
 import org.intellij.terraform.config.model.BackendType
@@ -14,6 +13,16 @@ import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.ProvisionerType
 import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.TfFunction
+import tools.jackson.databind.MapperFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.node.ObjectNode
+
+/**
+ * The mapper for the Terraform metadata and schema JSON. It keeps the property order of the source.
+ */
+internal val tfJsonMapper: JsonMapper = JsonMapper.builder()
+  .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+  .build()
 
 class LoadingModel {
   val resources: MutableList<ResourceType> = mutableListOf()

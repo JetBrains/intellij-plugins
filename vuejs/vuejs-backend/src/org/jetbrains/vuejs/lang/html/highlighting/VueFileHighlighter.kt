@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.html.highlighting
 import com.intellij.ide.highlighter.HtmlFileHighlighter
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.highlighting.JSHighlighter
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
@@ -19,7 +18,6 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 internal class VueFileHighlighter(
-  private val languageLevel: JSLanguageLevel,
   private val langMode: LangMode,
   private val project: Project?,
   private val interpolationConfig: Pair<String, String>?,
@@ -32,7 +30,7 @@ internal class VueFileHighlighter(
   }
 
   override fun getHighlightingLexer(): Lexer {
-    return VueLexer(languageLevel, project, interpolationConfig, htmlCompatMode, true, langMode)
+    return VueLexer(project, interpolationConfig, htmlCompatMode, true, langMode)
   }
 
   companion object {

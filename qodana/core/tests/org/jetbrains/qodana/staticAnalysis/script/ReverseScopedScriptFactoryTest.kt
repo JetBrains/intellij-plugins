@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedRunNewCodeContextFactory
@@ -48,12 +48,12 @@ class ReverseScopedScriptFactoryTest : QodanaTestCase() {
   @Test
   fun `parse parameters should fail when blank`() = runTest {
     assertThatThrownBy { subject.parseParameters("") }
-      .isExactlyInstanceOf(QodanaException::class.java)
+      .isExactlyInstanceOf(QodanaConfigurationException::class.java)
       .message()
       .isEqualTo("Cannot start reverse-scoped script without scope file and stage")
 
     assertThatThrownBy { subject.parseParameters(" ") }
-      .isExactlyInstanceOf(QodanaException::class.java)
+      .isExactlyInstanceOf(QodanaConfigurationException::class.java)
       .message()
       .isEqualTo("Cannot start reverse-scoped script without scope file and stage")
   }
@@ -61,12 +61,12 @@ class ReverseScopedScriptFactoryTest : QodanaTestCase() {
   @Test
   fun `parse parameters should fail when stage is missing`() = runTest {
     assertThatThrownBy { subject.parseParameters("some.file.json") }
-      .isExactlyInstanceOf(QodanaException::class.java)
+      .isExactlyInstanceOf(QodanaConfigurationException::class.java)
       .message()
       .isEqualTo("Cannot start reverse-scoped script: Unknown stage some.file.json, expected one of NEW, OLD, FIXES")
 
     assertThatThrownBy { subject.parseParameters("UNKNOWN,some.file.json") }
-      .isExactlyInstanceOf(QodanaException::class.java)
+      .isExactlyInstanceOf(QodanaConfigurationException::class.java)
       .message()
       .isEqualTo("Cannot start reverse-scoped script: Unknown stage UNKNOWN, expected one of NEW, OLD, FIXES")
   }
@@ -85,7 +85,7 @@ class ReverseScopedScriptFactoryTest : QodanaTestCase() {
   fun `create script should fail when absolute path does not exist`() = runTest {
     val path = Path("/absolutely/does/not/exist")
     assertThatThrownBy { createScript(mapOf("scope-file" to "/absolutely/does/not/exist")) }
-      .isExactlyInstanceOf(QodanaException::class.java)
+      .isExactlyInstanceOf(QodanaConfigurationException::class.java)
       .message()
       .isEqualTo("Scope file ${path.pathString} does not exist")
   }
@@ -94,7 +94,7 @@ class ReverseScopedScriptFactoryTest : QodanaTestCase() {
   fun `create script should fail when relative path does not exist`() = runTest {
     val path = Path("/absolute/project/relatively/does/not/exist")
     assertThatThrownBy { createScript(mapOf("scope-file" to "relatively/does/not/exist")) }
-      .isExactlyInstanceOf(QodanaException::class.java)
+      .isExactlyInstanceOf(QodanaConfigurationException::class.java)
       .message()
       .isEqualTo("Scope file ${path.pathString} does not exist")
   }

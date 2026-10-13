@@ -1,5 +1,0 @@
-package {
-class Super {
-
-}
-}

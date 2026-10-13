@@ -102,11 +102,14 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
         getEntityData(true).nuxtFolderUrl = value
         changedProperty.add("nuxtFolderUrl")
         val _diff = diff
-        if (_diff != null) index(this, "nuxtFolderUrl", value)
+        if (_diff != null) {
+          index(this, "nuxtFolderUrl", value)
+        }
       }
     private val libraryFileUrlsUpdater: (value: List<VirtualFileUrl>) -> Unit = { value ->
-      val _diff = diff
-      if (_diff != null) index(this, "libraryFileUrls", value)
+      if (diff != null) {
+        index(this, "libraryFileUrls", value)
+      }
       changedProperty.add("libraryFileUrls")
     }
     override var libraryFileUrls: MutableList<VirtualFileUrl>

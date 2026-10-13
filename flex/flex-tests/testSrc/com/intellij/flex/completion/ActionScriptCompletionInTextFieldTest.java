@@ -8,8 +8,6 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantDialog;
-import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinDialog;
@@ -25,15 +23,12 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescript
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 
 public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
   private static final LightProjectDescriptor DESCRIPTOR = new FlexProjectDescriptor();
@@ -130,43 +125,6 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     // TODO primitive types (and e.g. not subclasses of SkinnableComponent?) should be removed from completion list
     String[] excluded = new String[]{"public", "function", "while", "Z333", "EventDispatcher", "int", "String", "uint", "Number"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
-  }
-
-  @FlexTestOptions(FlexTestOption.WithFlexSdk)
-  public void testIntroduceConstantTargetClass() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    // scope calculated same way as in constructor of JSIntroduceConstantDialog
-    Module module = ModuleUtilCore.findModuleForPsiElement(myFixture.getFile());
-    GlobalSearchScope targetClassScope =
-      module != null ? GlobalSearchScope.moduleWithDependenciesScope(module) : GlobalSearchScope.projectScope(getProject());
-    PsiFile fragment =
-      FlexIntroduceConstantDialog.createTargetClassField(getProject(), "", targetClassScope).getPsiFile();
-    String[] included = new String[]{"Z111", "Z222", "com"};
-    String[] excluded = new String[]{"EventDispatcher", "int", "String", "uint", "Number", "public", "function", "while"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");
-  }
-
-  @FlexTestOptions(FlexTestOption.WithFlexSdk)
-  public void testMoveMembersTargetClass() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    PsiFile fragment =
-      ActionScriptMoveMembersDialog.createTargetClassField(getProject(), "", ActionScriptMoveMembersDialog.getScope(getProject()), myFixture.getFile()).getPsiFile();
-    String[] included = new String[]{"Z111", "Z222"};
-    String[] excluded = new String[]{"EventDispatcher", "int", "String", "uint", "Number", "public", "function", "while"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");
-  }
-
-  @FlexTestOptions(FlexTestOption.WithFlexSdk)
-  public void testMoveMembersTargetInnerClass() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    PsiFile fragment =
-      ActionScriptMoveMembersDialog.createTargetClassField(getProject(), "", ActionScriptMoveMembersDialog.getScope(getProject()), myFixture.getFile()).getPsiFile();
-    String[] included = new String[]{"Inner"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtilRt.EMPTY_STRING_ARRAY, "Inner",
-                             getTestName(false) + ".txt");
   }
 
   private void doTestCustomScope(String activeBcName, String selectedBcName, int numberOfVariants) {

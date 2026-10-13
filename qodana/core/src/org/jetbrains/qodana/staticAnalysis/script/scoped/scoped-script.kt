@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -32,6 +33,7 @@ internal const val SCOPE_ARG = "scope-file"
 const val SCOPED_SCRIPT_NAME = "scoped"
 internal const val SCOPED_BASELINE_PROPERTY = "qodana.scoped.baseline.path"
 internal const val COVERAGE_SKIP_REPORTING_PROPERTY = "qodana.skip.coverage.issues.reporting"
+const val COVERAGE_INCREMENTAL_REPORTING_PROPERTY: String = "qodana.incremental.coverage.issues.reporting"
 const val COVERAGE_SKIP_COMPUTATION_PROPERTY = "qodana.skip.coverage.computation"
 
 internal class ScopedScriptFactory : QodanaScriptFactory {
@@ -39,7 +41,7 @@ internal class ScopedScriptFactory : QodanaScriptFactory {
 
   override fun parseParameters(parameters: String): Map<String, String> =
     if (parameters.isBlank()) {
-      throw QodanaException("Cannot start $scriptName script without scope file")
+      throw QodanaConfigurationException("Cannot start $scriptName script without scope file")
     }
     else {
       mapOf(SCOPE_ARG to parameters)
@@ -55,7 +57,7 @@ internal class ScopedScriptFactory : QodanaScriptFactory {
       val p = Path(parameters.require<String>(SCOPE_ARG))
       if (p.isAbsolute) p else config.projectPath.resolve(p)
     }
-    if (path.notExists()) throw QodanaException("Scope file $path does not exist")
+    if (path.notExists()) throw QodanaConfigurationException("Scope file $path does not exist")
 
     val runContextFactory = ScopedRunContextFactory(contextFactory, path, config)
     return ScopedScript(runContextFactory)
@@ -79,15 +81,7 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
   }
 
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext) : QodanaGlobalInspectionContext {
-    val skipCoverageComputation = java.lang.Boolean.getBoolean(COVERAGE_SKIP_COMPUTATION_PROPERTY)
-    val skipCoverageReporting = java.lang.Boolean.getBoolean(COVERAGE_SKIP_REPORTING_PROPERTY)
-    val computationState = if (skipCoverageComputation) {
-      QodanaCoverageComputationState.SKIP_COMPUTE
-    } else if (skipCoverageReporting) {
-      QodanaCoverageComputationState.SKIP_REPORT
-    } else {
-      throw QodanaException("Coverage computation mode is not set to 'skip computation' or 'skip reporting'")
-    }
+    val computationState = computeCoverageState()
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
   }
 
@@ -95,6 +89,26 @@ internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
     val scopedBaselinePath = System.getProperty(SCOPED_BASELINE_PROPERTY)?.let { Path.of(it) } ?: return null
     val absPath = if (scopedBaselinePath.isAbsolute) scopedBaselinePath else runContext.config.projectPath.resolve(scopedBaselinePath)
     return SarifUtil.readReport(absPath)
+  }
+}
+
+private fun computeCoverageState(): QodanaCoverageComputationState {
+  // qodana-cli selects one coverage mode for each scoped stage. Result-producing stages use INCREMENTAL_REPORT.
+  val requestedStates = listOfNotNull(
+    QodanaCoverageComputationState.SKIP_COMPUTE.takeIf {
+      java.lang.Boolean.getBoolean(COVERAGE_SKIP_COMPUTATION_PROPERTY)
+    },
+    QodanaCoverageComputationState.SKIP_REPORT.takeIf {
+      java.lang.Boolean.getBoolean(COVERAGE_SKIP_REPORTING_PROPERTY)
+    },
+    QodanaCoverageComputationState.INCREMENTAL_REPORT.takeIf {
+      java.lang.Boolean.getBoolean(COVERAGE_INCREMENTAL_REPORTING_PROPERTY)
+    },
+  )
+  return when (requestedStates.size) {
+    0 -> throw QodanaException("Coverage computation mode is not set")
+    1 -> requestedStates.single()
+    else -> throw QodanaException("More than one coverage computation mode is set")
   }
 }
 

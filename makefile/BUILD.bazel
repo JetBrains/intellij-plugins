@@ -9,7 +9,14 @@ dev_dist_plugin(
         "intellij.makefile.spellchecker",
         "intellij.makefile.terminal",
     ],
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/makefile.jar": ["intellij.makefile"],
+    },
     main_module = "intellij.makefile",
+    mode_refused_content_modules = {
+        "frontend": ["intellij.makefile.spellchecker"],
+    },
 )
 ### auto-generated section `dev intellij.makefile` end
 
@@ -30,6 +37,7 @@ jvm_library(
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
+        exclude = ["resources/**/icon-robots.txt"],
     ),
     visibility = ["//visibility:public"],
     deps = [

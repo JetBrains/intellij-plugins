@@ -5,7 +5,7 @@ import com.intellij.openapi.extensions.ExtensionPointName.Companion.create
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.util.QodanaMessageReporter
 
@@ -49,7 +49,7 @@ interface QodanaScriptFactory {
    * For `--script script-name:parameters`, the parameters are the parameters only, without the script name or the ':'.
    * The format of the parameters is specific to each script.
    *
-   * @throws QodanaException if the parameters are wrong
+   * @throws QodanaConfigurationException if the parameters are wrong
    */
   fun parseParameters(parameters: String): Map<String, String>
 
@@ -68,7 +68,7 @@ interface QodanaScriptFactory {
           if (afterName.startsWith(":")) {
             val parameters = afterName.substring(1)
             if (parameters.isEmpty()) {
-              throw QodanaException("Script parameters in '--script $argument' must not be empty")
+              throw QodanaConfigurationException("Script parameters in '--script $argument' must not be empty")
             }
             return QodanaScriptConfig(scriptName, factory.parseParameters(parameters))
           }
@@ -84,7 +84,7 @@ interface QodanaScriptFactory {
     ): QodanaScript {
       val name = config.script.name
       val factory = EP_NAME.extensionList.firstOrNull { it.scriptName.lowercase() == name.lowercase() }
-                    ?: throw QodanaException("Script '$name' does not exist")
+                    ?: throw QodanaConfigurationException("Script '$name' does not exist")
 
       val scriptName = factory.scriptName
       if (scriptName != DEFAULT_SCRIPT_NAME) {

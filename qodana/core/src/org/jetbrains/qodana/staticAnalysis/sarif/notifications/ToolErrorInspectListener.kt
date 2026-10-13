@@ -15,6 +15,7 @@ import com.jetbrains.qodana.sarif.model.Notification
 import com.jetbrains.qodana.sarif.model.PhysicalLocation
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import kotlinx.coroutines.CancellationException
+import org.jetbrains.qodana.staticAnalysis.diogen.QodanaDiogenReporter
 import org.jetbrains.qodana.staticAnalysis.sarif.withKind
 import java.nio.file.Path
 import java.time.Instant
@@ -38,6 +39,7 @@ internal class ToolErrorInspectListener : InspectListener {
 
     project.service<RuntimeNotificationCollector>()
       .add(buildNotification(toolId, throwable, file?.virtualFile?.toNioPathOrNull()))
+    service<QodanaDiogenReporter>().reportInspectionFailure(toolId, throwable)
   }
 
   private fun buildNotification(toolId: String, ex: Throwable, path: Path?): Notification {

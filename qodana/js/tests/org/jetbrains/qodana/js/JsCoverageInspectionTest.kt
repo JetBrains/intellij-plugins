@@ -77,22 +77,40 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
 
   @Test
   fun incrementalSecondStage() {
-    runIncrementalAnalysis(QodanaCoverageComputationState.SKIP_REPORT, SCOPE)
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
     assertCoverageProjectDataMatchesGolden("JestCoverageEngine", "JestCoverageEngine.info")
     assertChangedLinesMatchesGolden()
     assertSarifResults()
   }
 
+  @Test
+  fun incrementalSecondStageWithoutProblemReport() {
+    runIncrementalAnalysis(QodanaCoverageComputationState.INCREMENTAL_REPORT, SCOPE)
+    assertFalse(qodanaConfig.coverage.reportProblems)
+    assertNoCoverageProblems()
+    assertSarifResults()
+  }
+
   private companion object {
-    // bar() of FooCls.ts: lines 19-21 are covered (DA counts > 0 in lcov.info), so fresh coverage is non-zero.
+    // baz() and the BarCls constructor have no covered lines in lcov.info.
     private const val SCOPE = """
       {
         "files" : [ {
           "path" : "FooCls.ts",
-          "added" : [ {
-            "firstLine" : 19,
-            "count" : 3
-          } ],
+          "added" : [
+            {
+              "firstLine" : 19,
+              "count" : 3
+            },
+            {
+              "firstLine" : 26,
+              "count" : 8
+            },
+            {
+              "firstLine" : 58,
+              "count" : 8
+            }
+          ],
           "deleted" : [ ]
         } ]
       }

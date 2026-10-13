@@ -101,7 +101,7 @@ class JvmMultiModuleCoverageUiTest : QodanaCoverageUiTestBase("JvmMultiModuleCov
 
     openFileInEditor("app/src/main/kotlin/com/example/app/App.kt")
     assertEquals(
-      mapOf(7 to LineCoverage.FULL),
+      mapOf(7 to LineCoverage.FULL, 12 to LineCoverage.NONE),
       gutterCoverage("app/src/main/kotlin/com/example/app/App.kt")
     )
 

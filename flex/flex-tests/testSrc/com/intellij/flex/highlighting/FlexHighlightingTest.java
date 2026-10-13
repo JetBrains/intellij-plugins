@@ -65,6 +65,7 @@ import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.properties.PropertiesBundle;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.XmlHighlighterColors;
@@ -1573,7 +1574,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       JSDialectSpecificHandlersFactory.forLanguage(FlexSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
     final JSClass jsClass =
       (JSClass)resolver.findClassByQName("mx.controls.CheckBox", GlobalSearchScope.moduleWithLibrariesScope(myModule));
-    final Collection<PsiReference> usages = ReferencesSearch.search(jsClass, GlobalSearchScope.moduleScope(myModule)).findAll();
+    final Collection<PsiReference> usages =
+      ReadAction.computeBlocking(() -> ReferencesSearch.search(jsClass, GlobalSearchScope.moduleScope(myModule)).findAll());
     assertEquals(1, usages.size());
   }
 

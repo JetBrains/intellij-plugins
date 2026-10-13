@@ -3,7 +3,7 @@ package com.intellij.prettierjs
 
 import com.intellij.codeInsight.actions.FileTreeIterator
 import com.intellij.codeInsight.actions.VcsFacade
-import com.intellij.ide.trustedProjects.TrustedFiles
+import com.intellij.ide.TrustedFiles
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.awaitFuture
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil.timeout
@@ -348,7 +348,7 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
 
         var offsetsToKeep: IntArray? = null
 
-        val editor = FileEditorManager.getInstance(project).getSelectedTextEditor()
+        val editor = FileEditorManager.getInstance(project).selectedTextEditor
         if (editor != null && !editor.isDisposed() && editor.virtualFile == currentVFile) {
           offsetsToKeep = intArrayOf(editor.getCaretModel().offset)
         }

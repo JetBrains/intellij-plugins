@@ -29,7 +29,7 @@ jvm_library(
         "//contrib/mdx/shared",
         "@community//platform/core-api:core",
         "@community//platform/util",
-        "//plugins/js/react/shared",
+        "//plugins/javascript/react/shared",
         "@community//xml/emmet",
     ],
 )
@@ -50,7 +50,7 @@ jvm_library(
         "//contrib/mdx/shared:shared_test_lib",
         "@community//platform/core-api:core_test_lib",
         "@community//platform/util:util_test_lib",
-        "//plugins/js/react/shared:shared_test_lib",
+        "//plugins/javascript/react/shared:shared_test_lib",
         "@community//xml/emmet:emmet_test_lib",
     ],
 )

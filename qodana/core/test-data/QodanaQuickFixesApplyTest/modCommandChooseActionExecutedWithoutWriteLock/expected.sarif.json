@@ -1,0 +1,58 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "testGlobalSimpleInspectionName",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "The file does not start with '// test' comment",
+            "markdown": "The file does not start with '// test' comment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/Main.java",
+                  "uriBaseId": "SRCROOT"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testModCommandChooseActionExecutedWithoutWriteLock",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "cf47624dc0e7b3a3",
+            "equalIndicator/v1": "82313ba3875181f90edd4263df25f082142dbca3ddeccbaa05f88d964c31e1ae"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

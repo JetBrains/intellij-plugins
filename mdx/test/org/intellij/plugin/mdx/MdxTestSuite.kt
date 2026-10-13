@@ -7,6 +7,7 @@ import org.junit.platform.suite.api.Suite
 @SelectClasses(
   MdxAutoImportTest::class,
   MdxCompletionTest::class,
+  MdxCommenterTest::class,
   MdxEmmetTest::class,
   MdxFormatterTest::class,
   MdxHighlightTest::class,

@@ -2,20 +2,27 @@
 package org.intellij.terraform.hil;
 
 import com.intellij.lexer.Lexer;
-import com.intellij.testFramework.LexerTestCase;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixtures;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-public class HILLexerTest extends LexerTestCase {
-  @Override
-  protected @NotNull Lexer createLexer() {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixtureKt.lexerFixture;
+
+@TestFixtures
+public class HILLexerTest {
+  private final TestFixture<LexerTestFixture> lexerTestFixture = lexerFixture("data/hil/lexer", () -> createLexer());
+
+  private static @NotNull Lexer createLexer() {
     return new HILLexer();
   }
 
-  @Override
-  protected @NotNull String getDirPath() {
-    return "data/hil/lexer";
+  private void doTest(@NotNull String text, @NotNull String expected) {
+    lexerTestFixture.get().doTest(text, expected);
   }
 
+  @Test
   public void testLogicalOps() {
     doTest("true && true", """
       true ('true')
@@ -33,6 +40,7 @@ public class HILLexerTest extends LexerTestCase {
         "true ('true')");
   }
 
+  @Test
   public void testCompareOps() {
     doTest("1==2", """
       NUMBER ('1')
@@ -60,6 +68,7 @@ public class HILLexerTest extends LexerTestCase {
       NUMBER ('2')""");
   }
 
+  @Test
   public void testTernaryOp() {
     doTest("true ? 1 : 2", """
       true ('true')
@@ -73,6 +82,7 @@ public class HILLexerTest extends LexerTestCase {
       NUMBER ('2')""");
   }
 
+  @Test
   public void testTernaryOpWithInterpolationBranch() {
     doTest("true ? 1 : \"${\"x\"}\"", """
       true ('true')
@@ -86,6 +96,7 @@ public class HILLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${"x"}"')""");
   }
 
+  @Test
   public void testMultiline() {
     doTest("1 +\n2", """
       NUMBER ('1')
@@ -95,22 +106,27 @@ public class HILLexerTest extends LexerTestCase {
       NUMBER ('2')""");
   }
 
+  @Test
   public void testMultilineStringInception() {
     doTest("\"${\n\"x\"\n}\"", "DOUBLE_QUOTED_STRING ('\"${\\n\"x\"\\n}\"')");
   }
 
+  @Test
   public void testMultilineStringInception2() {
     doTest("\"${\n\"x\n y\"}\"", "DOUBLE_QUOTED_STRING ('\"${\\n\"x\\n y\"}\"')");
   }
 
+  @Test
   public void testMultilineStringInception3() {
     doTest("\"${\"${1\n+1}\n \"}", "DOUBLE_QUOTED_STRING ('\"${\"${1\\n+1}\\n \"}')");
   }
 
+  @Test
   public void testEscapesInString() {
     doTest("\"\\\\\"", "DOUBLE_QUOTED_STRING ('\"\\\\\"')");
   }
 
+  @Test
   public void testEscapesInString2() {
     doTest("join(\"\\\",\\\"\", x)", """
       ID ('join')
@@ -122,6 +138,7 @@ public class HILLexerTest extends LexerTestCase {
       ) (')')""");
   }
 
+  @Test
   public void testUnsupportedOps() {
     doTest("1|2", """
       NUMBER ('1')
@@ -137,6 +154,7 @@ public class HILLexerTest extends LexerTestCase {
       NUMBER ('2')""");
   }
 
+  @Test
   public void testClosingCurlyBraceInString() {
     doTest("${x(\"\\\"}\\\\\")}", """
       ${ ('${')
@@ -147,6 +165,7 @@ public class HILLexerTest extends LexerTestCase {
       } ('}')""");
   }
 
+  @Test
   public void testIdStartsWithNumber() {
     doTest("${null_resource.2a.id}", """
       ${ ('${')
@@ -158,6 +177,7 @@ public class HILLexerTest extends LexerTestCase {
       } ('}')""");
   }
 
+  @Test
   public void testIdIsHexNumber() {
     doTest("${null_resource.0x0.id}", """
       ${ ('${')
@@ -169,6 +189,7 @@ public class HILLexerTest extends LexerTestCase {
       } ('}')""");
   }
 
+  @Test
   public void testNumbers() {
     doTest("0", "NUMBER ('0')");
     doTest("0x0", "NUMBER ('0x0')");
@@ -178,6 +199,7 @@ public class HILLexerTest extends LexerTestCase {
     doTest("0x0.0e+0", "NUMBER ('0x0.0e+0')");
   }
 
+  @Test
   public void testNumberOps() {
     doTest("1+1", "NUMBER ('1')\n+ ('+')\nNUMBER ('1')\n");
     doTest("1-1", "NUMBER ('1')\n- ('-')\nNUMBER ('1')\n");
@@ -185,6 +207,7 @@ public class HILLexerTest extends LexerTestCase {
     doTest("1/1", "NUMBER ('1')\n/ ('/')\nNUMBER ('1')\n");
   }
 
+  @Test
   public void testTemplateFor() {
     doTest("%{for a, b in var.test~} 123 %{endfor} ", """
       TEMPLATE_START ('%{')
@@ -210,6 +233,7 @@ public class HILLexerTest extends LexerTestCase {
       WHITE_SPACE (' ')""".trim());
   }
 
+  @Test
   public void testArray() {
     doTest("${[true,false,]}", """
       ${ ('${')
@@ -222,6 +246,7 @@ public class HILLexerTest extends LexerTestCase {
       } ('}')""");
   }
 
+  @Test
   public void testObject() {
     doTest("${{a=1,b=2\nc=3}}}", """
       ${ ('${')
@@ -242,6 +267,7 @@ public class HILLexerTest extends LexerTestCase {
       } ('}')""");
   }
 
+  @Test
   public void testProviderFunctionCall() {
     doTest("provider::aws::createInstance()", """
       ID ('provider')
@@ -253,6 +279,7 @@ public class HILLexerTest extends LexerTestCase {
       ) (')')""".trim());
   }
 
+  @Test
   public void testNestedProviderFunctionCall() {
     doTest("provider::custom::outer(provider::inner::compute(42))", """
       ID ('provider')
@@ -272,6 +299,7 @@ public class HILLexerTest extends LexerTestCase {
       ) (')')""".trim());
   }
 
+  @Test
   public void testInvalidProviderFunctionCall_MissingParentheses() {
     doTest("provider::aws::createInstance", """
       ID ('provider')

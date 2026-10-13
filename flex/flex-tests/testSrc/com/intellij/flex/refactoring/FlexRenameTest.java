@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.rename.JSInplaceRenameHandler;
 import com.intellij.lang.refactoring.NamesValidator;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -611,7 +612,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
       if (element != null) object = element;
     }
 
-    PsiElement additionalTarget = null;
+    PsiElement additionalTarget;
 
     if (object instanceof JSClass) {
       additionalTarget = ((JSClass)object).getConstructor();
@@ -619,10 +620,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     else if (object instanceof JSFunction && ((JSFunction)object).isConstructor()) {
       additionalTarget = object.getParent();
     }
+    else {
+      additionalTarget=null;
+    }
 
     Set<PsiReference> uniquesSet = ContainerUtil.newHashSet(references);
     if (additionalTarget != null) {
-      uniquesSet.addAll(ReferencesSearch.search(additionalTarget, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll());
+      uniquesSet.addAll(
+        ReadAction.computeBlocking(()->ReferencesSearch.search(additionalTarget, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll()));
     }
 
     if (object instanceof JSFunction) {
@@ -630,7 +635,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
         new CommonProcessors.CollectProcessor<>(Collections.synchronizedList(new ArrayList<>()));
       JSInheritanceUtil.iterateMethodsDown((JSFunction)object, allFunctions);
       for (JSFunction function : allFunctions.getResults()) {
-        uniquesSet.addAll(ReferencesSearch.search(function, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll());
+        uniquesSet.addAll(ReadAction.computeBlocking(()->ReferencesSearch.search(function, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll()));
       }
     }
     references = uniquesSet.toArray(PsiReference.EMPTY_ARRAY);

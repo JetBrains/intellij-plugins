@@ -3,7 +3,6 @@ package com.intellij.javascript.ift.lesson.editor
 
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.ift.JsLessonsBundle
-import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import training.dsl.LessonContext
 import training.dsl.LessonUtil
@@ -38,7 +37,6 @@ internal class CodeInspectionLesson
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        setLanguageLevel()
         prepareSample(sample)
         task("GotoNextError") {
           text(JsLessonsBundle.message("js.editor.code.inspection.intro", action(it)))

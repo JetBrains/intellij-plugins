@@ -9,6 +9,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
+import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
@@ -16,6 +17,7 @@ import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy
+@TestTsKotlin
 class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
 
   @Test
@@ -56,6 +58,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler") {
   @Test
   fun testSafeAccess() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_17_3_0,
+  )
+
+  @Test
+  fun testSafeNavigationMigration() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_22_0_8,
   )
 
   @Test

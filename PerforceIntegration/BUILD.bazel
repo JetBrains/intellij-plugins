@@ -5,6 +5,13 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### auto-generated section `dev intellij.vcs.perforce` start
 dev_dist_plugin(
     content_modules = ["intellij.vcs.perforce.util"],
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/vcs-perforce.jar": [
+            "intellij.vcs.perforce",
+            "intellij.vcs.perforce.util",
+        ],
+    },
     main_module = "intellij.vcs.perforce",
 )
 ### auto-generated section `dev intellij.vcs.perforce` end

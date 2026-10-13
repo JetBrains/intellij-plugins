@@ -49,6 +49,7 @@
       <module name="intellij.platform.indexing"/>
       <module name="intellij.platform.lang"/>
       <module name="intellij.platform.lang.impl"/>
+      <module name="intellij.platform.lsp"/>
       <module name="intellij.platform.markdown.utils"/>
       <module name="intellij.platform.projectModel"/>
       <module name="intellij.platform.refactoring"/>
@@ -75,7 +76,7 @@
         <!-- Syntax Highlighting -->
         <lang.syntaxHighlighter language="Prisma"
                                 implementationClass="org.intellij.prisma.ide.highlighting.PrismaSyntaxHighlighter"/>
-        <colorSettingsPage implementation="org.intellij.prisma.ide.highlighting.PrismaColorSettingsPage"/>
+        <colorSettings implementation="org.intellij.prisma.ide.highlighting.PrismaColorSettingsPage" displayName="Prisma"/>
         <annotator language="Prisma"
                    implementationClass="org.intellij.prisma.ide.highlighting.PrismaHighlightingAnnotator"/>
 

@@ -85,6 +85,7 @@ class Angular2HtmlFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLe
     )
     private val COMMENTS = TokenSet.orSet(
       JSElementTypes.COMMENTS,
+      Angular2HtmlTokenTypes.IN_ELEMENT_COMMENTS,
       TokenSet.create(XmlTokenType.XML_COMMENT_CHARACTERS)
     )
     private val LITERALS = TokenSet.orSet(

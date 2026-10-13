@@ -2,16 +2,16 @@
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptVariableImpl
 import com.intellij.lang.javascript.psi.impl.JSParameterImpl
 import com.intellij.lang.javascript.psi.util.JSDestructuringUtil
-import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsParameter
@@ -28,20 +28,17 @@ class VueJSSlotPropsParameterImpl(node: ASTNode) : JSParameterImpl(node), VueJSS
   override fun getDeclarationScope(): PsiElement? =
     PsiTreeUtil.getContextOfType(this, XmlTag::class.java, PsiFile::class.java)
 
-  override fun calculateType(): JSType? {
-    val type = calculateDeclaredType() ?: JSDestructuringUtil.getTypeFromInitializer(this) {
-      getSlotTypeFromContext(this)
+  override fun getJSType(): JSType? =
+    CachedValuesManager.getCachedValue(this) {
+      var type = calculateDeclarationTypeStubSafe()
+      if (type == null) {
+        val inferredOrFromDestructuringType =
+          TypeScriptVariableImpl.calculateDestructuringTypeStubSafe(this)
+          ?: JSDestructuringUtil.getTypeFromInitializer(this) {
+            getSlotTypeFromContext(this)
+          }
+        type = inferredOrFromDestructuringType?.asCompleteType()
+      }
+      CachedValueProvider.Result.create(type, this)
     }
-
-    return type?.asCompleteType()
-  }
-
-  private fun calculateDeclaredType(): JSType? {
-    if (!DialectDetector.isTypeScript(this)) return null
-
-    return TypeScriptPsiUtil.getTypeFromDeclaration(this)
-           ?: TypeScriptVariableImpl.calculateDestructuringTypeStubSafe(this)
-  }
-
-  override fun shouldSerializeType(): Boolean = true
 }

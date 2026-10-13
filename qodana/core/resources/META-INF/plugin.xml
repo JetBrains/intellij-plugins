@@ -440,6 +440,9 @@
     <extensionPoint name="customInspectionLicenseRule"
                     interface="org.jetbrains.qodana.license.CustomInspectionLicenseRule"
                     dynamic="true"/>
+    <extensionPoint name="codeQualityCategoryProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.sarif.CodeQualityCategoryProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">

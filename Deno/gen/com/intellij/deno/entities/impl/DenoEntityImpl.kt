@@ -85,7 +85,9 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         getEntityData(true).depsFile = value
         changedProperty.add("depsFile")
         val _diff = diff
-        if (_diff != null) index(this, "depsFile", value)
+        if (_diff != null) {
+          index(this, "depsFile", value)
+        }
       }
     override var denoTypes: VirtualFileUrl?
       get() = getEntityData().denoTypes
@@ -94,7 +96,9 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         getEntityData(true).denoTypes = value
         changedProperty.add("denoTypes")
         val _diff = diff
-        if (_diff != null) index(this, "denoTypes", value)
+        if (_diff != null) {
+          index(this, "denoTypes", value)
+        }
       }
 
     override fun getEntityClass(): Class<DenoEntity> = DenoEntity::class.java

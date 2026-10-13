@@ -3,27 +3,39 @@ package org.intellij.terraform.config;
 
 import com.google.common.base.Strings;
 import com.intellij.lexer.Lexer;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixture;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.testFramework.LexerTestCase;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixtures;
 import org.intellij.terraform.hcl.HCLElementTypes;
 import org.intellij.terraform.hcl.HCLParserDefinitionKt;
 import org.intellij.terraform.hcl.refactoring.HCLElementRenameValidator;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class HCLLexerTest extends LexerTestCase {
-  @Override
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.LexerTestFixtureKt.lexerFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestFixtures
+public class HCLLexerTest {
+  private final TestFixture<LexerTestFixture> lexerTestFixture = lexerFixture("data/hcl/lexer", () -> createLexer());
+
   protected @NotNull Lexer createLexer() {
     return HCLParserDefinitionKt.createHclLexer();
   }
 
-  @Override
-  protected @NotNull String getDirPath() {
-    return "data/hcl/lexer";
+  protected void doTest(@NotNull String text, @NotNull String expected) {
+    lexerTestFixture.get().doTest(text, expected);
   }
 
+  @Test
   public void testSimple() {
     doTest("a=1", """
       ID ('a')
@@ -31,6 +43,7 @@ public class HCLLexerTest extends LexerTestCase {
       NUMBER ('1')""");
   }
 
+  @Test
   public void testNumberWithSuffix() {
     doTest("a=[1k, 1Kb]", """
       ID ('a')
@@ -45,6 +58,7 @@ public class HCLLexerTest extends LexerTestCase {
       ] (']')""");
   }
 
+  @Test
   public void testStringWithCurves() {
     doTest("a=\"{}\"", """
       ID ('a')
@@ -52,6 +66,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"{}"')""");
   }
 
+  @Test
   public void testStringWith$() {
     doTest("dollar=\"$\"", """
       ID ('dollar')
@@ -59,6 +74,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"$"')""");
   }
 
+  @Test
   public void testQuotes1() {
     doTest("a='\"1\"'", """
       ID ('a')
@@ -66,6 +82,7 @@ public class HCLLexerTest extends LexerTestCase {
       SINGLE_QUOTED_STRING (''"1"'')""");
   }
 
+  @Test
   public void testQuotes2() {
     doTest("a=\"'1'\"", """
       ID ('a')
@@ -73,6 +90,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"'1'"')""");
   }
 
+  @Test
   public void testTerraformIL() {
     doTest("count = \"${count()}\"", """
       ID ('count')
@@ -82,6 +100,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${count()}"')""");
   }
 
+  @Test
   public void testTerraformILInception() {
     doTest("count = \"${foo(${bar()})}\"", """
       ID ('count')
@@ -91,6 +110,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${foo(${bar()})}"')""");
   }
 
+  @Test
   public void testTerraformILInception2() {
     doTest("count = \"${${}}\"", """
       ID ('count')
@@ -100,6 +120,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${${}}"')""");
   }
 
+  @Test
   public void testTerraformILWithString() {
     doTest("count = \"${call(\"count\")}\"", """
       ID ('count')
@@ -109,6 +130,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${call("count")}"')""");
   }
 
+  @Test
   public void testTerraformILWithString2() {
     doTest("count = '${call(\"count\")}'", """
       ID ('count')
@@ -118,6 +140,7 @@ public class HCLLexerTest extends LexerTestCase {
       SINGLE_QUOTED_STRING (''${call("count")}'')""");
   }
 
+  @Test
   public void testComplicatedTerraformConfigWithILStings() {
     doTest("container_definitions = \"${file(\"ecs-container-definitions.json\")}\"", """
       ID ('container_definitions')
@@ -127,6 +150,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${file("ecs-container-definitions.json")}"')""");
   }
 
+  @Test
   public void testUnfinishedString() {
     doTest("a=\"x\"\"\n", """
       ID ('a')
@@ -136,6 +160,7 @@ public class HCLLexerTest extends LexerTestCase {
       WHITE_SPACE ('\\n')""");
   }
 
+  @Test
   public void testUnfinishedString2() {
     doTest("a=\r\n\"x\"\"\r\n", """
       ID ('a')
@@ -148,6 +173,7 @@ public class HCLLexerTest extends LexerTestCase {
       \\n')""");
   }
 
+  @Test
   public void testUnfinishedStringInObjectSingleLine() {
     doTest("a={y = \"x\"\"}", """
       ID ('a')
@@ -161,6 +187,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"}')""");
   }
 
+  @Test
   public void testUnfinishedStringInObjectMultiLine() {
     doTest("a={\ny = \"x\"\"\n}", """
       ID ('a')
@@ -177,6 +204,7 @@ public class HCLLexerTest extends LexerTestCase {
       } ('}')""");
   }
 
+  @Test
   public void testUnfinishedStringWithBackslash() {
     doTest("a=\"x\\\ny\"", """
       ID ('a')
@@ -187,6 +215,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"')""");
   }
 
+  @Test
   public void testUnfinishedInterpolation() {
     doTest("a = \"${b(\"c\")}${{}}\"", """
       ID ('a')
@@ -196,6 +225,7 @@ public class HCLLexerTest extends LexerTestCase {
       DOUBLE_QUOTED_STRING ('"${b("c")}${{}}"')""");
   }
 
+  @Test
   public void testUnfinishedInterpolation2() {
     doTest("a = \"${b(\"c\")}${{}}\"\nx=y", """
       ID ('a')
@@ -209,6 +239,7 @@ public class HCLLexerTest extends LexerTestCase {
       ID ('y')""");
   }
 
+  @Test
   public void testMultilineString() {
     doTest("ml=\"hello\n  world\"", """
       ID ('ml')
@@ -220,6 +251,7 @@ public class HCLLexerTest extends LexerTestCase {
       """);
   }
 
+  @Test
   public void testHereDoc() {
     doTest("""
              foo = <<EOF
@@ -242,6 +274,7 @@ public class HCLLexerTest extends LexerTestCase {
              """);
   }
 
+  @Test
   public void testHereDoc2() {
     doTest("""
              foo = <<EOF
@@ -265,6 +298,7 @@ public class HCLLexerTest extends LexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
+  @Test
   public void testHereDoc_Indented() {
     doTest("""
              foo = <<-EOF
@@ -288,6 +322,7 @@ public class HCLLexerTest extends LexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
+  @Test
   public void testHereDoc_Indented_End() {
     doTest("""
              foo = <<EOF
@@ -311,6 +346,7 @@ public class HCLLexerTest extends LexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
+  @Test
   public void testHereDoc_Empty() {
     doTest("foo = <<EOF\n" +
             "EOF",
@@ -326,6 +362,7 @@ public class HCLLexerTest extends LexerTestCase {
              """);
   }
 
+  @Test
   public void testHereDoc_EmptyLines() {
     doTest("""
              foo = <<EOF
@@ -348,6 +385,7 @@ public class HCLLexerTest extends LexerTestCase {
              """);
   }
 
+  @Test
   public void testHereDoc_SingleLineEmpty() {
     doTest("""
              foo = <<EOF
@@ -367,6 +405,7 @@ public class HCLLexerTest extends LexerTestCase {
              """);
   }
 
+  @Test
   public void testHereDoc_Incomplete() {
     doTest("""
              foo = <<EOF
@@ -385,6 +424,7 @@ public class HCLLexerTest extends LexerTestCase {
              BAD_CHARACTER ('')""");
   }
 
+  @Test
   public void testHereDoc_IncompleteStart() {
     doTest("""
              foo = <<
@@ -401,6 +441,7 @@ public class HCLLexerTest extends LexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
+  @Test
   public void testHereDoc_BackSlash_Start() {
     doTest("""
              foo = <<EOF\\
@@ -420,6 +461,7 @@ public class HCLLexerTest extends LexerTestCase {
              WHITE_SPACE ('\\n')""");
   }
 
+  @Test
   public void testHereDoc_BackSlash_Line() {
     doTest("""
              foo = <<EOF
@@ -450,7 +492,7 @@ public class HCLLexerTest extends LexerTestCase {
     assertEquals(0, lexer.getState());
 
     lexer.advance();
-    assertNull("Should be only one token in: " + text + "\nSecond is " + lexer.getTokenType() + "(" + lexer.getTokenText() + ")", lexer.getTokenType());
+    assertNull(lexer.getTokenType(), "Should be only one token in: " + text + "\nSecond is " + lexer.getTokenType() + "(" + lexer.getTokenText() + ")");
 
     assertEquals(0, lexer.getState());
     assertEquals(expected, first);
@@ -458,6 +500,7 @@ public class HCLLexerTest extends LexerTestCase {
 
   // testSimpleTokens_* methods uses inputs from hcl/scanner/scanner_test.go#tokenLists
 
+  @Test
   public void testSimpleTokens_Comment() {
     List<String> line_c_comments = Arrays.asList(
         "//",
@@ -505,11 +548,13 @@ public class HCLLexerTest extends LexerTestCase {
     }
   }
 
+  @Test
   public void testSimpleTokens_Boolean() {
     doSimpleTokenTest(HCLElementTypes.TRUE, "true");
     doSimpleTokenTest(HCLElementTypes.FALSE, "false");
   }
 
+  @Test
   public void testSimpleTokens_Identifier() {
     List<String> identifiers = Arrays.asList(
         "a",
@@ -534,11 +579,12 @@ public class HCLLexerTest extends LexerTestCase {
     HCLElementRenameValidator validator = new HCLElementRenameValidator();
     for (String input : identifiers) {
       doSimpleTokenTest(HCLElementTypes.ID, input);
-      assertTrue(input, validator.isInputValid(input, false));
-      assertTrue(input, validator.isInputValid(input, true));
+      assertTrue(validator.isInputValid(input, false), input);
+      assertTrue(validator.isInputValid(input, true), input);
     }
   }
 
+  @Test
   public void testSimpleTokens_String() {
     List<String> strings = Arrays.asList(
         "\" \"",
@@ -567,6 +613,7 @@ public class HCLLexerTest extends LexerTestCase {
     }
   }
 
+  @Test
   public void testSimpleTokens_Number() {
     List<String> numbers = Arrays.asList(
         "0",
@@ -621,6 +668,7 @@ public class HCLLexerTest extends LexerTestCase {
     }
   }
 
+  @Test
   public void testSimpleTokens_Float() {
     List<String> floats = Arrays.asList(
         "0.0",
@@ -701,6 +749,7 @@ public class HCLLexerTest extends LexerTestCase {
     }
   }
 
+  @Test
   public void testNonEscapedQuote() {
     doTest("""
              x=[
@@ -721,6 +770,7 @@ public class HCLLexerTest extends LexerTestCase {
   }
 
   // From several 'panic' issues in HCL itself
+  @Test
   public void testBrokenInput() {
     doTestNoException("{\"\\0"); // #194
     doTestNoException("wÔΩø\u00dc<<070005000\n"); // #130
@@ -731,7 +781,7 @@ public class HCLLexerTest extends LexerTestCase {
 
   private void doTestNoException(String input) {
     try {
-      printTokens(input, 0, createLexer());
+      LexerTestFixture.printTokens(input, 0, createLexer());
     } catch (Throwable t) {
       fail("Unexpected exception in lexer:" + t.getMessage());
     }
