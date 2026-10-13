@@ -182,6 +182,8 @@ jvm_library(
         # do not sort,
         "@community//libraries/jetbrains/annotations",
         "//contrib/javascript/eslint",
+        "//contrib/vuejs/vuejs-plugin:plugin",
+        "@community//idea/customization/plugin",
     ],
 )
 
@@ -207,6 +209,8 @@ jvm_library(
         ":eslint-tests",
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "//contrib/vuejs/vuejs-plugin:plugin_test_lib",
+        "@community//idea/customization/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,

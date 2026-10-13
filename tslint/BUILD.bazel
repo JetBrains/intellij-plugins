@@ -137,7 +137,19 @@ jvm_library(
     ),
     module_name = "intellij.tslint.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "//plugins/JavaScriptLanguage/plugin",
+        "@community//xml/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//platform/problemsView/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/vcs/plugin",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//platform/navbar/plugin",
+        "@community//json/networknt.wrapper",
+    ],
 )
 
 jvm_library(
@@ -162,6 +174,15 @@ jvm_library(
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//platform/navbar/plugin:plugin_test_lib",
+        "@community//json/networknt.wrapper:networknt.wrapper_test_lib",
     ],
     deps = [
         # do not sort,

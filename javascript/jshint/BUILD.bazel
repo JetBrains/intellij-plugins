@@ -133,6 +133,17 @@ jvm_library(
     ),
     module_name = "intellij.javascript.jshint.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/plugin",
+        "@community//xml/plugin",
+        "@community//platform/testRunner/plugin",
+        "@community//platform/problemsView/plugin",
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/vcs/plugin",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "@community//platform/navbar/plugin",
+    ],
 )
 
 jvm_library(
@@ -156,6 +167,14 @@ jvm_library(
         # do not sort,
         ":jshint-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "@community//xml/plugin:plugin_test_lib",
+        "@community//platform/testRunner/plugin:plugin_test_lib",
+        "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
+        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
+        "@community//platform/navbar/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
