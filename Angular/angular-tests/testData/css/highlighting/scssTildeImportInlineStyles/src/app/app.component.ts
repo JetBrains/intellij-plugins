@@ -6,6 +6,7 @@ import {Component} from '@angular/core';
   styles: [`
     @import '~node_modules/bootstrap/scss/functions';
     @import '~node_modules/bootstrap/scss/variables';
+    @import '~node_modules/<error descr="Cannot resolve file 'foo'">foo</error>';
 
     .cls {
       color: $red-100;
