@@ -1,6 +1,7 @@
 package org.angular2.entities
 
-import com.intellij.javascript.typeEngine.getTSType
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -32,8 +33,7 @@ interface Angular2ClassBasedDirectiveProperty : Angular2DirectiveProperty {
 
   override val transformParameterType: JSType?
     get() = objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)
-      ?.getTSType()
-      ?.asJSType()
+      ?.getJSType(JSTypeEngineMode.Service)
       ?.asRecordType(owner)
       ?.callSignatures
       ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.isNotEmpty() }?.get(0) }

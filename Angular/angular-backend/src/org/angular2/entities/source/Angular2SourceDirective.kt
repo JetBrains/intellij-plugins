@@ -1,7 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
-import com.intellij.javascript.typeEngine.getTSType
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunction
@@ -365,7 +366,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       var hasViewContainerRef = false
       var isTemplateRefOptional = false
       list.forEach {
-        val typeText = it.getTSType()?.asJSType()
+        val typeText = it.getJSType(JSTypeEngineMode.Service)
                          ?.let { type -> if (type is TypeScriptCompilerType || type is JSWidenType) type.substitute(clazz) else type }
                          ?.typeText
                        ?: return@forEach
