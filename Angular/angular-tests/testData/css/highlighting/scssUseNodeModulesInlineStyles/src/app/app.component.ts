@@ -6,6 +6,7 @@ import {Component} from '@angular/core';
   styles: `
     @use '@angular/material' as mat;
     @use 'theme';
+    @use '<error descr="Cannot resolve file 'foo'">foo</error>';
 
     div {
       @include mat.elevation(3);

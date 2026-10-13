@@ -6,6 +6,7 @@ import {Component} from '@angular/core';
   styles: `
     @import '~node_modules/my-lib/styles/variables';
     @import 'my-lib/styles/variables';
+    @import 'my-lib/styles/<error descr="Cannot resolve file 'foo'">foo</error>';
 
     .cls {
       color: @my-color;

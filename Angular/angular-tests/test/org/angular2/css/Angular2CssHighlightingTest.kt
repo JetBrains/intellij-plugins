@@ -17,15 +17,12 @@ import org.junit.Test
 @TestTsKotlin
 class Angular2CssHighlightingTest : Angular2TestCase("css/highlighting") {
 
-  // WEB-63400
   @Test
   fun testCssAmpersandSelector() = checkHighlighting()
 
-  // WEB-63587
   @Test
   fun testLessParentSelector() = checkHighlighting(extension = "less")
 
-  // WEB-63587
   @Test
   fun testPcssAmpersand() = checkHighlighting(extension = "pcss")
 
@@ -38,15 +35,12 @@ class Angular2CssHighlightingTest : Angular2TestCase("css/highlighting") {
   @Test
   fun testHostBindingDecoratorClassUnused() = checkHighlighting(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
-  // WEB-79721
   @Test
   fun testScssUseNodeModulesInlineStyles() = checkInlineStylesImports()
 
-  // WEB-56888
   @Test
   fun testScssTildeImportInlineStyles() = checkInlineStylesImports()
 
-  // WEB-56888
   @Test
   fun testLessTildeImportInlineStyles() = checkInlineStylesImports()
 
