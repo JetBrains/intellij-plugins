@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.nodejs.library.nodeModulesDir.NodeModulesDirectoryManager
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -50,5 +51,5 @@ internal fun getVueSymbolsCacheDependencies(
     DumbService.getInstance(project).modificationTracker.takeIf { !withPsiModificationTracker },
     StubIndex.getInstance().getStubIndexModificationTracker(project).takeIf { !withPsiModificationTracker },
     NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
-    optimizedGraphModificationTracker(project).takeIf { withGraphModificationTracker },
+    TypeScriptConfigService.Provider.get(project).graphModificationTracker.takeIf { withGraphModificationTracker },
   )
