@@ -40,17 +40,17 @@ export class SettingsComponent {
     standalone: true,
     selector: 'cdt-settings',
     template: `
-    <div (click)="check(12 | async)" [title]="12 | json">
-      {{ 12 | date}}
-    </div>
-    <div *ngFor="let item of [12 | percent, 13]">
-      {{ item }}
-    </div>
-    <div [ngStyle]="{'foo': true}"></div>
-    @if (12 | number) {
+        <div (click)="check(12 | async)" [title]="12 | json">
+            {{ 12 | date }}
+        </div>
+        <div *ngFor="let item of [12 | percent, 13]">
+            {{ item }}
+        </div>
+        <div [ngStyle]="{'foo': true}"></div>
+        @if (12 | number) {
 
-    }
-  `,
+        }
+    `,
     imports: [
         AsyncPipe, // incorrectly used in event binding
         DatePipe, // used in an interpolation

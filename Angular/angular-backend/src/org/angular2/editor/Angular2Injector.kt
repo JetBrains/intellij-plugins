@@ -3,11 +3,11 @@ package org.angular2.editor
 
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
-import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil
 import com.intellij.lang.javascript.injections.JSInjectionUtil
+import com.intellij.lang.javascript.injections.JSReformattableHostInjector
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -44,7 +44,7 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import java.util.function.Consumer
 
-class Angular2Injector : MultiHostInjector {
+class Angular2Injector : JSReformattableHostInjector {
   internal object Holder {
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil
       .delimitersFactory(Angular2HtmlLanguage.displayName) { _, _ -> null }/* no support for custom delimiters*/
@@ -54,12 +54,22 @@ class Angular2Injector : MultiHostInjector {
     return listOf(JSLiteralExpression::class.java, XmlText::class.java)
   }
 
+  override fun isReformattableInjectionHost(host: PsiElement): Boolean {
+    val parent = host.parent ?: return false
+    if (!(host is JSLiteralExpression && host.isQuotedLiteral) || !isInjectionContext(parent)) {
+      return false
+    }
+    val ancestor = when {
+      isPropertyWithName(parent, TEMPLATE_PROP) -> parent
+      isStylesValue(parent) -> parent.parent
+      else -> findHostBinding(host, parent)?.first
+    }
+    return ancestor != null && isInAngularEntityDecorator(ancestor)
+  }
+
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
-    val parent = context.parent
-    if (parent == null
-        || parent.language is Angular2ExprDialect
-        || parent.language is Angular2HtmlDialect
-        || !Angular2LangUtil.isAngular2Context(context)) {
+    val parent = context.parent ?: return
+    if (!isInjectionContext(parent) || !Angular2LangUtil.isAngular2Context(parent)) {
       return
     }
 
@@ -77,10 +87,8 @@ class Angular2Injector : MultiHostInjector {
       return
     }
 
-    val grandParent = parent.parent
-    if ((parent is JSArrayLiteralExpression && isPropertyWithName(grandParent, STYLES_PROP))
-        || isPropertyWithName(parent, STYLES_PROP)) {
-      injectIntoDecoratorExpr(registrar, context, grandParent, getCssDialect(context), null)
+    if (isStylesValue(parent)) {
+      injectIntoDecoratorExpr(registrar, context, parent.parent, getCssDialect(context), null)
       return
     }
 
@@ -88,15 +96,28 @@ class Angular2Injector : MultiHostInjector {
       return
     }
 
-    if (parent is JSProperty && parent.parent is JSObjectLiteralExpression) {
-      val ancestor = parent.parent.parent
-      if (isPropertyWithName(ancestor, HOST_PROP)) {
-        val name = parent.name ?: return
-        val fileExtension = getExpressionFileExtension(context.textLength, name, true)
-                            ?: return
-        injectIntoDecoratorExpr(registrar, context, ancestor, Angular2ExprDialect.forContext(context), fileExtension)
-      }
-    }
+    val (hostProperty, fileExtension) = findHostBinding(context, parent) ?: return
+    injectIntoDecoratorExpr(registrar, context, hostProperty, Angular2ExprDialect.forContext(context), fileExtension)
+  }
+
+  private fun isInjectionContext(parent: PsiElement): Boolean =
+    parent.language !is Angular2ExprDialect
+    && parent.language !is Angular2HtmlDialect
+
+  private fun isStylesValue(parent: PsiElement): Boolean =
+    (parent is JSArrayLiteralExpression && isPropertyWithName(parent.parent, STYLES_PROP))
+    || isPropertyWithName(parent, STYLES_PROP)
+
+  /**
+   * Returns the `host` property and the injected file extension if [context] is a host binding expression.
+   */
+  private fun findHostBinding(context: JSLiteralExpression, parent: PsiElement): kotlin.Pair<PsiElement, String>? {
+    if (parent !is JSProperty || parent.parent !is JSObjectLiteralExpression) return null
+    val ancestor = parent.parent.parent
+    if (!isPropertyWithName(ancestor, HOST_PROP)) return null
+    val name = parent.name ?: return null
+    val fileExtension = getExpressionFileExtension(context.textLength, name, true) ?: return null
+    return ancestor to fileExtension
   }
 
   private fun getCssDialect(literalExpression: JSLiteralExpression): Language {
@@ -106,7 +127,7 @@ class Angular2Injector : MultiHostInjector {
       val angularConfig = AngularConfigProvider.findAngularConfig(file.project, file.virtualFile)
 
       if (angularConfig == null) {
-        return@getCachedValue create<Language>(CSSLanguage.INSTANCE, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        return@getCachedValue create(CSSLanguage.INSTANCE, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
 
       var cssDialect: Language = CSSLanguage.INSTANCE
@@ -176,15 +197,16 @@ class Angular2Injector : MultiHostInjector {
     language: Language,
     fileExtension: String?,
   ) {
-    val decorator = PsiTreeUtil.getContextOfType(ancestor, ES6Decorator::class.java)
-    if (decorator != null) {
-      if (isAngularEntityDecorator(decorator, true, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC)) {
-        inject(registrar, context, language, fileExtension) {
-          JSFormattableInjectionUtil.setReformattableInjection(context, it)
-        }
+    if (isInAngularEntityDecorator(ancestor)) {
+      inject(registrar, context, language, fileExtension) {
+        JSFormattableInjectionUtil.setReformattableInjection(context, it)
       }
     }
   }
+
+  private fun isInAngularEntityDecorator(ancestor: PsiElement): Boolean =
+    PsiTreeUtil.getContextOfType(ancestor, ES6Decorator::class.java)
+      ?.let { isAngularEntityDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC) } == true
 
 
   private fun inject(

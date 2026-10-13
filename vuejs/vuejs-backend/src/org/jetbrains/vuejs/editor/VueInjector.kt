@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.editor
 
-import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
@@ -9,6 +8,7 @@ import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringL
 import com.intellij.lang.javascript.index.JavaScriptIndex
 import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil
 import com.intellij.lang.javascript.injections.JSInjectionUtil
+import com.intellij.lang.javascript.injections.JSReformattableHostInjector
 import com.intellij.lang.javascript.psi.JSDefinitionExpression
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -48,7 +48,7 @@ import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 
-internal class VueInjector : MultiHostInjector {
+internal class VueInjector : JSReformattableHostInjector {
   internal object Holder {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
@@ -100,6 +100,14 @@ internal class VueInjector : MultiHostInjector {
     }
   }
 
+  override fun isReformattableInjectionHost(host: PsiElement): Boolean {
+    val parent = host.parent
+    return parent != null
+           && findVueTemplateLiteral(host, parent) != null
+           && !inVPreContext(host)
+           && isVueContext(host)
+  }
+
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
     val parent = context.parent
     if (parent == null || !isVueContext(context)) return
@@ -134,14 +142,8 @@ internal class VueInjector : MultiHostInjector {
                                   braces.getFirst(), braces.getSecond(),
                                   VueExprParsing.INTERPOLATION)
     }
-    else if (context is JSLiteralExpressionImpl
-             && context.isQuotedLiteral
-             && context.isValidHost
-             && parent is JSProperty
-             && parent.name == TEMPLATE_PROP
-             && parent.parent is JSObjectLiteralExpression
-             && shouldInjectVueTemplate(context, parent.parent as JSObjectLiteralExpression)) {
-
+    else {
+      val template = findVueTemplateLiteral(context, parent) ?: return
       val braces = VueComponents.getComponent(parent.parent)
                      ?.delimiters
                      ?.let {
@@ -152,11 +154,18 @@ internal class VueInjector : MultiHostInjector {
       JSInjectionUtil.injectInQuotedLiteral(registrar,
                                             VueLanguage,
                                             "${braces.first}.${braces.second}${INJECTED_FILE_SUFFIX}",
-                                            context, null, null) {
+                                            template, null, null) {
         JSFormattableInjectionUtil.setReformattableInjection(context, it)
       }
     }
 
+  }
+
+  private fun findVueTemplateLiteral(context: PsiElement, parent: PsiElement): JSLiteralExpressionImpl? {
+    if (context !is JSLiteralExpressionImpl || !context.isQuotedLiteral || !context.isValidHost) return null
+    if (parent !is JSProperty || parent.name != TEMPLATE_PROP) return null
+    val initializer = parent.parent as? JSObjectLiteralExpression ?: return null
+    return context.takeIf { shouldInjectVueTemplate(it, initializer) }
   }
 
   private fun shouldInjectVueTemplate(template: JSLiteralExpressionImpl, initializer: JSObjectLiteralExpression): Boolean {
