@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.model.Pointer
+import com.intellij.openapi.DelicateLockingApi
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.edtWriteAction
@@ -97,6 +98,7 @@ class Angular2ExtractComponentHandlerService(
   private val coroutineScope: CoroutineScope,
 ) {
 
+  @OptIn(DelicateLockingApi::class)
   fun run(editor: Editor, sourceFilePtr: Pointer<PsiFile>, workingDir: VirtualFile, cliDir: VirtualFile) {
     var ex: Throwable? = null
     val job = coroutineScope.launch {
