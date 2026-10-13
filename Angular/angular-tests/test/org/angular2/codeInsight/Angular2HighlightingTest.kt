@@ -747,6 +747,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkAssetsHighlighting(configureFileName = "projects/app/src/app/app.component.html")
 
   @Test
+  fun testAssetsBuildConfigurations() =
+    checkAssetsHighlighting(configureFileName = "src/app/app.component.html")
+
+  @Test
   fun testNpmAliasedPackage() =
     checkHighlighting(ANGULAR_CORE_21_2_0, dir = true, configureFileName = "app.html")
 

@@ -128,12 +128,19 @@ open class AngularProjectImpl(override val name: String,
     }
   }
 
+  /**
+   * The union of the `assets` in the build `options` and in all build `configurations`.
+   * A configuration replaces the `assets` of `options`, but the IDE does not know which configuration the user builds.
+   */
   override val assets: List<AngularAssetPattern>?
-    get() = ngProject.targets?.build?.options?.assets?.let { patterns ->
+    get() {
+      val build = ngProject.targets?.build ?: return null
+      val patterns = listOfNotNull(build.options?.assets) + build.configurations.values.mapNotNull { it.assets }
+      if (patterns.isEmpty()) return null
       // The Angular CLI uses `<root>/src` when `sourceRoot` is not set.
       val sourceRoot = ngProject.sourceRoot?.takeIf { it.isNotEmpty() }
                        ?: ((ngProject.rootPath ?: "") + "/src")
-      normalizeAssetPatterns(patterns, angularCliFolder, sourceRoot)
+      return normalizeAssetPatterns(patterns.flatten(), angularCliFolder, sourceRoot).distinct()
     }
 
   override fun getTsLintConfigurations(project: Project): List<AngularLintConfiguration> =

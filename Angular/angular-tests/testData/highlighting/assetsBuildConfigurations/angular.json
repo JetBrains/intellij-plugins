@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "app": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/app",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "src/prod-assets",
+                  "output": "prod"
+                }
+              ]
+            },
+            "staging": {
+              "assets": [
+                "src/favicon.ico"
+              ]
+            },
+            "development": {
+              "optimization": false
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    }
+  }
+}
