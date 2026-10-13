@@ -3,17 +3,20 @@
 package org.jetbrains.qodana.inspectionKts.mcp.impl
 
 import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
+import com.intellij.diagnostic.rethrowControlFlowException
 import com.intellij.mcpserver.util.resolveInProject
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
 import com.intellij.psi.util.elementType
+import com.jetbrains.qodana.sarif.model.Result
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
 import org.jetbrains.qodana.inspectionKts.core.KtsInspectionsManager
+import org.jetbrains.qodana.inspectionKts.core.runInspectionOnPsiFile
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 import org.jetbrains.qodana.inspectionKts.fileFactory.CustomPsiFileFactory
 import org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsBatchRunResult
@@ -23,15 +26,20 @@ import org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsFileResult
 import org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsProjectRunResult
 import org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsRunResult
 import org.jetbrains.qodana.inspectionKts.mcp.InspectionProblem
-import org.jetbrains.qodana.inspectionKts.core.runInspectionOnPsiFile
 import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import java.io.IOException
+import java.nio.file.InvalidPathException
 import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 import kotlin.io.path.createTempFile
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.isRegularFile
-import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlin.time.Duration
 
 private val ANY_LANGUAGE_TEMPLATES = setOf(
   "ANY_LANGUAGE_GLOBAL",
@@ -169,35 +177,76 @@ internal suspend fun runInspectionKtsExamplesImpl(
   )
 }
 
+@OptIn(ExperimentalPathApi::class)
 internal suspend fun runInspectionKtsProjectImpl(
   project: Project,
   inspectionKtsCode: String,
+  timeout: Duration,
 ): InspectionKtsProjectRunResult = when (val compilation = compileInspection(project, inspectionKtsCode)) {
   is Compilation.Failed -> InspectionKtsProjectRunResult(compilation.result)
   is Compilation.Ready -> {
     val projectRoot = project.basePath?.let(Path::of)?.toAbsolutePath()?.normalize()
                       ?: error("The opened project has no base path")
-    val files = readAction {
-      buildList {
-        ProjectRootManager.getInstance(project).fileIndex.iterateContent { file ->
-          if (!file.isDirectory && file.extension?.lowercase() in SOURCE_EXTENSIONS) add(file)
-          true
-        }
-      }
+    val outputDirectory = createTempDirectory("mcp-inspection-analysis")
+    try {
+      val config = QodanaConfig.fromYaml(projectRoot, outputDirectory)
+      val results = project.service<DynamicInspectionRunnerParallel>()
+        .runSingle(compilation.tool, config, outputDirectory, timeout)
+      InspectionKtsProjectRunResult(compilation.result, results.toFileResults(projectRoot))
     }
-    val results = files.sortedBy { it.path }.mapNotNull { file ->
-      val psiFile = readAction { PsiManager.getInstance(project).findFile(file) } ?: return@mapNotNull null
-      val path = runCatching { projectRoot.relativize(Path.of(file.path)).toString() }.getOrDefault(file.path)
+    catch (e: Exception) {
+      rethrowControlFlowException(e)
+      InspectionKtsProjectRunResult(
+        compilation.result,
+        listOf(InspectionKtsFileResult(path = projectRoot.toString(), executionError = e.message ?: e.javaClass.simpleName)),
+      )
+    }
+    finally {
       try {
-        InspectionKtsFileResult(path = path, foundProblems = inspectFile(compilation.tool, psiFile))
+        outputDirectory.deleteRecursively()
       }
-      catch (e: Exception) {
-        InspectionKtsFileResult(path = path, executionError = e.message ?: e.javaClass.simpleName)
+      catch (e: IOException) {
+        fileLogger().warn("Cannot delete the MCP inspection output at $outputDirectory", e)
       }
     }
-    InspectionKtsProjectRunResult(compilation.result, results)
   }
 }
+
+private fun List<Result>.toFileResults(projectRoot: Path): List<InspectionKtsFileResult> =
+  mapNotNull { result -> result.toLocatedProblem(projectRoot) }
+    .groupBy({ it.path }, { it.problem })
+    .toSortedMap()
+    .map { (path, problems) -> InspectionKtsFileResult(path = path, foundProblems = problems) }
+
+private fun Result.toLocatedProblem(projectRoot: Path): LocatedProblem? {
+  val physicalLocation = locations.firstOrNull()?.physicalLocation ?: return null
+  val path = physicalLocation.artifactLocation?.uri ?: return null
+  val region = physicalLocation.region
+  return LocatedProblem(
+    path = projectRelativePath(projectRoot, path),
+    problem = InspectionProblem(
+      message = message?.text ?: "Inspection problem",
+      lineNumber = region?.startLine ?: -1,
+      highlightType = level?.toString()?.uppercase() ?: "WARNING",
+      startOffset = null,
+      endOffset = null,
+      elementText = region?.snippet?.text?.take(100),
+    ),
+  )
+}
+
+private fun projectRelativePath(projectRoot: Path, path: String): String {
+  return try {
+    val normalized = Path.of(path).normalize()
+    if (normalized.isAbsolute && normalized.startsWith(projectRoot)) projectRoot.relativize(normalized).toString()
+    else normalized.toString()
+  }
+  catch (_: InvalidPathException) {
+    path
+  }
+}
+
+private data class LocatedProblem(val path: String, val problem: InspectionProblem)
 
 private suspend fun inspectExample(
   project: Project,
@@ -293,9 +342,6 @@ private fun InspectionKtsCompileResult.toRunResult(): InspectionKtsRunResult = I
   compilationStatus = compilationStatus,
   compilationErrorDetails = compilationErrorDetails,
 )
-
-private val SOURCE_EXTENSIONS = setOf("java", "kt")
-
 
 private suspend fun generatePsiTreeText(element: PsiElement, level: Int = 0): String {
   return readAction {

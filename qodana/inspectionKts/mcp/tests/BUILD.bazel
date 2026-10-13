@@ -76,6 +76,8 @@ jvm_library(
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "//contrib/qodana",
         "//contrib/qodana:qodana_test_lib",
+        "//contrib/qodana/sarif",
+        "//contrib/qodana/sarif:sarif_test_lib",
         "@community//java/testFramework",
         "@community//java/testFramework:testFramework_test_lib",
         "//contrib/qodana/inspectionKts/java",

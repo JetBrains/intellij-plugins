@@ -11,7 +11,9 @@
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.impl"/>
+    <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.lang"/>
+    <module name="intellij.platform.lang.impl"/>
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.qodana.inspectionKts"/>
     <module name="intellij.qodana.sarif"/>
@@ -25,5 +27,9 @@
 
   <extensions defaultExtensionNs="com.intellij.mcpServer">
     <mcpToolset implementation="org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsMcpToolset"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.mcp.impl.ExtractedInspectionsDynamicProvider"/>
   </extensions>
 </idea-plugin>

@@ -8,6 +8,7 @@ import com.intellij.mcpserver.annotations.McpTool
 import com.intellij.mcpserver.project
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.serialization.Serializable
+import org.jetbrains.qodana.inspectionKts.mcp.impl.DynamicInspectionRunnerParallel.Companion.DEFAULT_TIMEOUT_MINUTES
 import org.jetbrains.qodana.inspectionKts.mcp.impl.generateInspectionKtsApiImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.generateInspectionKtsExamplesImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.generatePsiTreeImpl
@@ -15,6 +16,7 @@ import org.jetbrains.qodana.inspectionKts.mcp.impl.compileInspectionKtsImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsExamplesImpl
 import org.jetbrains.qodana.inspectionKts.mcp.impl.runInspectionKtsProjectImpl
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * MCP Toolset for InspectionKts-related tools.
@@ -123,9 +125,10 @@ class InspectionKtsMcpToolset : McpToolset {
   )
   suspend fun run_inspection_kts_project(
     @McpDescription("The inspection.kts script content to compile and execute") inspectionKtsCode: String,
+    @McpDescription("The project analysis timeout in minutes") timeoutMinutes: Long = DEFAULT_TIMEOUT_MINUTES,
   ): InspectionKtsProjectRunResult {
     val project = currentCoroutineContext().project
-    return runInspectionKtsProjectImpl(project, inspectionKtsCode)
+    return runInspectionKtsProjectImpl(project, inspectionKtsCode, timeoutMinutes.minutes)
   }
 }
 
