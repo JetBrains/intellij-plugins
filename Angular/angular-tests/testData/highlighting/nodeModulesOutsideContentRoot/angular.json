@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "test1": {
+      "projectType": "application",
+      "root": "projects/test1",
+      "sourceRoot": "projects/test1/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/test1/src/main.ts",
+            "tsConfig": "projects/test1/tsconfig.app.json"
+          }
+        }
+      }
+    }
+  }
+}

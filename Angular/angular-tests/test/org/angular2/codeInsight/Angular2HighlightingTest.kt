@@ -13,6 +13,7 @@ import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import junit.framework.TestCase
+import org.angular2.Angular2ContentRoot
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -22,6 +23,7 @@ import org.angular2.Angular2TestModule.ANGULAR_COMMON_15_1_5
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_16_2_8
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_17_3_0
 import org.angular2.Angular2TestModule.ANGULAR_COMMON_18_2_1
+import org.angular2.Angular2TestModule.ANGULAR_COMMON_19_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_15_1_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_16_2_8
@@ -753,6 +755,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   @Test
   fun testNpmAliasedPackage() =
     checkHighlighting(ANGULAR_CORE_21_2_0, dir = true, configureFileName = "app.html")
+
+  @Test
+  fun testNodeModulesOutsideContentRoot() =
+    checkHighlighting(ANGULAR_CORE_21_1_3, ANGULAR_COMMON_19_2_0, dir = true,
+                      configureFileName = "projects/test1/src/app/app.html",
+                      configurators = listOf(Angular2ContentRoot("projects/test1")))
 
   override fun setUp() {
     super.setUp()
