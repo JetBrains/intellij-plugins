@@ -106,7 +106,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): Angular2ExpressionsImportsTransferableData =
     throw UnsupportedOperationException()
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 

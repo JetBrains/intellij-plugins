@@ -67,7 +67,7 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
            && findScriptTag(file, true) != null
   }
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
     context.containingFile is VueFile
     && context.parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
@@ -113,7 +113,7 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
     return true
   }
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   override fun processTransferableData(
     values: List<VueTemplateExpressionsImportsTransferableData>,
     exportScope: PsiElement,
@@ -179,7 +179,7 @@ internal class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorB
   override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueTemplateExpressionsImportsTransferableData =
     VueTemplateExpressionsImportsTransferableData(importedElementsDeferred)
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     super.getExportScope(file, caret)
     ?: WriteAction.compute<PsiElement, Throwable> {

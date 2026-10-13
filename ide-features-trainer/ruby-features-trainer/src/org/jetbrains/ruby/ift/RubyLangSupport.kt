@@ -52,7 +52,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
   }
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   override fun getSdkForProject(project: Project, selectedSdk: Sdk?): Sdk? {
     return try {
       super.getSdkForProject(project, selectedSdk)
@@ -84,7 +84,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
   }
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   override fun applyProjectSdk(sdk: Sdk, project: Project) {
     super.applyProjectSdk(sdk, project)
     RModuleUtil.getInstance().changeModuleSdk(sdk, project.module)

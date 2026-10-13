@@ -274,12 +274,12 @@ class SerialMonitor(private val project: Project,
     lateinit var cts: JComponent
     lateinit var dsr: JComponent
 
-    @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+    @RequiresEdt
     fun onCTSChanged(state: Boolean) {
       cts.isEnabled = state
     }
 
-    @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+    @RequiresEdt
     fun onDSRChanged(state: Boolean) {
       dsr.isEnabled = state
     }

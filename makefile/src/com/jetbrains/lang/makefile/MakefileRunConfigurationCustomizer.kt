@@ -10,7 +10,7 @@ interface MakefileRunConfigurationCustomizer {
     val EP_NAME: ExtensionPointName<MakefileRunConfigurationCustomizer> = ExtensionPointName<MakefileRunConfigurationCustomizer>("com.intellij.makefile.runConfigurationCustomizer")
   }
 
-  @RequiresEdt(generateAssertion = false /* IJPL-115548 */)
+  @RequiresEdt
   fun customizeCommandAndEnvironment(
     project: Project, command: Array<@NlsSafe String>,
     environment: MutableMap<@NlsSafe String, @NlsSafe String>,
