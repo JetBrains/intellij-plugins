@@ -40,6 +40,7 @@ object QodanaYamlReader {
     roots.add("linter") // qodana-cli
     roots.add("image") // qodana-cli
     roots.add("withinDocker") // qodana-cli
+    roots.add("edict") // qodana-cli: Edict inspection generation
 
     roots.add("imports") // for GPC
 

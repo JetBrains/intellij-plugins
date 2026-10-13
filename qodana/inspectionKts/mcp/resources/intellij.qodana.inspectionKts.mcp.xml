@@ -9,11 +9,16 @@
     <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.ide"/>
+    <module name="intellij.platform.ide.impl"/>
     <module name="intellij.platform.lang"/>
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.qodana.inspectionKts"/>
   </dependencies>
   <!-- endregion -->
+
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.inspectionKts.mcp.McpServerScriptFactory"/>
+  </extensions>
 
   <extensions defaultExtensionNs="com.intellij.mcpServer">
     <mcpToolset implementation="org.jetbrains.qodana.inspectionKts.mcp.InspectionKtsMcpToolset"/>

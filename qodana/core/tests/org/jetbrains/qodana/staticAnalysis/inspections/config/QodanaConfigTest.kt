@@ -125,6 +125,20 @@ class QodanaConfigTest {
   }
 
   @Test
+  fun `qodana_yaml with an edict section is accepted and the section ignored`() {
+    val yaml = QodanaYamlReader.parse("""
+      version: 1.0
+      projectJDK: corretto-21
+      edict:
+        statePath: .edict
+        generation:
+          defaultGenerationCount: 20
+    """.trimIndent()).getOrThrow()
+
+    assertEquals("corretto-21", yaml.projectJDK)
+  }
+
+  @Test
   fun `deprecated yaml option is ignored and reported`() {
     val errors = mutableListOf<String?>()
     val reporter = object : QodanaMessageReporter by QodanaMessageReporter.EMPTY {
