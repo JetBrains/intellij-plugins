@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.lang.psi.impl;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.lang.psi.PbTextStringPart;
 import com.intellij.protobuf.lang.psi.PbTextStringValue;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.util.ProtoString;
 import com.intellij.psi.LiteralTextEscaper;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,57 @@ public class PbTextStringValueEscaper extends LiteralTextEscaper<PbTextStringVal
 
   @Override
   public @NotNull TextRange getRelevantTextRange() {
-    return new TextRange(0, myHost.getTextLength());
+    return getContentRange(myHost);
+  }
+
+  static @NotNull TextRange getContentRange(@NotNull PbTextStringValue host) {
+    int firstStart = -1;
+    int lastEnd = -1;
+    int fallbackPos = -1;
+    int nodeOffset = 0;
+
+    for (ASTNode child = host.getNode().getFirstChildNode();
+        child != null;
+        child = child.getTreeNext()) {
+      int childLen = child.getTextLength();
+      if (child.getPsi() instanceof PbTextStringPart part) {
+        TextRange partRange = getPartContentRangeInHost(part, nodeOffset);
+        if (fallbackPos == -1) {
+          fallbackPos = partRange.getStartOffset();
+        }
+        if (!partRange.isEmpty()) {
+          if (firstStart == -1) {
+            firstStart = partRange.getStartOffset();
+          }
+          lastEnd = partRange.getEndOffset();
+        }
+      }
+      nodeOffset += childLen;
+    }
+
+    if (firstStart != -1) {
+      return new TextRange(firstStart, lastEnd);
+    }
+    if (fallbackPos != -1) {
+      return new TextRange(fallbackPos, fallbackPos);
+    }
+    return new TextRange(0, host.getTextLength());
+  }
+
+  static @NotNull TextRange getPartContentRangeInHost(
+      @NotNull PbTextStringPart part, int partStartInHost) {
+    String text = part.getText();
+    if (!text.startsWith("\"") && !text.startsWith("'")) {
+      return new TextRange(partStartInHost, partStartInHost + text.length());
+    }
+    char quote = text.charAt(0);
+    int endOffset =
+        (text.length() > 1 && !part.isUnterminated() && text.charAt(text.length() - 1) == quote)
+            ? 1
+            : 0;
+    int start = partStartInHost + 1;
+    int end = Math.max(start, partStartInHost + text.length() - endOffset);
+    return new TextRange(start, end);
   }
 
   @Override
@@ -47,32 +97,44 @@ public class PbTextStringValueEscaper extends LiteralTextEscaper<PbTextStringVal
       return true;
     }
 
-    String hostText = myHost.getText();
-    int hostStartOffset = myHost.getTextRange().getStartOffset();
-    int totalLen = hostText.length();
-
-    int[] hostOffsets = new int[totalLen + 1];
-    int decodedIdx = 0;
-
+    int totalDecodedLen = 0;
     for (PbTextStringPart part : parts) {
-      int partStartInHost = part.getTextRange().getStartOffset() - hostStartOffset;
-      ProtoString parsed = part.getParsedString();
-      String parsedText = parsed.toString();
-      int parsedLen = parsedText.length();
+      totalDecodedLen += part.getParsedString().toString().length();
+    }
 
-      for (int j = 0; j < parsedLen; j++) {
-        int originalOffsetInPart = parsed.getOriginalOffset(j);
-        int charHostOffset = partStartInHost + originalOffsetInPart;
-        if (charHostOffset < rangeInsideHost.getStartOffset() || charHostOffset >= rangeInsideHost.getEndOffset()) {
-          continue;
+    int[] hostOffsets = new int[totalDecodedLen + 1];
+    int decodedIdx = 0;
+    int nodeOffset = 0;
+
+    for (ASTNode child = myHost.getNode().getFirstChildNode();
+        child != null;
+        child = child.getTreeNext()) {
+      int childLen = child.getTextLength();
+      if (child.getPsi() instanceof PbTextStringPart part) {
+        int partStartInHost = nodeOffset;
+        ProtoString parsed = part.getParsedString();
+        String parsedText = parsed.toString();
+        int parsedLen = parsedText.length();
+
+        for (int j = 0; j < parsedLen; j++) {
+          int originalOffsetInPart = parsed.getOriginalOffset(j);
+          int charHostOffset = partStartInHost + originalOffsetInPart;
+          if (charHostOffset < rangeInsideHost.getStartOffset()
+              || charHostOffset >= rangeInsideHost.getEndOffset()) {
+            continue;
+          }
+          hostOffsets[decodedIdx++] = charHostOffset;
+          outChars.append(parsedText.charAt(j));
         }
-        hostOffsets[decodedIdx++] = charHostOffset;
-        outChars.append(parsedText.charAt(j));
       }
+      nodeOffset += childLen;
     }
 
     hostOffsets[decodedIdx] = rangeInsideHost.getEndOffset();
-    offsets = Arrays.copyOf(hostOffsets, decodedIdx + 1);
+    offsets =
+        decodedIdx + 1 == hostOffsets.length
+            ? hostOffsets
+            : Arrays.copyOf(hostOffsets, decodedIdx + 1);
     return true;
   }
 

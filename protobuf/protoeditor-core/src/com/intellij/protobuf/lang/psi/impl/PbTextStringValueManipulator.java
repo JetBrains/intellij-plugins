@@ -15,16 +15,17 @@
  */
 package com.intellij.protobuf.lang.psi.impl;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.lang.PbTextFileType;
 import com.intellij.protobuf.lang.psi.PbTextField;
 import com.intellij.protobuf.lang.psi.PbTextStringPart;
 import com.intellij.protobuf.lang.psi.PbTextStringValue;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.util.ProtoString;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -43,45 +44,97 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
       return element;
     }
 
-    String hostText = element.getText();
-
-    // Build old decoded string and track decoded slices per part
+    // Build old decoded string and track offsets and decoded slices per part in one O(N) pass
     int numParts = parts.size();
+    int[] partStartInHost = new int[numParts];
+    TextRange[] partContentRangeInHost = new TextRange[numParts];
     int[] partDecodedStart = new int[numParts];
     int[] partDecodedEnd = new int[numParts];
     StringBuilder oldDecodedBuilder = new StringBuilder();
 
-    for (int i = 0; i < numParts; i++) {
-      partDecodedStart[i] = oldDecodedBuilder.length();
-      oldDecodedBuilder.append(parts.get(i).getParsedString().toString());
-      partDecodedEnd[i] = oldDecodedBuilder.length();
+    int partIdx = 0;
+    int nodeOffset = 0;
+    for (ASTNode child = element.getNode().getFirstChildNode();
+        child != null;
+        child = child.getTreeNext()) {
+      int childLen = child.getTextLength();
+      if (child.getPsi() instanceof PbTextStringPart part && partIdx < numParts) {
+        partStartInHost[partIdx] = nodeOffset;
+        partContentRangeInHost[partIdx] =
+            PbTextStringValueEscaper.getPartContentRangeInHost(part, nodeOffset);
+        partDecodedStart[partIdx] = oldDecodedBuilder.length();
+        oldDecodedBuilder.append(part.getParsedString().toString());
+        partDecodedEnd[partIdx] = oldDecodedBuilder.length();
+        partIdx++;
+      }
+      nodeOffset += childLen;
     }
     String oldDecoded = oldDecodedBuilder.toString();
+    int oldLen = oldDecoded.length();
 
-    // If the decoded content is unchanged, return element as-is (avoids re-encoding or reformatting untouched parts)
-    if (newContent.equals(oldDecoded)) {
+    int decodedRangeStart =
+        hostOffsetToDecodedIndex(
+            range.getStartOffset(),
+            parts,
+            partStartInHost,
+            partContentRangeInHost,
+            partDecodedStart,
+            partDecodedEnd,
+            oldLen);
+    int decodedRangeEnd =
+        hostOffsetToDecodedIndex(
+            range.getEndOffset(),
+            parts,
+            partStartInHost,
+            partContentRangeInHost,
+            partDecodedStart,
+            partDecodedEnd,
+            oldLen);
+    if (decodedRangeEnd < decodedRangeStart) {
+      decodedRangeEnd = decodedRangeStart;
+    }
+
+    // If the decoded content in the target range is unchanged, return element as-is
+    if (newContent.equals(oldDecoded.substring(decodedRangeStart, decodedRangeEnd))) {
       return element;
     }
 
-    // Compute diff between oldDecoded and newContent using common prefix and suffix
-    int oldLen = oldDecoded.length();
+    // Compute diff between the target slice of oldDecoded and newContent using common prefix and suffix
+    int rangeDecodedLen = decodedRangeEnd - decodedRangeStart;
     int newLen = newContent.length();
 
-    int prefixLen = 0;
-    while (prefixLen < oldLen && prefixLen < newLen && oldDecoded.charAt(prefixLen) == newContent.charAt(prefixLen)) {
-      prefixLen++;
+    int localPrefix = 0;
+    while (localPrefix < rangeDecodedLen
+        && localPrefix < newLen
+        && oldDecoded.charAt(decodedRangeStart + localPrefix) == newContent.charAt(localPrefix)) {
+      localPrefix++;
     }
 
-    int suffixLen = 0;
-    while (suffixLen < (oldLen - prefixLen)
-        && suffixLen < (newLen - prefixLen)
-        && oldDecoded.charAt(oldLen - 1 - suffixLen) == newContent.charAt(newLen - 1 - suffixLen)) {
-      suffixLen++;
+    int localSuffix = 0;
+    while (localSuffix < (rangeDecodedLen - localPrefix)
+        && localSuffix < (newLen - localPrefix)
+        && oldDecoded.charAt(decodedRangeEnd - 1 - localSuffix)
+            == newContent.charAt(newLen - 1 - localSuffix)) {
+      localSuffix++;
     }
 
-    int oldChangeStart = prefixLen;
-    int oldChangeEnd = oldLen - suffixLen;
-    String newReplacement = newContent.substring(prefixLen, newLen - suffixLen);
+    // Do not split a UTF-16 surrogate pair (e.g. from a \Uxxxxxxxx escape) across prefix or suffix
+    if (localPrefix > 0
+        && (decodedRangeStart + localPrefix) < oldLen
+        && Character.isHighSurrogate(oldDecoded.charAt(decodedRangeStart + localPrefix - 1))
+        && Character.isLowSurrogate(oldDecoded.charAt(decodedRangeStart + localPrefix))) {
+      localPrefix--;
+    }
+    if (localSuffix > 0
+        && (decodedRangeEnd - localSuffix) > 0
+        && Character.isLowSurrogate(oldDecoded.charAt(decodedRangeEnd - localSuffix))
+        && Character.isHighSurrogate(oldDecoded.charAt(decodedRangeEnd - localSuffix - 1))) {
+      localSuffix--;
+    }
+
+    int oldChangeStart = decodedRangeStart + localPrefix;
+    int oldChangeEnd = decodedRangeEnd - localSuffix;
+    String newReplacement = newContent.substring(localPrefix, newLen - localSuffix);
 
     if (oldChangeStart == oldChangeEnd && newReplacement.isEmpty()) {
       return element;
@@ -91,18 +144,23 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     if (newReplacement.isEmpty() && oldChangeStart < oldChangeEnd) {
       int bestStart = oldChangeStart;
       int bestEnd = oldChangeEnd;
+      int bestScore =
+          getBoundaryAlignmentScore(
+              oldChangeStart, oldChangeEnd, partDecodedStart, partDecodedEnd);
       int curStart = oldChangeStart;
       int curEnd = oldChangeEnd;
 
-      while (curStart > 0 && oldDecoded.charAt(curStart - 1) == oldDecoded.charAt(curEnd - 1)) {
+      while (bestScore < 2
+          && curStart > decodedRangeStart
+          && oldDecoded.charAt(curStart - 1) == oldDecoded.charAt(curEnd - 1)) {
         curStart--;
         curEnd--;
-        for (int start : partDecodedStart) {
-          if (curStart == start) {
-            bestStart = curStart;
-            bestEnd = curEnd;
-            break;
-          }
+        int score =
+            getBoundaryAlignmentScore(curStart, curEnd, partDecodedStart, partDecodedEnd);
+        if (score > 0 && score >= bestScore) {
+          bestStart = curStart;
+          bestEnd = curEnd;
+          bestScore = score;
         }
       }
       oldChangeStart = bestStart;
@@ -115,7 +173,8 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     if (oldChangeStart == oldChangeEnd) {
       int targetPart = numParts - 1;
       for (int i = 0; i < numParts - 1; i++) {
-        if (oldChangeStart < partDecodedEnd[i] || (oldChangeStart == 0 && partDecodedStart[i] == 0)) {
+        if (oldChangeStart < partDecodedEnd[i]
+            || (oldChangeStart == 0 && partDecodedStart[i] == 0)) {
           targetPart = i;
           break;
         }
@@ -137,38 +196,33 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     }
 
     // Check if this is a complete deletion of one or more whole parts
-    boolean isFullPartDeletion = newReplacement.isEmpty()
-        && (oldChangeStart <= partDecodedStart[firstAffected])
-        && (oldChangeEnd >= partDecodedEnd[lastAffected]);
+    boolean isFullPartDeletion =
+        newReplacement.isEmpty()
+            && (oldChangeStart <= partDecodedStart[firstAffected])
+            && (oldChangeEnd >= partDecodedEnd[lastAffected]);
 
     if (isFullPartDeletion) {
+      ASTNode valueNode = element.getNode();
       if (firstAffected == 0 && lastAffected == numParts - 1) {
         // All parts deleted: collapse to a single empty string
         char defaultQuote = getPartQuote(parts.getFirst());
-        return replaceWithText(element, String.valueOf(defaultQuote) + defaultQuote);
+        PbTextStringValue emptyValue =
+            createStringValue(element, String.valueOf(defaultQuote) + defaultQuote);
+        valueNode.replaceAllChildrenToChildrenOf(emptyValue.getNode());
+        return element;
       }
       // Drop parts firstAffected..lastAffected completely without leaving empty "" parts
-      StringBuilder fullText = new StringBuilder();
-      boolean first = true;
-      for (int i = 0; i < numParts; i++) {
-        if (i >= firstAffected && i <= lastAffected) {
-          continue;
+      if (lastAffected < numParts - 1) {
+        ASTNode firstToRemove = parts.get(firstAffected).getNode();
+        ASTNode firstToKeep = parts.get(lastAffected + 1).getNode();
+        valueNode.removeRange(firstToRemove, firstToKeep);
+      } else {
+        ASTNode firstToRemove = parts.get(firstAffected - 1).getNode().getTreeNext();
+        if (firstToRemove != null) {
+          valueNode.removeRange(firstToRemove, null);
         }
-        if (!first) {
-          if (i == lastAffected + 1 && firstAffected > 0) {
-            int prevEnd = parts.get(firstAffected - 1).getStartOffsetInParent() + parts.get(firstAffected - 1).getTextLength();
-            int nextStart = parts.get(firstAffected).getStartOffsetInParent();
-            fullText.append(hostText, prevEnd, nextStart);
-          } else {
-            int prevEnd = parts.get(i - 1).getStartOffsetInParent() + parts.get(i - 1).getTextLength();
-            int nextStart = parts.get(i).getStartOffsetInParent();
-            fullText.append(hostText, prevEnd, nextStart);
-          }
-        }
-        fullText.append(parts.get(i).getText());
-        first = false;
       }
-      return replaceWithText(element, fullText.toString());
+      return element;
     }
 
     PbTextStringPart firstPart = parts.get(firstAffected);
@@ -183,6 +237,17 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     int rawEnd = getRawOffsetInPart(lastPart, deltaEnd);
 
     String prefix = firstPart.getText().substring(0, rawStart);
+    if (deltaStart > 0) {
+      int prevRawStart = getRawOffsetInPart(firstPart, deltaStart - 1);
+      int tokenLen = rawStart - prevRawStart;
+      if ((tokenLen == 2 || tokenLen == 3)
+          && prefix.charAt(prevRawStart) == '\\'
+          && isOctalDigit(prefix.charAt(prevRawStart + 1))) {
+        String pad = tokenLen == 2 ? "00" : "0";
+        prefix =
+            prefix.substring(0, prevRawStart + 1) + pad + prefix.substring(prevRawStart + 1);
+      }
+    }
     String suffix = lastPart.getText().substring(rawEnd);
 
     // Split the replacement across several string parts if the value is already multipart, or if a
@@ -203,36 +268,92 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
         && oldDecoded.charAt(oldChangeStart - 1) == '\n') {
       middle.append(firstQuote).append(separator).append(firstQuote);
     }
-    appendEncoded(
-        middle, newReplacement, firstQuote, lastQuote, separator, split, suffix.length() > 1);
-    middle.append(suffix);
+    char openQuote =
+        appendEncoded(
+            middle, newReplacement, firstQuote, lastQuote, separator, split, suffix.length() > 1);
+    if (openQuote == lastQuote) {
+      middle.append(suffix);
+    } else {
+      String remainingDecoded = lastPart.getParsedString().toString().substring(deltaEnd);
+      middle.append(escapeContent(remainingDecoded, openQuote));
+      if (!lastPart.isUnterminated()) {
+        middle.append(openQuote);
+      }
+    }
     String middleReplacement = middle.toString();
 
-    StringBuilder fullText = new StringBuilder();
-    for (int i = 0; i < firstAffected; i++) {
-      if (i > 0) {
-        int prevPartEnd = parts.get(i - 1).getStartOffsetInParent() + parts.get(i - 1).getTextLength();
-        int curPartStart = parts.get(i).getStartOffsetInParent();
-        fullText.append(hostText, prevPartEnd, curPartStart);
+    PbTextStringValue replacementValue = createStringValue(element, middleReplacement);
+    ASTNode valueNode = element.getNode();
+    ASTNode firstNode = firstPart.getNode();
+    ASTNode anchorAfter = lastPart.getNode().getTreeNext();
+    ASTNode newFirst = replacementValue.getNode().getFirstChildNode();
+    if (firstAffected == lastAffected && newFirst != null && newFirst.getTreeNext() == null) {
+      valueNode.replaceChild(firstNode, newFirst);
+    } else if (firstAffected == 0 && lastAffected == numParts - 1) {
+      valueNode.replaceAllChildrenToChildrenOf(replacementValue.getNode());
+    } else {
+      if (newFirst != null) {
+        valueNode.addChildren(newFirst, null, firstNode);
       }
-      fullText.append(parts.get(i).getText());
+      valueNode.removeRange(firstNode, anchorAfter);
     }
-    if (firstAffected > 0) {
-      int prevPartEnd = parts.get(firstAffected - 1).getStartOffsetInParent() + parts.get(firstAffected - 1).getTextLength();
-      int curPartStart = parts.get(firstAffected).getStartOffsetInParent();
-      fullText.append(hostText, prevPartEnd, curPartStart);
-    }
-    fullText.append(middleReplacement);
-    for (int i = lastAffected + 1; i < numParts; i++) {
-      int prevPartEnd = (i == lastAffected + 1)
-          ? (parts.get(lastAffected).getStartOffsetInParent() + parts.get(lastAffected).getTextLength())
-          : (parts.get(i - 1).getStartOffsetInParent() + parts.get(i - 1).getTextLength());
-      int curPartStart = parts.get(i).getStartOffsetInParent();
-      fullText.append(hostText, prevPartEnd, curPartStart);
-      fullText.append(parts.get(i).getText());
-    }
+    return element;
+  }
 
-    return replaceWithText(element, fullText.toString());
+  private static int hostOffsetToDecodedIndex(
+      int hostOffset,
+      List<PbTextStringPart> parts,
+      int[] partStartInHost,
+      TextRange[] partContentRangeInHost,
+      int[] partDecodedStart,
+      int[] partDecodedEnd,
+      int totalDecodedLen) {
+    int numParts = parts.size();
+    for (int i = 0; i < numParts; i++) {
+      TextRange contentRange = partContentRangeInHost[i];
+      if (hostOffset <= contentRange.getStartOffset()) {
+        return partDecodedStart[i];
+      }
+      if (hostOffset < contentRange.getEndOffset()) {
+        ProtoString parsed = parts.get(i).getParsedString();
+        int parsedLen = partDecodedEnd[i] - partDecodedStart[i];
+        int relOffset = hostOffset - partStartInHost[i];
+        for (int j = 0; j < parsedLen; j++) {
+          if (parsed.getOriginalOffset(j) >= relOffset) {
+            return partDecodedStart[i] + j;
+          }
+        }
+        return partDecodedEnd[i];
+      }
+      if (hostOffset == contentRange.getEndOffset()) {
+        return partDecodedEnd[i];
+      }
+    }
+    return totalDecodedLen;
+  }
+
+  private static int getBoundaryAlignmentScore(
+      int start, int end, int[] partDecodedStart, int[] partDecodedEnd) {
+    boolean startMatches = false;
+    for (int partStart : partDecodedStart) {
+      if (start == partStart) {
+        startMatches = true;
+        break;
+      }
+    }
+    if (!startMatches) {
+      return 0;
+    }
+    for (int partEnd : partDecodedEnd) {
+      if (end == partEnd) {
+        return 2;
+      }
+    }
+    return 1;
+  }
+
+  private static boolean isOctalDigit(char c) {
+    return c >= '0' && c <= '7';
   }
 
   private static String escapeContent(String content, char quote) {
@@ -240,35 +361,26 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     for (int i = 0; i < content.length(); i++) {
       char c = content.charAt(i);
       switch (c) {
-        case '\n':
-          sb.append("\\n");
-          break;
-        case '\r':
-          sb.append("\\r");
-          break;
-        case '\t':
-          sb.append("\\t");
-          break;
-        case '\\':
-          sb.append("\\\\");
-          break;
-        case '"':
-          if (quote == '"') {
-            sb.append("\\\"");
+        case '\007' -> sb.append("\\a");
+        case '\b' -> sb.append("\\b");
+        case '\f' -> sb.append("\\f");
+        case '\n' -> sb.append("\\n");
+        case '\r' -> sb.append("\\r");
+        case '\t' -> sb.append("\\t");
+        case '\013' -> sb.append("\\v");
+        case '\\' -> sb.append("\\\\");
+        case '"' -> sb.append(quote == '"' ? "\\\"" : "\"");
+        case '\'' -> sb.append(quote == '\'' ? "\\'" : "'");
+        default -> {
+          if (c < 0x20) {
+            sb.append('\\')
+                .append((char) ('0' + ((c >> 6) & 7)))
+                .append((char) ('0' + ((c >> 3) & 7)))
+                .append((char) ('0' + (c & 7)));
           } else {
-            sb.append('"');
+            sb.append(c);
           }
-          break;
-        case '\'':
-          if (quote == '\'') {
-            sb.append("\\'");
-          } else {
-            sb.append('\'');
-          }
-          break;
-        default:
-          sb.append(c);
-          break;
+        }
       }
     }
     return sb.toString();
@@ -276,11 +388,20 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
 
   private static String getPartSeparator(PbTextStringValue element, List<PbTextStringPart> parts) {
     if (parts.size() > 1) {
-      int prevEnd = parts.get(0).getStartOffsetInParent() + parts.get(0).getTextLength();
-      int nextStart = parts.get(1).getStartOffsetInParent();
-      String sep = element.getText().substring(prevEnd, nextStart);
-      if (sep.contains("\n")) {
-        return sep;
+      StringBuilder sep = new StringBuilder();
+      boolean hasComment = false;
+      for (ASTNode node = parts.get(0).getNode().getTreeNext();
+          node != null && node != parts.get(1).getNode();
+          node = node.getTreeNext()) {
+        if (node.getElementType() == TokenType.WHITE_SPACE) {
+          sep.append(node.getChars());
+        } else {
+          hasComment = true;
+        }
+      }
+      int lastNewline = sep.lastIndexOf("\n");
+      if (lastNewline != -1) {
+        return hasComment ? "\n" + sep.substring(lastNewline + 1) : sep.toString();
       }
     }
     int elementOffset = element.getTextRange().getStartOffset();
@@ -289,18 +410,26 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     while (lineStart > 0 && fileText.charAt(lineStart - 1) != '\n') {
       lineStart--;
     }
-    int indentLen = elementOffset - lineStart;
-    return "\n" + " ".repeat(Math.max(0, indentLen));
+    StringBuilder indent = new StringBuilder("\n");
+    for (int i = lineStart; i < elementOffset; i++) {
+      char c = fileText.charAt(i);
+      indent.append(c == '\t' ? '\t' : ' ');
+    }
+    return indent.toString();
   }
 
-  private static PbTextStringValue replaceWithText(PbTextStringValue element, String replacementText) {
-    PsiFile dummyFile = PsiFileFactory.getInstance(element.getProject())
-        .createFileFromText("dummy.textproto", PbTextFileType.INSTANCE, "field: " + replacementText);
+  private static PbTextStringValue createStringValue(
+      PbTextStringValue context, String replacementText) {
+    PsiFile dummyFile =
+        PsiFileFactory.getInstance(context.getProject())
+            .createFileFromText(
+                "dummy.textproto", PbTextFileType.INSTANCE, "field: " + replacementText);
     PbTextField field = PsiTreeUtil.findChildOfType(dummyFile, PbTextField.class);
     if (field != null && field.getStringValue() != null) {
-      return (PbTextStringValue) element.replace(field.getStringValue());
+      return field.getStringValue();
     }
-    throw new IncorrectOperationException("Failed to update prototext string value with: " + replacementText);
+    throw new IncorrectOperationException(
+        "Failed to update prototext string value with: " + replacementText);
   }
 
   private static int getRawOffsetInPart(PbTextStringPart part, int parsedOffset) {
@@ -309,9 +438,7 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
     if (parsedOffset < parsedLen) {
       return parsed.getOriginalOffset(parsedOffset);
     }
-    TextRange rangeNoQuotes = PbPsiImplUtil.getTextRangeNoQuotes(part);
-    int partStart = part.getTextRange().getStartOffset();
-    return rangeNoQuotes.getEndOffset() - partStart;
+    return PbTextStringValueEscaper.getPartContentRangeInHost(part, 0).getEndOffset();
   }
 
   private static char getPartQuote(PbTextStringPart part) {
@@ -360,9 +487,9 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
    * closed and a new one opened right after each newline escape, so every line lives in its own
    * string part. {@code suffixHasContent} tells whether untouched content follows the replacement
    * inside the same part; if so and the replacement ends on a newline, that trailing content is
-   * moved into a part of its own.
+   * moved into a part of its own. Returns the quote character of the last open part.
    */
-  private static void appendEncoded(
+  private static char appendEncoded(
       StringBuilder out,
       String text,
       char firstQuote,
@@ -390,10 +517,11 @@ public class PbTextStringValueManipulator extends AbstractElementManipulator<PbT
         quote = nextQuote;
       }
     }
+    return quote;
   }
 
   @Override
   public @NotNull TextRange getRangeInElement(@NotNull PbTextStringValue element) {
-    return new TextRange(0, element.getTextLength());
+    return PbTextStringValueEscaper.getContentRange(element);
   }
 }
