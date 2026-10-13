@@ -91,6 +91,15 @@ class AngularJsonTestOptions {
 class AngularJsonBuild {
   @JsonProperty("options")
   val options: AngularJsonBuildOptions? = null
+
+  @JsonProperty("configurations")
+  val configurations: Map<String, AngularJsonBuildConfiguration> = HashMap()
+}
+
+class AngularJsonBuildConfiguration {
+  @JsonProperty("assets")
+  @JsonDeserialize(using = AssetPatternsDeserializer::class)
+  val assets: List<AngularJsonAssetPattern>? = null
 }
 
 open class AngularJsonBuildOptionsBase {

@@ -747,6 +747,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkAssetsHighlighting(configureFileName = "projects/app/src/app/app.component.html")
 
   @Test
+  fun testAssetsBuildConfigurations() =
+    checkAssetsHighlighting(configureFileName = "src/app/app.component.html")
+
+  @Test
   fun testInjectedServicePropertyUsage() =
     checkHighlighting(ANGULAR_CORE_22_2_2, dir = true, configureFileName = "my.service.ts", strictTemplates = true)
 
