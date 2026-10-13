@@ -2,15 +2,16 @@
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.ide.util.BasePropertyService;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.ParserDefinition;
-import com.intellij.mock.MockApplication;
-import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
-import com.intellij.psi.templateLanguages.TemplateDataLanguagePatterns;
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
 
 /**
  * ParsingTestCase test are created by placing a MyTestName.hbs file in the test/data/parsing directory with the syntax
@@ -27,34 +28,26 @@ import org.jetbrains.annotations.NotNull;
  * parser. So, in practice when creating parser tests, you create the .hbs file, run the test, validate that
  * the .txt represents the desired Psi structure, then call it a day.
  */
-public abstract class HbParserTest extends ParsingTestCase {
+public abstract class HbParserTest {
+  private static final TestFixture<Project> projectFixture = projectFixture();
+
+  protected final TestFixture<ParsingTestFixture> parsingFixture;
+
   public HbParserTest(ParserDefinition @NotNull ... additionalDefinitions) {
-    super("parser", "hbs", ArrayUtil.prepend(new HbParseDefinition(), additionalDefinitions));
+    parsingFixture = parsingFixture(projectFixture, HbTestUtils.BASE_TEST_DATA_PATH + "/parser", "hbs",
+                                    ArrayUtil.prepend(new HbParseDefinition(), additionalDefinitions));
   }
 
-  @Override
-  protected String getTestDataPath() {
-    return HbTestUtils.BASE_TEST_DATA_PATH;
-  }
-
-  @Override
   protected boolean checkAllPsiRoots() {
     return false;
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUpParsing() {
+    parsingFixture.get().setCheckAllPsiRoots(checkAllPsiRoots());
+  }
 
-    MockApplication app = getApplication();
-
-    project.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
-
-    // PropertiesComponent is used by HbConfig
-    app.registerService(PropertiesComponent.class, BasePropertyService.class);
-    project.registerService(PropertiesComponent.class, BasePropertyService.class);
-
-    app.registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
-    registerParserDefinition(new HbParseDefinition());
+  protected void doTest(boolean checkResult) {
+    parsingFixture.get().doTest(checkResult);
   }
 }

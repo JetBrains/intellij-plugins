@@ -1,7 +1,11 @@
 package com.intellij.dts.parsing
 
 import com.intellij.lang.impl.PsiBuilderDiagnosticsImpl
+import com.intellij.openapi.application.ReadAction
 import com.intellij.platform.syntax.impl.builder.SyntaxBuildingDiagnostics
+import com.intellij.testFramework.ParsingTestUtil
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
 private class BuilderDiagnostics : SyntaxBuildingDiagnostics {
   val rollbacks = mutableMapOf<String, MutableMap<Int, Int>>()
@@ -55,6 +59,7 @@ private class BuilderDiagnostics : SyntaxBuildingDiagnostics {
   }
 }
 
+@TestApplication
 class DtsRollbackParsingTest : DtsParsingTestBase("") {
   private fun createNesting(depth: Int, text: String): String {
     val builder = StringBuilder()
@@ -76,7 +81,7 @@ class DtsRollbackParsingTest : DtsParsingTestBase("") {
     val diagnostics = BuilderDiagnostics()
     PsiBuilderDiagnosticsImpl.runWithDiagnostics(diagnostics) {
       val root = createFile("file.dtsi", text)
-      ensureParsed(root)
+      ReadAction.computeBlocking<Unit, RuntimeException> { ParsingTestUtil.ensureParsed(root) }
     }
 
     return diagnostics
@@ -98,13 +103,18 @@ class DtsRollbackParsingTest : DtsParsingTestBase("") {
     doRollbackTest(nestedRollbacks + 2, createNesting(20, "$text\n$include"))
   }
 
+  @Test
   fun testProperty() = doRollbackTest(2, "prop = <>;")
 
+  @Test
   fun testSubNode() = doRollbackTest(3, "node {};")
 
+  @Test
   fun testRootNode() = doRollbackTest(6, "/ {};")
 
+  @Test
   fun testPropertyRecovery() = doRollbackWithRecoveryTest(1, "prop = <>")
 
+  @Test
   fun testSubNodeRecovery() = doRollbackWithRecoveryTest(2, "node {}")
 }

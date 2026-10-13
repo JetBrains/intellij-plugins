@@ -1,11 +1,16 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html
 
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
 
   override val templateSyntax: Angular2TemplateSyntax
     get() = Angular2TemplateSyntax.V_17
 
+  @Test
   fun testIncompleteBlock6() {
     doTestHtml("""
       @switch (user.name) {
@@ -14,6 +19,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testForBlockParens() {
     doTestHtml("""
       @for ((item of items) ; ) {
@@ -21,6 +27,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testForBlockParens2() {
     doTestHtml("""
       @for (((item of items ff bar 12) dd ) ) ff ; ) {
@@ -28,6 +35,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testForBlockParens3() {
     doTestHtml("""
       @for (((item of items ff bar 12) dd ; ) {
@@ -35,18 +43,21 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testForBlockParens4() {
     doTestHtml("""
       @for ((item of items); track trackingFn(item, compProp)) {{{item}}}
     """.trimIndent())
   }
 
+  @Test
   fun testEmptyPrimaryExpressionBlock() {
     doTestHtml("""
       @for (; track ; ;) {{{item}}}
     """.trimIndent())
   }
 
+  @Test
   fun testEmptyPrimaryExpressionBlockReparse() {
     doReparseTest("""
       @for (track) {}
@@ -55,24 +66,28 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testDeferredBlockTimeLiteral() {
     doTestHtml("""
       @defer{} @placeholder(minimum 12s) {} @loading(after two; minimum 12 ms &&; maximum 1e2hr) {}
     """.trimIndent())
   }
 
+  @Test
   fun testDeferBlockOnTriggers() {
     doTestHtml("""
       @defer(prefetch on viewport; on idle(var); on timer(12ms); on idle var; prefetch when foo == 12; prefetch ;)
     """.trimIndent())
   }
 
+  @Test
   fun testDeferBlockHydrate() {
     doTestHtml("""
       @defer(hydrate on viewport; hydrate when foo = 12; hydrate never; hydrate ;)
     """.trimIndent())
   }
 
+  @Test
   fun testIncompleteParameters() {
     doTestHtml("""
       @if(foo() {
@@ -86,12 +101,14 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testEmptyBlockName() {
     doTestHtml("""
       An empty @ (block) {name}
     """.trimIndent())
   }
 
+  @Test
   fun testTypeOfInsideIf() {
     doTestHtml("""
       @if (typeof value === 'string') {
@@ -102,6 +119,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testTopLevelBlockTextParsing() {
     doTestHtml("""
       foo
@@ -117,6 +135,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     )
   }
 
+  @Test
   fun testNestedBlockTextParsing() {
     doTestHtml("""
       foo
@@ -135,6 +154,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     )
   }
 
+  @Test
   fun testSwitchBlock() {
     doTestHtml("""
       @switch (foo) {
@@ -171,6 +191,7 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testSwitchBlockExhaustive() {
     doTestHtml("""
       @switch (foo) {

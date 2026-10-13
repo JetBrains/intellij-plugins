@@ -1,30 +1,52 @@
 package com.intellij.dts.pp.test
 
 import com.intellij.dts.pp.test.impl.TestParserDefinition
-import com.intellij.testFramework.ParsingTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.parsingFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
-class PpParserTest : ParsingTestCase("parser", "test", TestParserDefinition()) {
-  override fun getTestDataPath(): String = PP_TEST_DATA_PATH
+@TestApplication
+class PpParserTest {
+  companion object {
+    private val projectFixture = projectFixture()
+  }
 
-  override fun getTestName(lowercaseFirstLetter: Boolean): String = getPpTestName()
+  private val parsing by parsingFixture(projectFixture, "$PP_TEST_DATA_PATH/parser", "test", definitions = arrayOf(TestParserDefinition()))
 
-  fun `test define`() = doTest()
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    parsing.testName = getPpTestName(testInfo.testMethod.get().name)
+  }
 
-  fun `test ifdef active`() = doTest()
+  @Test
+  fun `test define`(): Unit = doTest()
 
-  fun `test ifdef inactive`() = doTest()
+  @Test
+  fun `test ifdef active`(): Unit = doTest()
 
-  fun `test incomplete ifdef`() = doTest()
+  @Test
+  fun `test ifdef inactive`(): Unit = doTest()
 
-  fun `test else active`() = doTest()
+  @Test
+  fun `test incomplete ifdef`(): Unit = doTest()
 
-  fun `test else inactive`() = doTest()
+  @Test
+  fun `test else active`(): Unit = doTest()
 
-  fun `test elifdef chain`() = doTest()
+  @Test
+  fun `test else inactive`(): Unit = doTest()
 
-  fun `test elifdef active`() = doTest()
+  @Test
+  fun `test elifdef chain`(): Unit = doTest()
 
-  fun `test if nested`() = doTest()
+  @Test
+  fun `test elifdef active`(): Unit = doTest()
 
-  fun doTest() = super.doTest(true, true)
+  @Test
+  fun `test if nested`(): Unit = doTest()
+
+  private fun doTest() = parsing.doTest(true, true)
 }

@@ -1,47 +1,58 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html
 
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 open class Angular181HtmlParsingTest : Angular17HtmlParsingTest() {
 
   override val templateSyntax: Angular2TemplateSyntax
     get() = Angular2TemplateSyntax.V_18_1
 
+  @Test
   fun testLetBlockInvalidId() {
     doTestHtml("""
       @let 12foo = test(12); the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockInvalidGlued() {
     doTestHtml("""
       @letfoo = test(12); the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockNoSemicolon() {
     doTestHtml("""
       @let foo = test(12) the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockNoEquals() {
     doTestHtml("""
       @let foo test(12); the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockEmptyValue() {
     doTestHtml("""
       @let foo =; the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockString() {
     doTestHtml("""
       @let foo = "foo" + test(12); the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockStringUnterminated() {
     doTestHtml("""
       @let foo = "foo + test(12); 
@@ -49,6 +60,7 @@ open class Angular181HtmlParsingTest : Angular17HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockStringMultiline() {
     doTestHtml("""
       @let foo = "foo 
@@ -57,17 +69,20 @@ open class Angular181HtmlParsingTest : Angular17HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockStringEscapeEof() {
     doTestHtml("""
       @let foo = "foo\""".trimIndent())
   }
 
+  @Test
   fun testLetBlockStrings() {
     doTestHtml("""
       @let foo = "foo\";bar" + 'foo\';bar' + test(12); the end
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockExample1() {
     doTestHtml("""
       @let name = user.name;
@@ -81,6 +96,7 @@ open class Angular181HtmlParsingTest : Angular17HtmlParsingTest() {
     """.trimIndent())
   }
 
+  @Test
   fun testLetBlockExample2() {
     doTestHtml("""
       @let topLevel = value;

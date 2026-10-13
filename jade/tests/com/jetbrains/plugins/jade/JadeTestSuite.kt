@@ -3,13 +3,11 @@ package com.jetbrains.plugins.jade
 
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsHighlightingTest
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsIntroduceVariableTest
-import com.jetbrains.plugins.jade.parser.JadeParsingTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-  JadeParsingTest::class,
   JadeCompletionTest::class,
   JadeCopyPasteTest::class,
   JadeFindUsagesTest::class,

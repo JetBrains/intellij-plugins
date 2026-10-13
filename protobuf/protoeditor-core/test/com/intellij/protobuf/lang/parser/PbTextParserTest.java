@@ -15,36 +15,33 @@
  */
 package com.intellij.protobuf.lang.parser;
 
-import com.intellij.lang.LanguageBraceMatching;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.ide.editing.ProtoBraceMatcher;
 import com.intellij.protobuf.lang.PbTextParserDefinition;
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class PbTextParserTest extends ParsingTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
 
-  public PbTextParserTest() {
-    super("lang/parser", "pb", new PbTextParserDefinition());
-  }
+@TestApplication
+public class PbTextParserTest {
+  private static final TestFixture<Project> projectFixture = projectFixture();
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, new ProtoBraceMatcher());
-  }
-
-  @Override
-  public String getTestDataPath() {
-    return TestUtils.getProtobufCoreTestDataPath();
-  }
+  private final TestFixture<ParsingTestFixture> parsingFixture =
+    parsingFixture(projectFixture, TestUtils.getProtobufCoreTestDataPath() + "/lang/parser", "pb", new PbTextParserDefinition());
 
   /** Test against Simple.pb. */
+  @Test
   public void testSimple() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
   /** Test against SpaceAfterNumber.pb. */
+  @Test
   public void testSpaceAfterNumber() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 }

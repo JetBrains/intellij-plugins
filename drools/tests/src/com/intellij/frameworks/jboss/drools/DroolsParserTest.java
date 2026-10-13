@@ -1,153 +1,175 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.frameworks.jboss.drools;
 
-import com.intellij.java.frontback.psi.impl.syntax.JavaSyntaxDefinitionExtension;
-import com.intellij.lang.LanguageASTFactory;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.lang.java.JavaParserDefinition;
-import com.intellij.lang.java.syntax.JavaElementTypeConverterExtension;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.platform.syntax.psi.ElementTypeConverters;
-import com.intellij.platform.syntax.psi.LanguageSyntaxDefinitions;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
 import com.intellij.plugins.drools.lang.parser.DroolsParserDefinition;
-import com.intellij.psi.impl.source.tree.JavaASTFactory;
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class DroolsParserTest extends ParsingTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+
+@TestApplication
+public class DroolsParserTest {
   private static final boolean CHECK_RESULT = true;
 
-  public DroolsParserTest() {
-    super("parser", "drl", new DroolsParserDefinition(), new JavaParserDefinition());
+  private static final TestFixture<Project> projectFixture = projectFixture();
+
+  private final TestFixture<ParsingTestFixture> parsingFixture = parsingFixture(
+    projectFixture,
+    PathManager.getHomePath() + "/contrib/drools/tests/testData/parser",
+    "drl",
+    false,
+    new DroolsParserDefinition(), new JavaParserDefinition());
+
+  @BeforeEach
+  public void setUp() {
+    parsingFixture.get().setCheckAllPsiRoots(false);
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    addExplicitExtension(LanguageASTFactory.INSTANCE, JavaLanguage.INSTANCE, new JavaASTFactory());
-    addExplicitExtension(LanguageSyntaxDefinitions.Companion.getINSTANCE(), JavaLanguage.INSTANCE, new JavaSyntaxDefinitionExtension());
-    addExplicitExtension(ElementTypeConverters.getInstance(), JavaLanguage.INSTANCE, new JavaElementTypeConverterExtension ());
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + "/contrib/drools/tests/testData/";
-  }
-
+  @Test
   public void testPackageDefinition() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testChunkBlockRule() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testImportDefinition() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testRuleAttribute() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testRuleAttribute2() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testSimpleRule() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testSimpleRule2() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testFibonacci() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testSudoku() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testOverAndWindowRules() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testQueryStatement() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testJavaStatement1() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testJavaStatement2() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testNotStatement() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testDeprecatedCommenter() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testRhsNamedConsequence() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testIsAOperator() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
+  @Test
   public void testDoubleQuotes() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testSingleQuotes() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
 
+  @Test
   public void testWindowDeclaration() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testUnitDeclaration() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testNullChecks() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testEnumDeclarations() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testGlobalImport() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
   // IDEA-319541
+  @Test
   public void testOOPath() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testOOPathAccumulate() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testNotOOPath() {
-    doTest(CHECK_RESULT);
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 
+  @Test
   public void testImportedFunctions() {
-    doTest(CHECK_RESULT);
-  }
-
-  @Override
-  protected boolean checkAllPsiRoots() {
-    return false;
+    parsingFixture.get().doTest(CHECK_RESULT);
   }
 }

@@ -71,12 +71,7 @@ import org.angular2.lang.expr.Angular20ParserTest
 import org.angular2.lang.expr.Angular2LexerSpecTest
 import org.angular2.lang.expr.Angular2ParserSpecTest
 import org.angular2.lang.expr.Angular2ParserTest
-import org.angular2.lang.html.Angular17HtmlParsingTest
-import org.angular2.lang.html.Angular181HtmlParsingTest
-import org.angular2.lang.html.Angular20HtmlParsingTest
-import org.angular2.lang.html.Angular22HtmlParsingTest
 import org.angular2.lang.html.Angular2HtmlLexerSpecTest
-import org.angular2.lang.html.Angular2HtmlParsingTest
 import org.angular2.lang.html.Angular2SemanticHighlightingTest
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
 import org.angular2.library.forms.Angular2FormsTestSuite
@@ -92,11 +87,6 @@ import org.junit.runners.Suite
   Angular2ParserTest::class,
   Angular20ParserTest::class,
   Angular2HtmlLexerSpecTest::class,
-  Angular2HtmlParsingTest::class,
-  Angular17HtmlParsingTest::class,
-  Angular181HtmlParsingTest::class,
-  Angular20HtmlParsingTest::class,
-  Angular22HtmlParsingTest::class,
   Angular2SemanticHighlightingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,
   Angular2TemplateTranspilerTest::class,

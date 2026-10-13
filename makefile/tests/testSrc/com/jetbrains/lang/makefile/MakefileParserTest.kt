@@ -1,115 +1,229 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.ParsingTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.parsingFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.Test
 
-class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinition()) {
-  fun testHelloWorld() = doTest(true)
-  fun testVariables() = doTest(true)
-  fun testInclude() = doTest(true)
-  fun testConditionals() = doTest(true)
-  fun testConditionalsInsideRecipe() = doTest(true)
-  fun testConditionalVars() = doTest(true)
-  fun testConditionalAfterRecipe() = doTest(true)
-  fun testConditionalWithParens() = doTest(true)
-  fun testPrerequisites() = doTest(true)
-  fun testMultipleTargets() = doTest(true)
-  fun testDefine() = doTest(true)
-  fun testEmptyRecipe() = doTest(true)
-  fun testRecipeOnTheSameLine() = doTest(true)
-  fun testDirectives() = doTest(true)
-  fun testExport() = doTest(true)
-  fun testExportMultipleVariables() = doTest(true)
-  fun testExportMultilineVariables() = doTest(true)
-  fun testVPath() = doTest(true)
-  fun testComments() = doTest(true)
-  fun testMultiline() = doTest(true)
-  fun testTargetInsideConditional() = doTest(true)
-  fun testTargetSpecificVariable() = doTest(true)
-  fun testWildcard() = doTest(true)
-  fun testDoubleColonRule() = doTest(true)
-  fun testStaticPatternRules() = doTest(true)
-  fun testDoccomments() = doTest(true)
-  fun testFunctions() = doTest(true)
-  fun testAtSign() = doTest(true)
-  fun testElseif() = doTest(true)
-  fun testFunctionInPrerequisites() = doTest(true)
-  fun testUndefine() = doTest(true)
-  fun testMultilineComment() = doTest(true)
-  fun testSimpleVar() = doTest(true)
-  fun testWhitespace() = doTest(true)
-  fun testShellWithCurly() = doTest(true)
-  fun testNonAscii() = doTest(true)
-  fun testStrings() = doTest(true)
+@TestApplication
+class MakefileParserTest {
+  companion object {
+    private val projectFixture = projectFixture()
+  }
 
-  fun testIssue7() = doTest(true)
-  fun testIssue9() = doTest(true)
-  fun testIssue15() = doTest(true)
-  fun testIssue23() = doTest(true)
-  fun testIssue36() = doTest(true)
-  fun testIssue37() = doTest(true)
-  fun testIssue44() = doTest(true)
-  fun testIssue45() = doTest(true)
-  fun testIssue46() = doTest(true)
-  fun testIssue56() = doTest(true)
-  fun testIssue61() = doTest(true)
-  fun testIssue62() = doTest(true)
-  fun testIssue63() = doTest(true)
-  fun testIssue72() = doTest(true)
-  fun testIssue81() = doTest(true)
-  fun testIssue88() = doTest(true)
-  fun testIssue91() = doTest(true)
-  fun testIssue97() = doTest(true)
-  fun testIssue104() = doTest(true)
-  fun testIssue107() = doTest(true)
-  fun testIssue113() = doTest(true)
-  fun testIssue115() = doTest(true)
-  fun testIssue116() = doTest(true)
-  fun testIssue118() = doTest(true)
-  fun testIssue120() = doTest(true)
-  fun testIssue121() = doTest(true)
-  fun testIssue124() = doTest(true)
-  fun testIssue130() = doTest(true)
-  fun testIssue131() = doTest(true)
-  fun testIssue129() = doTest(true)
-  fun testIssue132() = doTest(true)
-  fun testIssue135() = doTest(true)
-  fun testIssue140() = doTest(true)
-  fun testIssue141() = doTest(true)
-  fun testIssue142() = doTest(true)
-  fun testIssue143() = doTest(true)
-  fun testIssue144() = doTest(true)
-  fun testIssue150() = doTest(true)
-  fun testIssue153() = doTest(true)
-  fun testIssue155() = doTest(true)
-  fun testIssue159() = doTest(true)
-  fun testIssue160() = doTest(true)
-  fun testIssue167() = doTest(true)
-  fun testIssue170() = doTest(true)
-  fun testIssue175() = doTest(true)
-  fun testIssue178() = doTest(true)
-  fun testIssue179() = doTest(true)
-  fun testIssue185() = doTest(true)
-  fun testIssue188() = doTest(true)
-  fun testIssue190() = doTest(true)
-  fun testIssue194() = doTest(true)
+  private val parsing by parsingFixture(
+    projectFixture, "$BASE_TEST_DATA_PATH/parser", "mk",
+    definitions = arrayOf(MakefileParserDefinition()),
+  )
 
-  fun testFunctionForeach() = doTest(true)
-  fun testFunctionCall() = doTest(true)
+  @Test
+  fun testHelloWorld() = parsing.doTest(true)
+  @Test
+  fun testVariables() = parsing.doTest(true)
+  @Test
+  fun testInclude() = parsing.doTest(true)
+  @Test
+  fun testConditionals() = parsing.doTest(true)
+  @Test
+  fun testConditionalsInsideRecipe() = parsing.doTest(true)
+  @Test
+  fun testConditionalVars() = parsing.doTest(true)
+  @Test
+  fun testConditionalAfterRecipe() = parsing.doTest(true)
+  @Test
+  fun testConditionalWithParens() = parsing.doTest(true)
+  @Test
+  fun testPrerequisites() = parsing.doTest(true)
+  @Test
+  fun testMultipleTargets() = parsing.doTest(true)
+  @Test
+  fun testDefine() = parsing.doTest(true)
+  @Test
+  fun testEmptyRecipe() = parsing.doTest(true)
+  @Test
+  fun testRecipeOnTheSameLine() = parsing.doTest(true)
+  @Test
+  fun testDirectives() = parsing.doTest(true)
+  @Test
+  fun testExport() = parsing.doTest(true)
+  @Test
+  fun testExportMultipleVariables() = parsing.doTest(true)
+  @Test
+  fun testExportMultilineVariables() = parsing.doTest(true)
+  @Test
+  fun testVPath() = parsing.doTest(true)
+  @Test
+  fun testComments() = parsing.doTest(true)
+  @Test
+  fun testMultiline() = parsing.doTest(true)
+  @Test
+  fun testTargetInsideConditional() = parsing.doTest(true)
+  @Test
+  fun testTargetSpecificVariable() = parsing.doTest(true)
+  @Test
+  fun testWildcard() = parsing.doTest(true)
+  @Test
+  fun testDoubleColonRule() = parsing.doTest(true)
+  @Test
+  fun testStaticPatternRules() = parsing.doTest(true)
+  @Test
+  fun testDoccomments() = parsing.doTest(true)
+  @Test
+  fun testFunctions() = parsing.doTest(true)
+  @Test
+  fun testAtSign() = parsing.doTest(true)
+  @Test
+  fun testElseif() = parsing.doTest(true)
+  @Test
+  fun testFunctionInPrerequisites() = parsing.doTest(true)
+  @Test
+  fun testUndefine() = parsing.doTest(true)
+  @Test
+  fun testMultilineComment() = parsing.doTest(true)
+  @Test
+  fun testSimpleVar() = parsing.doTest(true)
+  @Test
+  fun testWhitespace() = parsing.doTest(true)
+  @Test
+  fun testShellWithCurly() = parsing.doTest(true)
+  @Test
+  fun testNonAscii() = parsing.doTest(true)
+  @Test
+  fun testStrings() = parsing.doTest(true)
 
-  fun testRecipePrefix0() = doTest(true)
-  fun testRecipePrefix1() = doTest(true)
-  fun testRecipePrefix2() = doTest(true)
-  fun testRecipePrefix3() = doTest(true)
-  fun testRecipePrefix4() = doTest(true)
-  fun testRecipePrefix5() = doTest(true)
-  fun testRecipePrefix6() = doTest(true)
-  fun testRecipePrefix7() = doTest(true)
-  fun testRecipePrefix8() = doTest(true)
-  fun testRecipePrefix9() = doTest(true)
-  fun testRecipePrefix10() = doTest(true)
-  fun testRecipePrefix11() = doTest(true)
+  @Test
+  fun testIssue7() = parsing.doTest(true)
+  @Test
+  fun testIssue9() = parsing.doTest(true)
+  @Test
+  fun testIssue15() = parsing.doTest(true)
+  @Test
+  fun testIssue23() = parsing.doTest(true)
+  @Test
+  fun testIssue36() = parsing.doTest(true)
+  @Test
+  fun testIssue37() = parsing.doTest(true)
+  @Test
+  fun testIssue44() = parsing.doTest(true)
+  @Test
+  fun testIssue45() = parsing.doTest(true)
+  @Test
+  fun testIssue46() = parsing.doTest(true)
+  @Test
+  fun testIssue56() = parsing.doTest(true)
+  @Test
+  fun testIssue61() = parsing.doTest(true)
+  @Test
+  fun testIssue62() = parsing.doTest(true)
+  @Test
+  fun testIssue63() = parsing.doTest(true)
+  @Test
+  fun testIssue72() = parsing.doTest(true)
+  @Test
+  fun testIssue81() = parsing.doTest(true)
+  @Test
+  fun testIssue88() = parsing.doTest(true)
+  @Test
+  fun testIssue91() = parsing.doTest(true)
+  @Test
+  fun testIssue97() = parsing.doTest(true)
+  @Test
+  fun testIssue104() = parsing.doTest(true)
+  @Test
+  fun testIssue107() = parsing.doTest(true)
+  @Test
+  fun testIssue113() = parsing.doTest(true)
+  @Test
+  fun testIssue115() = parsing.doTest(true)
+  @Test
+  fun testIssue116() = parsing.doTest(true)
+  @Test
+  fun testIssue118() = parsing.doTest(true)
+  @Test
+  fun testIssue120() = parsing.doTest(true)
+  @Test
+  fun testIssue121() = parsing.doTest(true)
+  @Test
+  fun testIssue124() = parsing.doTest(true)
+  @Test
+  fun testIssue130() = parsing.doTest(true)
+  @Test
+  fun testIssue131() = parsing.doTest(true)
+  @Test
+  fun testIssue129() = parsing.doTest(true)
+  @Test
+  fun testIssue132() = parsing.doTest(true)
+  @Test
+  fun testIssue135() = parsing.doTest(true)
+  @Test
+  fun testIssue140() = parsing.doTest(true)
+  @Test
+  fun testIssue141() = parsing.doTest(true)
+  @Test
+  fun testIssue142() = parsing.doTest(true)
+  @Test
+  fun testIssue143() = parsing.doTest(true)
+  @Test
+  fun testIssue144() = parsing.doTest(true)
+  @Test
+  fun testIssue150() = parsing.doTest(true)
+  @Test
+  fun testIssue153() = parsing.doTest(true)
+  @Test
+  fun testIssue155() = parsing.doTest(true)
+  @Test
+  fun testIssue159() = parsing.doTest(true)
+  @Test
+  fun testIssue160() = parsing.doTest(true)
+  @Test
+  fun testIssue167() = parsing.doTest(true)
+  @Test
+  fun testIssue170() = parsing.doTest(true)
+  @Test
+  fun testIssue175() = parsing.doTest(true)
+  @Test
+  fun testIssue178() = parsing.doTest(true)
+  @Test
+  fun testIssue179() = parsing.doTest(true)
+  @Test
+  fun testIssue185() = parsing.doTest(true)
+  @Test
+  fun testIssue188() = parsing.doTest(true)
+  @Test
+  fun testIssue190() = parsing.doTest(true)
+  @Test
+  fun testIssue194() = parsing.doTest(true)
 
-  fun testRecipeIndent() = doTest(true)
+  @Test
+  fun testFunctionForeach() = parsing.doTest(true)
+  @Test
+  fun testFunctionCall() = parsing.doTest(true)
 
-  override fun getTestDataPath() = BASE_TEST_DATA_PATH
+  @Test
+  fun testRecipePrefix0() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix1() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix2() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix3() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix4() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix5() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix6() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix7() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix8() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix9() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix10() = parsing.doTest(true)
+  @Test
+  fun testRecipePrefix11() = parsing.doTest(true)
+
+  @Test
+  fun testRecipeIndent() = parsing.doTest(true)
 }

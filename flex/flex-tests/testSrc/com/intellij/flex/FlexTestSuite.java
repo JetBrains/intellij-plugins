@@ -38,7 +38,6 @@ import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
 import com.intellij.flex.intentions.CreateASVariableIntentionTest;
 import com.intellij.flex.intentions.FlexConvertToLocalTest;
 import com.intellij.flex.intentions.ImportJSClassIntentionTest;
-import com.intellij.flex.parser.ActionScriptParsingTest;
 import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.refactoring.ActionScriptInPlaceIntroduceVariableTest;
 import com.intellij.flex.refactoring.ActionScriptIntroduceVariableTest;
@@ -121,7 +120,6 @@ public final class FlexTestSuite {
     //testSuite.addTestSuite(NonJarDependenciesImportingTest.class);
 
     //com.intellij.flex.parser.*
-    testSuite.addTestSuite(ActionScriptParsingTest.class);
     testSuite.addTestSuite(FlexImporterTest.class);
 
     //com.intellij.flex.refactoring.*

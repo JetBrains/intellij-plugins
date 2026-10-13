@@ -17,7 +17,6 @@ import org.jetbrains.astro.codeInsight.highlighting.AstroQuickFixHighlightingTes
 import org.jetbrains.astro.codeInsight.highlighting.AstroSuppressedInspectionsHighlightingTest
 import org.jetbrains.astro.lang.AstroHighlightingLexerTest
 import org.jetbrains.astro.lang.AstroLexerTest
-import org.jetbrains.astro.lang.AstroParserTest
 import org.jetbrains.astro.service.AstroServiceHighlightingTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -26,7 +25,6 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
   AstroLexerTest::class,
   AstroHighlightingLexerTest::class,
-  AstroParserTest::class,
   AstroCompletionTest::class,
   AstroHighlightingTest::class,
   AstroSuppressedInspectionsHighlightingTest::class,

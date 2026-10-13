@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.lang.expr.VueJSParserTest
-import org.jetbrains.vuejs.lang.html.VueParserTest
 import org.jetbrains.vuejs.libraries.LibrariesTestSuite
 import org.jetbrains.vuejs.pug.PugTemplateTest
 import org.jetbrains.vuejs.pug.VuePugFoldingTest
@@ -13,7 +12,6 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
   VueTestCommons::class,
   VueJSParserTest::class,
-  VueParserTest::class,
   VueCompletionTest::class,
   VueCompletionTest.WithoutServiceTest::class,
   VueCommenterTest::class,

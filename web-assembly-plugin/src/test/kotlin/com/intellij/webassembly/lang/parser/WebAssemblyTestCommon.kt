@@ -1,7 +1,9 @@
 package com.intellij.webassembly.lang.parser
 
-import org.junit.Test
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class WebAssemblyTestCommon : WebAssemblyTestBase("common") {
     @Test
     fun testBasic() = doTest()

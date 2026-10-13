@@ -1,45 +1,44 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.dmarcotte.handlebars.parsing.HbParseDefinition;
-import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
-import com.intellij.psi.templateLanguages.TemplateDataLanguagePatterns;
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.jetbrains.plugins.meteor.spacebars.lang.SpacebarsParseDefinition;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class MeteorParsingTest extends ParsingTestCase {
-  public MeteorParsingTest() {
-    super("testParsing", "spacebars", new SpacebarsParseDefinition());
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+
+@TestApplication
+public class MeteorParsingTest {
+  private static final TestFixture<Project> projectFixture = projectFixture();
+
+  private final TestFixture<ParsingTestFixture> parsingFixture =
+    parsingFixture(projectFixture, MeteorTestUtil.getTestDataPath() + "/testParsing", "spacebars", new SpacebarsParseDefinition());
+
+  @BeforeEach
+  public void setUp() {
+    ParsingTestFixture parsing = parsingFixture.get();
+    parsing.setCheckAllPsiRoots(false);
+    parsing.registerParserDefinition(new SpacebarsParseDefinition());
+    parsing.registerParserDefinition(new HbParseDefinition());
   }
 
-  @Override
-  protected String getTestDataPath() {
-    return MeteorTestUtil.getTestDataPath();
-  }
-
-  @Override
-  protected boolean checkAllPsiRoots() {
-    return false;
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    project.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
-    getApplication().registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
-    registerParserDefinition(new SpacebarsParseDefinition());
-    registerParserDefinition(new HbParseDefinition());
-  }
-
+  @Test
   public void testInclusionTag() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testDecimalLiteralInPath() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testDecimalLiteralWithName() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 }

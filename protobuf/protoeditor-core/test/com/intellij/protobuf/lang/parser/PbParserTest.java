@@ -15,82 +15,80 @@
  */
 package com.intellij.protobuf.lang.parser;
 
-import com.intellij.lang.LanguageBraceMatching;
-import com.intellij.lang.LanguageParserDefinitions;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.ide.editing.ProtoBraceMatcher;
 import com.intellij.protobuf.lang.PbParserDefinition;
-import com.intellij.protobuf.lang.PbTextLanguage;
-import com.intellij.protobuf.lang.PbTextParserDefinition;
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class PbParserTest extends ParsingTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
 
-  public PbParserTest() {
-    super("lang/parser", "proto.testdata", new PbParserDefinition());
-  }
+@TestApplication
+public class PbParserTest {
+  private static final TestFixture<Project> projectFixture = projectFixture();
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    // GeneratedParserUtilBase uses brace matchers to assist in recovery.
-    addExplicitExtension(LanguageBraceMatching.INSTANCE, myLanguage, new ProtoBraceMatcher());
-
-    // Needed because proto files directly include prototext elements.
-    addExplicitExtension(
-        LanguageParserDefinitions.INSTANCE, PbTextLanguage.INSTANCE, new PbTextParserDefinition());
-  }
-
-  @Override
-  public String getTestDataPath() {
-    return TestUtils.getProtobufCoreTestDataPath();
-  }
+  private final TestFixture<ParsingTestFixture> parsingFixture =
+    parsingFixture(projectFixture, TestUtils.getProtobufCoreTestDataPath() + "/lang/parser", "proto.testdata", new PbParserDefinition());
 
   /** Test against Unittest.proto from the official protoc release. */
+  @Test
   public void testUnittest() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
   /** Test against unittest_proto3.proto from the official protoc release. */
+  @Test
   public void testUnittestProto3() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
   /** Test against unittest_custom_options.proto from the official protoc release. */
+  @Test
   public void testUnittestCustomOptions() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
   /** Test against Recovery.proto. */
+  @Test
   public void testRecovery() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testUnittestExtensionRange() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testMapAsTypeName() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testMaxRanges() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testEnumReservedRange() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testEnumReservedRangeEditions() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testSymbolVisibility() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testImportOption() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 }

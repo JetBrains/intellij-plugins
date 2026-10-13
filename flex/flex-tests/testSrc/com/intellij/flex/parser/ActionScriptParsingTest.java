@@ -1,192 +1,214 @@
 package com.intellij.flex.parser;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.javascript.JSParsingTestBase;
-import com.intellij.lang.javascript.JavascriptASTFactory;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lang.javascript.dialects.ECMAL4ParserDefinition;
-import com.intellij.lang.xml.XMLLanguage;
-import com.intellij.lang.xml.XmlASTFactory;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.xml.StartTagEndTokenProvider;
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.Test;
 
+@TestApplication
 public class ActionScriptParsingTest extends JSParsingTestBase {
   public ActionScriptParsingTest() {
-    super("", "js2", new ECMAL4ParserDefinition(), new JavascriptParserDefinition());
+    super(FlexTestUtils.getTestDataPath("parsing"), "js2", new ECMAL4ParserDefinition(), new JavascriptParserDefinition());
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    addExplicitExtension(LanguageASTFactory.INSTANCE, JavascriptLanguage.INSTANCE, new JavascriptASTFactory());
-    addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
-    registerExtensionPoint(new ExtensionPointName<>("com.intellij.xml.startTagEndToken"),
-                           StartTagEndTokenProvider.class);
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("parsing");
-  }
-
+  @Test
   public void testBasic() {
     doTest(true);
   }
 
+  @Test
   public void testClassesPackagesNamespaces() {
     doTest(true);
   }
 
+  @Test
   public void testQualifiedNsReference() {
     doTest(true);
   }
 
+  @Test
   public void testAttributesInInclude() {
     doTest(true);
   }
 
+  @Test
   public void testExpressions() {
     doTest(true);
   }
 
+  @Test
   public void testE4X() {
     doTest(true);
   }
 
+  @Test
   public void testE4X2() {
     doTest(true);
   }
 
+  @Test
   public void testForEachIn() {
     doTest(true);
   }
 
+  @Test
   public void testXmlDef() {
     doTest(true);
   }
 
+  @Test
   public void testXmlDef2() {
     doTest(true);
   }
 
+  @Test
   public void testObjectLiteral() {
     doTest(true);
   }
 
+  @Test
   public void testAttributesListErrors() {
     doTest(true);
   }
 
+  @Test
   public void testSeveralCatchesInTry() {
     doTest(true);
   }
 
+  @Test
   public void testIncompleteCode() {
     doTest(true);
   }
 
+  @Test
   public void testIncompleteCode2() {
     doTest(true);
   }
 
+  @Test
   public void testIncompleteNewJS2() {
     doTest(true);
   }
 
+  @Test
   public void testOldAs2Code() {
     doTest(true);
   }
 
+  @Test
   public void testXmlAttributeSelectionInWithStatement() {
     doTest(true);
   }
 
+  @Test
   public void testKeywordsAsClassAndFunctionName() {
     doTest(true);
   }
 
+  @Test
   public void testArrayLiterals() {
     doTest(true);
   }
 
+  @Test
   public void testKeywordNsReference() {
     doTest(true);
   }
 
+  @Test
   public void testKeywordsInE4X() {
     doTest(true);
   }
 
+  @Test
   public void testConditionalBlocks() {
     doTest(true);
   }
 
+  @Test
   public void testActionScriptSpecific_() {
     doTest(true);
   }
 
+  @Test
   public void testVectorInitializers() {
     doTest(true);
   }
 
+  @Test
   public void testGenerics() {
     doTest(true);
   }
 
+  @Test
   public void testGenerics2() {
     doTest(true);
   }
 
+  @Test
   public void testIncorrectGenerics() {
     doTest(true);
   }
 
+  @Test
   public void testComplex() {
     doTest(true);
   }
 
+  @Test
   public void testE4X3() {
     doTest(true);
   }
 
+  @Test
   public void testMiscGotchas() {
     doTest(true);
   }
 
+  @Test
   public void testNoTypeRefInExtends() {
     doTest(true);
   }
 
+  @Test
   public void testStaticBlock() {
     doTest(true);
   }
 
+  @Test
   public void testNoReferenceBeforeQuotedAttributeValue() {
     doTest(true);
   }
 
+  @Test
   public void testConstInFor() {
     doTest(true);
   }
 
+  @Test
   public void testASDoc() {
     doTest(true);
   }
 
+  @Test
   public void testUseNsInAttrList() {
     doTest(true);
   }
 
+  @Test
   public void testLiteralWithExpressionProperties() {
     doTest(true);
   }
 
+  @Test
   public void testGoto() {
     doTest(true);
   }
 
+  @Test
   public void testBroken() {
     doTest(true);
   }

@@ -3,26 +3,24 @@ package org.jetbrains.vuejs.lang.html
 
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
-import com.intellij.lang.LanguageASTFactory
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
-import com.intellij.psi.css.CssElementDescriptorProvider
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.tree.CustomLanguageASTComparator
+import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider
-import org.intellij.plugins.postcss.PostCssLanguage
-import org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider
 import org.intellij.plugins.postcss.parser.PostCssParserDefinition
-import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport
-import org.jetbrains.vuejs.lang.html.parser.VueASTComparator
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class VueParserTest : JSHtmlParsingTest(
   "vue",
   VueParserDefinition(),
@@ -30,16 +28,12 @@ class VueParserTest : JSHtmlParsingTest(
   PostCssParserDefinition()
 ) {
 
-  override fun setUp() {
-    super.setUp()
+  override fun getEmbeddedContentSupports(): List<HtmlEmbeddedContentSupport> {
+    return super.getEmbeddedContentSupports() + VueEmbeddedContentSupport()
+  }
 
-    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, VueLanguage, VueASTComparator())
-    HtmlEmbeddedContentSupport.register(application, testRootDisposable, VueEmbeddedContentSupport::class.java)
-
-    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
-                       listOf(PostCssEmbeddedTokenTypesProvider()))
-    addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, PostCssTreeElementFactory())
-    registerExtension(CssElementDescriptorProvider.EP_NAME, PostCssElementDescriptorProvider())
+  override fun getEmbeddedTokenTypesProviders(): List<EmbeddedTokenTypesProvider> {
+    return super.getEmbeddedTokenTypesProviders() + PostCssEmbeddedTokenTypesProvider()
   }
 
   override fun checkResult(targetDataName: String, file: PsiFile) {
@@ -48,12 +42,14 @@ class VueParserTest : JSHtmlParsingTest(
   }
 
   private fun ensureReparsingConsistent(file: PsiFile) {
-    DebugUtil.performPsiModification<RuntimeException>("ensureReparsingConsistent") {
-      val fileText = file.text
-      val diffLog = BlockSupportImpl().reparseRange(
-        file, file.node, TextRange.allOf(fileText), fileText, EmptyProgressIndicator(), fileText)
-      val event = diffLog.performActualPsiChange(file)
-      assertEmpty(event.changedElements)
+    WriteAction.runAndWait<RuntimeException> {
+      DebugUtil.performPsiModification<RuntimeException>("ensureReparsingConsistent") {
+        val fileText = file.text
+        val diffLog = BlockSupportImpl().reparseRange(
+          file, file.node, TextRange.allOf(fileText), fileText, EmptyProgressIndicator(), fileText)
+        val event = diffLog.performActualPsiChange(file)
+        assertTrue(event.changedElements.isEmpty(), "The reparse changed the elements: ${event.changedElements}")
+      }
     }
   }
 
@@ -77,6 +73,7 @@ class VueParserTest : JSHtmlParsingTest(
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/html/parser"
 
+  @Test
   fun testScriptNoLang() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -89,6 +86,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptJs() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -101,6 +99,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptTs() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -113,6 +112,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptTypo() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -125,6 +125,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptsWithMixedLanguages() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -140,6 +141,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptTsTemplateFirst() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -152,6 +154,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptTsNoContent() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -162,6 +165,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testFirstEverScriptInTemplate() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -178,6 +182,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVueInnerScriptTagTS() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -191,6 +196,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptStrangeLang1() {
     doTestVue("""
       <script lang="html">
@@ -199,6 +205,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testScriptStrangeLang2() {
     doTestVue("""
       <script lang="template">
@@ -207,6 +214,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVue2FilterJs() {
     doTestVue("""
       <script lang="js"></script>
@@ -216,6 +224,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVue2FilterTs() {
     doTestVue("""
       <script lang="ts"></script>
@@ -225,6 +234,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVueInnerScriptTag() {
     doTestVue("""
       <template>
@@ -233,6 +243,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVueInnerScriptTag2() {
     doTestVue("""
       <template>
@@ -241,6 +252,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVueInnerScriptTag3() {
     doTestVue("""
       <template>
@@ -251,6 +263,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testSlotName() {
     doTestVue("""
       <template>
@@ -259,6 +272,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testSlotName2() {
     doTestVue("""
       <template>
@@ -269,6 +283,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testPropBinding() {
     doTestVue("""
       <template>
@@ -280,6 +295,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testEventBinding() {
     doTestVue("""
       <template>
@@ -290,6 +306,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testEmptyBinding() {
     doTestVue("""
       <template>
@@ -299,6 +316,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testVFor() {
     doTestVue("""
       <template>
@@ -309,6 +327,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testCustomDirective() {
     doTestVue("""
       <template>
@@ -317,6 +336,7 @@ class VueParserTest : JSHtmlParsingTest(
     """)
   }
 
+  @Test
   fun testInterpolationParsing() {
     doTest("""
       {{foo.bar}}
@@ -326,6 +346,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent(), "test.{{.}}${VueFileElementType.INJECTED_FILE_SUFFIX}")
   }
 
+  @Test
   fun testCustomInterpolationParsing() {
     doTest("""
       {%foo.bar%}
@@ -335,6 +356,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent(), "test.{%.%}${VueFileElementType.INJECTED_FILE_SUFFIX}")
   }
 
+  @Test
   fun testSrcAttribute() {
     doTestVue("""
       <template src="foo"></template>
@@ -350,6 +372,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testLangAttribute() {
     doTestVue("""
       <template><div lang="ts"><span></span></div></template>
@@ -357,10 +380,12 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testDivNestedUnderP() {
     doTestVue("<template><p><div></div></p></template>")
   }
 
+  @Test
   fun testScriptSetupGeneric() {
     doTestVue("""
       <script setup lang="ts" generic="Clearable extends boolean, ValueType extends string | number | null | undefined">
@@ -368,6 +393,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testScriptSetupGenericBroken() {
     doTestVue("""
       <script setup lang="ts" generic="Clearable boolean, , ValueType extends string || number, ||">
@@ -375,6 +401,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testScriptSetupGenericJS() {
     doTestVue("""
       <script setup generic="Clearable extends boolean">
@@ -382,6 +409,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testTitleVue() {
     doTestVue("""
       <head><title>This is <std>title</std></title>
@@ -389,6 +417,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testTitleHtml() {
     super.doTest("""
       <head><title>This is <std>title</std></title>
@@ -396,6 +425,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent(), "test.html")
   }
 
+  @Test
   fun testStyleReparse() {
     doReparseTest("<style scoped></styl\n", "<style scoped></style\n")
     doReparseTest("<style scoped></styl\n", "<style scoped></style><div\n")
@@ -403,6 +433,7 @@ class VueParserTest : JSHtmlParsingTest(
     doReparseTest("<style scoped>.foo { }</styl\n", "<style scoped>.foo { }</style><div\n")
   }
 
+  @Test
   fun testJsxReparse() {
     doReparseTest("""
       <script lang="jsx">
@@ -415,6 +446,7 @@ class VueParserTest : JSHtmlParsingTest(
     """.trimIndent())
   }
 
+  @Test
   fun testLangReparse() {
     val baseText = """
       <script lang="js">
@@ -432,6 +464,7 @@ class VueParserTest : JSHtmlParsingTest(
     doReparseTest(baseText, baseText.replace("js", "ts"))
   }
 
+  @Test
   fun testDeepWithSelectors() {
     doTestVue("""
       <template>

@@ -3,100 +3,95 @@ package org.intellij.terraform.config;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor;
 import com.intellij.psi.impl.source.tree.TreeElement;
-import com.intellij.psi.impl.source.tree.injected.InjectedTestUtil;
-import com.intellij.testFramework.ParsingTestCase;
-import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.UsefulTestCase;
-import com.intellij.util.KeyedLazyInstance;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.config.model.HclType;
-import org.intellij.terraform.config.psi.TfReferenceContributor;
 import org.intellij.terraform.hcl.HCLParserDefinition;
 import org.intellij.terraform.hcl.HCLTokenTypes;
 import org.intellij.terraform.hcl.psi.HCLBlock;
 import org.intellij.terraform.hcl.psi.HCLProperty;
 import org.intellij.terraform.hcl.psi.common.BaseExpression;
 import org.intellij.terraform.hcl.psi.common.ParameterList;
-import org.intellij.terraform.hil.psi.ILReferenceContributor;
 import org.intellij.terraform.hil.psi.TypeCachedValueProvider;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @SuppressWarnings("unused")
 @TestDataPath("$CONTENT_ROOT/../test-data/terraform/types/")
-public abstract class TfExpressionTypesTest extends ParsingTestCase {
+public abstract class TfExpressionTypesTest {
+  protected static final TestFixture<Project> projectFixture = projectFixture();
 
+  protected final TestFixture<ParsingTestFixture> parsingFixture =
+    parsingFixture(projectFixture, TfTestUtils.getTestDataPath() + "/terraform/types", "tf", false,
+                   new TfParserDefinition(), new HCLParserDefinition());
+
+  @Test
   public void testForListExpression() {
     doTest();
   }
 
+  @Test
   public void testForObjectExpression() {
     doTest();
   }
 
+  @Test
   public void testVariablesAndLocals() {
     doTest();
   }
 
+  @Test
   public void testComplexVariables() {
     doTest();
   }
 
+  @Test
   public void testVariablesAndLocalsSelect() {
     doTest();
   }
 
+  @Test
   public void testResources() {
     doTest();
   }
 
+  @Test
   public void testVariableWithOptionalAttribute() {
     doTest();
   }
 
   //region helpers
-  public TfExpressionTypesTest() {
-    super("terraform/types", "tf", false, new TfParserDefinition(), new HCLParserDefinition());
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    InjectedTestUtil.registerMockInjectedLanguageManager(getApplication(), getProject(), getPluginDescriptor());
-
-    //registerExtensionPoint(PsiReferenceContributor.EP_NAME, PsiReferenceContributor.class);
-    registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HCL", new ILReferenceContributor(), new TfReferenceContributor()));
-    registerExtension(PsiReferenceContributor.EP_NAME, new MyPsiReferenceContributor("HIL", new ILReferenceContributor()));
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return TfTestUtils.getTestDataPath();
-  }
-
   protected void doTest() {
-    doTest(true, true);
-  }
-
-  @Override
-  protected void checkResult(@NotNull @TestDataFile String targetDataName, @NotNull PsiFile file) {
-    doCheckResult(myFullDataPath, file, targetDataName);
+    ParsingTestFixture fixture = parsingFixture.get();
+    String name = fixture.getTestName();
+    PsiFile file = fixture.parseFile(name, fixture.loadFile(name + "." + fixture.getFileExt()));
+    ReadAction.runBlocking(() -> doCheckResult(fixture.getFullDataPath(), file, name));
+    fixture.ensureNoErrorElements(file);
   }
 
   private static void doCheckResult(@NotNull String testDataDir,
@@ -110,7 +105,7 @@ public abstract class TfExpressionTypesTest extends ParsingTestCase {
     StringBuilder buffer = new StringBuilder();
     final ASTNode node = ((PsiElement) file).getNode();
     assertNotNull(node);
-    assertInstanceOf(node, TreeElement.class);
+    assertInstanceOf(TreeElement.class, node);
     ((TreeElement) node).acceptTree(new TreeToBuffer(node, buffer));
     String actual = buffer.toString().trim();
     UsefulTestCase.assertSameLinesWithFile(expectedFileName, actual);
@@ -188,34 +183,6 @@ public abstract class TfExpressionTypesTest extends ParsingTestCase {
     @Override
     protected void elementFinished(@NotNull ASTNode e) {
       indent -= 2;
-    }
-  }
-
-  private static class MyPsiReferenceContributor extends PsiReferenceContributor implements KeyedLazyInstance<PsiReferenceContributor> {
-    private final String myKey;
-    private final PsiReferenceContributor[] myContributors;
-
-    private MyPsiReferenceContributor(String key, PsiReferenceContributor... contributors) {
-      myKey = key;
-      myContributors = contributors;
-    }
-
-    @Override
-    public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-      for (PsiReferenceContributor contributor : myContributors) {
-        contributor.registerReferenceProviders(registrar);
-      }
-    }
-
-    @Override
-    public @NotNull String getKey() {
-      return myKey;
-    }
-
-    @NotNull
-    @Override
-    public PsiReferenceContributor getInstance() {
-      return this;
     }
   }
 

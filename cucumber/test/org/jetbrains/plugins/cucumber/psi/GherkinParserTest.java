@@ -1,117 +1,136 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi;
 
-import com.intellij.testFramework.ParsingTestCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
+import org.junit.jupiter.api.Test;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
 
-public class GherkinParserTest extends ParsingTestCase {
-  public GherkinParserTest() {
-    super("", "feature", new GherkinParserDefinition());
-  }
+@TestApplication
+public class GherkinParserTest {
+  private static final TestFixture<Project> projectFixture = projectFixture();
 
-  @NotNull
-  @Override
-  protected String getTestName(boolean lowercaseFirstLetter) {
-    return super.getTestName(true);
-  }
+  private final TestFixture<ParsingTestFixture> parsingFixture =
+    parsingFixture(projectFixture, CucumberTestUtil.getTestDataPath() + "/parsing/", "feature", true, new GherkinParserDefinition());
 
-  @Override
-  protected String getTestDataPath() {
-    return CucumberTestUtil.getTestDataPath() + "/parsing";
-  }
-
+  @Test
   public void testSimple() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testMultiline_feature_description() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testBackground() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testMultiline_scenario_name() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testScenario_outline() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testScenario_outline_table() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testScenario_outline_table_with_tags() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testNot_a_step() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testMultiline_args() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testNo_steps() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testTags() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testPystring() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testWithout_feature_keyword() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testStep_param() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testRuby8793() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testRuby14051() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testBackground_after_scenario() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testFeatures() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testScenario_outline_param() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testScenario_with_examples() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testTag_before_examples() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testRule() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 
+  @Test
   public void testIdea375449() {
-    doTest(true);
+    parsingFixture.get().doTest(true);
   }
 }
 

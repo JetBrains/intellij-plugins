@@ -1,49 +1,29 @@
 package org.intellij.plugins.postcss.parser;
 
-import com.intellij.lang.LanguageASTFactory;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
-import com.intellij.psi.css.CssElementDescriptorProvider;
-import com.intellij.psi.css.impl.CssTreeElementFactory;
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture;
 import com.intellij.testFramework.TestDataPath;
-import org.intellij.plugins.postcss.PostCssLanguage;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.intellij.plugins.postcss.PostCssTestUtils;
-import org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider;
-import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixtureKt.parsingFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+
 @TestDataPath("$CONTENT_ROOT/../testData/parser/")
-public abstract class PostCssParsingTest extends ParsingTestCase {
+public abstract class PostCssParsingTest {
+  private static final TestFixture<Project> projectFixture = projectFixture();
+
+  private final TestFixture<ParsingTestFixture> parsingFixture;
+
   public PostCssParsingTest(@NonNls @NotNull String dataPath) {
-    super(dataPath, "pcss", new PostCssParserDefinition(), new CSSParserDefinition());
-  }
-
-  @Override
-  public void configureFromParserDefinition(@NotNull ParserDefinition definition, String extension) {
-    super.configureFromParserDefinition(definition, extension);
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
-    registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
-    registerExtension(CssElementDescriptorProvider.EP_NAME, new PostCssElementDescriptorProvider());
-
-    addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, new PostCssTreeElementFactory());
-    addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
+    parsingFixture = parsingFixture(projectFixture, PostCssTestUtils.getFullTestDataPath(getClass()) + "/" + dataPath, "pcss", false,
+                                    new PostCssParserDefinition(), new CSSParserDefinition());
   }
 
   protected void doTest() {
-    super.doTest(true);
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return PostCssTestUtils.getFullTestDataPath(getClass());
+    parsingFixture.get().doTest(true);
   }
 }

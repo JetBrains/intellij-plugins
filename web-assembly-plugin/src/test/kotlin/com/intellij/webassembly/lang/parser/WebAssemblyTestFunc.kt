@@ -1,7 +1,9 @@
 package com.intellij.webassembly.lang.parser
 
-import org.junit.Test
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class WebAssemblyTestFunc : WebAssemblyTestBase("func") {
     @Test
     fun testFuncNamed() = doTest()

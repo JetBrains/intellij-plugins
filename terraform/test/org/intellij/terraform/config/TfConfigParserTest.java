@@ -1,61 +1,74 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
+import com.intellij.lang.ParserDefinition;
 import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.junit5.TestApplication;
 import org.intellij.terraform.hcl.HCLParserDefinition;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
+@TestApplication
 @TestDataPath("$CONTENT_ROOT/../test-data/psi/")
 public class TfConfigParserTest extends HCLParserTest {
-  public TfConfigParserTest() {
-    super("psi", "hcl", false, new TfParserDefinition(), new HCLParserDefinition());
+  @Override
+  protected ParserDefinition @NotNull [] createParserDefinitions() {
+    return new ParserDefinition[]{new TfParserDefinition(), new HCLParserDefinition()};
   }
 
   private void setTerraformExtension() {
-    myFileExt = "tf";
+    parsingFixture.get().setFileExt("tf");
   }
 
+  @Test
   public void testTerraform_With_String_In_IL() throws Exception {
     setTerraformExtension();
     doTest();
   }
 
+  @Test
   public void testTerraform_With_Extra_Quote() throws Exception {
     setTerraformExtension();
     doTest();
   }
 
+  @Test
   public void testUnfinished_Interpolation() throws Exception {
     setTerraformExtension();
     doTest();
   }
 
+  @Test
   public void testBackslash_Escaping_In_Interpolation() throws Exception {
     setTerraformExtension();
     doTest();
   }
 
+  @Test
   public void testMultiline_Interpolation() throws Exception {
     setTerraformExtension();
     doTest();
   }
 
+  @Test
   public void testClosingBraceInInterpolationStringLiteral() throws Exception {
     setTerraformExtension();
     doTest();
   }
 
+  @Test
   public void testEscapedQuotesInInterpolation() {
     setTerraformExtension();
     doTest();
   }
 
-  public void testForArray() throws IOException {
+  @Test
+  public void testForArray() {
     doCodeTest("a = [for k, v in foo: v if true]");
   }
 
-  public void testForArray2() throws IOException {
+  @Test
+  public void testForArray2() {
     doCodeTest("""
                  cidr_blocks = [
                    for num in var.subnet_numbers:
@@ -63,7 +76,8 @@ public class TfConfigParserTest extends HCLParserTest {
                  ]""");
   }
 
-  public void testForObjectIf() throws IOException {
+  @Test
+  public void testForObjectIf() {
     doCodeTest("""
                  value = {
                    for instance in aws_instance.example:
@@ -72,7 +86,8 @@ public class TfConfigParserTest extends HCLParserTest {
                  }""");
   }
 
-  public void testForObjectIf2() throws IOException {
+  @Test
+  public void testForObjectIf2() {
     doCodeTest("""
                  value = {
                    for k in v:
@@ -81,19 +96,23 @@ public class TfConfigParserTest extends HCLParserTest {
                  }""");
   }
 
-  public void testForArrayIncomplete1() throws IOException {
+  @Test
+  public void testForArrayIncomplete1() {
     doCodeTest("a = [for ]");
   }
 
-  public void testForArrayIncomplete2() throws IOException {
+  @Test
+  public void testForArrayIncomplete2() {
     doCodeTest("a = [for k, in foo: v]");
   }
 
-  public void testForArrayIncomplete3() throws IOException {
+  @Test
+  public void testForArrayIncomplete3() {
     doCodeTest("a = [for a in ]");
   }
 
-  public void testForObject() throws IOException {
+  @Test
+  public void testForObject() {
     doCodeTest("""
                  value = {
                    for instance in aws_instance.example:
@@ -101,7 +120,8 @@ public class TfConfigParserTest extends HCLParserTest {
                  }""");
   }
 
-  public void testForObjectGrouping() throws IOException {
+  @Test
+  public void testForObjectGrouping() {
     doCodeTest("""
                  value = {
                    for instance in aws_instance.example:
@@ -109,46 +129,56 @@ public class TfConfigParserTest extends HCLParserTest {
                  }""");
   }
 
-  public void testSelectExpression() throws IOException {
+  @Test
+  public void testSelectExpression() {
     doCodeTest("a = foo.bar.baz");
   }
 
-  public void testIndexSelectExpression() throws IOException {
+  @Test
+  public void testIndexSelectExpression() {
     doCodeTest("a = foo[5].baz");
   }
 
-  public void testSplatExpression() throws IOException {
+  @Test
+  public void testSplatExpression() {
     doCodeTest("a = foo.*.baz");
   }
 
-  public void testFullSplatExpression() throws IOException {
+  @Test
+  public void testFullSplatExpression() {
     doCodeTest("a = foo[*].baz");
   }
 
-  public void testComplexSplat() throws IOException {
+  @Test
+  public void testComplexSplat() {
     doCodeTest("a = tuple.*.foo.bar[0]");
   }
 
-  public void testComplexFullSplat() throws IOException {
+  @Test
+  public void testComplexFullSplat() {
     doCodeTest("a = tuple[*].foo.bar[0]");
   }
 
-  public void testSelectWithNumberExpression() throws IOException {
+  @Test
+  public void testSelectWithNumberExpression() {
     doCodeTest("a = foo.0.baz");
   }
 
-  public void testPropsInObject() throws IOException {
+  @Test
+  public void testPropsInObject() {
     doCodeTest("a = {a=1, b:2, c=3\nd=4\ne:null}");
   }
 
-  public void testPropertyNameIsSelectExpression() throws IOException {
+  @Test
+  public void testPropertyNameIsSelectExpression() {
     doCodeTest("""
                  providers = {
                    aws.target = aws.iam
                  }""");
   }
 
-  public void testPropertyNameIsParenthesizedSelectExpression() throws IOException {
+  @Test
+  public void testPropertyNameIsParenthesizedSelectExpression() {
     doCodeTest("""
                  providers = {
                    a="x"
@@ -156,30 +186,36 @@ public class TfConfigParserTest extends HCLParserTest {
                  }""");
   }
 
-  public void testPropertyNameIsQuotedSelectExpression() throws IOException {
+  @Test
+  public void testPropertyNameIsQuotedSelectExpression() {
     doCodeTest("""
                  providers = {
                    "aws.target" = aws.iam
                  }""");
   }
 
-  public void testObjectAsMethodCallArgument() throws IOException {
+  @Test
+  public void testObjectAsMethodCallArgument() {
     doCodeTest("x=foo({a = 1, b = [true, false]})");
   }
 
-  public void testMethodCallEllipsis1() throws IOException {
+  @Test
+  public void testMethodCallEllipsis1() {
     doCodeTest("x=foo(1...)");
   }
 
-  public void testMethodCallEllipsis2() throws IOException {
+  @Test
+  public void testMethodCallEllipsis2() {
     doCodeTest("x=foo(1, 2...)");
   }
 
-  public void testMethodCallCommaEllipsis() throws IOException {
+  @Test
+  public void testMethodCallCommaEllipsis() {
     doCodeTest("x=foo(1, 2,...)");
   }
 
-  public void testMethodCallTrailingComma() throws IOException {
+  @Test
+  public void testMethodCallTrailingComma() {
     doCodeTest("x=foo(1, 2,)");
   }
 }

@@ -1,31 +1,43 @@
 package org.intellij.prisma
 
-import com.intellij.testFramework.ParsingTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.parsingFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.intellij.prisma.lang.parser.PrismaParserDefinition
+import org.junit.jupiter.api.Test
 
-class PrismaParserTest : ParsingTestCase(
-  "parser",
-  "prisma",
-  true,
-  PrismaParserDefinition()
-) {
-  override fun getTestDataPath(): String = getPrismaTestDataPath()
+@TestApplication
+class PrismaParserTest {
+  companion object {
+    private val projectFixture = projectFixture()
+  }
 
-  fun testPrismaFile() = doTest(true, true)
+  private val parsing by parsingFixture(projectFixture, getPrismaTestDataPath() + "/parser", "prisma", true, PrismaParserDefinition())
 
-  fun testUnsupportedType() = doTest(true, false)
+  @Test
+  fun testPrismaFile() = parsing.doTest(true, true)
 
-  fun testUnsupportedOptionalType() = doTest(true, true)
+  @Test
+  fun testUnsupportedType() = parsing.doTest(true, false)
 
-  fun testUnsupportedOptionalListType() = doTest(true, true)
+  @Test
+  fun testUnsupportedOptionalType() = parsing.doTest(true, true)
 
-  fun testUnsupportedListType() = doTest(true, true)
+  @Test
+  fun testUnsupportedOptionalListType() = parsing.doTest(true, true)
 
-  fun testUnsupportedTypeInAlias() = doTest(true, true)
+  @Test
+  fun testUnsupportedListType() = parsing.doTest(true, true)
 
-  fun testPathExpression() = doTest(true, true)
+  @Test
+  fun testUnsupportedTypeInAlias() = parsing.doTest(true, true)
 
-  fun testViewDeclaration() = doTest(true, true)
+  @Test
+  fun testPathExpression() = parsing.doTest(true, true)
 
-  fun testComments() = doTest(true, true)
+  @Test
+  fun testViewDeclaration() = parsing.doTest(true, true)
+
+  @Test
+  fun testComments() = parsing.doTest(true, true)
 }

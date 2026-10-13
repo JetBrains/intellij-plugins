@@ -22,11 +22,6 @@ import org.intellij.plugins.postcss.inspections.PostCssMediaRangeInspectionTest;
 import org.intellij.plugins.postcss.inspections.PostCssNestingInspectionTest;
 import org.intellij.plugins.postcss.inspections.PostCssNestingQuickFixTest;
 import org.intellij.plugins.postcss.parser.PostCssIncrementalParserTest;
-import org.intellij.plugins.postcss.parser.PostCssParsingCustomMediaTest;
-import org.intellij.plugins.postcss.parser.PostCssParsingCustomSelectorTest;
-import org.intellij.plugins.postcss.parser.PostCssParsingMediaRangesTest;
-import org.intellij.plugins.postcss.parser.PostCssParsingNestingTest;
-import org.intellij.plugins.postcss.parser.PostCssParsingOtherTest;
 import org.intellij.plugins.postcss.rename.PostCssRenameTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomMediaResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
@@ -58,11 +53,6 @@ public final class PostCssTestSuite {
   public static final class Fast {
     public static Test suite() {
       TestSuite suite = new TestSuite("Fast PostCSS");
-      suite.addTestSuite(PostCssParsingNestingTest.class);
-      suite.addTestSuite(PostCssParsingCustomSelectorTest.class);
-      suite.addTestSuite(PostCssParsingCustomMediaTest.class);
-      suite.addTestSuite(PostCssParsingMediaRangesTest.class);
-      suite.addTestSuite(PostCssParsingOtherTest.class);
       return suite;
     }
   }
