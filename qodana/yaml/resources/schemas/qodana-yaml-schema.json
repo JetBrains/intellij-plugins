@@ -661,6 +661,10 @@
       "description": "Defines if analysis is performed within a docker container or not",
       "type": "string"
     },
+    "edict": {
+      "description": "Edict inspection generation settings, used by qodana-cli",
+      "type": "object"
+    },
     "ide": {
       "description": "Deprecated. The local path to an IDE or a product code to use for Qodana analysis. Incompatible with 'linter'",
       "type": "string"
