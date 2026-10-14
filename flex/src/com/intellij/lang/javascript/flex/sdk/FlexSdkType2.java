@@ -6,6 +6,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.AdditionalDataConfigurable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
@@ -49,7 +50,7 @@ public final class FlexSdkType2 extends SdkType {
   }
 
   @Override
-  public @NotNull Collection<String> suggestHomePaths() {
+  public @NotNull Collection<String> suggestHomePaths(@Nullable Project project) {
     final String fbInstallation = FlashBuilderSdkFinder.findFBInstallationPath();
     return fbInstallation == null
            ? Collections.emptySet()
