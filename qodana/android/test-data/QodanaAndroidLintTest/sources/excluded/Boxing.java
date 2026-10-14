@@ -1,4 +1,4 @@
-package p1.p2;
+package excluded;
 
 public class Boxing {
   public Integer three() {

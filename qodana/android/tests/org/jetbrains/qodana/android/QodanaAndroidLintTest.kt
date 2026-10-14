@@ -31,7 +31,7 @@ class QodanaAndroidLintTest : QodanaRunnerTestCase() {
       it.copy(profile = QodanaProfileConfig.named("qodana.single:AndroidLintUseValueOf"))
     }
     runAnalysis()
-    assertUseValueOfResult()
+    assertUseValueOfResults("test-module/excluded/Boxing.java:5", "test-module/included/Boxing.java:5")
   }
 
   @Test
@@ -39,16 +39,16 @@ class QodanaAndroidLintTest : QodanaRunnerTestCase() {
     updateQodanaConfig {
       it.copy(
         profile = QodanaProfileConfig.named("qodana.single:AndroidLintUseValueOf"),
-        onlyDirectory = Path.of("test-module"),
+        onlyDirectory = Path.of("test-module", "included"),
       )
     }
     runAnalysis()
-    assertUseValueOfResult()
+    assertUseValueOfResults("test-module/included/Boxing.java:5")
   }
 
-  private fun assertUseValueOfResult() {
+  private fun assertUseValueOfResults(vararg expectedLocations: String) {
     assertSarifExitCode(0)
-    assertSarifResultLocations("test-module/p1/p2/Boxing.java:5")
-    assertEquals(listOf("AndroidLintUseValueOf"), manager.sarifRun.results.map { it.ruleId })
+    assertSarifResultLocations(*expectedLocations)
+    assertEquals(List(expectedLocations.size) { "AndroidLintUseValueOf" }, manager.sarifRun.results.map { it.ruleId })
   }
 }
