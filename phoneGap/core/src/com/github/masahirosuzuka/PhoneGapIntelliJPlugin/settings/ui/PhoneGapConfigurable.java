@@ -8,6 +8,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins.Phon
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
@@ -188,6 +189,17 @@ public final class PhoneGapConfigurable implements Configurable {
   @Override
   public void reset() {
     myUIController.reset(mySettings.getState());
+  }
+
+  @Override
+  public void disposeUIResources() {
+    if (myExecutablePath != null) {
+      Disposer.dispose(myExecutablePath);
+    }
+    if (myWorkingDirectory != null) {
+      Disposer.dispose(myWorkingDirectory);
+    }
+    myWrapper = null;
   }
 
   private PhoneGapPluginsView.VersionCallback getVersionCallback() {

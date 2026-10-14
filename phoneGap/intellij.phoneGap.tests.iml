@@ -30,6 +30,7 @@
     <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.phoneGap.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.phoneGap.core" />
 </module>

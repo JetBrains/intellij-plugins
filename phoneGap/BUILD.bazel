@@ -104,6 +104,7 @@ jvm_library(
         ":phoneGap-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
     ],
     deps = [
         # do not sort,
@@ -149,6 +150,7 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
+        "@community//platform/ide-core",
     ],
 )
 ### auto-generated section `build intellij.phoneGap.tests` end
