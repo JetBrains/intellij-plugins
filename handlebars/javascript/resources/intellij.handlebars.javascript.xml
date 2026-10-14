@@ -4,6 +4,7 @@
     <plugin id="com.dmarcotte.handlebars"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.platform.core"/>
+    <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core"/>
   </dependencies>
   <!-- endregion -->

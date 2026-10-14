@@ -29,6 +29,7 @@ jvm_library(
         "@community//platform/core-api:core",
         "@community//platform/ide-core",
         "@lib//:kotlin-stdlib",
+        "@community//platform/platform-api:ide",
     ],
 )
 
@@ -48,6 +49,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
         "@community//platform/core-api:core_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/platform-api:ide_test_lib",
     ],
 )
 ### auto-generated section `build intellij.handlebars.javascript` end
