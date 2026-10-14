@@ -32,6 +32,7 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_21_0_9
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_1_3
 import org.angular2.Angular2TestModule.ANGULAR_CORE_21_2_0
 import org.angular2.Angular2TestModule.ANGULAR_CORE_22_0_8
+import org.angular2.Angular2TestModule.ANGULAR_CORE_22_2_2
 import org.angular2.Angular2TestModule.ANGULAR_CORE_9_1_1_MIXED
 import org.angular2.Angular2TestModule.ANGULAR_FLEX_LAYOUT_13_0_0
 import org.angular2.Angular2TestModule.ANGULAR_FORMS_16_2_8
@@ -703,6 +704,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   @Test
   fun testImplicitUsages() =
     checkHighlighting(ANGULAR_CORE_21_0_9, NGRX_EFFECTS_21_0_1, RXJS_7_8_1, extension = "ts")
+
+  @Test
+  fun testInjectedServicePropertyUsage() =
+    checkHighlighting(ANGULAR_CORE_22_2_2, dir = true, configureFileName = "my.service.ts", strictTemplates = true)
 
   @Test
   fun testNpmAliasedPackage() =
