@@ -1,5 +1,7 @@
 package org.angular2.web.scopes
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
@@ -46,7 +48,7 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
 
     val jsType =
       dataHolder.findProperty(TYPE_PROP)
-        ?.jsType
+        ?.getJSType(JSTypeEngineMode.Service)
       ?: dataHolder.context
         ?.let { if (it is JSArgumentList) it.context else it }
         ?.asSafely<JSCallExpression>()

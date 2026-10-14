@@ -1,6 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -154,7 +156,7 @@ object Angular2EntityUtils {
             }
             else {
               directiveDef = literal.findProperty(DIRECTIVE_PROP)
-                ?.jsType
+                ?.getJSType(JSTypeEngineMode.Service)
                 ?.substitute()
                 ?.sourceElement
                 ?.asSafely<TypeScriptClass>()

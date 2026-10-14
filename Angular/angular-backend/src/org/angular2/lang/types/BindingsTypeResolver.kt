@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory
 import com.intellij.lang.javascript.psi.JSCallItem
@@ -703,7 +705,7 @@ internal class BindingsTypeResolver private constructor(
       var templateRefType: JSType? = null
       for (ctor in cls.constructors) {
         for (param in ctor.parameterVariables) {
-          val paramType = param.getJSType()
+          val paramType = param.getJSType(JSTypeEngineMode.Service)
           if (paramType.let { it != null && it.typeText.startsWith("$TEMPLATE_REF<") }) {
             templateRefType = paramType
             break

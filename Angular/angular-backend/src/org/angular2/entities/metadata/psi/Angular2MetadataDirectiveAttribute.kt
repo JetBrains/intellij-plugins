@@ -1,6 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.JSType
@@ -25,7 +27,7 @@ class Angular2MetadataDirectiveAttribute internal constructor(
   private val myParameter: NullableLazyValue<JSParameter> = lazyNullable { myOwner.getConstructorParameter(myIndex) }
 
   override val type: JSType?
-    get() = myParameter.value?.jsType
+    get() = myParameter.value?.getJSType(JSTypeEngineMode.Service)
 
   override val sourceElement: PsiElement
     get() = myParameter.value ?: myOwner.sourceElement

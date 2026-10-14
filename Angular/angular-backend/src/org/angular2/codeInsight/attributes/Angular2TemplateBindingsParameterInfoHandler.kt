@@ -2,6 +2,8 @@ package org.angular2.codeInsight.attributes
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.javascript.findArgumentList
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.documentation.JSHtmlHighlightingUtil
 import com.intellij.lang.javascript.psi.JSArgumentsHolder
 import com.intellij.lang.javascript.psi.JSFunction
@@ -117,7 +119,7 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
   }
 
   private fun renderJSType(variable: JSVariable?): String {
-    return JSHtmlHighlightingUtil.getElementHtmlHighlighting(variable ?: return "", "name", variable.jsType ?: return "")
+    return JSHtmlHighlightingUtil.getElementHtmlHighlighting(variable ?: return "", "name", variable.getJSType(JSTypeEngineMode.Service) ?: return "")
       .toString()
       .replaceFirst("name", "")
   }
