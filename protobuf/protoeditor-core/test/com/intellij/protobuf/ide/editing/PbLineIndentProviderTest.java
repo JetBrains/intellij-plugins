@@ -15,6 +15,7 @@
  */
 package com.intellij.protobuf.ide.editing;
 
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -22,37 +23,52 @@ import com.intellij.openapi.editor.actions.EnterAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider;
 import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedLineIndentProvider;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.text.CharArrayUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /** Tests for {@link PbLineIndentProvider} */
-public class PbLineIndentProviderTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbLineIndentProviderTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.registerTestdataFileExtension();
-  }
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/editing/";
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/editing/");
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
   /**
    * Tests that a PbLineIndentProvider and FormatterBasedLineIndentProvider behave identically when
    * generating indents for new lines.
    */
+  @Test
   public void testAgreementWithFormatter() {
     myFixture.configureByFile("LineIndentProvider.proto.testdata");
 
     LineIndentProvider customProvider = new PbLineIndentProvider();
     LineIndentProvider formatterProvider = new FormatterBasedLineIndentProvider();
-    String customText = buildIndentedOutput(customProvider, formatterProvider);
-    String formatterText = buildIndentedOutput(formatterProvider, formatterProvider);
+    String customText = EdtTestUtil.runInEdtAndGet(() -> buildIndentedOutput(customProvider, formatterProvider));
+    String formatterText = EdtTestUtil.runInEdtAndGet(() -> buildIndentedOutput(formatterProvider, formatterProvider));
 
     assertEquals(formatterText, customText);
   }
@@ -65,9 +81,9 @@ public class PbLineIndentProviderTest extends PbCodeInsightFixtureTestCase {
   // This mimics pressing return at each new line. The output should be a properly-indented file.
   private String buildIndentedOutput(
       LineIndentProvider provider, LineIndentProvider formatterProvider) {
-    Project project = getProject();
-    Editor editor = getEditor();
-    Document document = getEditor().getDocument();
+    Project project = myFixture.getProject();
+    Editor editor = myFixture.getEditor();
+    Document document = myFixture.getEditor().getDocument();
     for (int line = 0; line < document.getLineCount(); line++) {
       int offset = document.getLineStartOffset(line);
       int endOffset = document.getLineEndOffset(line);

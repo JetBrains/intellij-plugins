@@ -15,54 +15,79 @@
  */
 package com.intellij.protobuf.ide.settings;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider.ChildEntry;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
+import static com.google.common.truth.Truth.assertThat;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /** Unit tests for {@link SettingsFileResolveProvider}. */
-public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class SettingsFileResolveProviderTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
 
   private File tempDir = null;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    tempDir = FileUtil.createTempDirectory(getName(), UUID.randomUUID().toString(), false);
+  @BeforeEach
+  void setUp(TestInfo testInfo) throws Exception {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
+    tempDir = FileUtil.createTempDirectory(testInfo.getTestMethod().orElseThrow().getName(), UUID.randomUUID().toString(), false);
   }
 
-  @Override
-  public void tearDown() throws Exception {
+  @AfterEach
+  void tearDown() {
     try {
       // Reset settings state
-      PbProjectSettings.getInstance(getProject()).loadState(new PbProjectSettings.State());
-      FileUtil.delete(tempDir);
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
+      PbProjectSettings.getInstance(myFixture.getProject()).loadState(new PbProjectSettings.State());
     }
     finally {
-      super.tearDown();
+      FileUtil.delete(tempDir);
     }
   }
 
+  @Test
   public void testFindFileWithNoSettingsReturnsNull() {
-    assertNull(new SettingsFileResolveProvider().findFile("missing/file", getProject()));
+    assertNull(new SettingsFileResolveProvider().findFile("missing/file", myFixture.getProject()));
   }
 
+  @Test
   public void testFindFilePrefersFirstListedPath() throws Exception {
     FileUtil.writeToFile(new File(tempDir, "path1/dir/foo.proto"), "// foo in path1");
     FileUtil.writeToFile(new File(tempDir, "path2/dir/foo.proto"), "// foo in path2");
     FileUtil.writeToFile(new File(tempDir, "path2/dir/bar.proto"), "// bar in path2");
 
-    PbProjectSettings settings = PbProjectSettings.getInstance(getProject());
+    PbProjectSettings settings = PbProjectSettings.getInstance(myFixture.getProject());
     settings.setImportPathEntries(
         Arrays.asList(
             new ImportPathEntry(VfsUtil.pathToUrl(new File(tempDir, "path1").getPath()), "com/foo"),
@@ -70,8 +95,8 @@ public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCas
                 VfsUtil.pathToUrl(new File(tempDir, "path2").getPath()), "com/foo")));
 
     FileResolveProvider resolver = new SettingsFileResolveProvider();
-    VirtualFile foo = resolver.findFile("com/foo/dir/foo.proto", getProject());
-    VirtualFile bar = resolver.findFile("com/foo/dir/bar.proto", getProject());
+    VirtualFile foo = resolver.findFile("com/foo/dir/foo.proto", myFixture.getProject());
+    VirtualFile bar = resolver.findFile("com/foo/dir/bar.proto", myFixture.getProject());
 
     assertNotNull(foo);
     assertNotNull(bar);
@@ -80,13 +105,14 @@ public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCas
     assertEquals("// bar in path2", VfsUtil.loadText(bar));
   }
 
+  @Test
   public void testGetChildEntries() throws Exception {
     FileUtil.writeToFile(new File(tempDir, "path1/dir/foo.proto"), "// foo in path1");
     FileUtil.writeToFile(new File(tempDir, "path2/dir/foo.proto"), "// foo in path2");
     FileUtil.writeToFile(new File(tempDir, "path2/dir/bar.proto"), "// bar in path2");
     FileUtil.writeToFile(new File(tempDir, "path3/dir/bar.proto"), "// bar in path3");
 
-    PbProjectSettings settings = PbProjectSettings.getInstance(getProject());
+    PbProjectSettings settings = PbProjectSettings.getInstance(myFixture.getProject());
     settings.setImportPathEntries(
         Arrays.asList(
             new ImportPathEntry(VfsUtil.pathToUrl(new File(tempDir, "path1").getPath()), "com/foo"),
@@ -94,25 +120,12 @@ public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCas
             new ImportPathEntry(VfsUtil.pathToUrl(new File(tempDir, "path3").getPath()), "")));
 
     FileResolveProvider resolver = new SettingsFileResolveProvider();
-    assertContainsElements(
-        resolver.getChildEntries("", getProject()),
-        ChildEntry.directory("dir"),
-        ChildEntry.directory("com"));
-    assertContainsElements(
-        resolver.getChildEntries("dir", getProject()), ChildEntry.file("bar.proto"));
-    assertContainsElements(
-        resolver.getChildEntries("com", getProject()), ChildEntry.directory("foo"));
-    assertContainsElements(
-        resolver.getChildEntries("com/", getProject()), ChildEntry.directory("foo"));
-    assertContainsElements(
-        resolver.getChildEntries("com/foo", getProject()), ChildEntry.directory("dir"));
-    assertContainsElements(
-        resolver.getChildEntries("com/foo/dir", getProject()),
-        ChildEntry.file("foo.proto"),
-        ChildEntry.file("bar.proto"));
-    assertContainsElements(
-        resolver.getChildEntries("com/foo/dir/", getProject()),
-        ChildEntry.file("foo.proto"),
-        ChildEntry.file("bar.proto"));
+    assertTrue(resolver.getChildEntries("", myFixture.getProject()).containsAll(List.of(ChildEntry.directory("dir"), ChildEntry.directory("com"))));
+    assertThat(resolver.getChildEntries("dir", myFixture.getProject())).contains(ChildEntry.file("bar.proto"));
+    assertThat(resolver.getChildEntries("com", myFixture.getProject())).contains(ChildEntry.directory("foo"));
+    assertThat(resolver.getChildEntries("com/", myFixture.getProject())).contains(ChildEntry.directory("foo"));
+    assertThat(resolver.getChildEntries("com/foo", myFixture.getProject())).contains(ChildEntry.directory("dir"));
+    assertTrue(resolver.getChildEntries("com/foo/dir", myFixture.getProject()).containsAll(List.of(ChildEntry.file("foo.proto"), ChildEntry.file("bar.proto"))));
+    assertTrue(resolver.getChildEntries("com/foo/dir/", myFixture.getProject()).containsAll(List.of(ChildEntry.file("foo.proto"), ChildEntry.file("bar.proto"))));
   }
 }

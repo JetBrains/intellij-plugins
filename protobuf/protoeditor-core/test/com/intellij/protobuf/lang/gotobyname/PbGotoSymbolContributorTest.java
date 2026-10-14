@@ -15,19 +15,47 @@
  */
 package com.intellij.protobuf.lang.gotobyname;
 
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbFileType;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Tests for {@link PbGotoSymbolContributor}. */
-public class PbGotoSymbolContributorTest extends PbCodeInsightFixtureTestCase {
+import static com.google.common.truth.Truth.assertThat;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/** Tests for {@link PbGotoSymbolContributor}. */
+@TestApplication
+public class PbGotoSymbolContributorTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
+  }
+
+  @Test
   public void testGetItemsByName() {
     myFixture.configureByText(
         PbFileType.INSTANCE,
@@ -54,28 +82,28 @@ public class PbGotoSymbolContributorTest extends PbCodeInsightFixtureTestCase {
             "}"));
     PbGotoSymbolContributor contributor = new PbGotoSymbolContributor();
     NavigationItem[] messageResults =
-        contributor.getItemsByName("com.test.google.SomeMessage", "SomeMe", getProject(), false);
+        ReadAction.computeBlocking(() -> contributor.getItemsByName("com.test.google.SomeMessage", "SomeMe", myFixture.getProject(), false));
     assertContainsNames(messageResults, "com.test.google.SomeMessage");
     NavigationItem[] enumResults =
-        contributor.getItemsByName(
-            "com.test.google.SomeMessage.SomeEnum", "SomeE", getProject(), false);
+        ReadAction.computeBlocking(() -> contributor.getItemsByName(
+            "com.test.google.SomeMessage.SomeEnum", "SomeE", myFixture.getProject(), false));
     assertContainsNames(enumResults, "com.test.google.SomeMessage.SomeEnum");
     NavigationItem[] anotherMessageResults =
-        contributor.getItemsByName(
-            "com.test.google.AnotherMessage", "Another", getProject(), false);
+        ReadAction.computeBlocking(() -> contributor.getItemsByName(
+            "com.test.google.AnotherMessage", "Another", myFixture.getProject(), false));
     assertContainsNames(anotherMessageResults, "com.test.google.AnotherMessage");
     NavigationItem[] groupResults =
-        contributor.getItemsByName(
-            "com.test.google.AnotherMessage.SomeGroup", "SomeG", getProject(), false);
+        ReadAction.computeBlocking(() -> contributor.getItemsByName(
+            "com.test.google.AnotherMessage.SomeGroup", "SomeG", myFixture.getProject(), false));
     assertContainsNames(groupResults, "com.test.google.AnotherMessage.SomeGroup");
     NavigationItem[] oneofResults =
-        contributor.getItemsByName(
-            "com.test.google.AnotherMessage.pick_oneof", "pick", getProject(), false);
+        ReadAction.computeBlocking(() -> contributor.getItemsByName(
+            "com.test.google.AnotherMessage.pick_oneof", "pick", myFixture.getProject(), false));
     assertContainsNames(oneofResults, "com.test.google.AnotherMessage.pick_oneof");
   }
 
   private static void assertContainsNames(NavigationItem[] navigationItems, String... names) {
-    List<String> navigationNames =
+    List<String> navigationNames = ReadAction.computeBlocking(() ->
         Arrays.stream(navigationItems)
             .map(
                 navItem -> {
@@ -86,7 +114,7 @@ public class PbGotoSymbolContributorTest extends PbCodeInsightFixtureTestCase {
                   return String.join(
                       ".", presentation.getLocationString(), presentation.getPresentableText());
                 })
-            .collect(Collectors.toList());
-    assertSameElements(navigationNames, names);
+            .collect(Collectors.toList()));
+    assertThat(navigationNames).containsExactly((Object[])names);
   }
 }

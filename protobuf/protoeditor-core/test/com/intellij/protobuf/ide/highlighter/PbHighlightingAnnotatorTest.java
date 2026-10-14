@@ -15,28 +15,46 @@
  */
 package com.intellij.protobuf.ide.highlighter;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class PbHighlightingAnnotatorTest extends PbCodeInsightFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+@TestApplication
+public class PbHighlightingAnnotatorTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp(@TestDisposable Disposable disposable) throws Exception {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
     myFixture.addFileToProject(
         TestUtils.OPENSOURCE_DESCRIPTOR_PATH, TestUtils.getOpensourceDescriptorText());
     TestUtils.addTestFileResolveProvider(
-        getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, getTestRootDisposable());
-    TestUtils.registerTestdataFileExtension();
+        myFixture.getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, disposable);
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath();
-  }
-
+  @Test
   public void testAnnotator() {
     myFixture.configureByFile("ide/highlighter/TopLevelString.proto.testdata");
-    myFixture.testFile("ide/highlighter/Highlighted.proto.testdata").checkSymbolNames().test();
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testFile("ide/highlighter/Highlighted.proto.testdata").checkSymbolNames().test());
   }
 }

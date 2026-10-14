@@ -15,114 +15,161 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.psi.PbPackageName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.QualifiedName;
-import org.junit.Assert;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Tests for {@link ProtoSymbolPathReference}. */
-public class PbTypeReferenceTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbTypeReferenceTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+  private String testName;
+
+  @BeforeEach
+  void setUp(TestInfo testInfo, @TestDisposable Disposable disposable) throws Exception {
+    myFixture = codeInsightFixture.get();
+    testName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), false);
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
     myFixture.addFileToProject(
             TestUtils.OPENSOURCE_DESCRIPTOR_PATH, TestUtils.getOpensourceDescriptorText());
     TestUtils.addTestFileResolveProvider(
-            getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, getTestRootDisposable());
-    TestUtils.registerTestdataFileExtension();
+            myFixture.getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, disposable);
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
   private PsiReference resolveRef() {
-    String filename = "lang/resolve/" + getTestName(false) + ".proto.testdata";
+    String filename = "lang/resolve/" + testName + ".proto.testdata";
     return myFixture.getReferenceAtCaretPosition(filename);
   }
 
   private PsiElement resolve() {
     PsiReference ref = resolveRef();
     assertNotNull(ref);
-    return ref.resolve();
+    return ReadAction.computeBlocking(() -> ref.resolve());
   }
 
+  @Test
   public void testNonQualifiedType() {
     assertIsMessageType(resolve(), "foo.bar.Foo");
   }
 
+  @Test
   public void testFullyQualifiedType() {
     assertIsMessageType(resolve(), "foo.bar.Foo");
   }
 
+  @Test
   public void testPartiallyQualifiedType() {
     assertIsMessageType(resolve(), "foo.bar.Baz.Foo.Tom");
   }
 
+  @Test
   public void testPartialPackageNameType() {
     assertIsMessageType(resolve(), "foo.bar.Foo.Tom");
   }
 
+  @Test
   public void testIntermediateFullyQualifiedType() {
     assertIsMessageType(resolve(), "foo.bar.Foo");
   }
 
+  @Test
   public void testIntermediateFullyQualifiedPackage() {
     assertIsPackage(resolve(), "foo.bar");
   }
 
+  @Test
   public void testIntermediatePartiallyQualifiedType() {
     assertIsMessageType(resolve(), "foo.bar.Foo");
   }
 
+  @Test
   public void testIntermediatePartiallyQualifiedPackage() {
     assertIsPackage(resolve(), "foo.bar");
   }
 
+  @Test
   public void testIntermediateTypeOfUnresolvedType() {
     assertIsMessageType(resolve(), "foo.bar.baz.Foo");
   }
 
+  @Test
   public void testIntermediatePackageOfUnresolvedType() {
     assertIsPackage(resolve(), "foo.bar.baz");
   }
 
+  @Test
   public void testSameTypeAndFieldName() {
     assertIsMessageType(resolve(), "foo.bar.Foo");
   }
 
+  @Test
   public void testTypeDeclaredInOneof() {
     assertIsMessageType(resolve(), "foo.bar.Bar.SomeGroup");
   }
 
+  @Test
   public void testGeneratedMapEntry() {
     assertIsMessageType(resolve(), "foo.bar.Foo.SomeMapEntry");
   }
 
+  @Test
   public void testInnerMostSymbolWins() {
-    assertNull("Reference should be unresolvable", resolve());
+    assertNull(resolve(), "Reference should be unresolvable");
   }
 
+  @Test
   public void testFullyQualifiedBuiltInTypeName() {
     assertIsMessageType(resolve(), "string");
   }
 
+  @Test
   public void testUnqualifiedBuiltInTypeName() {
-    assertNull("Built-in type should be unresolvable", resolveRef());
+    assertNull(resolveRef(), "Built-in type should be unresolvable");
   }
 
   private static void assertIsMessageType(PsiElement target, String name) {
-    Assert.assertTrue(target instanceof PbMessageType);
-    QualifiedName qualifiedName = ((PbMessageType) target).getQualifiedName();
-    Assert.assertNotNull(qualifiedName);
-    Assert.assertEquals(name, qualifiedName.toString());
+    assertInstanceOf(PbMessageType.class, target);
+    QualifiedName qualifiedName = ReadAction.computeBlocking(() -> ((PbMessageType) target).getQualifiedName());
+    assertNotNull(qualifiedName);
+    assertEquals(name, qualifiedName.toString());
   }
 
   private static void assertIsPackage(PsiElement target, String name) {
-    Assert.assertTrue(target instanceof PbPackageName);
-    QualifiedName qualifiedName = ((PbPackageName) target).getQualifiedName();
-    Assert.assertNotNull(qualifiedName);
-    Assert.assertTrue(qualifiedName.matchesPrefix(QualifiedName.fromDottedString(name)));
+    assertInstanceOf(PbPackageName.class, target);
+    QualifiedName qualifiedName = ReadAction.computeBlocking(() -> ((PbPackageName) target).getQualifiedName());
+    assertNotNull(qualifiedName);
+    assertTrue(qualifiedName.matchesPrefix(QualifiedName.fromDottedString(name)));
   }
 }

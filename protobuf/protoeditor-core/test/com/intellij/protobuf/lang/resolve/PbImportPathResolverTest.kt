@@ -1,20 +1,31 @@
 package com.intellij.protobuf.lang.resolve
 
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase
+import com.intellij.openapi.application.runReadActionBlocking
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.protobuf.lang.psi.PbImportName
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.parentOfType
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.runInEdtAndWait
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-@RunWith(JUnit4::class)
-class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
-  @Before
+@TestApplication
+class PbImportPathResolverTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val myFixture by codeInsightModuleFixture(projectFixture)
+
+  @BeforeEach
   fun beforeEachTest() {
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture)
     PbProjectSettings.getInstance(myFixture.project).apply {
       isIncludeContentRoots = false
       isIncludeProtoDirectories = false
@@ -30,7 +41,9 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
     myFixture.configureByText("root.proto", """
       import "<error descr="Cannot resolve import 'imported.proto'">imported.proto</error>";
     """)
-    myFixture.checkHighlighting()
+    runInEdtAndWait {
+      myFixture.checkHighlighting()
+    }
   }
 
   @Test
@@ -42,9 +55,12 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
       import "dir2/dir3/impor<caret>ted.proto"
     """.trimIndent())
 
-    val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
-    Assert.assertTrue(reference is PbImportReference)
-    Assert.assertEquals(importedFile, reference!!.resolve())
+    val (reference, resolved) = runReadActionBlocking {
+      val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
+      reference to reference?.resolve()
+    }
+    assertTrue(reference is PbImportReference)
+    assertEquals(importedFile, resolved)
   }
 
   @Test
@@ -56,9 +72,12 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
       import "dir1/dir2/dir3/impor<caret>ted.proto"
     """.trimIndent())
 
-    val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
-    Assert.assertTrue(reference is PbImportReference)
-    Assert.assertEquals(importedFile, reference!!.resolve())
+    val (reference, resolved) = runReadActionBlocking {
+      val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
+      reference to reference?.resolve()
+    }
+    assertTrue(reference is PbImportReference)
+    assertEquals(importedFile, resolved)
   }
 
   @Test
@@ -70,9 +89,12 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
       import "impor<caret>ted.proto"
     """.trimIndent())
 
-    val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
-    Assert.assertTrue(reference is PbImportReference)
-    Assert.assertEquals(importedFile, reference!!.resolve())
+    val (reference, resolved) = runReadActionBlocking {
+      val reference = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!.parentOfType<PbImportName>()?.reference
+      reference to reference?.resolve()
+    }
+    assertTrue(reference is PbImportReference)
+    assertEquals(importedFile, resolved)
   }
 
   @Test
@@ -82,12 +104,15 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
     myFixture.addFileToProject("/testroot/google/protobuf/wrappers.proto", """
       message Test {}
     """.trimIndent())
-    myFixture.configureByText("main.proto", """
+    val mainFile = myFixture.addFileToProject("main.proto", """
       import "google/protobuf/wrap<caret>pers.proto";
     """.trimIndent())
-    myFixture.checkHighlighting(true, true, true)
-    val reference = myFixture.getReferenceAtCaretPosition("main.proto")
-    Assert.assertEquals(2, (reference as PsiPolyVariantReference).multiResolve(false).size)
+    myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
+    runInEdtAndWait {
+      myFixture.checkHighlighting(true, true, true)
+    }
+    val reference = myFixture.getReferenceAtCaretPosition()
+    assertEquals(2, runReadActionBlocking { (reference as PsiPolyVariantReference).multiResolve(false).size })
   }
 
   @Test
@@ -98,7 +123,7 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
       package google.protobuf;
       message DoubleValue {}
     """.trimIndent())
-    myFixture.configureByText("main.proto", """
+    val mainFile = myFixture.addFileToProject("main.proto", """
       syntax = "proto3";
       import "google/protobuf/wrappers.proto";
       
@@ -106,8 +131,11 @@ class PbImportPathResolverTest : PbCodeInsightFixtureTestCase() {
         google.protobuf.Double<caret>Value value = 1;
       }
     """.trimIndent())
-    myFixture.checkHighlighting(true, true, true)
-    val reference = myFixture.getReferenceAtCaretPosition("main.proto")
-    Assert.assertEquals(1, (reference as PsiPolyVariantReference).multiResolve(false).size)
+    myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
+    runInEdtAndWait {
+      myFixture.checkHighlighting(true, true, true)
+    }
+    val reference = myFixture.getReferenceAtCaretPosition()
+    assertEquals(1, runReadActionBlocking { (reference as PsiPolyVariantReference).multiResolve(false).size })
   }
 }

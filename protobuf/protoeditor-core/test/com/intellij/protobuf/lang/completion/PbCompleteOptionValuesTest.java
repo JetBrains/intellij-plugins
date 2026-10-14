@@ -16,31 +16,39 @@
 package com.intellij.protobuf.lang.completion;
 
 import com.intellij.protobuf.TestUtils;
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Tests for option value completions. */
+@TestApplication
 public class PbCompleteOptionValuesTest extends PbCompletionContributorTestCase {
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUp() {
     myFixture.configureByFile("lang/completion/mock_descriptor.proto");
     TestUtils.addTestFileResolveProvider(
-        getProject(), "lang/completion/mock_descriptor.proto", getTestRootDisposable());
+        getProject(), "lang/completion/mock_descriptor.proto", testDisposable);
   }
 
+  @Test
   public void testFieldEnumOption() {
     setInput("message Foo {", "  int32 x = 1 [field_enum_option=" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "BAR", "FOO");
+    assertThat(completions).containsAllOf("BAR", "FOO");
     assertTrue(completeWithFirstChoice());
     assertResult("message Foo {", "  int32 x = 1 [field_enum_option=BAR");
   }
 
+  @Test
   public void testFieldEnumDefault() {
     setInput(
         "enum Abcd {",
@@ -51,7 +59,7 @@ public class PbCompleteOptionValuesTest extends PbCompletionContributorTestCase 
         "  Abcd x = 1 [default=" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "GOODBYE", "HELLO");
+    assertThat(completions).containsAllOf("GOODBYE", "HELLO");
     assertTrue(completeWithFirstChoice());
     assertResult(
         "enum Abcd {",
@@ -62,20 +70,22 @@ public class PbCompleteOptionValuesTest extends PbCompletionContributorTestCase 
         "  Abcd x = 1 [default=GOODBYE");
   }
 
+  @Test
   public void testFieldBooleanOption() {
     setInput("message Foo {", "  int32 x = 1 [field_bool_option=" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "false", "true");
+    assertThat(completions).containsAllOf("false", "true");
     assertTrue(completeWithFirstChoice());
     assertResult("message Foo {", "  int32 x = 1 [field_bool_option=false");
   }
 
+  @Test
   public void testFieldBooleanDefault() {
     setInput("message Foo {", "  bool x = 1 [default=" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "false", "true");
+    assertThat(completions).containsAllOf("false", "true");
     assertTrue(completeWithFirstChoice());
     assertResult("message Foo {", "  bool x = 1 [default=false");
   }

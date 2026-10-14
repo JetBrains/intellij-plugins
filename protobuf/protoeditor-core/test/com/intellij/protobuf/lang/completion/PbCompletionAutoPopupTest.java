@@ -17,54 +17,61 @@ package com.intellij.protobuf.lang.completion;
 
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.protobuf.TestUtils;
+import com.intellij.testFramework.fixtures.CompletionAutoPopupTestUtil;
 import com.intellij.testFramework.fixtures.CompletionAutoPopupTester;
+import com.intellij.testFramework.junit5.TestApplication;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
 
 /** Tests for autopop of completion suggestions */
+@TestApplication
 public class PbCompletionAutoPopupTest extends PbCompletionContributorTestCase {
 
   private CompletionAutoPopupTester tester;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUp() {
     this.tester = new CompletionAutoPopupTester(myFixture);
-    TestUtils.addTestFileResolveProvider(getProject(), getTestRootDisposable());
+    TestUtils.addTestFileResolveProvider(getProject(), testDisposable);
     myFixture.addFileToProject("foo/baaaz/import_me.proto", "message Abc {}");
   }
 
-  @Override
-  protected boolean runInDispatchThread() {
-    return false;
+  private <E extends Throwable> void runTest(@NotNull ThrowableRunnable<E> runnable) throws E {
+    CompletionAutoPopupTestUtil.runWithAutoPopupEnabled(myFixture, runnable);
   }
 
-  @Override
-  protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> runnable) throws Throwable {
-    tester.runWithAutoPopupEnabled(runnable);
-  }
-
+  @Test
   public void testNoAutoPopupFieldNumber() {
-    setInput("message Foo {", "  int64 foo = 4" + CARET_TAG, "}");
-    tester.typeWithPauses("5");
-    assertThat(tester.getLookup()).isNull();
+    runTest(() -> {
+      setInput("message Foo {", "  int64 foo = 4" + CARET_TAG, "}");
+      tester.typeWithPauses("5");
+      assertThat(tester.getLookup()).isNull();
+    });
   }
 
+  @Test
   public void testNoAutoPopupReservedNumber() {
-    setInput("message Foo {", "  reserved 1, 4 to 5" + CARET_TAG, "}");
-    tester.typeWithPauses("6");
-    assertThat(tester.getLookup()).isNull();
+    runTest(() -> {
+      setInput("message Foo {", "  reserved 1, 4 to 5" + CARET_TAG, "}");
+      tester.typeWithPauses("6");
+      assertThat(tester.getLookup()).isNull();
+    });
   }
 
+  @Test
   public void testAutoPopupOnImportSlash() {
-    setInput("import \"foo/baaaz" + CARET_TAG + "\"");
-    tester.typeWithPauses("/");
-    Lookup lookup = tester.getLookup();
-    assertThat(lookup).isNotNull();
-    assertThat(getCompletionItemsAsStrings(lookup.getItems().stream()))
-        .containsExactly("foo/baaaz/import_me.proto");
+    runTest(() -> {
+      setInput("import \"foo/baaaz" + CARET_TAG + "\"");
+      tester.typeWithPauses("/");
+      Lookup lookup = tester.getLookup();
+      assertThat(lookup).isNotNull();
+      assertThat(getCompletionItemsAsStrings(lookup.getItems().stream()))
+          .containsExactly("foo/baaaz/import_me.proto");
+    });
   }
 }

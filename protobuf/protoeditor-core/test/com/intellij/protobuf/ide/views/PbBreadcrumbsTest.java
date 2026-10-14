@@ -15,18 +15,25 @@
  */
 package com.intellij.protobuf.ide.views;
 
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.breadcrumbs.BreadcrumbsItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +41,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /** Tests for {@link PbBreadcrumbsInfoProvider}. */
-public class PbBreadcrumbsTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbBreadcrumbsTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
 
   private static final String EXPECTED =
       String.join(
@@ -58,34 +77,34 @@ public class PbBreadcrumbsTest extends PbCodeInsightFixtureTestCase {
           "[Service1;service <b>test.Service1</b>]",
           "[Service1;service <b>test.Service1</b>][Foo;rpc <b>test.Service1.Foo</b>]");
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.registerTestdataFileExtension();
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/views/");
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/views/";
-  }
-
+  @Test
   public void testAll() {
     myFixture.configureByFile("BreadcrumbsTest.proto.testdata");
-    final CaretModel caretModel = myFixture.getEditor().getCaretModel();
+    List<String> outputs = EdtTestUtil.runInEdtAndGet(() -> {
+      final CaretModel caretModel = myFixture.getEditor().getCaretModel();
 
-    List<String> outputs = new ArrayList<>();
-    List<Integer> offsets = ContainerUtil.map(caretModel.getAllCarets(), Caret::getOffset);
-    for (int offset : offsets) {
-      caretModel.moveToOffset(offset);
-      List<BreadcrumbsItem> breadcrumbs = getBreadcrumbs(myFixture);
-      if (breadcrumbs.isEmpty()) {
-        outputs.add("[]");
-      } else {
-        outputs.add(breadcrumbs.stream().map(BreadcrumbsItem::toString).collect(Collectors.joining()));
+      List<String> result = new ArrayList<>();
+      List<Integer> offsets = ContainerUtil.map(caretModel.getAllCarets(), Caret::getOffset);
+      for (int offset : offsets) {
+        caretModel.moveToOffset(offset);
+        List<BreadcrumbsItem> breadcrumbs = getBreadcrumbs(myFixture);
+        if (breadcrumbs.isEmpty()) {
+          result.add("[]");
+        } else {
+          result.add(breadcrumbs.stream().map(BreadcrumbsItem::toString).collect(Collectors.joining()));
+        }
       }
-    }
+      return result;
+    });
 
-    assertSameLines(EXPECTED, String.join("\n", outputs));
+    assertEquals(EXPECTED, String.join("\n", outputs));
   }
 
   @NotNull

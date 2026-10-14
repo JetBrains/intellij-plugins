@@ -15,76 +15,95 @@
  */
 package com.intellij.protobuf.lang.completion;
 
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collection;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Tests for various keywords (message, enum) completion (see {@link PbCompletionContributor}). */
+@TestApplication
 public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
 
+  @Test
   public void testMessageAtTopLevel() {
     setInput("mes" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("message ");
   }
 
+  @Test
   public void testNoMessageAsMessageIdentifier() {
     setInput("message mes" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testEnumAtTopLevel() {
     setInput("enu" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("enum ");
   }
 
+  @Test
   public void testServiceAtTopLevel() {
     setInput("ser" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("service ");
   }
 
+  @Test
   public void testExtendAtTopLevel() {
     setInput("ext" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("extend ");
   }
 
+  @Test
   public void testOptionAtTopLevel() {
     setInput("opt" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("option ");
   }
 
+  @Test
   public void testImportAtTopLevel() {
     setInput("imp" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("import ");
   }
 
+  @Test
   public void testMessageInMessageAutoInsertSpace() {
     setInput("message Foo {", "  mes" + CARET_TAG, "}");
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  message ", "}");
   }
 
+  @Test
   public void testNoMessageAsMessageIdentifierInMessage() {
     setInput("message Foo {", "  message mes" + CARET_TAG, "}");
     assertNoCompletions();
   }
 
+  @Test
   public void testNoMessageAsFieldIdentifier() {
     setInput("message Foo {", "  int32 mes" + CARET_TAG, "}");
     assertNoCompletions();
   }
 
+  @Test
   public void testNoMessageInEnum() {
     setInput("enum Foo {", "  mes" + CARET_TAG, "}");
     assertNoCompletions();
   }
 
+  @Test
   public void testGroupInProto2() {
     withSyntax("proto2");
     setInput("message Foo {", "  repeated gro" + CARET_TAG);
@@ -92,18 +111,21 @@ public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
     assertResult("message Foo {", "  repeated group ");
   }
 
+  @Test
   public void testNoGroupInProto3() {
     withSyntax("proto3");
     setInput("message Foo {", "  repeated gro" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testNoGroupAsGroupIdentifier() {
     withSyntax("proto2");
     setInput("message Foo {", "  repeated group gro" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testNoGroupAsFullyQualifiedType() {
     withSyntax("proto2");
     withPackage("com.bar");
@@ -112,6 +134,7 @@ public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
     assertResult("message Foo {", "  optional .com.", "}");
   }
 
+  @Test
   public void testNoMessageInExtend() {
     setInput(
         "message Foo {",
@@ -124,6 +147,7 @@ public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testGroupInExtend() {
     withSyntax("proto2");
     setInput(
@@ -145,6 +169,7 @@ public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testMessageWithinExtendInGroup() {
     withSyntax("proto2");
     setInput(
@@ -168,19 +193,22 @@ public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testExtendExtensionsInMessage() {
     setInput("message Foo {", "  ext" + CARET_TAG, "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "extend", "extensions");
+    assertThat(completions).containsExactly("extend", "extensions");
   }
 
+  @Test
   public void testMapInMessageNoAutoInsertSpace() {
     setInput("message Foo {", "  ma" + CARET_TAG, "}");
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  map", "}");
   }
 
+  @Test
   public void testMessageInGroup() {
     withSyntax("proto2");
     setInput(
@@ -202,19 +230,21 @@ public class PbCompleteKeywordsTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testOptionOrOptionalForProto2() {
     withSyntax("proto2");
     setInput("message Foo {", "  repeated int32 field1 = 1;", "  opt" + CARET_TAG, "}");
     Collection<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "option", "optional");
+    assertThat(completions).containsExactly("option", "optional");
   }
 
+  @Test
   public void testOptionOrOptionalForProto3() {
     withSyntax("proto3");
     setInput("message Foo {", "  repeated int32 field1 = 1;", "  opt" + CARET_TAG, "}");
     Collection<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "option", "optional");
+    assertThat(completions).containsExactly("option", "optional");
   }
 }

@@ -17,62 +17,87 @@ package com.intellij.protobuf.ide.actions;
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.PbTextFileType;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
 /** Tests for {@link InsertSchemaDirectiveAction}. */
-public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class InsertSchemaDirectiveActionTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
     TemplateManagerImpl.setTemplateTesting(myFixture.getTestRootDisposable());
   }
 
+  @Test
   public void testActionIsVisibleForTextFormat() {
     AnAction action = getAction();
     AnActionEvent event = getTextEvent(action, "# Comment\n", PbTextFileType.INSTANCE);
-    action.update(event);
+    EdtTestUtil.runInEdtAndWait(() -> action.update(event));
     assertThat(event.getPresentation().isEnabledAndVisible()).isTrue();
   }
 
+  @Test
   public void testActionIsNotVisibleForOthers() {
     AnAction action = getAction();
     AnActionEvent event = getTextEvent(action, "// Comment\n", PbFileType.INSTANCE);
-    action.update(event);
+    EdtTestUtil.runInEdtAndWait(() -> action.update(event));
     assertThat(event.getPresentation().isEnabledAndVisible()).isFalse();
   }
 
+  @Test
   public void testInsertEmptyFile() {
     AnAction action = getAction();
     AnActionEvent event = getTextEvent(action, "");
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .matches(file("# proto-file: ", "# proto-message: ", ""));
   }
 
+  @Test
   public void testInsertBeforeNoCommentsEntries() {
     AnAction action = getAction();
     AnActionEvent event = getTextEvent(action, file("foo: bar"));
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .matches(
             file( "# proto-file: ", "# proto-message: ", "", "foo: bar"));
   }
 
+  @Test
   public void testInsertBeforeExistingBlock() {
     AnAction action = getAction();
     AnActionEvent event =
         getTextEvent(action, file("# First", "# Second", "# Third", "", "# New block", "foo: bar"));
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .matches(
             file(
                 "# proto-file: ",
@@ -86,6 +111,7 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "foo: bar"));
   }
 
+  @Test
   public void testUseExistingFileValue() {
     AnAction action = getAction();
     AnActionEvent event =
@@ -99,8 +125,8 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "",
                 "# New block",
                 "foo: bar"));
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .matches(
             file(
                 "# proto-file: foo/bar.proto",
@@ -114,6 +140,7 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "foo: bar"));
   }
 
+  @Test
   public void testUseExistingMessageValue() {
     AnAction action = getAction();
     AnActionEvent event =
@@ -127,8 +154,8 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "",
                 "# New block",
                 "foo: bar"));
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .matches(
             file(
                 "# proto-file: ",
@@ -142,6 +169,7 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "foo: bar"));
   }
 
+  @Test
   public void testUseBothExistingValues() {
     AnAction action = getAction();
     AnActionEvent event =
@@ -156,8 +184,8 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "",
                 "# New block",
                 "foo: bar"));
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .isEqualTo(
             file(
                 "# proto-file: foo/bar.proto",
@@ -171,6 +199,7 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "foo: bar"));
   }
 
+  @Test
   public void testInsertImportsAtEnd() {
     AnAction action = getAction();
     AnActionEvent event =
@@ -188,8 +217,8 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
                 "",
                 "# New block",
                 "foo: bar"));
-    action.actionPerformed(event);
-    assertThat(myFixture.getFile().getText())
+    performAction(action, event);
+    assertThat(getFileText())
         .isEqualTo(
             file(
                 "# proto-file: foo/bar.proto",
@@ -210,6 +239,14 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
     return String.join("\n", lines) + "\n";
   }
 
+  private String getFileText() {
+    return ReadAction.computeBlocking(() -> myFixture.getFile().getText());
+  }
+
+  private static void performAction(AnAction action, AnActionEvent event) {
+    EdtTestUtil.runInEdtAndWait(() -> action.actionPerformed(event));
+  }
+
   private AnActionEvent getTextEvent(AnAction action, String text) {
     return getTextEvent(action, text, PbTextFileType.INSTANCE);
   }
@@ -220,8 +257,8 @@ public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCas
   }
 
   private AnActionEvent getEditorEvent(AnAction action) {
-    return AnActionEvent.createFromAnAction(
-        action, null, "", DataManager.getInstance().getDataContext(getEditor().getComponent()));
+    return EdtTestUtil.runInEdtAndGet(() -> AnActionEvent.createFromAnAction(
+        action, null, "", DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent())));
   }
 
   private AnAction getAction() {

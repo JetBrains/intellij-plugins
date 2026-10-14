@@ -16,21 +16,42 @@
 package com.intellij.protobuf.ide.editing;
 
 import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
 /** Tests for {@link PbTextCommenter} */
-public class PbTextCommenterTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbTextCommenterTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/editing/";
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/editing/");
   }
 
   // Test comment by line action.
+  @Test
   public void testCommentByLine() {
     myFixture.configureByFiles("CommenterTestCommentByLineBefore.pb");
     CommentByLineCommentAction action = new CommentByLineCommentAction();
-    action.actionPerformedImpl(getProject(), getEditor());
+    EdtTestUtil.runInEdtAndWait(() -> action.actionPerformedImpl(myFixture.getProject(), myFixture.getEditor()));
     myFixture.checkResultByFile("CommenterTestCommentByLineAfter.pb");
   }
 }

@@ -15,50 +15,83 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.VfsTestUtil;
-import org.junit.Assert;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.File;
 
-/** Tests for {@link PbImportReference}. */
-public class PbImportReferenceTest extends PbCodeInsightFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+/** Tests for {@link PbImportReference}. */
+@TestApplication
+public class PbImportReferenceTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+  private String testName;
+
+  @BeforeEach
+  void setUp(TestInfo testInfo, @TestDisposable Disposable disposable) throws Exception {
+    myFixture = codeInsightFixture.get();
+    testName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), false);
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
     myFixture.addFileToProject(
             TestUtils.OPENSOURCE_DESCRIPTOR_PATH, TestUtils.getOpensourceDescriptorText());
     TestUtils.addTestFileResolveProvider(
-            getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, getTestRootDisposable());
-    TestUtils.registerTestdataFileExtension();
+            myFixture.getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, disposable);
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
+  @Test
   public void testImportSibling() {
     String siblingProto = "lang/resolve/Sibling.proto";
 
     final VirtualFile vFile =
-        VfsTestUtil.findFileByCaseSensitivePath(getTestDataPath() + siblingProto);
+        VfsTestUtil.findFileByCaseSensitivePath(myFixture.getTestDataPath() + siblingProto);
     assertNotNull(vFile);
     myFixture.copyFileToProject(vFile.getPath(), siblingProto);
 
     assertIsFileType(resolve(), siblingProto);
   }
 
+  @Test
   public void testImportIncompleteQuotes() throws Exception {
     // Just test that there's no exception while attempting to resolve.
-    String filePath = "lang/resolve/" + getTestName(false) + ".proto.testdata";
+    String filePath = "lang/resolve/" + testName + ".proto.testdata";
 
-    VirtualFile vFile = VfsTestUtil.findFileByCaseSensitivePath(getTestDataPath() + filePath);
-    assertNotNull("file " + filePath + " not found", vFile);
+    VirtualFile vFile = VfsTestUtil.findFileByCaseSensitivePath(myFixture.getTestDataPath() + filePath);
+    assertNotNull(vFile, "file " + filePath + " not found");
 
     String fileText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(vFile));
     int offset = fileText.indexOf("<caret>");
@@ -68,21 +101,21 @@ public class PbImportReferenceTest extends PbCodeInsightFixtureTestCase {
     fileText = fileText.substring(0, offset) + fileText.substring(offset + "<caret>".length());
 
     myFixture.configureByText(PbFileType.INSTANCE, fileText);
-    PsiReference ref = getFile().findReferenceAt(offset);
+    PsiReference ref = ReadAction.computeBlocking(() -> myFixture.getFile().findReferenceAt(offset));
     assertNull(ref);
   }
 
   private PsiElement resolve() {
-    String filename = "lang/resolve/" + getTestName(false) + ".proto.testdata";
+    String filename = "lang/resolve/" + testName + ".proto.testdata";
     PsiReference ref = myFixture.getReferenceAtCaretPosition(filename);
     assertNotNull(ref);
-    return ref.resolve();
+    return ReadAction.computeBlocking(() -> ref.resolve());
   }
 
   private static void assertIsFileType(PsiElement target, String expectedPath) {
-    Assert.assertTrue(target instanceof PbFile);
+    assertInstanceOf(PbFile.class, target);
     String fileName = ((PbFile) target).getName();
-    Assert.assertNotNull(fileName);
-    Assert.assertEquals(new File(expectedPath).getName(), fileName);
+    assertNotNull(fileName);
+    assertEquals(new File(expectedPath).getName(), fileName);
   }
 }

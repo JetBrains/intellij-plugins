@@ -15,32 +15,53 @@
  */
 package com.intellij.protobuf.ide.views;
 
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
-
 import com.intellij.testFramework.StructureViewComponentTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import javax.swing.JTree;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
 
 /** Test structure view. */
-public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbStructureViewTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/views/";
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/views/");
   }
 
   private void testStructureView(String expectedLines) {
-    StructureViewComponentTestUtil.testStructureView(myFixture, it -> {
+    EdtTestUtil.runInEdtAndWait(() -> StructureViewComponentTestUtil.testStructureView(myFixture, it -> {
       JTree tree = it.getTree();
       PlatformTestUtil.waitWhileBusy(tree);
       PlatformTestUtil.expandAll(tree);
       PlatformTestUtil.assertTreeEqual(tree, expectedLines);
-    });
+    }));
   }
 
+  @Test
   public void testExtends() {
-    myFixture.configureByFile(getTestDataPath() + "Extends.proto");
+    myFixture.configureByFile(myFixture.getTestDataPath() + "Extends.proto");
     String expectedLines =
       """
         -Extends.proto
@@ -54,8 +75,9 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
     testStructureView(expectedLines);
   }
 
+  @Test
   public void testNestedMessage() {
-    myFixture.configureByFile(getTestDataPath() + "NestedMessage.proto");
+    myFixture.configureByFile(myFixture.getTestDataPath() + "NestedMessage.proto");
     String expectedLines =
       """
         -NestedMessage.proto
@@ -88,8 +110,9 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
     testStructureView(expectedLines);
   }
 
+  @Test
   public void testReservedFields() {
-    myFixture.configureByFile(getTestDataPath() + "ReservedFields.proto");
+    myFixture.configureByFile(myFixture.getTestDataPath() + "ReservedFields.proto");
     String expectedLines =
       """
         -ReservedFields.proto
@@ -101,8 +124,9 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
     testStructureView(expectedLines);
   }
 
+  @Test
   public void testServiceRpc() {
-    myFixture.configureByFile(getTestDataPath() + "ServiceRpc.proto");
+    myFixture.configureByFile(myFixture.getTestDataPath() + "ServiceRpc.proto");
     String expectedLines =
       """
         -ServiceRpc.proto

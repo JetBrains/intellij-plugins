@@ -18,28 +18,34 @@ package com.intellij.protobuf.lang.completion;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.lang.resolve.PbOptionNameReference;
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Tests for option completions (see {@link PbOptionNameReference#getVariants()}). */
+@TestApplication
 public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUp() {
     myFixture.configureByFile("lang/completion/mock_descriptor.proto");
     TestUtils.addTestFileResolveProvider(
-        getProject(), "lang/completion/mock_descriptor.proto", getTestRootDisposable());
+        getProject(), "lang/completion/mock_descriptor.proto", testDisposable);
   }
 
+  @Test
   public void testFileOption() {
     setInput("option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "file_bool_option",
         "file_int_option",
         "file_string_option",
@@ -48,12 +54,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("option file_bool_option");
   }
 
+  @Test
   public void testMessageOption() {
     setInput("message Foo {", "  option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "message_bool_option",
         "message_int_option",
         "message_string_option",
@@ -62,12 +68,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("message Foo {", "  option message_bool_option");
   }
 
+  @Test
   public void testFieldOption() {
     setInput("message Foo {", "  int32 x = 1 [" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "field_bool_option",
         "field_int_option",
         "field_string_option",
@@ -76,12 +82,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("message Foo {", "  int32 x = 1 [field_bool_option");
   }
 
+  @Test
   public void testFieldOptionAfterComma() {
     setInput("message Foo {", "  int32 x = 1 [field_int_option=1, " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "field_bool_option",
         "field_int_option",
         "field_string_option",
@@ -90,12 +96,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("message Foo {", "  int32 x = 1 [field_int_option=1, field_bool_option");
   }
 
+  @Test
   public void testOneofOption() {
     setInput("message Foo {", "  oneof Bar {", "    option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "oneof_bool_option",
         "oneof_int_option",
         "oneof_string_option",
@@ -104,12 +110,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("message Foo {", "  oneof Bar {", "    option oneof_bool_option");
   }
 
+  @Test
   public void testEnumOption() {
     setInput("enum Foo {", "  option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "enum_bool_option",
         "enum_int_option",
         "enum_string_option",
@@ -118,12 +124,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("enum Foo {", "  option enum_bool_option");
   }
 
+  @Test
   public void testEnumValueOption() {
     setInput("enum Foo {", "  BAR = 1 [" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "enum_value_bool_option",
         "enum_value_int_option",
         "enum_value_string_option",
@@ -132,12 +138,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("enum Foo {", "  BAR = 1 [enum_value_bool_option");
   }
 
+  @Test
   public void testEnumValueOptionAfterComma() {
     setInput("enum Foo {", "  BAR = 1 [enum_value_int_option=1, " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "enum_value_bool_option",
         "enum_value_int_option",
         "enum_value_string_option",
@@ -146,12 +152,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("enum Foo {", "  BAR = 1 [enum_value_int_option=1, enum_value_bool_option");
   }
 
+  @Test
   public void testServiceOption() {
     setInput("service Foo {", "  option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "service_bool_option",
         "service_int_option",
         "service_string_option",
@@ -160,12 +166,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("service Foo {", "  option service_bool_option");
   }
 
+  @Test
   public void testMethodOption() {
     setInput("service Foo {", "  rpc Bar(int32) returns (int32) {", "    option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "method_bool_option",
         "method_int_option",
         "method_string_option",
@@ -175,12 +181,12 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "service Foo {", "  rpc Bar(int32) returns (int32) {", "    option method_bool_option");
   }
 
+  @Test
   public void testStreamOption() {
     setInput("service Foo {", "  stream Bar (int32, int32) {", "    option " + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions,
+    assertThat(completions).containsAllOf(
         "stream_bool_option",
         "stream_int_option",
         "stream_string_option",
@@ -189,6 +195,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertResult("service Foo {", "  stream Bar (int32, int32) {", "    option stream_bool_option");
   }
 
+  @Test
   public void testExtensionOptionUsingGroupUsesLowercaseFieldName() {
     setInput(
         "message MyType {",
@@ -202,9 +209,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "option (tt)." + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "zz");
+    assertThat(completions).contains("zz");
   }
 
+  @Test
   public void testCompleteCustomFieldOption() {
     withPackage("com.foo");
     setInput(
@@ -225,9 +233,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "test_field_option", "test_field_option2");
+    assertThat(completions).containsExactly("test_field_option", "test_field_option2");
   }
 
+  @Test
   public void testCompleteCustomOptionExtendFullyQualified() {
     withPackage("com.foo");
     setInput(
@@ -244,9 +253,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "test_field_option", "test_field_option2");
+    assertThat(completions).containsExactly("test_field_option", "test_field_option2");
   }
 
+  @Test
   public void testCompleteCustomMessageOption() {
     withPackage("com.foo");
     setInput(
@@ -267,9 +277,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "test_message_option", "test_message_option2");
+    assertThat(completions).containsExactly("test_message_option", "test_message_option2");
   }
 
+  @Test
   public void testCompleteQualifierOfCustomOption() {
     withPackage("foosbar");
     setInput(
@@ -297,6 +308,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testCompleteFullyQualifiedCustomOption() {
     withPackage("foosbar");
     setInput(
@@ -320,9 +332,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "test_field_option2", "ExtensionScope");
+    assertThat(completions).containsExactly("test_field_option2", "ExtensionScope");
   }
 
+  @Test
   public void testCompleteRelativeCustomOption() {
     withPackage("foosbar");
     setInput(
@@ -342,9 +355,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "test_field_option", "test_field_option2");
+    assertThat(completions).containsExactly("test_field_option", "test_field_option2");
   }
 
+  @Test
   public void testCompleteExtendedCustomOption() {
     withSyntax("proto2");
     setInput(
@@ -365,10 +379,11 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(
-        completions, "crazy_extended_option_field", "crazy_extended_option_field2");
+    assertThat(completions)
+        .containsAllOf("crazy_extended_option_field", "crazy_extended_option_field2");
   }
 
+  @Test
   public void testCompleteQualifierTypeInCustomOption() {
     withSyntax("proto2");
     setInput(
@@ -385,9 +400,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "MyType");
+    assertThat(completions).contains("MyType");
   }
 
+  @Test
   public void testCompleteDescriptorTypeInCustomOption() {
     withSyntax("proto2");
     setInput(
@@ -397,9 +413,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "FieldOptions");
+    assertThat(completions).contains("FieldOptions");
   }
 
+  @Test
   public void testOptionNameCompletionDoesNotSuggestExtensionField() {
     withSyntax("proto2");
     setInput(
@@ -418,6 +435,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testBlankCustomOptionNoClosingParen() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -431,9 +449,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "option (" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "foo", "bar");
+    assertThat(completions).containsAllOf("foo", "bar");
   }
 
+  @Test
   public void testBlankCustomOptionWithClosingParen() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -447,9 +466,10 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
         "option (" + CARET_TAG + ")");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "foo", "bar");
+    assertThat(completions).containsAllOf("foo", "bar");
   }
 
+  @Test
   public void testDuplicateOptionNameIsHighlighted() {
     setInput(
         "message TestMessage {",
@@ -462,6 +482,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertContainsHighlightedItems(completions, "message_bool_option");
   }
 
+  @Test
   public void testDuplicateExtensionOptionNameIsHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -480,6 +501,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertContainsHighlightedItems(completions, "field");
   }
 
+  @Test
   public void testRepeatedOptionIsNotHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -498,6 +520,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertContainsNonhighlightedItems(completions, "field");
   }
 
+  @Test
   public void testOtherOneofMembersAreHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -519,6 +542,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertContainsHighlightedItems(completions, "field1", "field2");
   }
 
+  @Test
   public void testMergeableTypeIsNotHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -543,6 +567,7 @@ public class PbCompleteOptionsTest extends PbCompletionContributorTestCase {
     assertContainsNonhighlightedItems(completions, "sub");
   }
 
+  @Test
   public void testDuplicateExtensionNameIsHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",

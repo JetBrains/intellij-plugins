@@ -15,53 +15,82 @@
  */
 package com.intellij.protobuf.lang.resolve.directive;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
 /** Tests for comment-based format directives in text format files. */
-public class PbTextDirectiveAnnotatorTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbTextDirectiveAnnotatorTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.addTestFileResolveProvider(getProject(), getTestRootDisposable());
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp(@TestDisposable Disposable disposable) {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
+    TestUtils.addTestFileResolveProvider(myFixture.getProject(), disposable);
     myFixture.configureByFile("lang/resolve/root_message.proto");
   }
 
   private void doTest(String filename) {
     PsiFile testFile = myFixture.configureByFile(filename);
-    myFixture.testHighlighting(
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testHighlighting(
         /* checkWarnings= */ true,
         /* checkInfos= */ false,
         /* checkWeakWarnings= */ true,
-        testFile.getVirtualFile());
+        testFile.getVirtualFile()));
   }
 
+  @Test
   public void testInvalidFile() {
     doTest("lang/resolve/directive/InvalidFile.pb");
   }
 
+  @Test
   public void testInvalidMessage() {
     doTest("lang/resolve/directive/InvalidMessage.pb");
   }
 
+  @Test
   public void testMissingValues() {
     doTest("lang/resolve/directive/MissingValues.pb");
   }
 
+  @Test
   public void testFileWithoutMessage() {
     doTest("lang/resolve/directive/FileWithoutMessage.pb");
   }
 
+  @Test
   public void testMessageWithoutFile() {
     doTest("lang/resolve/directive/MessageWithoutFile.pb");
   }
 
+  @Test
   public void testNotAMessage() {
     doTest("lang/resolve/directive/NotAMessage.pb");
   }
 
+  @Test
   public void testImports() {
     myFixture.configureByFile("lang/options/any.proto");
     myFixture.configureByFile("lang/resolve/import_message.proto");

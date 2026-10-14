@@ -15,23 +15,39 @@
  */
 package com.intellij.protobuf.ide.folding;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class PbFoldingTest extends PbCodeInsightFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.registerTestdataFileExtension();
+@TestApplication
+public class PbFoldingTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/folding/");
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/folding/";
-  }
-
+  @Test
   public void testSimpleFolding() {
-    myFixture.testFoldingWithCollapseStatus(getTestDataPath() + "SimpleFolding.proto.testdata");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testFoldingWithCollapseStatus(myFixture.getTestDataPath() + "SimpleFolding.proto.testdata"));
   }
 }

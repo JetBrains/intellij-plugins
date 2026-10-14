@@ -18,12 +18,21 @@ package com.intellij.protobuf.lang.completion;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -33,19 +42,38 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.google.common.truth.Truth.assertThat;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Base class for {@link PbCompletionContributor} tests. Provides useful utilities for setup,
  * actions, and assertions.
  */
-public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtureTestCase {
+public abstract class PbCompletionContributorTestCase {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  protected CodeInsightTestFixture myFixture;
+  protected Disposable testDisposable;
 
   private String syntaxForTest = "proto3";
   private String packageForTest = "plugin.test";
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.addTestFileResolveProvider(getProject(), getTestRootDisposable());
+  @BeforeEach
+  void setUpCompletionTestCase(@TestDisposable Disposable disposable) {
+    myFixture = codeInsightFixture.get();
+    testDisposable = disposable;
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
+    TestUtils.addTestFileResolveProvider(myFixture.getProject(), testDisposable);
+  }
+
+  protected Project getProject() {
+    return myFixture.getProject();
   }
 
   /** Override the default syntax for the test. */
@@ -65,9 +93,12 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
   }
 
   PsiFile setAdditionalFile(String filename, String... fileContents) {
-    return myFixture.configureByText(
+    // Other files import this file by its name, so keep the exact name.
+    PsiFile file = myFixture.addFileToProject(
         filename,
         TestUtils.makeFileWithSyntaxAndPackage(syntaxForTest, packageForTest, fileContents));
+    myFixture.configureFromExistingVirtualFile(file.getVirtualFile());
+    return file;
   }
 
   void assertResult(String... resultingFileContents) {
@@ -82,7 +113,7 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
    */
   @Nullable
   List<LookupElement> getCompletionItems() {
-    LookupElement[] completionItems = myFixture.completeBasic();
+    LookupElement[] completionItems = EdtTestUtil.runInEdtAndGet(() -> myFixture.completeBasic());
     if (completionItems == null) {
       return null;
     }
@@ -95,7 +126,7 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
    */
   @Nullable
   List<String> getCompletionItemsAsStrings() {
-    LookupElement[] completionItems = myFixture.completeBasic();
+    LookupElement[] completionItems = EdtTestUtil.runInEdtAndGet(() -> myFixture.completeBasic());
     if (completionItems == null) {
       return null;
     }
@@ -112,16 +143,18 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
    * @return true if completion is applied (by auto-complete or choice)
    */
   boolean completeWithUniqueChoice() {
-    LookupElement[] completionItems = myFixture.completeBasic();
-    if (completionItems == null) {
+    return EdtTestUtil.runInEdtAndGet(() -> {
+      LookupElement[] completionItems = myFixture.completeBasic();
+      if (completionItems == null) {
+        return true;
+      }
+      if (completionItems.length != 1) {
+        return false;
+      }
+      myFixture.getLookup().setCurrentItem(completionItems[0]);
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
       return true;
-    }
-    if (completionItems.length != 1) {
-      return false;
-    }
-    myFixture.getLookup().setCurrentItem(completionItems[0]);
-    myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-    return true;
+    });
   }
 
   /**
@@ -130,29 +163,31 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
    * @return true if completion is applied (by auto-complete or choice)
    */
   boolean completeWithFirstChoice() {
-    LookupElement[] completionItems = myFixture.completeBasic();
-    if (completionItems == null) {
+    return EdtTestUtil.runInEdtAndGet(() -> {
+      LookupElement[] completionItems = myFixture.completeBasic();
+      if (completionItems == null) {
+        return true;
+      }
+      if (completionItems.length == 0) {
+        return false;
+      }
+      myFixture.getLookup().setCurrentItem(completionItems[0]);
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
       return true;
-    }
-    if (completionItems.length == 0) {
-      return false;
-    }
-    myFixture.getLookup().setCurrentItem(completionItems[0]);
-    myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-    return true;
+    });
   }
 
   void assertNoCompletions() {
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertEmpty(completions);
+    assertThat(completions).isEmpty();
   }
 
   public static void assertContainsItems(
       @NotNull Collection<? extends LookupElement> collection, @NotNull String... expected) {
     List<String> items =
         collection.stream().map(LookupElement::getLookupString).collect(Collectors.toList());
-    assertContainsElements(items, Arrays.asList(expected));
+    assertThat(items).containsAllIn(expected);
   }
 
   public static void assertContainsHighlightedItems(
@@ -161,8 +196,11 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
     for (LookupElement lookupElement : collection) {
       LookupElementPresentation presentation = new LookupElementPresentation();
       Color defaultColor = presentation.getItemTextForeground();
-      lookupElement.renderElement(presentation);
-      if (!defaultColor.equals(presentation.getItemTextForeground())) {
+      Color color = ReadAction.computeBlocking(() -> {
+        lookupElement.renderElement(presentation);
+        return presentation.getItemTextForeground();
+      });
+      if (!defaultColor.equals(color)) {
         highlightedItems.add(lookupElement);
       }
     }
@@ -175,8 +213,11 @@ public abstract class PbCompletionContributorTestCase extends PbCodeInsightFixtu
     for (LookupElement lookupElement : collection) {
       LookupElementPresentation presentation = new LookupElementPresentation();
       Color defaultColor = presentation.getItemTextForeground();
-      lookupElement.renderElement(presentation);
-      if (defaultColor.equals(presentation.getItemTextForeground())) {
+      Color color = ReadAction.computeBlocking(() -> {
+        lookupElement.renderElement(presentation);
+        return presentation.getItemTextForeground();
+      });
+      if (defaultColor.equals(color)) {
         items.add(lookupElement);
       }
     }

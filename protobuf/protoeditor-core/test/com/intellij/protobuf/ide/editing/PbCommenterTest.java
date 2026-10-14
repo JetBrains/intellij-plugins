@@ -16,54 +16,72 @@
 package com.intellij.protobuf.ide.editing;
 
 import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.common.EditorCaretTestUtil.CaretAndSelectionState;
 import com.intellij.testFramework.common.EditorCaretTestUtil.CaretInfo;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+
 /** Tests for {@link PbCommenter} */
-public class PbCommenterTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbCommenterTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.registerTestdataFileExtension();
-  }
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/editing/";
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/editing/");
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
   // Test comment by line action.
+  @Test
   public void testCommentByLine() {
     myFixture.configureByFiles("CommenterTestCommentByLineBefore.proto.testdata");
     CommentByLineCommentAction action = new CommentByLineCommentAction();
-    action.actionPerformedImpl(getProject(), getEditor());
+    EdtTestUtil.runInEdtAndWait(() -> action.actionPerformedImpl(myFixture.getProject(), myFixture.getEditor()));
     myFixture.checkResultByFile("CommenterTestCommentByLineAfter.proto.testdata");
   }
 
   // Tests that hitting enter in the middle of a comment will keep the tail part in a comment.
+  @Test
   public void testInternalNewline() {
     myFixture.configureByFiles("CommenterTestInternalNewlineBefore.proto.testdata");
-    Editor editor = openFileInEditor(getFile().getVirtualFile());
+    Editor editor = openFileInEditor(myFixture.getFile().getVirtualFile());
     setCaretPosition(editor, 3, "// Documentation for some".length());
     performTypingAction(editor, '\n');
     myFixture.checkResultByFile("CommenterTestInternalNewlineAfter.proto.testdata");
   }
 
   private Editor openFileInEditor(VirtualFile file) {
-    myFixture.openFileInEditor(file);
-    return getEditor();
+    return EdtTestUtil.runInEdtAndGet(() -> {
+      myFixture.openFileInEditor(file);
+      return myFixture.getEditor();
+    });
   }
 
   private static void setCaretPosition(Editor editor, int lineNumber, int columnNumber) {
@@ -75,8 +93,10 @@ public class PbCommenterTest extends PbCodeInsightFixtureTestCase {
   }
 
   private void performTypingAction(Editor editor, char typedChar) {
-    EditorTestUtil.performTypingAction(editor, typedChar);
-    PostprocessReformattingAspect.getInstance(getProject()).doPostponedFormatting();
-    PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+    EdtTestUtil.runInEdtAndWait(() -> {
+      EditorTestUtil.performTypingAction(editor, typedChar);
+      PostprocessReformattingAspect.getInstance(myFixture.getProject()).doPostponedFormatting();
+      PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments();
+    });
   }
 }

@@ -15,38 +15,68 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.psi.PbField;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.QualifiedName;
-import org.junit.Assert;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.TestDisposable;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests for stream options. Streams aren't part of the open source release, so unlike the other
  * tests in {@link PbOptionReferenceTest}, this test does not use the open source descriptor.proto.
  */
-public class PbStreamOptionReferenceTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class PbStreamOptionReferenceTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+  private String testName;
+
+  @BeforeEach
+  void setUp(TestInfo testInfo, @TestDisposable Disposable disposable) {
+    myFixture = codeInsightFixture.get();
+    testName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), false);
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
     String descriptorPath = "lang/options/stream_descriptor.proto";
     myFixture.copyFileToProject(descriptorPath, descriptorPath);
     TestUtils.addTestFileResolveProvider(
-        getProject(), descriptorPath, getTestRootDisposable());
-    TestUtils.registerTestdataFileExtension();
+        myFixture.getProject(), descriptorPath, disposable);
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
+  @Test
   public void testStreamOption() {
-    String filename = "lang/options/" + getTestName(false) + ".proto.testdata";
+    String filename = "lang/options/" + testName + ".proto.testdata";
     PsiReference ref = myFixture.getReferenceAtCaretPosition(filename);
     assertNotNull(ref);
-    PsiElement element = ref.resolve();
-    Assert.assertTrue(element instanceof PbField);
-    QualifiedName qualifiedName = ((PbField) element).getQualifiedName();
-    Assert.assertNotNull(qualifiedName);
-    Assert.assertEquals("proto2.StreamOptions.deprecated", qualifiedName.toString());
+    PsiElement element = ReadAction.computeBlocking(() -> ref.resolve());
+    assertInstanceOf(PbField.class, element);
+    QualifiedName qualifiedName = ReadAction.computeBlocking(() -> ((PbField) element).getQualifiedName());
+    assertNotNull(qualifiedName);
+    assertEquals("proto2.StreamOptions.deprecated", qualifiedName.toString());
   }
 }

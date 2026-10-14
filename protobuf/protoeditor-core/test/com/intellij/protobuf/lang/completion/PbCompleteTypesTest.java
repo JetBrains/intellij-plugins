@@ -16,123 +16,147 @@
 package com.intellij.protobuf.lang.completion;
 
 import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for completing types. See {@link PbCompletionContributor} for builtin types, and see {@link
  * ProtoSymbolPathReference#getVariants()} for
  * user-defined types.
  */
+@TestApplication
 public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
 
+  @Test
   public void testIntInField() {
     setInput("message Foo {", "  in" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "int32", "int64", "sint32", "sint64", "uint32", "uint64");
+    assertThat(completions).containsAllOf("int32", "int64", "sint32", "sint64", "uint32", "uint64");
     assertTrue(completeWithFirstChoice());
     assertResult("message Foo {", "  int32 ");
   }
 
+  @Test
   public void testIntInFieldWithCloseBrace() {
     setInput("message Foo {", "  in" + CARET_TAG, "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "int32", "int64", "sint32", "sint64", "uint32", "uint64");
+    assertThat(completions).containsAllOf("int32", "int64", "sint32", "sint64", "uint32", "uint64");
     assertTrue(completeWithFirstChoice());
     assertResult("message Foo {", "  int32 ", "}");
   }
 
+  @Test
   public void testPrimitiveTypeInFieldAfterRepeatedKeyword() {
     setInput("message Foo {", "  repeated in" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "int32", "int64", "sint32", "sint64", "uint32", "uint64");
+    assertThat(completions).containsAllOf("int32", "int64", "sint32", "sint64", "uint32", "uint64");
   }
 
+  @Test
   public void testPrimitiveTypeInFieldAfterOptionalKeyword() {
     withSyntax("proto2");
     setInput("message Foo {", "  optional in" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertContainsElements(completions, "int32", "int64", "sint32", "sint64", "uint32", "uint64");
+    assertThat(completions).containsAllOf("int32", "int64", "sint32", "sint64", "uint32", "uint64");
   }
 
+  @Test
   public void testNoInt32CompletionInFieldIdentifier() {
     setInput("message Foo {", "  int32 in" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testNoInt32CompletionInMessageIdentifier() {
     setInput("message in" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testNoInt32CompletionAsEnum() {
     setInput("enum AnEnum {", "  in" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testFloatInField() {
     setInput("message Foo {", "  fl" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  float ");
   }
 
+  @Test
   public void testDoubleInField() {
     setInput("message Foo {", "  do" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  double ");
   }
 
+  @Test
   public void testNoDoubleCompletionInComment() {
     setInput("message Foo {", "  // doub" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testNoDoubleCompletionInFieldOption() {
     setInput("message Foo {", "  int32 some_field = 1 [(dou" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testNoDoubleCompletionInExtend() {
     setInput("extend dou" + CARET_TAG);
     assertNoCompletions();
   }
 
+  @Test
   public void testBoolBytesInField() {
     setInput("message Foo {", "  b" + CARET_TAG, "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "bool", "bytes", "double");
+    assertThat(completions).containsExactly("bool", "bytes", "double");
   }
 
+  @Test
   public void testPrimitiveTypeInMapKeyType() {
     setInput("message Foo {", "  map<do" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  map<double");
   }
 
+  @Test
   public void testPrimitiveTypeInMapKeyTypeWithCloseBraces() {
     setInput("message Foo {", "  map<do" + CARET_TAG + ">", "}");
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  map<double>", "}");
   }
 
+  @Test
   public void testPrimitiveTypeInMapValueType() {
     setInput("message Foo {", "  map<int32, do" + CARET_TAG);
     assertTrue(completeWithUniqueChoice());
     assertResult("message Foo {", "  map<int32, double");
   }
 
+  @Test
   public void testNoPrimitiveTypeInServiceMethodParam() {
     setInput("service Foo {", "  rpc Bar(dou" + CARET_TAG + ")", "}");
     assertNoCompletions();
   }
 
+  @Test
   public void testNoPrimitiveTypeInServiceMethodReturn() {
     setInput(
         "message Message {}",
@@ -144,6 +168,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
 
   // User-defined types.
 
+  @Test
   public void testNonQualifiedTypeFileScope() {
     setInput(
         "message MyMessage {",
@@ -171,6 +196,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "extend MyMessage");
   }
 
+  @Test
   public void testNonQualifiedTypeMessageScope() {
     setInput(
         "message MyMessage {",
@@ -187,9 +213,10 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "MyEnum", "MyMessage");
+    assertThat(completions).containsExactly("MyEnum", "MyMessage");
   }
 
+  @Test
   public void testNonQualifiedTypeDeclaredInNonScopeCreatingParent() {
     withSyntax("proto2");
     setInput(
@@ -203,9 +230,10 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "MyMessage", "MyGroup");
+    assertThat(completions).containsExactly("MyMessage", "MyGroup");
   }
 
+  @Test
   public void testNonQualifiedTypeNestedMessageScope() {
     setInput(
         "message MyMessage {",
@@ -224,9 +252,10 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "MyEnum", "MyMessage");
+    assertThat(completions).containsExactly("MyEnum", "MyMessage");
   }
 
+  @Test
   public void testNonQualifiedTypeServiceMethodParam() {
     setInput(
         "message MyMessage {",
@@ -251,6 +280,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testNonQualifiedTypeServiceMethodReturn() {
     setInput(
         "message MyMessage {",
@@ -275,6 +305,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testNoMessageEnumTypesInMapKeys() {
     setInput(
         "message MyMessage {",
@@ -289,6 +320,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testMessageTypesInMapValues() {
     setInput(
         "message MyMessage {",
@@ -302,9 +334,10 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "  map<int32, My" + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "MyEnum", "MyMessage");
+    assertThat(completions).containsExactly("MyEnum", "MyMessage");
   }
 
+  @Test
   public void testFullyQualifiedType() {
     withPackage("foo.bar");
     setInput(
@@ -326,6 +359,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testPartialPackageNameType() {
     withPackage("foo.bar");
     setInput(
@@ -347,6 +381,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testPartiallyQualifiedType() {
     setInput(
         "message Bar {",
@@ -379,6 +414,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
   }
 
+  @Test
   public void testPartiallyQualifiedTypeNoMatchingChildren() {
     setInput(
         "message Bar {",
@@ -396,6 +432,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testPartiallyQualifiedTypeNoMatchingQualifier() {
     setInput(
         "message Bar {",
@@ -413,6 +450,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testNoCompleteOutOfScope() {
     setInput(
         "message Bar {",
@@ -426,6 +464,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testNoBuiltinTypesInPartiallyQualifiedType() {
     setInput(
         "message Foo {",
@@ -440,17 +479,19 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "  Bar." + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "Abc", "Xyz");
+    assertThat(completions).containsExactly("Abc", "Xyz");
   }
 
+  @Test
   public void testNoBuiltinTypesInFullyQualifiedType() {
     withPackage("com.bar.baz");
     setInput("message Foo {", "  ." + CARET_TAG);
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "com.");
+    assertThat(completions).containsExactly("com.");
   }
 
+  @Test
   public void testFuzzyComplete() {
     setInput(
         "message NotExpensiveMessage {",
@@ -464,17 +505,19 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
         "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "ExpensiveMessage", "NotExpensiveMessage");
+    assertThat(completions).containsExactly("ExpensiveMessage", "NotExpensiveMessage");
   }
 
+  @Test
   public void testCompleteImportSamePackage() {
     setAdditionalFile("import_me.proto", "message Xyz {", "}", "message Xyzw {", "}");
     setInput("import \"import_me.proto\";", "message Test {", "  X" + CARET_TAG, "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "Xyz", "Xyzw");
+    assertThat(completions).containsExactly("Xyz", "Xyzw");
   }
 
+  @Test
   public void testNoCompleteWithoutQualifierImportOtherPackage() {
     withPackage("com.bar.baz");
     setAdditionalFile("import_me.proto", "message Xyz {", "}", "message Xyzw {", "}");
@@ -483,6 +526,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     assertNoCompletions();
   }
 
+  @Test
   public void testCompleteWithQualifierImportOtherPackage() {
     withPackage("com.bar.baz");
     setAdditionalFile("import_me.proto", "message Xyz {", "}", "message Xyzw {", "}");
@@ -490,9 +534,10 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     setInput("import \"import_me.proto\";", "message Test {", "  com.bar.baz.X" + CARET_TAG, "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "Xyz", "Xyzw");
+    assertThat(completions).containsExactly("Xyz", "Xyzw");
   }
 
+  @Test
   public void testCompletePackageUnique() {
     // Test de-duplicating different package symbol objects.
     withPackage("com.bar.baz");
@@ -503,6 +548,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     assertResult("import \"import_me.proto\";", "message Test {", "  .com.", "}");
   }
 
+  @Test
   public void testCompletePackageMessageClash() {
     // Test where a package and message have the same symbol.
     // We don't attempt to de-duplicate.
@@ -512,7 +558,7 @@ public class PbCompleteTypesTest extends PbCompletionContributorTestCase {
     setInput("import \"import_me.proto\";", "message bar {", "  com." + CARET_TAG, "}");
     List<String> completions = getCompletionItemsAsStrings();
     assertNotNull(completions);
-    assertSameElements(completions, "bar.", "bar");
+    assertThat(completions).containsExactly("bar.", "bar");
   }
 
   public void noCompleteMapEntry() { //todo

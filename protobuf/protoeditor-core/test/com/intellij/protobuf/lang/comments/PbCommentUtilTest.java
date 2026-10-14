@@ -15,8 +15,11 @@
  */
 package com.intellij.protobuf.lang.comments;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbMessageType;
@@ -26,19 +29,39 @@ import com.intellij.protobuf.lang.psi.PbSyntaxStatement;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.util.QualifiedName;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-/** Tests for {@link PbCommentUtil}. */
-public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.registerTestdataFileExtension();
+/** Tests for {@link PbCommentUtil}. */
+@TestApplication
+public class PbCommentUtilTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
+  @Test
   public void testSingleLeadingLineComment() {
     PbStatement element =
         loadStatement(
@@ -46,6 +69,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "A comment");
   }
 
+  @Test
   public void testManyLeadingLineComments() {
     PbStatement element =
         loadStatement(
@@ -57,6 +81,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "A comment", "Another comment");
   }
 
+  @Test
   public void testSingleLeadingBlockComment() {
     PbStatement element =
         loadStatement(
@@ -64,6 +89,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "A comment");
   }
 
+  @Test
   public void testSingleLeadingBlockCommentSameLine() {
     PbStatement element =
         loadStatement(
@@ -71,6 +97,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "A comment");
   }
 
+  @Test
   public void testSingleLeadingBlockCommentSameLineNoSpace() {
     PbStatement element =
         loadStatement(
@@ -79,6 +106,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "A comment");
   }
 
+  @Test
   public void testBlockCommentBeforeLeadingLineCommentIsIgnored() {
     PbStatement element =
         loadStatement(
@@ -90,6 +118,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "Comment");
   }
 
+  @Test
   public void testOnlyOneLeadingBlockCommentIsCollected() {
     PbStatement element =
         loadStatement(
@@ -101,6 +130,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "Comment");
   }
 
+  @Test
   public void testOnlyOneLeadingBlockCommentIsCollectedSameLine() {
     PbStatement element =
         loadStatement(
@@ -111,6 +141,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "Comment");
   }
 
+  @Test
   public void testBlankLineStopsLeadingLineCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -124,6 +155,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element, "Comment2", "Comment3");
   }
 
+  @Test
   public void testBlankLinePreventsLeadingLineCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -131,6 +163,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element);
   }
 
+  @Test
   public void testBlankLinePreventsLeadingBlockCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -138,29 +171,34 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(element);
   }
 
+  @Test
   public void testLeadingLineCommentAtBeginningOfFile() {
     PbStatement element = loadStatement(PbSyntaxStatement.class, "// Comment1", "syntax='proto2';");
     checkLeading(element, "Comment1");
   }
 
+  @Test
   public void testLeadingLineCommentAfterOnlyWhitespace() {
     PbStatement element =
         loadStatement(PbSyntaxStatement.class, "", "// Comment1", "syntax='proto2';");
     checkLeading(element, "Comment1");
   }
 
+  @Test
   public void testLeadingBlockCommentAtBeginningOfFile() {
     PbStatement element =
         loadStatement(PbSyntaxStatement.class, "/* Comment1 */", "syntax='proto2';");
     checkLeading(element, "Comment1");
   }
 
+  @Test
   public void testLeadingBlockCommentAfterOnlyWhitespace() {
     PbStatement element =
         loadStatement(PbSyntaxStatement.class, "", "/* Comment1 */", "syntax='proto2';");
     checkLeading(element, "Comment1");
   }
 
+  @Test
   public void testSingleTrailingLineComment() {
     PbStatement element =
         loadStatement(
@@ -173,6 +211,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testSingleTrailingLineCommentSameLine() {
     PbStatement element =
         loadStatement(
@@ -183,6 +222,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testSingleTrailingLineCommentSameLineNoSpace() {
     PbStatement element =
         loadStatement(
@@ -193,6 +233,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testSingleTrailingLineCommentSameLineStopsCollection() {
     PbStatement element =
         loadStatement(
@@ -205,6 +246,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testSingleTrailingLineCommentSameLineStopsBlockCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -217,6 +259,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testManyTrailingLineComments() {
     PbStatement element =
         loadStatement(
@@ -230,6 +273,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment", "Another comment");
   }
 
+  @Test
   public void testSingleTrailingBlockComment() {
     PbStatement element =
         loadStatement(
@@ -242,6 +286,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testSingleTrailingBlockCommentSameLine() {
     PbStatement element =
         loadStatement(
@@ -252,6 +297,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testSingleTrailingBlockCommentSameLineNoSpace() {
     PbStatement element =
         loadStatement(
@@ -262,6 +308,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "A comment");
   }
 
+  @Test
   public void testBlockCommentAfterTrailingLineCommentIsIgnored() {
     PbStatement element =
         loadStatement(
@@ -275,6 +322,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment");
   }
 
+  @Test
   public void testOnlyOneTrailingBlockCommentIsCollected() {
     PbStatement element =
         loadStatement(
@@ -288,6 +336,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment");
   }
 
+  @Test
   public void testOnlyOneTrailingBlockCommentIsCollectedSameLine() {
     PbStatement element =
         loadStatement(
@@ -300,6 +349,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment");
   }
 
+  @Test
   public void testBlankLineStopsTrailingLineCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -315,6 +365,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment1", "Comment2");
   }
 
+  @Test
   public void testBlankLinePreventsTrailingLineCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -329,6 +380,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element);
   }
 
+  @Test
   public void testBlankLinePreventsTrailingBlockCommentCollection() {
     PbStatement element =
         loadStatement(
@@ -342,6 +394,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element);
   }
 
+  @Test
   public void testTrailingLineCommentAtEndOfFile() {
     PbStatement element =
         loadStatement(
@@ -349,6 +402,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment1");
   }
 
+  @Test
   public void testTrailingLineCommentBeforeOnlyWhitespace() {
     PbStatement element =
         loadStatement(
@@ -356,6 +410,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment1");
   }
 
+  @Test
   public void testTrailingBlockCommentAtEndOfFile() {
     PbStatement element =
         loadStatement(
@@ -363,6 +418,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment1");
   }
 
+  @Test
   public void testTrailingBlockCommentBeforeOnlyWhitespace() {
     PbStatement element =
         loadStatement(
@@ -370,6 +426,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "Comment1");
   }
 
+  @Test
   public void testTrailingLineCommentAfterBlockOpenSameLine() {
     PbStatement element =
         loadStatement(
@@ -381,6 +438,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "This comment belongs to A.");
   }
 
+  @Test
   public void testTrailingLineCommentsAfterBlockOpen() {
     PbStatement element =
         loadStatement(
@@ -393,6 +451,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "This comment belongs to A.", "And this one.");
   }
 
+  @Test
   public void testTrailingBlockCommentAfterBlockOpenSameLine() {
     PbStatement element =
         loadStatement(
@@ -404,6 +463,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "This comment belongs to A.");
   }
 
+  @Test
   public void testTrailingBlockCommentAfterBlockOpen() {
     PbStatement element =
         loadStatement(
@@ -416,6 +476,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkTrailing(element, "This comment belongs to A.");
   }
 
+  @Test
   public void testCommentSurroundedByStatementsOnSameLineBelongsToNeither() {
     PbFile file =
         loadFile("syntax='proto2';", "message A {", "  bool X = 1; /* Ignored */ bool Y = 2;", "}");
@@ -426,6 +487,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y);
   }
 
+  @Test
   public void testTwoCommentsSurroundedByStatementsOnSameLineBelongToNeither() {
     PbFile file =
         loadFile(
@@ -440,6 +502,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y);
   }
 
+  @Test
   public void testTwoCommentsOnFirstLineBelongToNeither() {
     PbFile file =
         loadFile(
@@ -455,6 +518,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y);
   }
 
+  @Test
   public void testTwoCommentsOnFirstLinePreventLeadingCollectionForNextToken() {
     // TODO(b/33539835): This is probably a bug in protoc's comment collection.
     PbFile file =
@@ -473,6 +537,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y);
   }
 
+  @Test
   public void testTwoCommentsOnSecondLineBelongToEach() {
     PbFile file =
         loadFile(
@@ -488,6 +553,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Y comment");
   }
 
+  @Test
   public void testSingleBlockCommentBetweenTwoStatementsBelongsToSecond() {
     PbFile file =
         loadFile(
@@ -504,6 +570,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Comment");
   }
 
+  @Test
   public void testSingleLineCommentBetweenTwoStatementsBelongsToSecond() {
     PbFile file =
         loadFile(
@@ -520,6 +587,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Comment");
   }
 
+  @Test
   public void testTwoBlockCommentsBetweenTwoStatementsBelongToEach() {
     PbFile file =
         loadFile(
@@ -537,6 +605,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Y comment");
   }
 
+  @Test
   public void testTwoBlockCommentsOnSameLineBetweenTwoStatementsBelongToEach() {
     PbFile file =
         loadFile(
@@ -553,6 +622,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Y comment");
   }
 
+  @Test
   public void testTwoLineCommentsBetweenTwoStatementsBelongToSecond() {
     PbFile file =
         loadFile(
@@ -570,6 +640,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Y comment 1", "Y comment 2");
   }
 
+  @Test
   public void testBlockAndLineCommentsBetweenTwoStatementsBelongToEach() {
     PbFile file =
         loadFile(
@@ -587,6 +658,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Y comment");
   }
 
+  @Test
   public void testLineAndBlockCommentsBetweenTwoStatementsBelongToEach() {
     PbFile file =
         loadFile(
@@ -604,6 +676,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(y, "Y comment");
   }
 
+  @Test
   public void testLineCommentTextExtraction() {
     PbStatement statement =
         loadSymbol(
@@ -622,6 +695,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
         "  This line should have 2.");
   }
 
+  @Test
   public void testLineCommentTextExtractionLineWithNoLeadingSpaces() {
     PbStatement statement =
         loadSymbol(
@@ -635,6 +709,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(statement, "This line should have 0 leading spaces.", " This line should have 1.");
   }
 
+  @Test
   public void testBlockCommentTextExtraction() {
     PbStatement statement =
         loadSymbol(
@@ -654,6 +729,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
         "  This line should have 2.");
   }
 
+  @Test
   public void testBlockCommentTextExtractionLineWithNoLeadingSpaces() {
     PbStatement statement =
         loadSymbol(
@@ -668,6 +744,7 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
     checkLeading(statement, "This line should have 0 leading spaces.", " This line should have 1.");
   }
 
+  @Test
   public void testBlockCommentFirstAndLastBlankLinesAreOmitted() {
     PbStatement statement =
         loadSymbol(
@@ -721,12 +798,12 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
 
   private <T extends PbStatement> T loadStatement(Class<T> type, String... lines) {
     PbFile file = loadFile(lines);
-    return file.getStatements()
+    return ReadAction.computeBlocking(() -> file.getStatements()
         .stream()
         .filter(type::isInstance)
         .map(type::cast)
         .findFirst()
-        .orElse(null);
+        .orElse(null));
   }
 
   private PbStatement loadSymbol(String symbol, String... lines) {
@@ -735,13 +812,13 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
   }
 
   private static PbStatement findSymbol(String symbol, PbFile file) {
-    return file.findSymbols(QualifiedName.fromDottedString(symbol), PbStatement.class)
+    return ReadAction.computeBlocking(() -> file.findSymbols(QualifiedName.fromDottedString(symbol), PbStatement.class)
         .iterator()
-        .next();
+        .next());
   }
 
   private static void checkLines(List<PsiComment> comments, String... expected) {
-    List<String> actual = PbCommentUtil.extractText(comments);
+    List<String> actual = ReadAction.computeBlocking(() -> PbCommentUtil.extractText(comments));
 
     String expectedString = String.join("\n", Arrays.asList(expected));
     String actualString = String.join("\n", actual);
@@ -750,10 +827,10 @@ public class PbCommentUtilTest extends PbCodeInsightFixtureTestCase {
   }
 
   private static void checkLeading(PbStatement element, String... expected) {
-    checkLines(element.getLeadingComments(), expected);
+    checkLines(ReadAction.computeBlocking(() -> element.getLeadingComments()), expected);
   }
 
   private static void checkTrailing(PbStatement element, String... expected) {
-    checkLines(element.getTrailingComments(), expected);
+    checkLines(ReadAction.computeBlocking(() -> element.getTrailingComments()), expected);
   }
 }

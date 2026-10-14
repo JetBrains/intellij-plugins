@@ -17,22 +17,28 @@ package com.intellij.protobuf.lang.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.protobuf.TestUtils;
+import com.intellij.testFramework.junit5.TestApplication;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Tests for injected text format completions. */
+@TestApplication
 public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase {
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUp() {
     myFixture.configureByFile("lang/completion/mock_descriptor.proto");
     TestUtils.addTestFileResolveProvider(
-        getProject(), "lang/completion/mock_descriptor.proto", getTestRootDisposable());
+        getProject(), "lang/completion/mock_descriptor.proto", testDisposable);
   }
 
+  @Test
   public void testFieldCompletion() {
     withPackage("foosbar");
     setInput(
@@ -60,6 +66,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
         "};");
   }
 
+  @Test
   public void testGroupFieldCompletionSuggestsTypeName() {
     withPackage("foosbar");
     withSyntax("proto2");
@@ -83,6 +90,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsItems(completions, "foo", "MyGroup");
   }
 
+  @Test
   public void testFieldCompletionDoesNotSuggestExtensionField() {
     withPackage("foosbar");
     setInput(
@@ -102,6 +110,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertNoCompletions();
   }
 
+  @Test
   public void testEnumValueCompletion() {
     withPackage("foosbar");
     setInput(
@@ -137,6 +146,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
         "};");
   }
 
+  @Test
   public void testExtensionNameCompletion() {
     // Only 'ext_opt' should be completed, since 'ext_other_opt' does not extend MyType.
     withPackage("foosbar");
@@ -184,6 +194,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
         "};");
   }
 
+  @Test
   public void testSubMessageExtensionNameCompletion() {
     // Only 'ext_opt' should be completed, since 'ext_other_opt' does not extend MyType.
     withPackage("foosbar");
@@ -249,6 +260,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
         "};");
   }
 
+  @Test
   public void testExtensionNameCompletionDoesNotSuggestMembers() {
     // In text format, extension names must refer to actual extension fields. The completion below
     // should not suggest the member in MyType.
@@ -268,6 +280,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertNoCompletions();
   }
 
+  @Test
   public void testDuplicateFieldNameIsHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -288,6 +301,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsNonhighlightedItems(completions, "foobar");
   }
 
+  @Test
   public void testDuplicateFieldNameInNestedMessageIsHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -311,6 +325,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsNonhighlightedItems(completions, "foobar");
   }
 
+  @Test
   public void testDuplicateFieldAndOptionNamesAreHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -331,6 +346,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsNonhighlightedItems(completions, "foobar");
   }
 
+  @Test
   public void testRepeatedOptionIsNotHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -350,6 +366,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsNonhighlightedItems(completions, "field", "foobar");
   }
 
+  @Test
   public void testOtherOneofMembersAreHighlighted() {
     setInput(
         "import \"lang/completion/mock_descriptor.proto\";",
@@ -373,6 +390,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsNonhighlightedItems(completions, "foobar");
   }
 
+  @Test
   public void testDuplicateExtensionNameIsHighlighted() {
     withSyntax("proto2");
     setInput(
@@ -398,6 +416,7 @@ public class PbCompleteTextElementsTest extends PbCompletionContributorTestCase 
     assertContainsNonhighlightedItems(completions, "ext2");
   }
 
+  @Test
   public void testDuplicateGroupFieldsWithDifferentCasingAreHighlighted() {
     withSyntax("proto2");
     setInput(

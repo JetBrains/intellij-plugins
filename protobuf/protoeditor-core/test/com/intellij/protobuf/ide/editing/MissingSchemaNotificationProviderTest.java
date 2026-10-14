@@ -15,51 +15,75 @@
  */
 package com.intellij.protobuf.ide.editing;
 
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.PbTextFileType;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.ui.EditorNotificationPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.JComponent;
 import java.util.function.Function;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /** Tests for {@link MissingSchemaNotificationProvider}. */
-public class MissingSchemaNotificationProviderTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class MissingSchemaNotificationProviderTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public String getTestDataPath() {
-    return super.getTestDataPath() + "/ide/editing/";
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture, "/ide/editing/");
   }
 
+  @Test
   public void testNoActionOnNonTextFormatFile() {
     myFixture.configureByText(PbFileType.INSTANCE, file("// Comment"));
-    Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> panelCreator = new MissingSchemaNotificationProvider()
-      .collectNotificationData(myFixture.getProject(), myFixture.getFile().getVirtualFile());
+    Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> panelCreator = ReadAction.computeBlocking(() -> new MissingSchemaNotificationProvider()
+      .collectNotificationData(myFixture.getProject(), myFixture.getFile().getVirtualFile()));
     assertThat(panelCreator).isNull();
   }
 
+  @Test
   public void testCreatesPanelForTextFormatFile() {
     myFixture.configureByText(PbTextFileType.INSTANCE, file("# Comment"));
-    TextEditor textEditor = TextEditorProvider.getInstance().getTextEditor(myFixture.getEditor());
-
-    JComponent panel =
-      new MissingSchemaNotificationProvider()
+    JComponent panel = EdtTestUtil.runInEdtAndGet(() -> {
+      TextEditor textEditor = TextEditorProvider.getInstance().getTextEditor(myFixture.getEditor());
+      return new MissingSchemaNotificationProvider()
         .collectNotificationData(myFixture.getProject(), myFixture.getFile().getVirtualFile()).apply(textEditor);
-    assertInstanceOf(panel, EditorNotificationPanel.class);
+    });
+    assertInstanceOf(EditorNotificationPanel.class, panel);
     assertThat(panel).isNotNull();
   }
 
+  @Test
   public void testNoActionWithExistingAnnotation() {
     myFixture.configureByText(PbTextFileType.INSTANCE, file("# proto-file: foo"));
-    Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> panelCreator = new MissingSchemaNotificationProvider()
-      .collectNotificationData(myFixture.getProject(), myFixture.getFile().getVirtualFile());
+    Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> panelCreator = ReadAction.computeBlocking(() -> new MissingSchemaNotificationProvider()
+      .collectNotificationData(myFixture.getProject(), myFixture.getFile().getVirtualFile()));
     assertThat(panelCreator).isNull();
   }
 

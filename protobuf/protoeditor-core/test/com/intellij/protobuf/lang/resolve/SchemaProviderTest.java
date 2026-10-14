@@ -15,35 +15,59 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.psi.PbTextField;
 import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.protobuf.lang.psi.PbTextMessage;
 import com.intellij.psi.util.QualifiedName;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightModuleFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /** Test cases for {@link SchemaProvider}. */
-public class SchemaProviderTest extends PbCodeInsightFixtureTestCase {
+@TestApplication
+public class SchemaProviderTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    TestUtils.registerTestdataFileExtension();
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightModuleFixture(projectFixture);
+
+  private CodeInsightTestFixture myFixture;
+
+  @BeforeEach
+  void setUp() {
+    myFixture = codeInsightFixture.get();
+    PbCodeInsightTestUtil.setUpTestDataPath(myFixture);
+    EdtTestUtil.runInEdtAndWait(TestUtils::registerTestdataFileExtension);
   }
 
+  @Test
   public void testRootMessageProvider() {
     final PbFile messageProto =
         (PbFile) myFixture.configureByFile("lang/resolve/root_message.proto");
-    final PbMessageType message =
+    final PbMessageType message = ReadAction.computeBlocking(() ->
         messageProto
             .findSymbols(QualifiedName.fromDottedString("foo.bar.Message"), PbMessageType.class)
             .stream()
             .findFirst()
-            .orElse(null);
+            .orElse(null));
     assertNotNull(message);
 
     // Register a simple RootMessageProvider extension which returns the message found above.
@@ -54,18 +78,20 @@ public class SchemaProviderTest extends PbCodeInsightFixtureTestCase {
           return SchemaInfo.create(message);
         };
 
-    Disposable disposable = new TestDisposable();
-    getProject().getExtensionArea().getExtensionPoint(SchemaProvider.EP_NAME).registerExtension(extension, disposable);
+    Disposable disposable = Disposer.newDisposable();
+    myFixture.getProject().getExtensionArea().getExtensionPoint(SchemaProvider.EP_NAME).registerExtension(extension, disposable);
     try {
       PbTextFile textFile = (PbTextFile) myFixture.configureByFile("lang/resolve/root_data.pb");
-      PbTextMessage rootMessage = textFile.getRootMessage();
-      assertNotNull(rootMessage);
+      ReadAction.runBlocking(() -> {
+        PbTextMessage rootMessage = textFile.getRootMessage();
+        assertNotNull(rootMessage);
 
-      PbMessageType declaredMessage = rootMessage.getDeclaredMessage();
-      assertEquals(message, declaredMessage);
+        PbMessageType declaredMessage = rootMessage.getDeclaredMessage();
+        assertEquals(message, declaredMessage);
 
-      PbTextField field = rootMessage.getFields().get(0);
-      assertNotNull(field.getFieldName().getDeclaredField());
+        PbTextField field = rootMessage.getFields().get(0);
+        assertNotNull(field.getFieldName().getDeclaredField());
+      });
     } finally {
       Disposer.dispose(disposable);
     }
