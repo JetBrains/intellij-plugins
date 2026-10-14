@@ -18,7 +18,7 @@ if (ownPackageJson.version !== theirPackageJson.version) {
 }
 
 const vendoredDependencies = [
-  `@astrojs/compiler`
+  `@astrojs/astro2tsx`
 ];
 
 esbuild.build({
@@ -27,7 +27,7 @@ esbuild.build({
     },
     outdir: '.',
     bundle: true,
-    external: [...vendoredDependencies, 'prettier', 'prettier-plugin-astro'],
+    external: ['prettier', 'prettier-plugin-astro'],
     format: 'cjs',
     platform: 'node',
     target: 'es2015',
@@ -63,6 +63,22 @@ esbuild.build({
                             '        const estreePlugin = require("prettier/plugins/estree");\n' +
                             '        const standalone_1 = require("prettier/standalone");\n');
                     return {contents, loader: 'js'};
+                });
+            },
+        },
+        {
+            // @astrojs/astro2tsx is ESM and reads its WebAssembly binary relative to import.meta.url.
+            // import.meta is empty in the CJS bundle, so read the binary from the vendored copy in bin/node_modules.
+            name: 'vendored-astro2tsx-wasm',
+            setup(build) {
+                build.onLoad({filter: /[\\/]@astrojs[\\/]astro2tsx[\\/]index\.js$/}, args => {
+                    const contents = fs.readFileSync(args.path, 'utf8');
+                    const wasmUrl = "new URL('./astro2tsx.wasm32-wasi.wasm', import.meta.url)";
+                    if (!contents.includes(wasmUrl)) {
+                        throw new Error('@astrojs/astro2tsx/index.js layout changed; update vendored-astro2tsx-wasm in build.js');
+                    }
+                    const wasmPath = "require('path').join(__dirname, 'node_modules/@astrojs/astro2tsx/astro2tsx.wasm32-wasi.wasm')";
+                    return {contents: contents.replace(wasmUrl, wasmPath), loader: 'js'};
                 });
             },
         },

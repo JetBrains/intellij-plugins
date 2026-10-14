@@ -1,1 +1,2 @@
+My (typeText='./MyAstroComponent.astro'; priority=4.0; typeGreyed)
 MyAstroComponent (typeText='./MyAstroComponent.astro'; priority=4.0; typeGreyed)
