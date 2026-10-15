@@ -1664,6 +1664,14 @@ abstract class VueCompletionTestBase(
     doLookupTest(renderTailText = true) { it.priority >= 100 }
 
   @Test
+  fun testGlobalComponentFromVueFileIndexedAccess() =
+    doLookupTest(configureFileName = "src/App.vue") { it.priority >= 100 }
+
+  @Test
+  fun testGlobalComponentFromVueFileDefaultProperty() =
+    doLookupTest(configureFileName = "src/App.vue") { it.priority >= 100 }
+
+  @Test
   fun testWatchProperty() =
     doEditorTypingTest(VueTestModule.VUE_2_6_10) {
       completeBasic()

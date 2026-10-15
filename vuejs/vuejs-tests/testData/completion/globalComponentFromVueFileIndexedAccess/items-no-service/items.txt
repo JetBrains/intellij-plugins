@@ -1,0 +1,4 @@
+logo-size (typeText='number'; priority=100.0; bold; typeGreyed)
+logo-title (typeText='string'; priority=100.0; bold; typeGreyed)
+logoSize (typeText='number'; priority=100.0; bold; typeGreyed)
+logoTitle (typeText='string'; priority=100.0; bold; typeGreyed)

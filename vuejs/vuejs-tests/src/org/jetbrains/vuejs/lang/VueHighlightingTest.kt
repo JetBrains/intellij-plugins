@@ -1373,6 +1373,16 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  fun testGlobalComponentFromVueFileIndexedAccess() {
+    doHighlightingTest(configureFileName = "src/App.vue")
+  }
+
+  @Test
+  fun testGlobalComponentFromVueFileDefaultProperty() {
+    doHighlightingTest(configureFileName = "src/App.vue")
+  }
+
+  @Test
   fun testVaporSimpleApplication() {
     doHighlightingTest(
       VueTestModule.VUE_3_6_0,
