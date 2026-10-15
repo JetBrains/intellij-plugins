@@ -36,7 +36,7 @@ internal class TfRequiredProvidersCompletionTestCase : BasePlatformTestCase() {
       required_providers {
         libvirt = {
           source  = "dmacvicar/libvirt"
-          version = "0.9.4"
+          version = "0.9.9"
         }
       }
     }
