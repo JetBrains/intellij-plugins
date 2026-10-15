@@ -1,7 +1,8 @@
 <idea-plugin visibility="internal">
 
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+    <module name="intellij.dts.pp"/>
     <module name="intellij.libraries.snakeyaml"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.backend"/>
@@ -21,8 +22,8 @@
     <module name="intellij.platform.structureView"/>
     <module name="intellij.platform.util.progress"/>
     <module name="intellij.platform.util.ui"/>
-    <!-- endregion -->
   </dependencies>
+  <!-- endregion -->
 
   <resource-bundle>messages.DtsBundle</resource-bundle>
 

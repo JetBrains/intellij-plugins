@@ -8,5 +8,6 @@
   <content namespace="jetbrains">
     <module name="intellij.dts.cmake"/>
     <module name="intellij.dts.core" loading="required"/>
+    <module name="intellij.dts.pp" loading="required"/>
   </content>
 </idea-plugin>

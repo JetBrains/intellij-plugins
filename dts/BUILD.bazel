@@ -7,6 +7,7 @@ dev_dist_plugin(
         # do not sort,
         "intellij.dts.cmake",
         "intellij.dts.core",
+        "intellij.dts.pp",
     ],
     descriptor = "resources/META-INF/plugin.xml",
     jars = {

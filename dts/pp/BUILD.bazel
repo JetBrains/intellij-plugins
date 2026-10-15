@@ -1,4 +1,9 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.dts.pp` start
+content_module_jar(module = ":pp")
+### auto-generated section `dev intellij.dts.pp` end
 
 ### auto-generated section `build intellij.dts.pp` start
 jvm_library(
@@ -67,6 +72,7 @@ jvm_library(
 exports_files(
     [
         "intellij.dts.pp.iml",
+        "resources/intellij.dts.pp.xml",
     ],
     visibility = ["//visibility:public"],
 )
