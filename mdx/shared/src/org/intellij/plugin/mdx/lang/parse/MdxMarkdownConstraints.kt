@@ -22,8 +22,14 @@ internal class MdxMarkdownConstraints private constructor(
     charsEaten: Int,
   ): CommonMarkdownConstraints = MdxMarkdownConstraints(indents, types, isExplicit, charsEaten)
 
-  override fun addModifierIfNeeded(pos: LookaheadText.Position?): CommonMarkdownConstraints? {
-    val modified = asGfmConstraints().addModifierIfNeeded(pos) as? GFMConstraints ?: return null
+  override fun addModifierIfNeeded(pos: LookaheadText.Position?): CommonMarkdownConstraints? =
+    addModifierIfNeeded(pos, interruptsParagraph = false)
+
+  override fun addModifierIfNeeded(
+    pos: LookaheadText.Position?,
+    interruptsParagraph: Boolean,
+  ): CommonMarkdownConstraints? {
+    val modified = asGfmConstraints().addModifierIfNeeded(pos, interruptsParagraph) as? GFMConstraints ?: return null
     val skippedIndent = if (pos == null) 0 else skippedIndent(pos)
     return MdxMarkdownConstraints(
       indents + (modified.indent + skippedIndent),
