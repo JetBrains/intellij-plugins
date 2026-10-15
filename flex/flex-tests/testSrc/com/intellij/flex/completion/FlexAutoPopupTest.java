@@ -228,7 +228,7 @@ public class FlexAutoPopupTest {
           ]]></mx:Script>
         </mx:Application>
       """);
-      runInEdtAndWait((ThrowableRunnable<Throwable>)() ->  myFixture.doHighlighting()); // to ensure, injected documents are calculated
+      myFixture.doHighlighting(); // to ensure, injected documents are calculated
       type("n");
       assertEquals("UIComponent", getLookup().getCurrentItem().getLookupString());
       type("\t");

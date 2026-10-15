@@ -3,7 +3,6 @@ package org.intellij.terraform.config
 
 import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import com.intellij.testFramework.junit5.TestApplication
-import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.ui.RenameDialogInterceptor
 import com.intellij.ui.UiInterceptors
 import org.intellij.terraform.TfTestUtils
@@ -140,7 +139,7 @@ internal class TfInspectionsTest : TfInspectionFixtureTestCase() {
       }
     """.trimIndent())
     myFixture.enableInspections(TfIncorrectVariableTypeInspection())
-    runInEdtAndWait { myFixture.checkHighlighting() }
+    myFixture.checkHighlighting()
   }
 
   @Test
@@ -196,9 +195,9 @@ internal class TfInspectionsTest : TfInspectionFixtureTestCase() {
   fun testInterpolationBinaryExpressionsTypesCheck() {
     myFixture.enableInspections(HILOperationTypesMismatchInspection())
     myFixture.configureByFile("interpolation_operations_types/src/test.tf")
-    runInEdtAndWait { myFixture.checkHighlighting() }
+    myFixture.checkHighlighting()
     myFixture.configureByFile("interpolation_operations_types/src/ternary.tf")
-    runInEdtAndWait { myFixture.checkHighlighting() }
+    myFixture.checkHighlighting()
   }
 
   @Test
