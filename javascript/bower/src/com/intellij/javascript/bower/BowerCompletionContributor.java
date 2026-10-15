@@ -13,6 +13,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
+import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.execution.ExecutionException;
 import com.intellij.javascript.bower.browsePackages.BowerPackageSearcher;
 import com.intellij.json.codeinsight.JsonStringPropertyInsertHandler;
@@ -34,7 +35,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,7 @@ public class BowerCompletionContributor extends CompletionContributor {
   private static final Logger LOG = Logger.getInstance(BowerCompletionContributor.class);
   private static final List<String> DEPENDENCIES_NAMES = Arrays.asList("dependencies", "devDependencies");
 
-  private static final Map<String, List<String>> ourVersionCache = CollectionFactory.createConcurrentSoftMap();
+  private static final Map<String, List<String>> ourVersionCache = ConcurrentCollectionFactory.createConcurrentSoftMap();
 
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {

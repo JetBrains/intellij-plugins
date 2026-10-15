@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.runConfiguration.infrastructure
 
+import com.intellij.concurrency.ConcurrentCollectionFactory
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.executors.DefaultRunExecutor
@@ -19,7 +20,6 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.util.containers.CollectionFactory
 import junit.framework.TestCase.fail
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.CountDownLatch
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 class KarmaRunConfigurationRunner: JsRunConfigurationRunner<KarmaRunConfiguration, KarmaRunSettings.Builder>() {
-  private val serversOutputListeners: ConcurrentMap<KarmaServer, KarmaServerOutputListener> = CollectionFactory.createConcurrentWeakMap()
+  private val serversOutputListeners: ConcurrentMap<KarmaServer, KarmaServerOutputListener> = ConcurrentCollectionFactory.createConcurrentWeakMap()
 
   override fun getConfigurationFactory(): ConfigurationFactory = KarmaConfigurationType.getInstance()
 
