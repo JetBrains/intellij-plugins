@@ -24,12 +24,12 @@
       "ConfigImplicitMode": "Attr"
     },
     "assume_role": {
-      "Type": "NilType",
+      "Type": "Any",
       "Optional": true,
       "ConfigImplicitMode": "Attr"
     },
     "assume_role_with_web_identity": {
-      "Type": "NilType",
+      "Type": "Any",
       "Optional": true,
       "ConfigImplicitMode": "Attr"
     },
@@ -82,7 +82,7 @@
       "ConfigImplicitMode": "Attr"
     },
     "endpoints": {
-      "Type": "NilType",
+      "Type": "Any",
       "Optional": true,
       "ConfigImplicitMode": "Attr"
     },
