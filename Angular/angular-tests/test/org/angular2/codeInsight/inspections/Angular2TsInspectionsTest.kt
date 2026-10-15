@@ -66,8 +66,6 @@ class Angular2TsInspectionsTest : Angular2TestCase("inspections/ts") {
     }
 
   @Test
-  @SkipTsGoProxy
-  @SkipTsKotlin
   fun testInaccessibleSymbolPrivateAllowed() =
     doHighlightingTest(Angular2TestModule.ANGULAR_CORE_22_2_2, Angular2TestModule.TS_LIB,
                        configurators = listOf(Angular2TsConfigFile()),
