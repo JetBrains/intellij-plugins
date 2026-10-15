@@ -2,7 +2,7 @@ package com.intellij.dts.inspections.fixes
 
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.inspections.DtsInspectionTest
-import com.intellij.dts.inspections.DtsRequiredPropertyInspection
+import com.intellij.dts.core.inspections.DtsRequiredPropertyInspection
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test

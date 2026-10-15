@@ -23,7 +23,7 @@ private class BuilderDiagnostics : SyntaxBuildingDiagnostics {
     }
 
     val method = Thread.currentThread().stackTrace.dropWhile {
-      it.className != "com.intellij.dts.lang.parser.DtsParser"
+      it.className != "com.intellij.dts.core.lang.parser.DtsParser"
     }.first().methodName
 
     val map = rollbacks.getOrPut(method) { mutableMapOf() }

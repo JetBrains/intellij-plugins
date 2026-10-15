@@ -1,6 +1,6 @@
 package com.intellij.dts.parsing
 
-import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.core.lang.psi.DtsTypes
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.util.text.StringUtil

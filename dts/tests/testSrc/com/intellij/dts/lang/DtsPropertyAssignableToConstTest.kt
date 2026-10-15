@@ -1,5 +1,8 @@
 package com.intellij.dts.lang
 
+import com.intellij.dts.core.lang.DtsFile
+import com.intellij.dts.core.lang.DtsPropertyValue
+import com.intellij.dts.core.lang.dtsAssignableTo
 import com.intellij.dts.dtsFixture
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction

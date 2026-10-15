@@ -1,0 +1,24 @@
+package com.intellij.dts.core.lang.symbols
+
+import com.intellij.dts.core.documentation.DtsPropertyBindingDocumentationTarget
+import com.intellij.dts.core.lang.DtsPropertyType
+import com.intellij.dts.core.lang.DtsPropertyValue
+import com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding
+import com.intellij.model.Pointer
+import com.intellij.model.Symbol
+import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.documentation.DocumentationTarget
+
+data class DtsPropertySymbol(private val binding: DtsZephyrPropertyBinding) : DtsDocumentationSymbol {
+  val name: String get() = binding.name
+
+  val type: DtsPropertyType get() = binding.type
+
+  val enum: List<DtsPropertyValue>? get() = binding.enum
+
+  val defaultValue: DtsPropertyValue? get() = (binding.const ?: binding.default)?.takeIf { binding.type in it.assignableTo }
+
+  override fun createPointer(): Pointer<out Symbol> = Pointer { this }
+
+  override fun getDocumentationTarget(project: Project): DocumentationTarget = DtsPropertyBindingDocumentationTarget(project, binding)
+}

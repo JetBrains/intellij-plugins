@@ -1,8 +1,8 @@
 package com.intellij.dts.parsing
 
 import com.intellij.dts.DTS_TEST_DATA_PATH
-import com.intellij.dts.lang.DtsLanguage
-import com.intellij.dts.lang.parser.DtsParserDefinition
+import com.intellij.dts.core.lang.DtsLanguage
+import com.intellij.dts.core.lang.parser.DtsParserDefinition
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.parsingFixture
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SingleRootFileViewProvider

@@ -1,0 +1,246 @@
+{
+  parserImports="static com.intellij.lang.WhitespacesBinders.*"
+  parserClass="com.intellij.dts.core.lang.parser.DtsParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  generate=[visitor="no" fqn="yes"]
+
+  psiClassPrefix="Dts"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.dts.core.lang.psi"
+  psiImplPackage="com.intellij.dts.core.lang.psi.impl"
+
+  elementTypeHolderClass="com.intellij.dts.core.lang.psi.DtsTypes"
+  elementTypeClass="com.intellij.dts.core.lang.DtsElementType"
+
+  tokenTypeClass="com.intellij.dts.core.lang.DtsTokenType"
+  parserUtilClass="com.intellij.dts.core.lang.parser.DtsParserUtil"
+
+  implements("rootNode")="com.intellij.dts.core.lang.psi.DtsNode.Root"
+  mixin("rootNode")="com.intellij.dts.core.lang.psi.mixin.DtsRootNodeMixin"
+  stubClass("rootNode")="com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub"
+  elementTypeFactory("rootNode")="com.intellij.dts.core.lang.stubs.DtsStubElementTypes.factory"
+
+  implements("refNode")="com.intellij.dts.core.lang.psi.DtsNode.Ref"
+  mixin("refNode")="com.intellij.dts.core.lang.psi.mixin.DtsRefNodeMixin"
+  stubClass("refNode")="com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub"
+  elementTypeFactory("refNode")="com.intellij.dts.core.lang.stubs.DtsStubElementTypes.factory"
+
+  implements("subNode")="com.intellij.dts.core.lang.psi.DtsNode.Sub"
+  mixin("subNode")="com.intellij.dts.core.lang.psi.mixin.DtsSubNodeMixin"
+  stubClass("subNode")="com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub"
+  elementTypeFactory("subNode")="com.intellij.dts.core.lang.stubs.DtsStubElementTypes.factory"
+
+  implements("nodeContent")="com.intellij.dts.core.lang.psi.DtsContainer"
+  mixin("nodeContent")="com.intellij.dts.core.lang.psi.mixin.DtsNodeContentMixin"
+
+  implements("property")="com.intellij.dts.core.lang.psi.DtsStatement.Property"
+  mixin("property")="com.intellij.dts.core.lang.psi.mixin.DtsPropertyMixin"
+
+  implements("compilerDirective")="com.intellij.dts.core.lang.psi.DtsStatement.CompilerDirective"
+  mixin("compilerDirective")="com.intellij.dts.core.lang.psi.mixin.DtsCompilerDirectiveMixin"
+
+  implements("entry")="com.intellij.dts.core.lang.psi.mixin.IDtsEntry"
+  mixin("entry")="com.intellij.dts.core.lang.psi.mixin.DtsEntryMixin"
+
+  implements("cellArray")="com.intellij.dts.core.lang.psi.DtsArray.Cell"
+  mixin("cellArray")="com.intellij.dts.core.lang.psi.mixin.DtsCellArrayMixin"
+
+  implements("cellArrayBits")="com.intellij.dts.core.lang.psi.mixin.IDtsCellArrayBits"
+  mixin("cellArrayBits")="com.intellij.dts.core.lang.psi.mixin.DtsCellArrayBitsMixin"
+
+  implements("byteArray")="com.intellij.dts.core.lang.psi.DtsArray.Byte"
+  mixin("byteArray")="com.intellij.dts.core.lang.psi.mixin.DtsByteArrayMixin"
+
+  implements("int")="com.intellij.dts.core.lang.psi.DtsValue.Int"
+  mixin("int")="com.intellij.dts.core.lang.psi.mixin.DtsIntMixin"
+
+  implements("byte")="com.intellij.dts.core.lang.psi.DtsValue.Byte"
+  mixin("byte")="com.intellij.dts.core.lang.psi.mixin.DtsByteMixin"
+
+  implements("exprValue")="com.intellij.dts.core.lang.psi.DtsValue.Expression"
+  implements("exprValue")="com.intellij.dts.core.lang.psi.DtsValue.Int"
+  mixin("exprValue")="com.intellij.dts.core.lang.psi.mixin.DtsExpressionMixin"
+
+  implements("ppMacro")="com.intellij.dts.core.lang.psi.DtsValue.Macro"
+
+  implements("string")="com.intellij.dts.core.lang.psi.DtsValue.String"
+  mixin("string")="com.intellij.dts.core.lang.psi.mixin.DtsStringMixin"
+
+  implements("char")="com.intellij.dts.core.lang.psi.DtsValue.Char"
+  mixin("char")="com.intellij.dts.core.lang.psi.mixin.DtsCharMixin"
+
+  implements("pHandle")="com.intellij.dts.core.lang.psi.DtsValue.PHandle"
+  mixin("pHandle")="com.intellij.dts.core.lang.psi.mixin.DtsPHandleMixin"
+
+  implements("includeStatement")="com.intellij.dts.core.lang.psi.PsiFileInclude"
+  mixin("includeStatement")="com.intellij.dts.core.lang.psi.mixin.DtsIncludeStatementMixin"
+
+  extends(".*Expr")=expr
+  consumeTokenMethod(".*Recover")="consumeTokenFast"
+
+  hooks("nodeContent")=[rightBinder="GREEDY_RIGHT_BINDER" leftBinder="GREEDY_LEFT_BINDER"]
+  hooks("entry")=[rightBinder="trailingCommentsBinder" leftBinder="leadingCommentsBinder"]
+
+  tokens=[
+    COMMENT_EOL="COMMENT_EOL"
+    COMMENT_C="COMMENT_C"
+
+    PP_MACRO_ARG="PP_MACRO_ARG"
+
+    PP_STATEMENT_MARKER="PP_STATEMENT_MARKER"
+    PP_STATEMENT_END="PP_STATEMENT_END"
+
+    PP_STATEMENT ="PP_STATEMENT"
+    PP_DIRECTIVE ="PP_DIRECTIVE"
+
+    PP_LINE_BRAK="PP_LINE_BREAK"
+    PP_COMMENT="PP_COMMENT"
+    PP_INACTIVE="PP_INACTIVE"
+
+    PP_HEADER_NAME="PP_HEADER_NAME"
+
+    PP_IDENTIFIER="PP_IDENTIFIER"
+    PP_OPERATOR_OR_PUNCTUATOR ="PP_OPERATOR_OR_PUNCTUATOR"
+    PP_INTEGER_LITERAL ="PP_INTEGER_LITERAL"
+    PP_CHAR_LITERAL ="PP_CHAR_LITERAL"
+    PP_FLOAT_LITERAL ="PP_FLOAT_LITERAL"
+    PP_STRING_LITERAL ="PP_STRING_LITERAL"
+  ]
+}
+
+file ::= entries*
+
+private entries ::=
+        <<entry property>> |
+        <<entry subNode>> |
+        <<entry refNode>> |
+        <<entry rootNode>> |
+        <<compilerDirectiveEntry V1 ()>> |
+        <<compilerDirectiveEntry PLUGIN ()>> |
+        <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
+        <<compilerDirectiveEntry DELETE_NODE (pHandle | NAME)>> |
+        <<compilerDirectiveEntry DELETE_PROP NAME>> |
+        <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+        invalidEntry
+
+external invalidEntry ::= parseInvalidEntry
+
+rootNode ::= SLASH LBRACE nodeContent? RBRACE {pin=2 recoverWhile="rootNodeRecover"}
+refNode ::= LABEL* pHandle LBRACE nodeContent? RBRACE {pin=3 recoverWhile="rootNodeRecover"}
+private rootNodeRecover ::= !(SEMICOLON | RBRACE | HANDLE | afterLineBreak)
+
+subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 recoverWhile="subNodeRecover"}
+private subNodeRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
+
+nodeContent ::= (!RBRACE entries)+
+
+property ::= LABEL* propertyName propertyAssignment?
+private propertyAssignment ::= ASSIGN propertyContent {pin=1}
+propertyContent ::= propertyValue (COMMA propertyValue)* {recoverWhile="propertyRecover"}
+private propertyValue ::= <<value (string | pHandle | cellArray | byteArray | ppMacro)>>
+private propertyRecover ::= !(SEMICOLON | RBRACE | NAME | afterLineBreak)
+
+external propertyName ::= parsePropertyName
+
+cellArray ::= (&BITS cellArrayBits)? LANGL cellArrayContent RANGL {pin=2}
+private cellArrayContent ::= cellArrayValue* {recoverWhile="cellArrayRecover"}
+private cellArrayValue ::= <<value (pHandle | cell)>>
+private cellArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RANGL | RPAREN)
+
+cellArrayBits ::= BITS (int | ppMacro) {pin=1 recoverWhile="cellArrayBitsRecover"}
+private cellArrayBitsRecover ::= !(SEMICOLON | RBRACE | LANGL)
+
+byteArray ::= LBRACKET byteArrayContent RBRACKET {pin=1}
+private byteArrayContent ::= byteArrayValue* {recoverWhile="byteArrayRecover"}
+private byteArrayValue ::= <<value (byte | ppMacro)>>
+private byteArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RBRACKET | RPAREN)
+
+pHandle ::= HANDLE (NAME | pHandlePath) {pin=1}
+private pHandlePath ::= LBRACE path RBRACE {pin=1}
+private path ::= PATH {recoverWhile="pathRecover"}
+private pathRecover ::= !(SEMICOLON | RANGL | RBRACE | afterLineBreak)
+
+meta entry ::= <<arg>> SEMICOLON {pin=1}
+private meta value ::= LABEL* <<arg>> trailingLabels?
+
+external trailingLabels ::= parseTrailingLabels
+
+private meta compilerDirectiveEntry ::= <<entry <<compilerDirective <<directive>> <<arg>>>>>>
+meta compilerDirective ::= <<directive>> <<arg>> {pin=1 recoverWhile="compilerDirectiveRecover"}
+private compilerDirectiveRecover ::= !(SEMICOLON | RBRACE | afterLineBreak)
+
+private cell ::= int | char | exprValue | ppMacro
+
+byte ::= BYTE_LITERAL
+int ::= INT_LITERAL
+string ::= STRING_LITERAL
+char ::= CHAR_LITERAL
+
+exprValue ::= LPAREN expr RPAREN {pin=1}
+
+expr ::= ppMacroExpr
+    | ternaryExpr
+    | lOrExpr
+    | lAndExpr
+    | bOrExpr
+    | xorExpr
+    | bAndExpr
+    | eqGroup
+    | relaGroup
+    | shiftGroup
+    | addGroup
+    | mulGroup
+    | unaryGroup
+    | primaryGroup
+
+private eqGroup ::= eqExpr | neqExpr
+private relaGroup ::= lesExpr | grtExpr | leqExpr | geqExpr
+private shiftGroup ::= lshExpr | rshExpr
+private addGroup ::= addExpr | subExpr
+private mulGroup ::= mulExpr | divExpr | modExpr
+private unaryGroup ::= lNotExpr | bNotExpr | negExpr
+private primaryGroup ::= intExpr | charExpr | parenExpr
+
+ppMacroExpr ::= ppMacro
+ternaryExpr ::= expr TERNARY expr COLON expr
+
+addExpr ::= expr ADD expr
+subExpr ::= expr SUB expr
+mulExpr ::= expr MUL expr
+divExpr ::= expr DIV expr
+modExpr ::= expr MOD expr
+
+bAndExpr ::= expr AND expr
+lAndExpr ::= expr L_AND expr
+
+bOrExpr ::= expr OR expr
+lOrExpr ::= expr L_OR expr
+
+bNotExpr ::= NOT expr
+lNotExpr ::= L_NOT expr
+negExpr ::= SUB expr
+
+xorExpr ::= expr XOR expr
+lshExpr ::= expr LSH expr
+rshExpr ::= expr RSH expr
+
+lesExpr ::= expr LES expr
+grtExpr ::= expr GRT expr
+leqExpr ::= expr LEQ expr
+geqExpr ::= expr GEQ expr
+eqExpr ::= expr EQ expr
+neqExpr ::= expr NEQ expr
+
+intExpr ::= int
+charExpr ::= char
+parenExpr ::= LPAREN expr RPAREN
+
+includeStatement ::= () INCLUDE INCLUDE_PATH { pin=1 }
+
+external afterLineBreak ::= parseAfterLineBreak
+
+// fallback to handle unknown identifiers like macros
+ppMacro ::= parserPpMacro
+external parserPpMacro ::= parsePpMacro

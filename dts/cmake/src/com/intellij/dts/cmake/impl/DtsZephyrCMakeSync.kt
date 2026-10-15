@@ -1,6 +1,6 @@
 package com.intellij.dts.cmake.impl
 
-import com.intellij.dts.settings.DtsSettings
+import com.intellij.dts.core.settings.DtsSettings
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetListener
 import com.intellij.openapi.diagnostic.Logger

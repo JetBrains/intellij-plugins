@@ -1,0 +1,101 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.dts.core` start
+content_module_jar(module = ":core")
+### auto-generated section `dev intellij.dts.core` end
+
+### auto-generated section `build intellij.dts.core` start
+jvm_library(
+    name = "core",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+            "gen/**/*.kt",
+            "gen/**/*.java",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.core",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/backend"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/dts/pp",
+        "@community//libraries/snakeyaml",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/core-api:core",
+        "@community//platform/core-impl",
+        "@community//platform/core-ui",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/ide-core",
+        "@community//platform/platform-impl:ide-impl",
+        "@community//platform/progress/shared:ide-progress",
+        "@community//platform/indexing-api:indexing",
+        "@community//jps/model-api:model",
+        "@community//platform/lang-api:lang",
+        "@community//platform/lang-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/structure-view-impl:structureView",
+        "@community//platform/util/jdom",
+        "@community//platform/util/progress",
+        "@community//platform/util:util-ui",
+    ],
+)
+
+jvm_library(
+    name = "core_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.dts.core",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":core",
+        "//contrib/dts/pp:pp_test_lib",
+        "@community//libraries/snakeyaml:snakeyaml_test_lib",
+        "@community//platform/analysis-api:analysis_test_lib",
+        "@community//platform/backend:backend_test_lib",
+        "@community//platform/code-style-api:codeStyle_test_lib",
+        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/core-impl:core-impl_test_lib",
+        "@community//platform/core-ui:core-ui_test_lib",
+        "@community//platform/editor-ui-api:editor-ui_test_lib",
+        "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/progress/shared:ide-progress_test_lib",
+        "@community//platform/indexing-api:indexing_test_lib",
+        "@community//jps/model-api:model_test_lib",
+        "@community//platform/lang-api:lang_test_lib",
+        "@community//platform/lang-impl:lang-impl_test_lib",
+        "@community//platform/projectModel-api:projectModel_test_lib",
+        "@community//platform/structure-view-impl:structureView_test_lib",
+        "@community//platform/util/jdom:jdom_test_lib",
+        "@community//platform/util/progress:progress_test_lib",
+        "@community//platform/util:util-ui_test_lib",
+    ],
+)
+### auto-generated section `build intellij.dts.core` end
+
+### auto-generated section `iml intellij.dts.core` start
+exports_files(
+    [
+        "intellij.dts.core.iml",
+        "resources/intellij.dts.core.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.dts.core` end

@@ -1,6 +1,6 @@
 package com.intellij.dts
 
-import com.intellij.dts.lang.lexer.DtsParserLexerAdapter
+import com.intellij.dts.core.lang.lexer.DtsParserLexerAdapter
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.lexerFixture
 import com.intellij.testFramework.PlatformTestUtil

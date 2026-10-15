@@ -1,7 +1,7 @@
 package com.intellij.dts.completion
 
 import com.intellij.dts.dtsFixture
-import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.openapi.application.EDT
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.fixture.projectFixture

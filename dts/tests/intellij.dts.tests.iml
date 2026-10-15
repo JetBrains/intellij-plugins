@@ -55,7 +55,7 @@
     <orderEntry type="module" module-name="intellij.libraries.jackson3" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.jackson3.dataformat.yaml" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.syntax" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.dts" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.dts.core" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.dts" />
+  <component name="TestModuleProperties" production-module="intellij.dts.core" />
 </module>

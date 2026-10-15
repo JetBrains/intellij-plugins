@@ -1,10 +1,10 @@
 package com.intellij.dts
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.dts.lang.DtsFileType
-import com.intellij.dts.settings.DtsSettings
-import com.intellij.dts.util.DtsUtil
-import com.intellij.dts.zephyr.DtsZephyrProvider
+import com.intellij.dts.core.lang.DtsFileType
+import com.intellij.dts.core.settings.DtsSettings
+import com.intellij.dts.core.util.DtsUtil
+import com.intellij.dts.core.zephyr.DtsZephyrProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -28,7 +28,7 @@ import kotlin.io.path.pathString
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
-val DTS_TEST_ROOT_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts")
+val DTS_TEST_ROOT_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/core")
 val DTS_TEST_DATA_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/tests/testData")
 
 private val defaultTestTimeout = 5.minutes

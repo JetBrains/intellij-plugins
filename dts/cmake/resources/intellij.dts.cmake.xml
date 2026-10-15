@@ -3,6 +3,7 @@
   <dependencies>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cmake.core"/>
+    <module name="intellij.dts.core"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.execution"/>
     <module name="intellij.platform.projectModel"/>
@@ -15,7 +16,7 @@
       topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
     <listener
       class="com.intellij.dts.cmake.impl.DtsZephyrCMakeSync"
-      topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
+      topic="com.intellij.dts.core.settings.DtsSettings$ChangeListener"/>
     <listener
       class="com.intellij.dts.cmake.impl.DtsZephyrCMakeSync"
       topic="com.intellij.execution.ExecutionTargetListener"/>

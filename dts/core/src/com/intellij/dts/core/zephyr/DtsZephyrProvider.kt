@@ -1,0 +1,105 @@
+package com.intellij.dts.core.zephyr
+
+import com.intellij.dts.core.DtsBundle
+import com.intellij.dts.core.settings.DtsSettings
+import com.intellij.dts.core.util.DtsUtil
+import com.intellij.dts.core.zephyr.binding.BindingSource
+import com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.core.zephyr.binding.loadExternalBindings
+import com.intellij.dts.core.zephyr.binding.parseExternalBindings
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.platform.util.progress.SequentialProgressReporter
+import com.intellij.platform.util.progress.reportSequentialProgress
+import com.intellij.util.containers.MultiMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import org.jetbrains.annotations.TestOnly
+import java.nio.file.Path
+
+private fun settings(project: Project): Flow<DtsSettings.State> = channelFlow {
+  project.messageBus.connect(this@channelFlow).subscribe(DtsSettings.ChangeListener.TOPIC, DtsSettings.ChangeListener { settings ->
+    trySend(settings.state)
+  })
+
+  send(DtsSettings.of(project).state)
+
+  awaitClose {}
+}.buffer(CONFLATED)
+
+@Service(Service.Level.PROJECT)
+internal class DtsZephyrProvider(private val project: Project, scope: CoroutineScope) {
+  companion object {
+    fun of(project: Project): DtsZephyrProvider = project.service()
+  }
+
+  private val state: MutableStateFlow<State?> = MutableStateFlow(null)
+
+  init {
+    scope.launch {
+      settings(project).collectLatest { settings ->
+        withBackgroundProgress(project, DtsBundle.message("background.load_zephyr.title")) {
+          reportSequentialProgress { reporter ->
+            state.value = update(reporter, settings)
+          }
+        }
+      }
+    }
+  }
+
+  val root: Path? get() = state.value?.root
+
+  val board: DtsZephyrBoard? get() = state.value?.board
+
+  val bindings: MultiMap<String, DtsZephyrBinding> get() = state.value?.bindings ?: MultiMap.empty()
+
+  private suspend fun findSdk(reporter: SequentialProgressReporter, root: String): Path? {
+    return if (root.isBlank()) {
+      reporter.indeterminateStep(DtsBundle.message("background.load_zephyr.search")) {
+        DtsZephyrFileUtil.searchForRoot(project)
+      }
+    }
+    else {
+      DtsUtil.toPath(root)
+    }
+  }
+
+  private suspend fun update(reporter: SequentialProgressReporter, settings: DtsSettings.State): State? {
+    val root = findSdk(reporter, settings.zephyrRoot)
+    if (root == null) return null
+
+    val board = DtsUtil.toPath(settings.zephyrBoard)?.let(::DtsZephyrBoard)
+
+    val bundledBindings = DtsZephyrBundledBindings.getInstance().getSource()
+    val defaultBinding = bundledBindings?.files?.get(DtsZephyrBundledBindings.DEFAULT_BINDING)
+
+    val bindings = reporter.indeterminateStep(DtsBundle.message("background.load_zephyr.bindings")) {
+      val files = loadExternalBindings(root.resolve("dts").resolve("bindings"))
+      parseExternalBindings(BindingSource(files, defaultBinding))
+    }
+
+    return State(root, board, bindings)
+  }
+
+  @TestOnly
+  suspend fun awaitInit() {
+    state.first { it != null }
+  }
+
+  private data class State(
+    val root: Path?,
+    val board: DtsZephyrBoard?,
+    val bindings: MultiMap<String, DtsZephyrBinding>,
+  )
+}

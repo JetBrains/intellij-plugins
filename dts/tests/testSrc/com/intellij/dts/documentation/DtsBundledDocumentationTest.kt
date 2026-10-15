@@ -2,7 +2,7 @@ package com.intellij.dts.documentation
 
 import com.intellij.dts.DTS_TEST_ROOT_PATH
 import com.intellij.dts.dtsTimeoutRunBlocking
-import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication

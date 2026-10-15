@@ -1,0 +1,55 @@
+package com.intellij.dts.core.completion
+
+import com.intellij.codeInsight.AutoPopupController
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+import com.intellij.dts.core.completion.provider.DtsCompilerDirectiveProvider
+import com.intellij.dts.core.completion.provider.DtsIntValueProvider
+import com.intellij.dts.core.completion.provider.DtsNodeNameProvider
+import com.intellij.dts.core.completion.provider.DtsPropertyNameProvider
+import com.intellij.dts.core.completion.provider.DtsRootNodeProvider
+import com.intellij.dts.core.completion.provider.DtsStringValueProvider
+import com.intellij.dts.core.lang.DtsFile
+import com.intellij.dts.core.lang.psi.DtsTypes
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+
+class DtsCompletionContributor : CompletionContributor() {
+  class AutoPopup : TypedHandlerDelegate() {
+    override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
+      if (file !is DtsFile || c != '/') return Result.CONTINUE
+
+      AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
+
+      return Result.CONTINUE
+    }
+  }
+
+  init {
+    val base = dtsBasePattern().and(dtsInsideContainer())
+
+    extend(CompletionType.BASIC, base, DtsCompilerDirectiveProvider)
+    extend(CompletionType.BASIC, base, DtsRootNodeProvider)
+
+    val propertyName = base
+      .withElementType(DtsTypes.NAME)
+      .withParent(dtsProperty())
+    extend(CompletionType.BASIC, propertyName, DtsPropertyNameProvider)
+
+    val subNodeName = base
+      .withElementType(DtsTypes.NAME)
+      .withParent(dtsSubNode())
+    extend(CompletionType.BASIC, subNodeName, DtsNodeNameProvider)
+
+    val insideString = dtsBasePattern()
+      .withElementType(DtsTypes.STRING_LITERAL)
+      .withParent(dtsFirstValue())
+    extend(CompletionType.BASIC, insideString, DtsStringValueProvider)
+
+    val insideInt = dtsBasePattern()
+      .withParent(dtsFirstCell().withParent(dtsFirstValue()))
+    extend(CompletionType.BASIC, insideInt, DtsIntValueProvider)
+  }
+}

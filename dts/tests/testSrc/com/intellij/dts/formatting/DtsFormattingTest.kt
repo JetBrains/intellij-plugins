@@ -2,9 +2,9 @@ package com.intellij.dts.formatting
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.dts.DTS_TEST_DATA_PATH
-import com.intellij.dts.lang.DtsFileType
-import com.intellij.dts.lang.DtsLanguage
-import com.intellij.dts.settings.DtsCodeStyleSettings
+import com.intellij.dts.core.lang.DtsFileType
+import com.intellij.dts.core.lang.DtsLanguage
+import com.intellij.dts.core.settings.DtsCodeStyleSettings
 import com.intellij.openapi.project.Project
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
 import com.intellij.psi.formatter.FormatterTestUtil

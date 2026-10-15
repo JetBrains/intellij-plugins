@@ -24,8 +24,8 @@ jvm_library(
         allow_empty = True,
     ),
     associates = [
-        "//contrib/dts",
-        "//contrib/dts:dts_test_lib",
+        "//contrib/dts/core",
+        "//contrib/dts/core:core_test_lib",
     ],
     visibility = ["//visibility:public"],
     runtime_deps = [

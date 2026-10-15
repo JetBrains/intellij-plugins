@@ -1,6 +1,6 @@
 package com.intellij.dts
 
-import com.intellij.dts.lang.psi.DtsTypes
+import com.intellij.dts.core.lang.psi.DtsTypes
 import com.intellij.openapi.application.EDT
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
 import com.intellij.psi.tree.IElementType

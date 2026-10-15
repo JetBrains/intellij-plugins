@@ -2,8 +2,8 @@ package com.intellij.dts.ide
 
 import com.intellij.dts.dtsFixture
 import com.intellij.dts.dtsTimeoutRunBlocking
-import com.intellij.dts.lang.DtsTokenSets
-import com.intellij.dts.util.DtsUtil
+import com.intellij.dts.core.lang.DtsTokenSets
+import com.intellij.dts.core.util.DtsUtil
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.application.readAction
 import com.intellij.psi.TokenType

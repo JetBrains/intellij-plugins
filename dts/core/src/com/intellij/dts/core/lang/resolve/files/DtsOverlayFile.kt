@@ -1,0 +1,37 @@
+package com.intellij.dts.core.lang.resolve.files
+
+import com.intellij.dts.core.lang.psi.FileInclude
+import com.intellij.dts.core.zephyr.DtsZephyrProvider
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
+
+/**
+ * Resolves references to the source file from an overlay file.
+ */
+object DtsOverlayFile : FileInclude {
+  override val offset: Int? = null
+
+  override fun resolve(anchor: PsiFile): PsiFile? {
+    val context = anchor.originalFile.virtualFile
+    if (context == null || !context.isValid) return null
+
+    val name = "${context.nameWithoutExtension}.dts"
+    val board = DtsZephyrProvider.of(anchor.project).board ?: return null
+    val file = VfsUtil.findFile(board.path, false) ?: return null
+
+    val candidates = mutableListOf<VirtualFile>()
+    VfsUtilCore.processFilesRecursively(file) { virtualFile ->
+      if (virtualFile.name == name) {
+        candidates.add(virtualFile)
+      }
+
+      true
+    }
+
+    // TODO: filter for best matching candidate
+
+    return candidates.asSequence().map { virtualFile -> anchor.manager.findFile(virtualFile) }.firstOrNull()
+  }
+}

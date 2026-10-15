@@ -1,6 +1,6 @@
 package com.intellij.dts.ide
 
-import com.intellij.dts.DtsIcons
+import com.intellij.dts.core.icons.DtsCoreIcons
 import com.intellij.dts.dtsFixture
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
@@ -51,7 +51,7 @@ class DtsOverrideLineMarkerProviderTest {
             $text
         """)
 
-    val gutter = myFixture.findAllGutters().filter { it.icon == DtsIcons.OverrideProperty }
+    val gutter = myFixture.findAllGutters().filter { it.icon == DtsCoreIcons.OverrideProperty }
 
     assertThat(gutter).hasSize(count)
   }

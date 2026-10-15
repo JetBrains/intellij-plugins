@@ -1,0 +1,28 @@
+package com.intellij.dts.core.completion.provider
+
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.dts.core.DtsBundle
+import com.intellij.dts.core.completion.getDtsContainer
+import com.intellij.dts.core.icons.DtsCoreIcons
+import com.intellij.util.ProcessingContext
+
+object DtsRootNodeProvider : CompletionProvider<CompletionParameters>() {
+  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    val container = context.getDtsContainer()
+    val resultSet = result.withDtsPrefixMatcher(parameters)
+
+    if (!container.isDtsRootContainer || container.dtsAffiliation.isNode()) return
+
+    val lookup = LookupElementBuilder.create("/")
+      .withTailText(" {}")
+      .withTypeText(DtsBundle.message("documentation.node.lookup_type"))
+      .withIcon(DtsCoreIcons.Node)
+      .withInsertHandler(DtsInsertHandler.ROOT_NODE)
+
+    resultSet.addElement(PrioritizedLookupElement.withPriority(lookup, DtsLookupPriority.ROOT_NODE))
+  }
+}
