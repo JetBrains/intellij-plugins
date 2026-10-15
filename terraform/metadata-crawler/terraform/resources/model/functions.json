@@ -295,6 +295,7 @@
         },
         {
           "name": "value",
+          "is_nullable": true,
           "type": "dynamic"
         }
       ]
@@ -608,6 +609,7 @@
         },
         {
           "name": "value",
+          "is_nullable": true,
           "type": "dynamic"
         }
       ]
