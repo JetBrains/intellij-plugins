@@ -22,7 +22,7 @@ import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
 val DTS_TEST_ROOT_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts")
-val DTS_TEST_DATA_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/testData")
+val DTS_TEST_DATA_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/tests/testData")
 
 abstract class DtsTestBase : BasePlatformTestCase() {
   private val defaultTestTimeout = 5.minutes

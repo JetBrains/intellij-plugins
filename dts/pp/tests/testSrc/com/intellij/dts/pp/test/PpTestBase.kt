@@ -6,7 +6,7 @@ import com.intellij.testFramework.UsefulTestCase
 import java.util.Locale
 
 val PP_TEST_ROOT_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp"
-val PP_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp/testData"
+val PP_TEST_DATA_PATH: String = PathManager.getHomePath() + "/contrib/dts/pp/tests/testData"
 
 fun UsefulTestCase.getPpTestName(): String = getPpTestName(name)
 
