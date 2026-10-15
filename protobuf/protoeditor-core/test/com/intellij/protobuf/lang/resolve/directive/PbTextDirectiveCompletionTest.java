@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightTestUtil;
 import com.intellij.protobuf.lang.PbTextFileType;
-import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.junit5.TestApplication;
 import com.intellij.testFramework.junit5.TestDisposable;
@@ -115,9 +114,7 @@ public class PbTextDirectiveCompletionTest {
 
   private List<String> completeStrings(String text) {
     myFixture.configureByText(PbTextFileType.INSTANCE, text);
-    return EdtTestUtil.runInEdtAndGet(() -> {
-      myFixture.complete(CompletionType.BASIC, 1);
-      return myFixture.getLookupElementStrings();
-    });
+    myFixture.complete(CompletionType.BASIC, 1);
+    return myFixture.getLookupElementStrings();
   }
 }

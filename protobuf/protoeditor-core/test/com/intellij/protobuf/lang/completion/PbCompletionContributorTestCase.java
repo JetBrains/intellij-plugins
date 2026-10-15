@@ -113,7 +113,7 @@ public abstract class PbCompletionContributorTestCase {
    */
   @Nullable
   List<LookupElement> getCompletionItems() {
-    LookupElement[] completionItems = EdtTestUtil.runInEdtAndGet(() -> myFixture.completeBasic());
+    LookupElement[] completionItems = myFixture.completeBasic();
     if (completionItems == null) {
       return null;
     }
@@ -126,7 +126,7 @@ public abstract class PbCompletionContributorTestCase {
    */
   @Nullable
   List<String> getCompletionItemsAsStrings() {
-    LookupElement[] completionItems = EdtTestUtil.runInEdtAndGet(() -> myFixture.completeBasic());
+    LookupElement[] completionItems = myFixture.completeBasic();
     if (completionItems == null) {
       return null;
     }
@@ -143,18 +143,18 @@ public abstract class PbCompletionContributorTestCase {
    * @return true if completion is applied (by auto-complete or choice)
    */
   boolean completeWithUniqueChoice() {
-    return EdtTestUtil.runInEdtAndGet(() -> {
-      LookupElement[] completionItems = myFixture.completeBasic();
-      if (completionItems == null) {
-        return true;
-      }
-      if (completionItems.length != 1) {
-        return false;
-      }
+    LookupElement[] completionItems = myFixture.completeBasic();
+    if (completionItems == null) {
+      return true;
+    }
+    if (completionItems.length != 1) {
+      return false;
+    }
+    EdtTestUtil.runInEdtAndWait(() -> {
       myFixture.getLookup().setCurrentItem(completionItems[0]);
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-      return true;
     });
+    return true;
   }
 
   /**
@@ -163,18 +163,18 @@ public abstract class PbCompletionContributorTestCase {
    * @return true if completion is applied (by auto-complete or choice)
    */
   boolean completeWithFirstChoice() {
-    return EdtTestUtil.runInEdtAndGet(() -> {
-      LookupElement[] completionItems = myFixture.completeBasic();
-      if (completionItems == null) {
-        return true;
-      }
-      if (completionItems.length == 0) {
-        return false;
-      }
+    LookupElement[] completionItems = myFixture.completeBasic();
+    if (completionItems == null) {
+      return true;
+    }
+    if (completionItems.length == 0) {
+      return false;
+    }
+    EdtTestUtil.runInEdtAndWait(() -> {
       myFixture.getLookup().setCurrentItem(completionItems[0]);
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-      return true;
     });
+    return true;
   }
 
   void assertNoCompletions() {

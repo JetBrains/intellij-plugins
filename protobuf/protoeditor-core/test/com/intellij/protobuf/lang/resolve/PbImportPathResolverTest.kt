@@ -9,7 +9,6 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
-import com.intellij.testFramework.runInEdtAndWait
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -41,9 +40,7 @@ class PbImportPathResolverTest {
     myFixture.configureByText("root.proto", """
       import "<error descr="Cannot resolve import 'imported.proto'">imported.proto</error>";
     """)
-    runInEdtAndWait {
-      myFixture.checkHighlighting()
-    }
+    myFixture.checkHighlighting()
   }
 
   @Test
@@ -108,9 +105,7 @@ class PbImportPathResolverTest {
       import "google/protobuf/wrap<caret>pers.proto";
     """.trimIndent())
     myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
-    runInEdtAndWait {
-      myFixture.checkHighlighting(true, true, true)
-    }
+    myFixture.checkHighlighting(true, true, true)
     val reference = myFixture.getReferenceAtCaretPosition()
     assertEquals(2, runReadActionBlocking { (reference as PsiPolyVariantReference).multiResolve(false).size })
   }
@@ -132,9 +127,7 @@ class PbImportPathResolverTest {
       }
     """.trimIndent())
     myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
-    runInEdtAndWait {
-      myFixture.checkHighlighting(true, true, true)
-    }
+    myFixture.checkHighlighting(true, true, true)
     val reference = myFixture.getReferenceAtCaretPosition()
     assertEquals(1, runReadActionBlocking { (reference as PsiPolyVariantReference).multiResolve(false).size })
   }
