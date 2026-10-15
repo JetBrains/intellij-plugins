@@ -1,5 +1,10 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class DtsPropertyValueCompletionTest : DtsCompletionTest() {
   private val unproductiveStatements = """
         // comment
@@ -8,41 +13,49 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
         /*comment*/
     """
 
+  @Test
   fun `test string (status)`() = doTest(
     input = "status",
     after = "status = \"<caret>\";",
   )
 
+  @Test
   fun `test string (model)`() = doTest(
     input = "model",
     after = "model = \"<caret>\";",
   )
 
+  @Test
   fun `test cell array (reg)`() = doTest(
     input = "reg",
     after = "reg = <<caret>>;",
   )
 
+  @Test
   fun `test cell array (virtual-reg)`() = doTest(
     input = "virtual-reg",
     after = "virtual-reg = <<caret>>;",
   )
 
+  @Test
   fun `test boolean (dma-coherent)`() = doTest(
     input = "dma-coherent",
     after = "dma-coherent;<caret>",
   )
 
+  @Test
   fun `test phandle (phandle)`() = doTest(
     input = "phandle",
     after = "phandle = <&<caret>>;",
   )
 
+  @Test
   fun `test compound (interrupts-extended)`() = doTest(
     input = "interrupts-extended",
     after = "interrupts-extended = <caret>;",
   )
 
+  @Test
   fun `test no completion if line not empty (comment)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "phandle",
@@ -51,6 +64,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test no completion if line not empty (text)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "phandle",
@@ -59,6 +73,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test no duplicated tokens (semicolon)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "phandle",
@@ -67,6 +82,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test no duplicated tokens (langl)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "phandle",
@@ -84,6 +100,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test no duplicated tokens (rangl)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "phandle",
@@ -92,6 +109,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test no duplicated tokens (assign)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "phandle",
@@ -100,6 +118,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test const property value (int)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-int",
@@ -109,6 +128,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test const property value (hex int)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-int-hex",
@@ -118,6 +138,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test const property value (string)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-string",
@@ -127,6 +148,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test const property value (cell array)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-cell-array",
@@ -136,6 +158,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test const property value (byte array)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-byte-array",
@@ -145,6 +168,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test const property value (string array)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-string-array",
@@ -154,6 +178,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test default property value (int)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-int",
@@ -163,6 +188,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test default property value (hex int)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-int-hex",
@@ -172,6 +198,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test default property value (string)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-string",
@@ -181,6 +208,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test default property value (cell array)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-cell-array",
@@ -190,6 +218,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test default property value (byte array)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-byte-array",
@@ -199,6 +228,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test default property value (string array)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "prop-string-array",
@@ -208,6 +238,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test enum property value (int)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "10",
@@ -217,6 +248,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test enum property value (string)`() = dtsTimeoutRunBlocking {
     doTest(
       lookup = "value1",
@@ -235,7 +267,7 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
   }
 
   private suspend fun doTest(lookup: String, input: String, after: String, compatible: String = "") {
-    addZephyr()
+    dts.addZephyr()
 
     val surrounding = """
       / {

@@ -1,6 +1,7 @@
 package com.intellij.dts.ide
 
-import com.intellij.dts.DtsTestBase
+import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.util.DtsUtil
 import com.intellij.lang.ASTNode
@@ -9,6 +10,11 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor
 import com.intellij.psi.impl.source.tree.TreeElement
+import com.intellij.testFramework.TestDataPath
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private class PsiToString(node: ASTNode) : RecursiveTreeElementWalkingVisitor(node) {
   val buffer = StringBuffer()
@@ -22,7 +28,17 @@ private class PsiToString(node: ASTNode) : RecursiveTreeElementWalkingVisitor(no
   }
 }
 
-class DtsIterateLeafsTest : DtsTestBase() {
+@TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/ide/iterateLeafs")
+class DtsIterateLeafsTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val dts by dtsFixture(projectFixture)
+
+  private val myFixture get() = dts.codeInsight
+
   private val unproductiveStatements = """
         // comment
         /include/ "file"
@@ -30,8 +46,7 @@ class DtsIterateLeafsTest : DtsTestBase() {
         /*comment*/
     """
 
-  override fun getBasePath(): String = "ide/iterateLeafs"
-
+  @Test
   fun `test root node`() = dtsTimeoutRunBlocking {
     doTest(
       input = "/ {};",
@@ -39,6 +54,7 @@ class DtsIterateLeafsTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test root node with unproductive statement`() = dtsTimeoutRunBlocking {
     doTest(
       input = "/ { $unproductiveStatements };",
@@ -46,6 +62,7 @@ class DtsIterateLeafsTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test root node with unproductive`() = dtsTimeoutRunBlocking {
     doTest(
       input = "/ { };",
@@ -53,6 +70,7 @@ class DtsIterateLeafsTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test property`() = dtsTimeoutRunBlocking {
     doTest(
       input = "/ { prop = $unproductiveStatements <>; };",
@@ -60,10 +78,11 @@ class DtsIterateLeafsTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test file`() = dtsTimeoutRunBlocking {
-    val fixture = getTestFixture("dts")
+    val fixture = dts.getTestFixture("dts")
 
-    configureByText(fixture)
+    dts.configureByText(fixture)
     val file = myFixture.file
 
     val start = file.findElementAt(0)
@@ -77,11 +96,11 @@ class DtsIterateLeafsTest : DtsTestBase() {
   }
 
   private suspend fun doTest(input: String, leafs: List<String>) {
-    configureByText(input)
+    dts.configureByText(input)
 
     val start = myFixture.file.findElementAt(0)
     val actual = readAction { DtsUtil.iterateLeafs(start!!, strict = false).map { it.text }.toList() }
 
-    assertOrderedEquals(actual, leafs)
+    assertEquals(leafs, actual)
   }
 }

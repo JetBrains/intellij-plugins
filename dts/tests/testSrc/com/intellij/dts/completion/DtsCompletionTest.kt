@@ -1,15 +1,21 @@
 package com.intellij.dts.completion
 
-import com.intellij.dts.DtsTestBase
+import com.intellij.dts.dtsFixture
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.openapi.application.EDT
 import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import kotlin.time.Duration.Companion.seconds
 
-abstract class DtsCompletionTest : DtsTestBase() {
+abstract class DtsCompletionTest {
   companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+
     private val nodeContentVariations = listOf(
       "node {};",
       "variations_label: node {};",
@@ -36,9 +42,12 @@ abstract class DtsCompletionTest : DtsTestBase() {
     )
   }
 
-  override fun setUp() {
-    super.setUp()
+  protected val dts by dtsFixture(projectFixture)
 
+  protected val myFixture get() = dts.codeInsight
+
+  @BeforeEach
+  fun awaitBundledBindings() {
     timeoutRunBlocking(30.seconds) {
       DtsZephyrBundledBindings.getInstance().awaitInit()
     }
@@ -78,7 +87,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
       val embeddedInput = surrounding.replace("<embed>", apply(input))
       val embeddedAfter = surrounding.replace("<embed>", apply(after))
 
-      configureByText(embeddedInput)
+      dts.configureByText(embeddedInput)
 
       myFixture.type(character)
       myFixture.checkResult(embeddedAfter)
@@ -104,7 +113,7 @@ abstract class DtsCompletionTest : DtsTestBase() {
       val embeddedInput = surrounding.replace("<embed>", apply(input))
       val embeddedAfter = surrounding.replace("<embed>", apply(after))
 
-      configureByText(embeddedInput)
+      dts.configureByText(embeddedInput)
       doCompletion(lookupString)
       myFixture.checkResult(embeddedAfter)
     }
@@ -118,11 +127,11 @@ abstract class DtsCompletionTest : DtsTestBase() {
   ) {
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
       val embeddedInput = surrounding.replace("<embed>", apply(input))
-      configureByText(embeddedInput)
+      dts.configureByText(embeddedInput)
 
       val items = myFixture.completeBasic()
       assertNotNull(items)
-      assertEmpty(items)
+      assertThat(items).isEmpty()
     }
   }
 }

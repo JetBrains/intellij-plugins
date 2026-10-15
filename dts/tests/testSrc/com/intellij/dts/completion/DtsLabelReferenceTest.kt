@@ -1,15 +1,21 @@
 package com.intellij.dts.completion
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class DtsLabelReferenceTest : DtsCompletionTest() {
-  override fun setUp() {
-    super.setUp()
-
+  @BeforeEach
+  fun addIncludedFiles() {
     myFixture.addFileToProject("a.dtsi", "/ { labelA: nodeA {}; };")
     myFixture.addFileToProject("b.dtsi", "/ { labelB: nodeB {}; };")
   }
 
+  @Test
   fun testLabelAbove() = dtsTimeoutRunBlocking {
     doTest(
       input = "&<caret>",
@@ -19,6 +25,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testLabelBelow() = dtsTimeoutRunBlocking {
     doTest(
       input = "&<caret>",
@@ -28,6 +35,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testLabelAboveValue() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = &<caret>",
@@ -38,6 +46,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testLabelBelowValue() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = &<caret>",
@@ -48,6 +57,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testIncludeLabel() = dtsTimeoutRunBlocking {
     doTest(
       input = "&<caret>",
@@ -57,6 +67,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testIncludeLabels() = dtsTimeoutRunBlocking {
     doTest(
       input = "&<caret>",
@@ -66,6 +77,7 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testIncludeIndirect() = dtsTimeoutRunBlocking {
     for (i in 0 until 100) {
       myFixture.addFileToProject("$i.dtsi", "/include/ \"${i + 1}.dtsi\" / { l$i: n$i {}; };")
@@ -78,11 +90,12 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testEmptyOverlay() = dtsTimeoutRunBlocking {
-    addZephyr()
+    dts.addZephyr()
     myFixture.configureByText("esp32.overlay", "&<caret>")
 
-    assertSize(56, myFixture.completeBasic())
+    assertThat(myFixture.completeBasic()).hasSize(56)
   }
 
   private suspend fun doTest(
@@ -94,17 +107,17 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
     useNodeContentVariations: Boolean = false,
   ) {
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
-      configureByText("$prefix\n${apply(input)}\n$suffix")
+      dts.configureByText("$prefix\n${apply(input)}\n$suffix")
 
       val lookups = myFixture.complete(CompletionType.BASIC)
         .map { it.lookupString }
         .filter { it != "variations_label" }
 
       if (labels.isEmpty()) {
-        assertEmpty(lookups)
+        assertThat(lookups).isEmpty()
       }
       else {
-        assertContainsElements(lookups, labels)
+        assertThat(lookups).containsAll(labels)
       }
     }
   }

@@ -1,6 +1,12 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class DtsPropertyCompletionTest : DtsCompletionTest() {
+  @Test
   fun `test new property (compatible)`() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("c", "pati"),
@@ -9,6 +15,7 @@ class DtsPropertyCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test edit empty property (#size-cells)`() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("#", "#size", "ize-"),
@@ -17,6 +24,7 @@ class DtsPropertyCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test edit property with value (device_type)`() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("d", "vice_", "type"),
@@ -25,6 +33,7 @@ class DtsPropertyCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test edit property with label (interrupt-map-mask)`() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("inter", "-", "-map-", "mask"),

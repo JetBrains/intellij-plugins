@@ -1,6 +1,12 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class DtsBindingReferenceTest : DtsCompletionTest() {
+  @Test
   fun `test compatible espressif,esp32-eth`() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("espressif", "eth"),
@@ -8,6 +14,7 @@ class DtsBindingReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test compatible espressif,esp32-pinctrl`() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("espressif", "esp32-pinctrl"),
@@ -15,6 +22,7 @@ class DtsBindingReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test no completion if property name is not compatible`() = dtsTimeoutRunBlocking {
     doNoCompletionTest(
       input = "something = \"<caret>\"",
@@ -24,7 +32,7 @@ class DtsBindingReferenceTest : DtsCompletionTest() {
   }
 
   private suspend fun doTest(variations: List<String>, lookupString: String) {
-    addZephyr()
+    dts.addZephyr()
 
     val input = "compatible = \"<caret>\""
 

@@ -1,5 +1,10 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class DtsStringCompletionTest : DtsQuoteCompletionTestBase(
   quote = '"',
   surrounding = """
@@ -9,17 +14,20 @@ class DtsStringCompletionTest : DtsQuoteCompletionTestBase(
   """,
 )
 
+@TestApplication
 class DtsCharCompletionTest : DtsQuoteCompletionTestBase(
   surrounding = "prop = <'c' <embed> 'c'>;",
   quote = '\'',
 )
 
+@TestApplication
 class DtsIncludePathCompletionTest : DtsQuoteCompletionTestBase(
   surrounding = "/include/ <embed>",
   quote = '"',
 )
 
 abstract class DtsQuoteCompletionTestBase(private val surrounding: String, private val quote: Char) : DtsCompletionTest() {
+  @Test
   fun `test new string`() = dtsTimeoutRunBlocking {
     doQuoteTest(
       input = "<caret>",
@@ -27,6 +35,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test complete empty string closing`() = dtsTimeoutRunBlocking {
     doQuoteTest(
       input = "x<caret>",
@@ -34,6 +43,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test complete string closing`() = dtsTimeoutRunBlocking {
     doQuoteTest(
       input = "xc<caret>",
@@ -41,6 +51,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test complete empty string opening`() = dtsTimeoutRunBlocking {
     doQuoteTest(
       input = "<caret>x",
@@ -48,6 +59,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test complete string opening`() = dtsTimeoutRunBlocking {
     doQuoteTest(
       input = "<caret>cx",
@@ -55,6 +67,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test new string after string`() = dtsTimeoutRunBlocking {
     doQuoteTest(
       input = "xx<caret>",
@@ -62,6 +75,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test remove opening`() = dtsTimeoutRunBlocking {
     doDeleteTest(
       input = "x<caret>x",
@@ -69,6 +83,7 @@ abstract class DtsQuoteCompletionTestBase(private val surrounding: String, priva
     )
   }
 
+  @Test
   fun `test remove closing`() = dtsTimeoutRunBlocking {
     doDeleteTest(
       input = "xx<caret>",

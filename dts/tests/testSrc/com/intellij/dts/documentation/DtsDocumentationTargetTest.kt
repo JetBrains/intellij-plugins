@@ -1,74 +1,105 @@
 package com.intellij.dts.documentation
 
-import com.intellij.dts.DtsTestBase
+import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.lang.documentation.ide.IdeDocumentationTargetProvider
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
-class DtsDocumentationTargetTest : DtsTestBase() {
-  override fun runInDispatchThread(): Boolean = false
+@TestApplication
+class DtsDocumentationTargetTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
 
-  override fun runFromCoroutine(): Boolean = true
+  private val dts by dtsFixture(projectFixture)
 
-  fun `test start of node name`() = doTest("""
+  private val myFixture get() = dts.codeInsight
+
+  @Test
+  fun `test start of node name`() = dtsTimeoutRunBlocking {
+    doTest("""
        <caret>node {}; 
     """)
+  }
 
-  fun `test end of node name`() = doTest("""
+  @Test
+  fun `test end of node name`() = dtsTimeoutRunBlocking {
+    doTest("""
        node<caret> {}; 
     """)
+  }
 
-  fun `test start of property name`() = doTest("""
+  @Test
+  fun `test start of property name`() = dtsTimeoutRunBlocking {
+    doTest("""
        <caret>prop = "value"; 
     """)
+  }
 
-  fun `test end of property name`() = doTest("""
+  @Test
+  fun `test end of property name`() = dtsTimeoutRunBlocking {
+    doTest("""
        prop<caret> = "value"; 
     """)
+  }
 
-  fun `test start of ref`() = doTest("""
+  @Test
+  fun `test start of ref`() = dtsTimeoutRunBlocking {
+    doTest("""
        prop = <caret>&label; 
        label: node {};
     """)
+  }
 
-  fun `test end of ref`() = doTest("""
+  @Test
+  fun `test end of ref`() = dtsTimeoutRunBlocking {
+    doTest("""
        prop = &label<caret>; 
        label: node {};
     """)
+  }
 
-  fun `test lookup label ref`() = doLookupTest("""
+  @Test
+  fun `test lookup label ref`() = dtsTimeoutRunBlocking {
+    doLookupTest("""
       prop = &<caret>;
       label1: node {}; 
     """)
+  }
 
-  fun `test lookup path ref`() = doLookupTest("""
+  @Test
+  fun `test lookup path ref`() = dtsTimeoutRunBlocking {
+    doLookupTest("""
       / { node1 {}; node2 {}; };
       &{/<caret>} {};
     """)
-
-  private fun assertOneDocumentationTarget() {
-    val provider = IdeDocumentationTargetProvider.getInstance(project)
-
-    val targets = runBlockingCancellable {
-      readAction {
-        provider.documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset)
-      }
-    }
-
-    assertOneElement(targets)
   }
 
-  private fun doTest(text: String) {
-    configureByText(text)
+  private suspend fun assertOneDocumentationTarget() {
+    val provider = IdeDocumentationTargetProvider.getInstance(dts.project)
+
+    val targets = readAction {
+      provider.documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset)
+    }
+
+    assertThat(targets).hasSize(1)
+  }
+
+  private suspend fun doTest(text: String) {
+    dts.configureByText(text)
 
     assertOneDocumentationTarget()
   }
 
-  private fun doLookupTest(text: String) {
-    configureByText(text)
+  private suspend fun doLookupTest(text: String) {
+    dts.configureByText(text)
 
     val completion = myFixture.completeBasic().toList()
-    assertNotEmpty(completion)
+    assertThat(completion).isNotEmpty()
 
     assertOneDocumentationTarget()
   }

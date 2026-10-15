@@ -1,6 +1,14 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
+  @Test
   fun testRootV1() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("/d", "/dts-v1", "/v1"),
@@ -10,6 +18,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testRootPlugin() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("/p", "/plug"),
@@ -19,6 +28,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testRootOmit() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("/o", "/omit-", "/-no-ref"),
@@ -28,6 +38,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNodeOmit() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("/o", "/omit-", "/-no-ref"),
@@ -37,6 +48,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testInclude() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("/i", "/include"),
@@ -47,6 +59,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNodeInclude() = dtsTimeoutRunBlocking {
     doTest(
       variations = listOf("/i", "/include"),
@@ -55,6 +68,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNoLookup() {
     val contexts = listOf(
       "prop = <caret>",
@@ -65,11 +79,11 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
     )
 
     for (context in contexts) {
-      configureByText(context)
+      dts.configureByText(context)
 
       val items = myFixture.completeBasic()
-      assertNotNull(context, items)
-      assertEmpty(context, items.filter { it.lookupString.startsWith('/') })
+      assertNotNull(items, context)
+      assertThat(items.filter { it.lookupString.startsWith('/') }).describedAs(context).isEmpty()
     }
   }
 

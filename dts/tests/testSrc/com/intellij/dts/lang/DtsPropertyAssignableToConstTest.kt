@@ -1,12 +1,28 @@
 package com.intellij.dts.lang
 
-import com.intellij.dts.DtsTestBase
+import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class DtsPropertyAssignableToConstTest : DtsTestBase() {
+@TestApplication
+class DtsPropertyAssignableToConstTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val dts by dtsFixture(projectFixture)
+
+  private val myFixture get() = dts.codeInsight
+
   val string = "\"string\""
   val strings = "\"first\", \"second\""
 
+  @Test
   fun `test int (1)`() = dtsTimeoutRunBlocking {
     doTest(
       type = DtsPropertyValue.Int(1),
@@ -15,6 +31,7 @@ class DtsPropertyAssignableToConstTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test int (9)`() = dtsTimeoutRunBlocking {
     doTest(
       type = DtsPropertyValue.Int(9),
@@ -23,6 +40,7 @@ class DtsPropertyAssignableToConstTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test ints (1 2 3)`() = dtsTimeoutRunBlocking {
     doTest(
       type = DtsPropertyValue.IntList(listOf(1, 2, 3)),
@@ -33,6 +51,7 @@ class DtsPropertyAssignableToConstTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test string (string)`() = dtsTimeoutRunBlocking {
     doTest(
       type = DtsPropertyValue.String("string"),
@@ -41,6 +60,7 @@ class DtsPropertyAssignableToConstTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test strings (first second)`() = dtsTimeoutRunBlocking {
     doTest(
       type = DtsPropertyValue.StringList(listOf("first", "second")),
@@ -55,17 +75,17 @@ class DtsPropertyAssignableToConstTest : DtsTestBase() {
     invalid: List<String>,
   ) {
     for (value in valid) {
-      configureByText("name = $value;")
+      dts.configureByText("name = $value;")
 
       val property = readAction { (myFixture.file as DtsFile).dtsProperties.first() }
-      assertTrue("should be assignable: $value", property.dtsAssignableTo(type))
+      assertTrue(property.dtsAssignableTo(type), "should be assignable: $value")
     }
 
     for (value in invalid) {
-      configureByText("name = $value;")
+      dts.configureByText("name = $value;")
 
       val property = readAction { (myFixture.file as DtsFile).dtsProperties.first() }
-      assertFalse("should not be assignable: $value", property.dtsAssignableTo(type))
+      assertFalse(property.dtsAssignableTo(type), "should not be assignable: $value")
     }
   }
 }

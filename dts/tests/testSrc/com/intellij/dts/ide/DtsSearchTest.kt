@@ -1,14 +1,27 @@
 package com.intellij.dts.ide
 
-import com.intellij.dts.DtsTestBase
+import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.lang.psi.DtsNode
 import com.intellij.dts.lang.psi.getDtsPath
 import com.intellij.openapi.application.readAction
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.startOffset
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class DtsSearchTest : DtsTestBase() {
-  override fun getTestFileExtension(): String = "dts"
+@TestApplication
+class DtsSearchTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val dts by dtsFixture(projectFixture, extension = "dts")
+
+  private val myFixture get() = dts.codeInsight
 
   private fun refNode(path: String) = "&{$path<caret>} {};"
 
@@ -16,6 +29,7 @@ class DtsSearchTest : DtsTestBase() {
 
   private fun include() = "/include/ \"include.dtsi\""
 
+  @Test
   fun `test find root node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -27,6 +41,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find root nodes`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -40,6 +55,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test does not find root node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -49,6 +65,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find included root node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -60,6 +77,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test does not find included root node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -70,6 +88,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find parent node from prop`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -81,6 +100,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find sibling node from prop`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -93,6 +113,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find nested node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -103,6 +124,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test does not find nested node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -112,6 +134,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find included nested node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -123,6 +146,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find first nested node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -136,6 +160,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find deeply nested node`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -148,6 +173,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find nested node in ref`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -159,6 +185,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find nested nodes in ref`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -188,6 +215,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find nested node in label ref`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -201,6 +229,7 @@ class DtsSearchTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test find nested nodes in label ref`() = dtsTimeoutRunBlocking {
     doTest(
       """
@@ -220,16 +249,16 @@ class DtsSearchTest : DtsTestBase() {
     include: String? = null,
     expected: List<String> = emptyList(),
   ) {
-    configureByText(text.trimIndent())
+    dts.configureByText(text.trimIndent())
 
     if (include != null) {
-      addFile("include.dtsi", include)
+      dts.addFile("include.dtsi", include)
     }
 
     val reference = myFixture.getReferenceAtCaretPosition() as PsiPolyVariantReference
     val results = readAction { reference.multiResolve(false) }
 
-    assertSize(expected.size, results)
+    assertThat(results).hasSize(expected.size)
 
     for ((item, result) in expected.zip(results)) {
       val (offset, path) = item.split(':')

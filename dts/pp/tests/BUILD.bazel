@@ -63,8 +63,6 @@ jvm_library(
         "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/util:util-ui",
         "@community//platform/util:util-ui_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//platform/testFramework/junit5/codeInsight",

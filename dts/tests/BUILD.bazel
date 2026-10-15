@@ -77,6 +77,8 @@ jvm_library(
         "@community//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
         "@community//libraries/junit6",
         "@community//libraries/junit6:junit6_test_lib",
+        "@community//libraries/assertj-core",
+        "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//xml/dom-impl",
         "@community//xml/dom-impl:dom-impl_test_lib",
         "@community//libraries/snakeyaml",
@@ -92,8 +94,6 @@ jvm_library(
         "@community//libraries/jackson3/dataformat-yaml:libraries-jackson3-dataformat-yaml_test_lib",
         "@community//platform/syntax/syntax-api:syntax",
         "@community//platform/syntax/syntax-api:syntax_test_lib",
-        "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.dts.tests` end

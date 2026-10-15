@@ -1,15 +1,21 @@
 package com.intellij.dts.completion
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class DtsPathReferenceTest : DtsCompletionTest() {
-  override fun setUp() {
-    super.setUp()
-
+  @BeforeEach
+  fun addIncludedFiles() {
     myFixture.addFileToProject("a.dtsi", "/ { nodeA {}; };")
     myFixture.addFileToProject("b.dtsi", "/ { nodeB { subB {}; subA{}; }; };")
   }
 
+  @Test
   fun testEmpty() = dtsTimeoutRunBlocking {
     doTest(
       input = "&{<caret>}",
@@ -18,6 +24,7 @@ class DtsPathReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testRoot() = dtsTimeoutRunBlocking {
     doTest(
       input = "&{/<caret>}",
@@ -26,6 +33,7 @@ class DtsPathReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNested() = dtsTimeoutRunBlocking {
     doTest(
       input = "&{/nodeB/<caret>}",
@@ -34,11 +42,12 @@ class DtsPathReferenceTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testEmptyOverlay() = dtsTimeoutRunBlocking {
-    addZephyr()
+    dts.addZephyr()
     myFixture.configureByText("esp32.overlay", "&{/<caret>} {};")
 
-    assertSize(10, myFixture.completeBasic())
+    assertThat(myFixture.completeBasic()).hasSize(10)
   }
 
   private suspend fun doTest(
@@ -55,15 +64,15 @@ class DtsPathReferenceTest : DtsCompletionTest() {
                 ${apply(input)}
             """.trimIndent()
 
-      configureByText(text)
+      dts.configureByText(text)
 
       val lookups = myFixture.complete(CompletionType.BASIC).map { it.lookupString }
 
       if (paths.isEmpty()) {
-        assertEmpty(lookups)
+        assertThat(lookups).isEmpty()
       }
       else {
-        assertContainsElements(lookups, paths)
+        assertThat(lookups).containsAll(paths)
       }
     }
   }

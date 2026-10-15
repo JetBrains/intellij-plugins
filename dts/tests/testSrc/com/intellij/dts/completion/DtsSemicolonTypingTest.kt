@@ -1,6 +1,12 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class DtsSemicolonTypingTest : DtsCompletionTest() {
+  @Test
   fun testValidProperty() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = <><caret>",
@@ -9,6 +15,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testValidPropertyWithLabel() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = <> label:<caret>",
@@ -17,6 +24,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testValidPropertyWithComment() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = <> // comment<caret>",
@@ -25,6 +33,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testInvalidPropertyAssignment() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = <caret>",
@@ -33,6 +42,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testInSubNode() = dtsTimeoutRunBlocking {
     doTest(
       input = "name {<caret>}",
@@ -41,6 +51,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testAfterSubNode() = dtsTimeoutRunBlocking {
     doTest(
       input = "name {}<caret>",
@@ -49,6 +60,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testCompilerDirective() = dtsTimeoutRunBlocking {
     doTest(
       input = "/dts-v1/<caret>",
@@ -57,6 +69,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testRootNode() = dtsTimeoutRunBlocking {
     doTest(
       input = "/ {}<caret>",
@@ -65,6 +78,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testHandleNode() = dtsTimeoutRunBlocking {
     doTest(
       input = "&handle {}<caret>",
@@ -73,6 +87,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNodeWithBrace() = dtsTimeoutRunBlocking {
     doTest(
       input = "node {\n    <caret>\n}",
@@ -81,6 +96,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNoCompletionNode() = dtsTimeoutRunBlocking {
     doTest(
       input = "node {\n    <caret>",
@@ -89,6 +105,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNoCompletionProperty() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop = <>\n<caret>",
@@ -97,6 +114,7 @@ class DtsSemicolonTypingTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun testNoCompletionPropertyEmpty() = dtsTimeoutRunBlocking {
     doTest(
       input = "prop <caret>",

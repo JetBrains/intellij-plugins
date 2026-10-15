@@ -1,7 +1,11 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class DtsNodeCompletionTest : DtsCompletionTest() {
   private suspend fun bundledNodes(callback: suspend (name: String, lookupString: String) -> Unit) {
     for (node in DtsZephyrBundledBindings.NODE_BINDINGS) {
@@ -10,6 +14,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     }
   }
 
+  @Test
   fun `test new node (bundled nodes)`() = dtsTimeoutRunBlocking {
     bundledNodes { name, lookupString ->
       doTest(
@@ -20,6 +25,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     }
   }
 
+  @Test
   fun `test edit empty node (bundled nodes)`() = dtsTimeoutRunBlocking {
     bundledNodes { name, lookupString ->
       doTest(
@@ -30,6 +36,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     }
   }
 
+  @Test
   fun `test edit node with label (bundled nodes)`() = dtsTimeoutRunBlocking {
     bundledNodes { name, lookupString ->
       doTest(
@@ -40,6 +47,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     }
   }
 
+  @Test
   fun `test edit node with omit (bundled nodes)`() = dtsTimeoutRunBlocking {
     bundledNodes { name, lookupString ->
       doTest(
@@ -50,6 +58,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     }
   }
 
+  @Test
   fun `test empty line`() = dtsTimeoutRunBlocking {
     doTest(
       lookupString = "chosen",
@@ -58,6 +67,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test trailing semicolon`() = dtsTimeoutRunBlocking {
     doTest(
       lookupString = "chosen",
@@ -66,6 +76,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test trailing semicolon on new line`() = dtsTimeoutRunBlocking {
     doTest(
       lookupString = "chosen",
@@ -74,6 +85,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test trailing rbrace on new line`() = dtsTimeoutRunBlocking {
     doTest(
       lookupString = "chosen",
@@ -82,6 +94,7 @@ class DtsNodeCompletionTest : DtsCompletionTest() {
     )
   }
 
+  @Test
   fun `test trailing lbrace on new line`() = dtsTimeoutRunBlocking {
     doTest(
       lookupString = "chosen",

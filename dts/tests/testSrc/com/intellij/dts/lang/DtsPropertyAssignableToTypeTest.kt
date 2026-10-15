@@ -1,11 +1,27 @@
 package com.intellij.dts.lang
 
-import com.intellij.dts.DtsTestBase
+import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class DtsPropertyAssignableToTypeTest : DtsTestBase() {
+@TestApplication
+class DtsPropertyAssignableToTypeTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val dts by dtsFixture(projectFixture)
+
+  private val myFixture get() = dts.codeInsight
+
   val string = "\"string\""
 
+  @Test
   fun `test int`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.Int,
@@ -14,6 +30,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test int with macros`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.Int,
@@ -23,6 +40,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
   }
 
 
+  @Test
   fun `test ints`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.Ints,
@@ -31,6 +49,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test ints with macros`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.Ints,
@@ -39,6 +58,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test string`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.String,
@@ -47,6 +67,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test string list`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.StringList,
@@ -55,6 +76,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test bytes`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.Bytes,
@@ -63,6 +85,7 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     )
   }
 
+  @Test
   fun `test phandls`() = dtsTimeoutRunBlocking {
     doTest(
       DtsPropertyType.PHandles,
@@ -77,17 +100,17 @@ class DtsPropertyAssignableToTypeTest : DtsTestBase() {
     invalid: List<String>,
   ) {
     for (value in valid) {
-      configureByText("name = $value;")
+      dts.configureByText("name = $value;")
 
       val property = readAction { (myFixture.file as DtsFile).dtsProperties.first() }
-      assertTrue("should be assignable: $value", property.dtsAssignableTo(type))
+      assertTrue(property.dtsAssignableTo(type), "should be assignable: $value")
     }
 
     for (value in invalid) {
-      configureByText("name = $value;")
+      dts.configureByText("name = $value;")
 
       val property = readAction { (myFixture.file as DtsFile).dtsProperties.first() }
-      assertFalse("should not be assignable: $value", property.dtsAssignableTo(type))
+      assertFalse(property.dtsAssignableTo(type), "should not be assignable: $value")
     }
   }
 }
