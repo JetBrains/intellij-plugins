@@ -72,6 +72,7 @@ jvm_library(
         "@community//platform/util/concurrency",
         "@community//jps/model-api:model",
         "@community//platform/util:util-ui",
+        "@community//platform/backend",
     ],
 )
 
@@ -116,6 +117,7 @@ jvm_library(
         "@community//platform/util/concurrency:concurrency_test_lib",
         "@community//jps/model-api:model_test_lib",
         "@community//platform/util:util-ui_test_lib",
+        "@community//platform/backend:backend_test_lib",
     ],
 )
 
