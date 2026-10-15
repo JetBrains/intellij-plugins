@@ -68,9 +68,9 @@ internal class TfProvidersSchemaLoader : VersionedMetadataLoader {
   private fun parseProviderInfo(context: LoadContext, name: String, namespace: String, obj: ObjectNode, file: ObjectNode): ProviderType? {
     val parsed = TfProvidersSchemaParser.parseSchema(context, obj, name) ?: return null
     val providerMetadata = TfProvidersSchemaParser.parseMetadata(file.obj("metadata"), name, namespace)
-    return ProviderType(providerMetadata.name,
+    return ProviderType(providerMetadata.name.ifEmpty { name },
                         parsed.properties.values.toList(),
-                        providerMetadata.namespace,
+                        providerMetadata.namespace.ifEmpty { namespace },
                         providerMetadata.tier,
                         providerMetadata.version,
                         parsed)
