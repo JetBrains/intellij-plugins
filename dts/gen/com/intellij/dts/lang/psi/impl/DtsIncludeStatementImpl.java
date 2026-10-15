@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsIncludeStatementImpl extends com.intellij.dts.lang.psi.mixin.DtsIncludeStatementMixin implements com.intellij.dts.lang.psi.DtsIncludeStatement {
 
-  public DtsIncludeStatementImpl(com.intellij.lang.ASTNode node) {
+  public DtsIncludeStatementImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

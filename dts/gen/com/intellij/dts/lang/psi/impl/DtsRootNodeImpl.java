@@ -5,12 +5,12 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsRootNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsRootNodeMixin implements com.intellij.dts.lang.psi.DtsRootNode {
 
-  public DtsRootNodeImpl(com.intellij.lang.ASTNode node) {
+  public DtsRootNodeImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 
-  public DtsRootNodeImpl(com.intellij.dts.lang.stubs.impl.DtsRootNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
-    super(stub, stubType);
+  public DtsRootNodeImpl(com.intellij.dts.lang.stubs.impl.@org.jetbrains.annotations.NotNull DtsRootNodeStub stub, com.intellij.psi.stubs.@org.jetbrains.annotations.NotNull IStubElementType<?,?> type) {
+    super(stub, type);
   }
 
   @java.lang.Override

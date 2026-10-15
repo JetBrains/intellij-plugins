@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsPropertyImpl extends com.intellij.dts.lang.psi.mixin.DtsPropertyMixin implements com.intellij.dts.lang.psi.DtsProperty {
 
-  public DtsPropertyImpl(com.intellij.lang.ASTNode node) {
+  public DtsPropertyImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

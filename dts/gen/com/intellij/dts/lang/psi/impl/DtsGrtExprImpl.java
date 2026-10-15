@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsGrtExprImpl extends com.intellij.dts.lang.psi.impl.DtsExprImpl implements com.intellij.dts.lang.psi.DtsGrtExpr {
 
-  public DtsGrtExprImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsGrtExprImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

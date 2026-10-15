@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsBNotExprImpl extends com.intellij.dts.lang.psi.impl.DtsExprImpl implements com.intellij.dts.lang.psi.DtsBNotExpr {
 
-  public DtsBNotExprImpl(@org.jetbrains.annotations.NotNull com.intellij.lang.ASTNode node) {
+  public DtsBNotExprImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

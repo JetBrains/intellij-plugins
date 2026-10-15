@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsExprValueImpl extends com.intellij.dts.lang.psi.mixin.DtsExpressionMixin implements com.intellij.dts.lang.psi.DtsExprValue {
 
-  public DtsExprValueImpl(com.intellij.lang.ASTNode node) {
+  public DtsExprValueImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

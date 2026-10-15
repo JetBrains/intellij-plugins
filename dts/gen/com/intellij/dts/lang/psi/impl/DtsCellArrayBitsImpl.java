@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsCellArrayBitsImpl extends com.intellij.dts.lang.psi.mixin.DtsCellArrayBitsMixin implements com.intellij.dts.lang.psi.DtsCellArrayBits {
 
-  public DtsCellArrayBitsImpl(com.intellij.lang.ASTNode node) {
+  public DtsCellArrayBitsImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

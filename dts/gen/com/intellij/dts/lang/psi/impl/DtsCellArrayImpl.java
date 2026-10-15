@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsCellArrayImpl extends com.intellij.dts.lang.psi.mixin.DtsCellArrayMixin implements com.intellij.dts.lang.psi.DtsCellArray {
 
-  public DtsCellArrayImpl(com.intellij.lang.ASTNode node) {
+  public DtsCellArrayImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

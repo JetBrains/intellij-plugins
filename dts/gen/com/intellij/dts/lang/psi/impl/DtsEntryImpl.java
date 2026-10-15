@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsEntryImpl extends com.intellij.dts.lang.psi.mixin.DtsEntryMixin implements com.intellij.dts.lang.psi.DtsEntry {
 
-  public DtsEntryImpl(com.intellij.lang.ASTNode node) {
+  public DtsEntryImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

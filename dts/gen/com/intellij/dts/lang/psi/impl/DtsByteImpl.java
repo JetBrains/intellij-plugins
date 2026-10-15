@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsByteImpl extends com.intellij.dts.lang.psi.mixin.DtsByteMixin implements com.intellij.dts.lang.psi.DtsByte {
 
-  public DtsByteImpl(com.intellij.lang.ASTNode node) {
+  public DtsByteImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 

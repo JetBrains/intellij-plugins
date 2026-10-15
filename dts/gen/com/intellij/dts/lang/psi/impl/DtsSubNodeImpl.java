@@ -5,12 +5,12 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsSubNodeImpl extends com.intellij.dts.lang.psi.mixin.DtsSubNodeMixin implements com.intellij.dts.lang.psi.DtsSubNode {
 
-  public DtsSubNodeImpl(com.intellij.lang.ASTNode node) {
+  public DtsSubNodeImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 
-  public DtsSubNodeImpl(com.intellij.dts.lang.stubs.impl.DtsSubNodeStub stub, com.intellij.psi.stubs.IStubElementType stubType) {
-    super(stub, stubType);
+  public DtsSubNodeImpl(com.intellij.dts.lang.stubs.impl.@org.jetbrains.annotations.NotNull DtsSubNodeStub stub, com.intellij.psi.stubs.@org.jetbrains.annotations.NotNull IStubElementType<?,?> type) {
+    super(stub, type);
   }
 
   @java.lang.Override

@@ -5,7 +5,7 @@ import static com.intellij.dts.lang.psi.DtsTypes.*;
 
 public class DtsCompilerDirectiveImpl extends com.intellij.dts.lang.psi.mixin.DtsCompilerDirectiveMixin implements com.intellij.dts.lang.psi.DtsCompilerDirective {
 
-  public DtsCompilerDirectiveImpl(com.intellij.lang.ASTNode node) {
+  public DtsCompilerDirectiveImpl(com.intellij.lang.@org.jetbrains.annotations.NotNull ASTNode node) {
     super(node);
   }
 
