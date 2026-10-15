@@ -194,7 +194,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     ).pool(context)
   }
 
-  private fun parseType(context: LoadContext, node: JsonNode): HclType {
+  internal fun parseType(context: LoadContext, node: JsonNode): HclType {
     if (node.isString) {
       val string = node.stringValue()
       return when (string?.lowercase(Locale.getDefault())) {
