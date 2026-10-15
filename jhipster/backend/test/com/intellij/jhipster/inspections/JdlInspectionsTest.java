@@ -5,7 +5,6 @@ package com.intellij.jhipster.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.openapi.project.Project;
-import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.junit5.TestApplication;
@@ -57,11 +56,9 @@ public class JdlInspectionsTest {
   }
 
   private void doTest(Class<? extends LocalInspectionTool> inspection, String file) {
-    EdtTestUtil.runInEdtAndWait(() -> {
-      CodeInsightTestFixture myFixture = codeInsightFixture.get();
-      myFixture.enableInspections(List.of(inspection));
-      myFixture.configureByFile(file);
-      myFixture.checkHighlighting();
-    });
+    CodeInsightTestFixture myFixture = codeInsightFixture.get();
+    myFixture.enableInspections(List.of(inspection));
+    myFixture.configureByFile(file);
+    myFixture.checkHighlighting();
   }
 }

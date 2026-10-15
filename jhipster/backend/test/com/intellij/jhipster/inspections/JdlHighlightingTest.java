@@ -4,7 +4,6 @@ package com.intellij.jhipster.inspections;
 
 import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.openapi.project.Project;
-import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.junit5.TestApplication;
@@ -51,10 +50,8 @@ public class JdlHighlightingTest {
   }
 
   private void doTest(String file) {
-    EdtTestUtil.runInEdtAndWait(() -> {
-      CodeInsightTestFixture myFixture = codeInsightFixture.get();
-      myFixture.configureByFile(file);
-      myFixture.checkHighlighting(true, false, true);
-    });
+    CodeInsightTestFixture myFixture = codeInsightFixture.get();
+    myFixture.configureByFile(file);
+    myFixture.checkHighlighting(true, false, true);
   }
 }
