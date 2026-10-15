@@ -96,22 +96,36 @@ class VueTypedComponent private constructor(
   }
 
   private fun getFromVueFile(type: JSType): JSRecordType? {
-    if (type is TypeScriptIndexedAccessJSTypeImpl
-        && type.parameterType.let { it is JSStringLiteralTypeImpl && it.literal == "default" }) {
-      val importType = type.owner as? JSImportType ?: return null
-      val prefix = "typeof import("
-      val contextFile = type.source.scope ?: return null
-      return importType.qualifiedName.name
-        .takeIf { it.startsWith(prefix) && it.endsWith(")") }
-        ?.let { it.substring(prefix.length + 1, it.length - 2) }
-        ?.takeIf { isVueFileName(it) }
-        ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
-        ?.let { contextFile.manager.findFile(it) }
-        ?.let { VueModelManager.findEnclosingContainer(it) as? VueComponent }
-        ?.thisType
-        ?.asRecordType()
+    val qualifiedName = when (type) {
+      is TypeScriptIndexedAccessJSTypeImpl -> {
+        val parameterType = type.parameterType
+        if (parameterType is JSStringLiteralTypeImpl && parameterType.literal == "default") {
+          (type.owner as? JSImportType)?.qualifiedName
+        }
+        else null
+      }
+
+      is JSImportType ->
+        type.qualifiedName
+          .takeIf { it.name == "default" }
+          ?.parent
+
+      else -> null
     }
-    return null
+
+    qualifiedName ?: return null
+    val contextFile = type.source.scope ?: return null
+
+    val prefix = "typeof import("
+    return qualifiedName.name
+      .takeIf { it.startsWith(prefix) && it.endsWith(")") }
+      ?.let { it.substring(prefix.length + 1, it.length - 2) }
+      ?.takeIf { isVueFileName(it) }
+      ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
+      ?.let { contextFile.manager.findFile(it) }
+      ?.let { VueModelManager.findEnclosingContainer(it) as? VueComponent }
+      ?.thisType
+      ?.asRecordType()
   }
 
   override val typeParameters: List<TypeScriptTypeParameter>

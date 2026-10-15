@@ -1332,6 +1332,24 @@ abstract class VueHighlightingTestBase(
   }
 
   @Test
+  fun testGlobalComponentFromVueFileIndexedAccess() {
+    doHighlightingTest(configureFileName = "src/App.vue"){
+      // Tree access disabled
+      //  /node_modules/@vue/runtime-core/dist/runtime-core.d.ts
+      disableAstLoadingFilterWhenPluginUsed()
+    }
+  }
+
+  @Test
+  fun testGlobalComponentFromVueFileDefaultProperty() {
+    doHighlightingTest(configureFileName = "src/App.vue") {
+      // Tree access disabled
+      //  /node_modules/@vue/runtime-core/dist/runtime-core.d.ts
+      disableAstLoadingFilterWhenPluginUsed()
+    }
+  }
+
+  @Test
   fun testVaporSimpleApplication() {
     doHighlightingTest(
       VueTestModule.VUE_3_6_0,
