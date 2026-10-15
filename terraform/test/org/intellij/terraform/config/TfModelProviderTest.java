@@ -1,8 +1,9 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
+import com.intellij.util.containers.ContainerUtil;
 import org.intellij.terraform.config.model.BlockType;
 import org.intellij.terraform.config.model.DataSourceType;
 import org.intellij.terraform.config.model.HclType;
@@ -11,9 +12,9 @@ import org.intellij.terraform.config.model.PropertyType;
 import org.intellij.terraform.config.model.ProviderType;
 import org.intellij.terraform.config.model.ProvisionerType;
 import org.intellij.terraform.config.model.ResourceType;
+import org.intellij.terraform.config.model.TfFunction;
 import org.intellij.terraform.config.model.TfTypeModel;
 import org.intellij.terraform.config.model.TypeModelProvider;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -157,7 +158,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
   public void testAllResourcesForSameProviderHasSamePrefix() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("catchpoint/catchpoint", "sap-cloud-infrastructure/sci");
+    Set<String> exceptions = Set.of("catchpoint/catchpoint", "paloaltonetworks/scm", "sap-cloud-infrastructure/sci");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
@@ -179,7 +180,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
   public void testAllDataSourcesForSameProviderHasSamePrefix() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("cloudposse/awsutils", "sap-cloud-infrastructure/sci");
+    Set<String> exceptions = Set.of("cloudposse/awsutils", "paloaltonetworks/scm", "sap-cloud-infrastructure/sci");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
@@ -222,8 +223,27 @@ public class TfModelProviderTest extends LightPlatformTestCase {
 
   public void testProvisionersLoaded() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
-    List<@NotNull ProvisionerType> provisionerTypes = model.getProvisioners().stream().filter(prov -> prov.getType().contains("chef")).toList();
-    assertEquals(1, provisionerTypes.size());
+    List<String> provisionerTypes = ContainerUtil.map(model.getProvisioners(), ProvisionerType::getType);
+    assertEquals(List.of("file", "local-exec", "remote-exec"), provisionerTypes);
+  }
+
+  public void testBuiltinFunctionsLoaded() {
+    final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
+    assertNotNull(model);
+
+    TfFunction abs = model.getFunction("abs");
+    assertNotNull(abs);
+    assertEquals("number", abs.getReturnType().getPresentableText());
+    assertEquals("(num: number)", abs.getArgumentsAsText());
+    assertNotNull(abs.getDescription());
+
+    TfFunction coalesce = model.getFunction("coalesce");
+    assertNotNull(coalesce);
+    assertEmpty(coalesce.getArguments());
+    assertNotNull(coalesce.getVariadic());
+
+    assertNotNull(model.getFunction("templatestring"));
+    assertNull(model.getFunction("core::abs"));
   }
 
 }

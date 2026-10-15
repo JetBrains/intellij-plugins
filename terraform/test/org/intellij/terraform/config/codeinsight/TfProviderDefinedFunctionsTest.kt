@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.psi.util.childrenOfType
@@ -14,7 +14,9 @@ internal class TfProviderDefinedFunctionsTest : TfBaseCompletionTestCase() {
         resource "kubernetes_manifest" "example" {
           manifest = manifest_d<caret>
         }
-      """.trimIndent(), 2, "provider::kubernetes::manifest_decode", "provider::kubernetes::manifest_decode_multi"
+      """.trimIndent(), 4,
+      "provider::kubectl::manifest_decode", "provider::kubectl::manifest_decode_multi",
+      "provider::kubernetes::manifest_decode", "provider::kubernetes::manifest_decode_multi"
     )
 
     doBasicCompletionTest(
