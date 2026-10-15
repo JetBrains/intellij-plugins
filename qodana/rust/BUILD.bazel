@@ -52,6 +52,7 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/ide-core",
         "@community//libraries/io",
+        "//rustrover/light/base",
     ],
 )
 
@@ -87,6 +88,7 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//libraries/io:io_test_lib",
+        "//rustrover/light/base:base_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.rust` end
