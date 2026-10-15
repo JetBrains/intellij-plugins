@@ -30,6 +30,7 @@ class TfMetadataLoader {
 
   private val loaders: List<VersionedMetadataLoader> = listOf(
     TfProvidersSchemaLoader(),
+    TfFunctionSignaturesLoader(),
 
     ProviderLoaderV2(),
     ProvisionerLoaderV2(),
@@ -279,7 +280,7 @@ class TfMetadataLoader {
     val version: String
     val schemasNode = json.obj("schemas") ?: json
     if (schemasNode.has("format_version"))  {
-      type = "terraform-providers-schema-json"
+      type = if (schemasNode.has("function_signatures")) FUNCTION_SIGNATURES_TYPE else "terraform-providers-schema-json"
       version = schemasNode.get("format_version").stringValue()
     }
     else {
