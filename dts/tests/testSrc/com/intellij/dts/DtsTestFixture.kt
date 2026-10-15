@@ -5,6 +5,7 @@ import com.intellij.dts.core.lang.DtsFileType
 import com.intellij.dts.core.settings.DtsSettings
 import com.intellij.dts.core.util.DtsUtil
 import com.intellij.dts.core.zephyr.DtsZephyrProvider
+import com.intellij.idea.AppMode
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -22,14 +23,20 @@ import org.junit.jupiter.api.fail
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Locale
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.pathString
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 
-val DTS_TEST_ROOT_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/core")
-val DTS_TEST_DATA_PATH: Path = PathManager.getHomeDir().resolve("contrib/dts/tests/testData")
+private const val DTS_ROOT_DIR = "contrib/dts"
+
+internal val dtsRootPath: Path = AppMode.getDevIdeaProjectDir()?.let { Path(it).resolve(DTS_ROOT_DIR) }
+                                  ?: PathManager.getHomeDir().resolve(DTS_ROOT_DIR)
+
+val DTS_TEST_DATA_PATH: Path = dtsRootPath.resolve("tests/testData")
 
 private val defaultTestTimeout = 5.minutes
 
@@ -97,7 +104,7 @@ class DtsTestFixture internal constructor(
   }
 
   fun makeRelativeToWorkingDirectory(path: String): String {
-    return path.replace(DTS_TEST_DATA_PATH.toString(), "WORKING_DIRECTORY")
+    return path.replace(DTS_TEST_DATA_PATH.invariantSeparatorsPathString, "WORKING_DIRECTORY")
   }
 
   fun compareWithTestFixture(extension: String, actual: String) {

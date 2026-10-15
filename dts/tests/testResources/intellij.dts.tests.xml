@@ -1,0 +1,23 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <module name="intellij.dts.core"/>
+    <module name="intellij.dts.pp"/>
+    <module name="intellij.libraries.assertj.core"/>
+    <module name="intellij.libraries.jsonSchemaValidator"/>
+    <module name="intellij.libraries.junit6"/>
+    <module name="intellij.libraries.snakeyaml"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.codeStyle"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.editor.ui"/>
+    <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.projectModel"/>
+    <module name="intellij.platform.syntax"/>
+    <module name="intellij.platform.testFramework"/>
+    <module name="intellij.platform.testFramework.junit5"/>
+    <module name="intellij.platform.testFramework.junit5.codeInsight"/>
+  </dependencies>
+  <!-- endregion -->
+</idea-plugin>

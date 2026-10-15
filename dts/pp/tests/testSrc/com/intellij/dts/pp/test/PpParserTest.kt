@@ -14,7 +14,10 @@ class PpParserTest {
     private val projectFixture = projectFixture()
   }
 
-  private val parsing by parsingFixture(projectFixture, "$PP_TEST_DATA_PATH/parser", "test", definitions = arrayOf(TestParserDefinition()))
+  private val parsing by parsingFixture(projectFixture,
+                                        testDataPath.resolve("parser").toString(),
+                                        "test",
+                                        definitions = arrayOf(TestParserDefinition()))
 
   @BeforeEach
   fun setUp(testInfo: TestInfo) {

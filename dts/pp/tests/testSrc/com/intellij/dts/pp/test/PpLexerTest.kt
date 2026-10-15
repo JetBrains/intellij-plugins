@@ -8,18 +8,19 @@ import com.intellij.testFramework.junit5.fixture.TestFixtures
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.readText
 
 @TestFixtures
 class PpLexerTest {
-  private val lexer by lexerFixture("$PP_TEST_DATA_PATH/lexer", checkRestart = false) { TestParserLexerAdapter() }
+  private val lexer by lexerFixture(testDataPath.resolve("lexer").toString(), checkRestart = false) { TestParserLexerAdapter() }
 
-  private lateinit var testFilePath: String
+  private lateinit var testFilePath: Path
 
   @BeforeEach
   fun setUp(testInfo: TestInfo) {
-    testFilePath = "$PP_TEST_DATA_PATH/lexer/${getPpTestName(testInfo.testMethod.get().name)}"
+    testFilePath = testDataPath.resolve("lexer").resolve(getPpTestName(testInfo.testMethod.get().name))
   }
 
   @Test

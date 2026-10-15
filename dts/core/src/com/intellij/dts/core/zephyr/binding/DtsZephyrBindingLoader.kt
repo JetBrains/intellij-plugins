@@ -14,10 +14,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
-import kotlin.io.path.pathString
 import kotlin.io.path.readText
 
-data class BindingFile(val path: String?, val data: Map<*, *>)
+data class BindingFile(val path: Path?, val data: Map<*, *>)
 
 private val yaml = Yaml(SafeConstructor(LoaderOptions()))
 private val logger = Logger.getInstance("DtsZephyrBindingLoader")
@@ -50,7 +49,7 @@ fun loadExternalBindings(root: Path): Map<String, BindingFile> {
         if (Files.isDirectory(file) || file.extension != "yaml") continue
 
         loadFileData(file.readText())?.let {
-          bindings[file.nameWithoutExtension] = BindingFile(file.pathString, it)
+          bindings[file.nameWithoutExtension] = BindingFile(file, it)
         }
       }
     }

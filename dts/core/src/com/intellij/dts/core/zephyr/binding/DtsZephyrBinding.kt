@@ -3,6 +3,8 @@ package com.intellij.dts.core.zephyr.binding
 import com.intellij.dts.core.lang.DtsPropertyType
 import com.intellij.dts.core.lang.DtsPropertyValue
 import com.intellij.openapi.util.NlsSafe
+import java.nio.file.Path
+import kotlin.io.path.invariantSeparatorsPathString
 
 data class DtsZephyrBinding(
   val compatible: @NlsSafe String?,
@@ -19,7 +21,7 @@ data class DtsZephyrBinding(
     private val isChild: Boolean = false,
   ) {
     private var compatible: String? = null
-    private var path: String? = null
+    private var path: Path? = null
     private var description: String? = null
     private var buses: List<String>? = null
     private var onBus: String? = null
@@ -32,7 +34,7 @@ data class DtsZephyrBinding(
       return this
     }
 
-    fun setPath(value: String): Builder {
+    fun setPath(value: Path): Builder {
       if (path == null) path = value
       return this
     }
@@ -71,7 +73,7 @@ data class DtsZephyrBinding(
 
       return DtsZephyrBinding(
         compatible = compatible,
-        path = path,
+        path = path?.invariantSeparatorsPathString,
         description = description,
         buses = buses ?: emptyList(),
         onBus = onBus,

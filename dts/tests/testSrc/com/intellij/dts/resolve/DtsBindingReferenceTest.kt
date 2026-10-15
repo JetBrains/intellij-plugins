@@ -8,6 +8,9 @@ import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.invariantSeparatorsPathString
 
 @TestApplication
 class DtsBindingReferenceTest {
@@ -23,7 +26,7 @@ class DtsBindingReferenceTest {
   fun `test one compatible string`() = dtsTimeoutRunBlocking {
     doTest(
       compatible = listOf("espressif,esp32-spi<caret>"),
-      bindingPath = "WORKING_DIRECTORY/zephyr/dts/bindings/spi/espressif,esp32-spi.yaml",
+      bindingPath = Path("WORKING_DIRECTORY/zephyr/dts/bindings/spi/espressif,esp32-spi.yaml"),
     )
   }
 
@@ -31,13 +34,13 @@ class DtsBindingReferenceTest {
   fun `test two compatible string`() = dtsTimeoutRunBlocking {
     doTest(
       compatible = listOf("espressif,esp32-spi", "nordic,nrf-spi<caret>"),
-      bindingPath = "WORKING_DIRECTORY/zephyr/dts/bindings/spi/nordic,nrf-spi.yaml",
+      bindingPath = Path("WORKING_DIRECTORY/zephyr/dts/bindings/spi/nordic,nrf-spi.yaml"),
     )
   }
 
   private suspend fun doTest(
     compatible: List<String>,
-    bindingPath: String,
+    bindingPath: Path,
   ) {
     dts.addZephyr()
 
@@ -54,6 +57,6 @@ class DtsBindingReferenceTest {
     val reference = myFixture.findSingleReferenceAtCaret()
     val target = readAction { reference.resolveReference().filterIsInstance<DtsBindingSymbol>().first() }
 
-    assertEquals(bindingPath, dts.makeRelativeToWorkingDirectory(target.binding.path!!))
+    assertEquals(bindingPath.invariantSeparatorsPathString, dts.makeRelativeToWorkingDirectory(target.binding.path!!))
   }
 }

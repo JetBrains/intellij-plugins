@@ -1,8 +1,8 @@
 package com.intellij.dts.documentation
 
-import com.intellij.dts.DTS_TEST_ROOT_PATH
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.dtsRootPath
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
@@ -13,9 +13,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.time.Duration.Companion.seconds
+
+private val DTS_TEST_ROOT_PATH: Path = dtsRootPath.resolve("core")
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/documentation/bundled")

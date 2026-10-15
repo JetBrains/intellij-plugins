@@ -27,6 +27,10 @@ jvm_library(
         "//contrib/dts/core",
         "//contrib/dts/core:core_test_lib",
     ],
+    resource_strip_prefix = "testResources",
+    resources = glob(
+        ["testResources/**/*"],
+    ),
     visibility = ["//visibility:public"],
     runtime_deps = [":tests"],
     deps = [
