@@ -239,10 +239,11 @@ object TerraformProvidersMetadataBuilder {
 
   private fun deleteDirRecursively(tfgendir: File) {
     if (tfgendir.exists())
-      Files.walk(tfgendir.toPath())
-        .sorted(Comparator.reverseOrder())
-        .map { it.toFile() }
-        .forEach(File::deleteOnExit)
+      Files.walk(tfgendir.toPath()).use { paths ->
+        paths.sorted(Comparator.reverseOrder())
+          .map { it.toFile() }
+          .forEach(File::delete)
+      }
   }
 
   private fun writeVersionsTfFile(tfGenDir: File, version: String, namespace: String, provider: String) {
