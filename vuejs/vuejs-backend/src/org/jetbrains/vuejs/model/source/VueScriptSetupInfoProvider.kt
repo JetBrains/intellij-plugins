@@ -1,6 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
@@ -332,7 +334,7 @@ private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe S
   // scriptSetup type declaration
   if (typeArgs.size == 1) {
     val typeArg = typeArgs[0]
-    val recordType = typeArg.jsType.asRecordType()
+    val recordType = typeArg.getPropsRecordType()
 
     props = recordType.properties
       .map { VueScriptSetupInputProperty(typeArg, it, defaults.contains(it.memberName)) }
@@ -427,6 +429,9 @@ private fun analyzeDefineSlots(call: JSCallExpression): List<VueSlot> =
     ?.toList()
   ?: emptyList()
 
+private fun JSTypeDeclaration.getPropsRecordType(): JSRecordType =
+  (getJSType(JSTypeEngineMode.Service) ?: jsType).asRecordType()
+
 private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
   stubSafeCallArguments
     .getOrNull(0)
@@ -476,7 +481,7 @@ private class VueScriptSetupInputProperty(
     val hasOuterDefault = hasOuterDefault
     return Pointer {
       val source = sourcePtr.element ?: return@Pointer null
-      source.jsType.asRecordType().findPropertySignature(name)
+      source.getPropsRecordType().findPropertySignature(name)
         ?.let { VueScriptSetupInputProperty(sourceType, it, hasOuterDefault) }
     }
   }
