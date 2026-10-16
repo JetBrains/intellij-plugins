@@ -3,7 +3,6 @@ package org.intellij.terraform.config.model.loader
 
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
-import org.intellij.terraform.config.model.Argument
 import org.intellij.terraform.config.model.BackendType
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.DataSourceType
@@ -16,9 +15,7 @@ import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.ProvisionerType
 import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.SetType
-import org.intellij.terraform.config.model.TfFunction
 import org.intellij.terraform.config.model.Types
-import org.intellij.terraform.config.model.VariadicArgument
 import org.intellij.terraform.config.model.array
 import org.intellij.terraform.config.model.boolean
 import org.intellij.terraform.config.model.isNotEmpty
@@ -299,37 +296,4 @@ class ProvisionerLoaderV1 : ProvisionerLoader(BaseLoaderV1) {
 
 class BackendLoaderV1 : BackendLoader(BaseLoaderV1) {
   override fun isSupportedVersion(version: String): Boolean = version == base.version
-}
-
-class FunctionsLoaderV1 : VersionedMetadataLoader {
-  override fun isSupportedType(type: String): Boolean = type == "functions"
-  override fun isSupportedVersion(version: String): Boolean = version == "1"
-
-  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
-    val model = context.model
-    val function_schema = json.obj("schemas") ?: json
-    val functions = function_schema.obj("schema")
-    if (functions == null) {
-      LOG.warn("No functions schema in file '$fileName'")
-      return
-    }
-    if (model.loaded.containsKey("functions")) {
-      LOG.warn("Functions definitions already loaded from '${model.loaded["functions"]}'")
-      return
-    }
-    model.loaded["functions"] = fileName
-    for ((k, v) in functions.properties()) {
-      if (v !is ObjectNode) continue
-      assert(v.string("Name").equals(k)) { "Name mismatch: $k != ${v.string("Name")}" }
-      val returnType = BaseLoaderV1.parseType(context, v.string("ReturnType")!!)
-      val args = v.array("ArgTypes")!!.mapNotNull { it.stringValue(null) }.map { BaseLoaderV1.parseType(context, it) }.map { Argument(it) }.toMutableList()
-      val variadic = v.boolean("Variadic") ?: false
-      var va: VariadicArgument? = null
-      if (variadic) {
-        va = VariadicArgument(BaseLoaderV1.parseType(context, v.string("VariadicType")))
-      }
-      model.functions.add(TfFunction(k.pool(context), returnType, *args.toTypedArray(), variadic = va))
-    }
-  }
-
 }

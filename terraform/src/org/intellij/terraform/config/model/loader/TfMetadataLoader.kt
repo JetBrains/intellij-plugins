@@ -35,12 +35,10 @@ class TfMetadataLoader {
     ProviderLoaderV2(),
     ProvisionerLoaderV2(),
     BackendLoaderV2(),
-    FunctionsLoaderV2(),
 
     ProviderLoaderV1(),
     ProvisionerLoaderV1(),
-    BackendLoaderV1(),
-    FunctionsLoaderV1()
+    BackendLoaderV1()
   )
 
   fun loadDefaults(): TfTypeModel? {
