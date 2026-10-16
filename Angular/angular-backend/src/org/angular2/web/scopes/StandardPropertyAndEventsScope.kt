@@ -3,6 +3,8 @@ package org.angular2.web.scopes
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile
@@ -190,7 +192,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
     @PolySymbol.Property(JSTypeProperty::class)
     val jsType: JSType?
-      get() = linkedElement?.getJSType()
+      get() = linkedElement?.getJSType(JSTypeEngineMode.Service)
 
     override val kind: PolySymbolKind
       get() = JS_PROPERTIES
@@ -247,8 +249,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
     @PolySymbol.Property(JSTypeProperty::class)
     val jsType: JSType?
-      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType())
-              ?: mapSource?.getJSType()
+      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(JSTypeEngineMode.Service))
+              ?: mapSource?.getJSType(JSTypeEngineMode.Service)
 
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL
