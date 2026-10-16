@@ -9,7 +9,8 @@ import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget
 
 interface DtsCMakeModelConfigurationDataProvider {
   companion object {
-    private val EP_NAME = ExtensionPointName.create<DtsCMakeModelConfigurationDataProvider>("com.intellij.dts.cmake.configurationDataProvider")
+    private val EP_NAME =
+      ExtensionPointName.create<DtsCMakeModelConfigurationDataProvider>("com.intellij.dts.cmake.configurationDataProvider")
 
     fun getFirstCMakeModelConfigurationData(project: Project): CMakeModelConfigurationData? {
       for (extension in EP_NAME.extensionList) {

@@ -1,8 +1,8 @@
 package com.intellij.dts.resolve
 
+import com.intellij.dts.core.lang.symbols.DtsBindingSymbol
 import com.intellij.dts.dtsFixture
 import com.intellij.dts.dtsTimeoutRunBlocking
-import com.intellij.dts.core.lang.symbols.DtsBindingSymbol
 import com.intellij.openapi.application.readAction
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture

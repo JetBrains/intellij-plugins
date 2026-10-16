@@ -11,20 +11,28 @@ import org.junit.jupiter.api.Test
 class DtsContainerInspectionTest : DtsInspectionTest(DtsContainerInspection::class, extension = "dts") {
   @Test
   fun `test root property`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test root sub node`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test root delete property`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test root delete node by name`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test root delete node by ref`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test node root node`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test node v1`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test node delete node by name`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test node delete node by ref`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }

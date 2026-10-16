@@ -58,11 +58,11 @@ private object InsideContainer : PatternCondition<PsiElement>("inside container"
 
   override fun accepts(element: PsiElement, context: ProcessingContext): Boolean {
     val container = when (val parent = element.parent) {
-      is DtsContainer -> parent
-      is DtsStatement -> DtsTreeUtil.parentNode(parent)?.dtsContent
-      is PsiErrorElement -> parent.parent as? DtsContainer
-      else -> null
-    } ?: return false
+                      is DtsContainer -> parent
+                      is DtsStatement -> DtsTreeUtil.parentNode(parent)?.dtsContent
+                      is PsiErrorElement -> parent.parent as? DtsContainer
+                      else -> null
+                    } ?: return false
 
     context.put(key, container)
     return true

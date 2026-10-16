@@ -14,8 +14,10 @@ import java.awt.event.FocusListener
 import javax.swing.JTextField
 import javax.swing.plaf.basic.BasicComboBoxEditor
 
-abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
-                                       private val browserTitle: @NlsContexts.DialogTitle String) : ComboBox<T>() {
+abstract class DtsSettingsPathInput<T>(
+  private val disposable: Disposable?,
+  private val browserTitle: @NlsContexts.DialogTitle String,
+) : ComboBox<T>() {
   protected val textField = ExtendableTextField()
 
   var text: String by textField::text

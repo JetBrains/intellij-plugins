@@ -15,12 +15,12 @@ class DtsPropertyNameInspection : LocalInspectionTool() {
   private fun checkPropertyName(property: DtsProperty, holder: ProblemsHolder) {
     val name = property.dtsName
 
-      firstNotMatching(name, rx) {
-          holder.registerProblem(
-              property,
-              bundleKey = "inspections.property_name.bad_char",
-              bundleParam = it,
-          )
-      }
+    firstNotMatching(name, rx) {
+      holder.registerProblem(
+        property,
+        bundleKey = "inspections.property_name.bad_char",
+        bundleParam = it,
+      )
+    }
   }
 }

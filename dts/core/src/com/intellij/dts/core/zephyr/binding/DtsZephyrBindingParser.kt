@@ -4,7 +4,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import java.util.Stack
-import kotlin.collections.get
 
 data class BindingSource(val files: Map<String, BindingFile>, val default: BindingFile?)
 

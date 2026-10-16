@@ -12,7 +12,7 @@ import com.intellij.lexer.Lexer
 open class FixedGeneratedBuilder(
   delegate: PsiBuilder,
   state: GeneratedParserUtilBase.ErrorState,
-  parser: PsiParser
+  parser: PsiParser,
 ) : GeneratedParserUtilBase.Builder(delegate, state, parser) {
 
   private fun getImplFromDelegate(builder: PsiBuilder): PsiBuilderImpl {

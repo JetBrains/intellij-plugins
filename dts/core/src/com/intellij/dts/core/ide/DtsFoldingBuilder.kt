@@ -19,7 +19,7 @@ class DtsFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     descriptors: MutableList<FoldingDescriptor>,
     root: PsiElement,
     document: Document,
-    quick: Boolean
+    quick: Boolean,
   ) {
     if (root !is DtsFile) return
 

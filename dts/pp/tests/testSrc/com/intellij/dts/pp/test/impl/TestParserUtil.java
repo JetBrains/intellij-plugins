@@ -10,16 +10,16 @@ import com.intellij.psi.tree.TokenSet;
 import java.util.Collections;
 
 public class TestParserUtil extends PpParserUtilBase {
-    public static PsiBuilder adapt_builder_(IElementType root, PsiBuilder builder, PsiParser parser, TokenSet[] extendsSets) {
-      final var state = new ErrorState();
-      ErrorState.initState(state, builder, root, extendsSets);
+  public static PsiBuilder adapt_builder_(IElementType root, PsiBuilder builder, PsiParser parser, TokenSet[] extendsSets) {
+    final var state = new ErrorState();
+    ErrorState.initState(state, builder, root, extendsSets);
 
-      return new PpBuildAdapter(
-        builder,
-        state,
-        parser,
-        TestPpTokenTypes.INSTANCE,
-        Collections.emptyList()
-      );
-    }
+    return new PpBuildAdapter(
+      builder,
+      state,
+      parser,
+      TestPpTokenTypes.INSTANCE,
+      Collections.emptyList()
+    );
+  }
 }

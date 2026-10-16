@@ -1,7 +1,7 @@
 package com.intellij.dts.completion
 
-import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 

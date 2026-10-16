@@ -97,7 +97,7 @@ object DtsZephyrFileUtil {
         if (arch.name == "common") continue
 
         for (board in Files.list(arch).filter { it.isDirectory() }) {
-          if (Files.list(board).anyMatch { it.name == "board.cmake"}) {
+          if (Files.list(board).anyMatch { it.name == "board.cmake" }) {
             yield(board)
           }
         }

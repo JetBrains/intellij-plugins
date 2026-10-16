@@ -30,6 +30,6 @@ internal class DtsCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings = DtsCodeStyleSettings(settings)
 
   override fun createConfigurable(
-    settings: CodeStyleSettings, modelSettings: CodeStyleSettings
+    settings: CodeStyleSettings, modelSettings: CodeStyleSettings,
   ): CodeStyleConfigurable = Configurable(settings, modelSettings)
 }

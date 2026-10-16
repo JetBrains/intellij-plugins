@@ -2,7 +2,7 @@ package com.intellij.dts.core.completion.insert
 
 private object InsertAbort : Exception()
 
-class DtsInsertSession (private val backend: DtsInsertBackend) {
+class DtsInsertSession(private val backend: DtsInsertBackend) {
   private var offset: Int = 0
   private var shouldThreshold: Int = 0
 
@@ -61,5 +61,7 @@ class DtsInsertSession (private val backend: DtsInsertBackend) {
 fun dtsRunInsertSession(session: DtsInsertSession, writer: DtsInsertSession.() -> Unit) {
   try {
     writer(session)
-  } catch (_: InsertAbort) {}
+  }
+  catch (_: InsertAbort) {
+  }
 }

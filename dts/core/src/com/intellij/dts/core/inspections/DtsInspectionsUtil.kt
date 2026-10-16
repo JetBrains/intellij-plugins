@@ -28,12 +28,12 @@ fun firstNotMatching(str: String, rx: Regex, callback: (Char) -> Unit): Boolean 
 }
 
 fun propertyValueRange(property: DtsProperty): TextRange? {
-    val values = property.dtsValues
-    if (values.isEmpty()) return null
+  val values = property.dtsValues
+  if (values.isEmpty()) return null
 
-    val valuesRange = TextRange(values.first().startOffset, values.last().endOffset)
-    return valuesRange.relativeTo(property.textRange)
-  }
+  val valuesRange = TextRange(values.first().startOffset, values.last().endOffset)
+  return valuesRange.relativeTo(property.textRange)
+}
 
 private fun elementInspectionRange(element: PsiElement): TextRange? {
   if (element !is DtsStatement) return null

@@ -34,7 +34,7 @@ import kotlin.time.Duration.Companion.minutes
 private const val DTS_ROOT_DIR = "contrib/dts"
 
 internal val dtsRootPath: Path = AppMode.getDevIdeaProjectDir()?.let { Path(it).resolve(DTS_ROOT_DIR) }
-                                  ?: PathManager.getHomeDir().resolve(DTS_ROOT_DIR)
+                                 ?: PathManager.getHomeDir().resolve(DTS_ROOT_DIR)
 
 val DTS_TEST_DATA_PATH: Path = dtsRootPath.resolve("tests/testData")
 

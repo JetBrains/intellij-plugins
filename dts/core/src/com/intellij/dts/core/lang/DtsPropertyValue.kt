@@ -44,7 +44,8 @@ sealed interface DtsPropertyValue {
     override fun getPresentableText(type: DtsPropertyType): kotlin.String {
       if (type == DtsPropertyType.Bytes) {
         return "[${asByteList()}]"
-      } else {
+      }
+      else {
         return "<${asIntList()}>"
       }
     }

@@ -6,7 +6,6 @@ import com.intellij.dts.core.util.DtsUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.elementType
-import kotlin.text.iterator
 
 private fun isLineBlank(start: PsiElement): Boolean {
   for (element in DtsUtil.iterateLeafs(start, filter = false, strict = false)) {
@@ -32,7 +31,7 @@ private class InsertBackendImpl(val context: InsertionContext) : DtsInsertBacken
       lineEmpty = true
     }
     else {
-      lineEmpty= isLineBlank(start)
+      lineEmpty = isLineBlank(start)
 
       val nextElement = DtsUtil.iterateLeafs(start, strict = false).firstOrNull()
       nextChar = nextElement?.text?.firstOrNull()

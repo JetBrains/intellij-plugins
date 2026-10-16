@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Test
 class DtsStatementOrderInspectionTest : DtsInspectionTest(DtsStatementOrderInspection::class) {
   @Test
   fun `test invalid property`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test invalid delete property`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test after delete node`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }

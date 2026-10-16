@@ -1,7 +1,7 @@
 package com.intellij.dts.completion
 
-import com.intellij.dts.dtsFixture
 import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+import com.intellij.dts.dtsFixture
 import com.intellij.openapi.application.EDT
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.fixture.projectFixture
@@ -56,7 +56,7 @@ abstract class DtsCompletionTest {
   suspend fun applyVariations(
     useRootContentVariations: Boolean,
     useNodeContentVariations: Boolean,
-    callback: suspend ((String) -> String) -> Unit
+    callback: suspend ((String) -> String) -> Unit,
   ) {
     callback { it }
 

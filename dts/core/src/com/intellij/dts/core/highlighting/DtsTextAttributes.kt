@@ -82,7 +82,7 @@ enum class DtsTextAttributes() {
   INACTIVE(
     "DTS_INACTIVE",
     TextAttributesKey.createTextAttributesKey("OC.CONDITIONALLY_NOT_COMPILED_V2"), // TODO: what if not CLion?
-   "settings.colors.inactive",
+    "settings.colors.inactive",
   ),
   INCLUDE_PATH(
     "DTS_INCLUDE_PATH",

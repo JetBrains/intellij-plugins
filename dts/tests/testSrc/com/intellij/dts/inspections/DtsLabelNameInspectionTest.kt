@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 class DtsLabelNameInspectionTest : DtsInspectionTest(DtsLabelNameInspection::class) {
   @Test
   fun `test invalid start`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test invalid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }

@@ -96,7 +96,8 @@ object DtsUtil {
   fun toPath(first: String, vararg more: String): Path? {
     val path = try {
       Path.of(first, *more)
-    } catch (_: InvalidPathException) {
+    }
+    catch (_: InvalidPathException) {
       return null
     }
 

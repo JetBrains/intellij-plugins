@@ -62,8 +62,9 @@ class DtsZephyrBundledBindings(scope: CoroutineScope) {
     return if (!bindings.isCompleted) {
       bindings.start()
 
-      return null
-    } else {
+      null
+    }
+    else {
       bindings.getCompleted()[name]
     }
   }

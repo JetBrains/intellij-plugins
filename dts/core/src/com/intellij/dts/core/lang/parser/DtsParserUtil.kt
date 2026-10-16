@@ -2,7 +2,6 @@ package com.intellij.dts.core.lang.parser
 
 import com.intellij.dts.core.DtsBundle
 import com.intellij.dts.core.lang.DtsTokenSets
-import com.intellij.dts.core.lang.parser.DtsParser
 import com.intellij.dts.core.lang.psi.DtsTypes
 import com.intellij.dts.pp.lang.parser.PpBuildAdapter
 import com.intellij.dts.pp.lang.parser.PpParserUtil

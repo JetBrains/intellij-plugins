@@ -248,7 +248,8 @@ private class DtsAnnotationHolder : DtsHighlightAnnotator.Holder {
   }
 }
 
-private class DtsAnnotationHolderIterator(holder: Iterable<DtsAnnotation>, val scheme: EditorColorsScheme) : SyntaxInfoBuilder.RangeIterator {
+private class DtsAnnotationHolderIterator(holder: Iterable<DtsAnnotation>, val scheme: EditorColorsScheme) :
+  SyntaxInfoBuilder.RangeIterator {
   private val iterator = holder.iterator()
   private var annotation: DtsAnnotation? = null
 

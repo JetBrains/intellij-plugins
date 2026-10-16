@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 class DtsUnitNameInspectionTest : DtsInspectionTest(DtsUnitNameInspection::class) {
   @Test
   fun `test leading 0s`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test leading 0x`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }

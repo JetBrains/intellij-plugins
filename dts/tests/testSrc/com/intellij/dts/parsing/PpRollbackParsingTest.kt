@@ -22,7 +22,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 
-private class TreeToBuffer(node: ASTNode, private val buffer: Appendable, private val ignore: TokenSet) : RecursiveTreeElementWalkingVisitor(node) {
+private class TreeToBuffer(node: ASTNode, private val buffer: Appendable, private val ignore: TokenSet) :
+  RecursiveTreeElementWalkingVisitor(node) {
   private var indent = 0
 
   private fun fixWhiteSpaces(text: String): String {

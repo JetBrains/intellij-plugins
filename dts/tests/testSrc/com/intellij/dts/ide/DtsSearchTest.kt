@@ -1,9 +1,9 @@
 package com.intellij.dts.ide
 
-import com.intellij.dts.dtsFixture
-import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.dts.core.lang.psi.DtsNode
 import com.intellij.dts.core.lang.psi.getDtsPath
+import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.startOffset

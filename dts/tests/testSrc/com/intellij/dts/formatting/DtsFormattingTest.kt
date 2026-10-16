@@ -40,7 +40,7 @@ abstract class DtsFormattingTest {
     maxBlankLinesBetweenProperties: Int = 1,
     minBlankLinesBetweenProperties: Int = 0,
     maxBlankLinesBetweenNodes: Int = 1,
-    minBlankLinesBetweenNodes: Int = 1
+    minBlankLinesBetweenNodes: Int = 1,
   ) {
     val settings = CodeStyle.getSettings(project)
 

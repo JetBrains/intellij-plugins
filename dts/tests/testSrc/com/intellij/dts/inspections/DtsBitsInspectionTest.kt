@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 class DtsBitsInspectionTest : DtsInspectionTest(DtsBitsInspection::class) {
   @Test
   fun `test valid`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test invalid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }

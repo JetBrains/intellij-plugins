@@ -19,12 +19,16 @@ class DtsFoldingBuilderTest {
 
   @Test
   fun `test node`() = doTest()
+
   @Test
   fun `test empty node`() = doTest()
+
   @Test
   fun `test root node`() = doTest()
+
   @Test
   fun `test empty root node`() = doTest()
+
   @Test
   fun `test nested node`() = doTest()
 

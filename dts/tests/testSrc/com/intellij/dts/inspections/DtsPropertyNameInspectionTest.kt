@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 class DtsPropertyNameInspectionTest : DtsInspectionTest(DtsPropertyNameInspection::class) {
   @Test
   fun `test invalid`() = dtsTimeoutRunBlocking { doInspectionTest() }
+
   @Test
   fun `test valid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 }
