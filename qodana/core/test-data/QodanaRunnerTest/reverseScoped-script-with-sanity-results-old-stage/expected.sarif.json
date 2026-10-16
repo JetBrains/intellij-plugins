@@ -2,7 +2,67 @@
   "runs": [
     {
       "language": "en-US",
-      "results": [],
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 9,
+                  "charOffset": 48,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 81,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    if (true) {\n    }\n    unusedResult();"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testReverseScoped-script-with-sanity-results-new-stage",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "34ac963e0b8e34c9",
+            "equalIndicator/v1": "70dcf20db1ab05c6c45954234ae539250f12918cd228dfa06df719d67eb23f5b"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
       "automationDetails": {
         "id": "tests",
         "guid": "tests",

@@ -48,8 +48,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "608fcaa1778e1823",
-            "equalIndicator/v1": "d700faad6526e5d866f3a75541ba4fd59958c9dc1a21852808ff4cc3df7e6582"
+            "equalIndicator/v2": "4f5355847bcfdd9c",
+            "equalIndicator/v1": "c65e6027c0e5bb513118ab58586856ece6f3b387ed1dbc5c3ce0c54276297da9"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -106,8 +106,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "33077e607440ec7d",
-            "equalIndicator/v1": "c9bd8a7ff0f83511b759f9595b031703aac907ff8b54e6db84da664a1c31fefd"
+            "equalIndicator/v2": "106611a61850adac",
+            "equalIndicator/v1": "49a0c221ac0bea97ddf3897511d136fd15afcaa65889af0fe585e6c9a71aa7a9"
           },
           "properties": {
             "ideaSeverity": "WARNING",

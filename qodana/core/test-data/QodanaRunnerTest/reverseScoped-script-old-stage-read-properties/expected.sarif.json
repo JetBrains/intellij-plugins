@@ -22,7 +22,8 @@
                 }
               }
             }
-          ]
+          ],
+          "baselineState": "new"
         }
       ],
       "newlineSequences": [

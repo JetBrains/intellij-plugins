@@ -51,6 +51,7 @@
             "equalIndicator/v2": "c45b4b95d8404a4c",
             "equalIndicator/v1": "79afe7b5e1ce10b2fc160ab92a39779726d42d102efb89a8181760f1620c7c76"
           },
+          "baselineState": "new",
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
