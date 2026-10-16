@@ -7,7 +7,6 @@ import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.TfParserDefinition
 import org.intellij.terraform.config.inspection.TypeSpecificationValidator
-import org.intellij.terraform.config.model.Argument
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.ListType
@@ -15,13 +14,10 @@ import org.intellij.terraform.config.model.MapType
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.SetType
-import org.intellij.terraform.config.model.TfFunction
 import org.intellij.terraform.config.model.Types
-import org.intellij.terraform.config.model.VariadicArgument
 import org.intellij.terraform.config.model.array
 import org.intellij.terraform.config.model.boolean
 import org.intellij.terraform.config.model.isNotEmpty
-import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
 import org.intellij.terraform.config.model.obj
 import org.intellij.terraform.config.model.string
 import org.intellij.terraform.config.model.toMap
@@ -278,44 +274,4 @@ class ProvisionerLoaderV2 : ProvisionerLoader(BaseLoaderV2) {
 
 class BackendLoaderV2 : BackendLoader(BaseLoaderV2) {
   override fun isSupportedVersion(version: String): Boolean = version == base.version
-}
-
-class FunctionsLoaderV2 : VersionedMetadataLoader {
-  override fun isSupportedType(type: String): Boolean = type == "functions"
-  override fun isSupportedVersion(version: String): Boolean = version == "2"
-
-  override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
-    val base = BaseLoaderV2
-    val model = context.model
-    val function_schema = json.obj("schemas") ?: json
-    val functions = function_schema.obj("schema")
-    if (functions == null) {
-      LOG.warn("No functions schema in file '$fileName'")
-      return
-    }
-    if (model.loaded.containsKey("functions")) {
-      LOG.warn("Functions definitions already loaded from '${model.loaded["functions"]}'")
-      return
-    }
-    model.loaded["functions"] = fileName
-    for ((name, v) in functions.properties()) {
-      if (v !is ObjectNode) continue
-      val returnType = base.parseType(context, v.string("ReturnType")!!)
-      val parameters: List<ObjectNode> = v.array("Parameters")?.mapNotNull { it as? ObjectNode } ?: emptyList()
-      val variadic = v.obj("VariadicParameter")
-
-      val args = parameters.map { Argument(name = it.string("Name"), type = base.parseType(context, it.string("Type"))) }
-      val va: VariadicArgument? = variadic?.let {
-        VariadicArgument(name = it.string("Name"), type = base.parseType(context, it.string("Type")))
-      }
-
-      model.functions.add(TfFunction(
-        name = name.pool(context),
-        returnType = returnType,
-        arguments = args.toTypedArray(),
-        variadic = va
-      ))
-    }
-  }
-
 }
