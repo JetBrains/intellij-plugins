@@ -34,6 +34,7 @@ jvm_library(
         # do not sort,
         "//rustrover",
         "//rustrover/plugin",
+        "//rustrover/light/plugin",
         "@community//libraries/rd/framework",
         "@community//libraries/qodana/sarif",
         "@community//platform/execution-impl",
