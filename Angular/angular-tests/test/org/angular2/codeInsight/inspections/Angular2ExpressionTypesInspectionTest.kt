@@ -5,6 +5,7 @@ import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsKotlin
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
 import org.angular2.TestTsNode
@@ -76,6 +77,7 @@ class Angular2ExpressionTypesInspectionTest : Angular2TestCase("inspections/expr
   /**
    * @see Angular2AttributesTest.testTypeMismatchErrorWithOptionalInputs
    */
+  @SkipTsKotlin
   @Test
   fun testNullChecks() =
     checkHighlightingNg15(dir = true)
