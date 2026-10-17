@@ -109,6 +109,7 @@
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.jade.css" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.idea.customization.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.lsp.impl" scope="TEST" />
   </component>
 </module>
