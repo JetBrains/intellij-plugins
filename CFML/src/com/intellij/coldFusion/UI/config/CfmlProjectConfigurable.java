@@ -49,7 +49,7 @@ public final class CfmlProjectConfigurable implements SearchableConfigurable, Co
   @Override
   public JComponent createComponent() {
     myForm = new CfmlMappingsForm(myProject);
-    return myForm.getContentPane();
+    return myForm.panel;
   }
 
   @Override
