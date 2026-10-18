@@ -5,6 +5,8 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.lang.makefile.psi.MakefileRule
 import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 class MakefileStructureViewElement(private val element: PsiElement) : StructureViewTreeElement {
@@ -29,4 +31,7 @@ class MakefileStructureViewElement(private val element: PsiElement) : StructureV
   }
 
   override fun getValue() = element
+
+  override fun getValueForComparison(): PsiElement =
+    if (element is MakefileTarget) PsiTreeUtil.getParentOfType(element, MakefileRule::class.java) ?: element else element
 }
