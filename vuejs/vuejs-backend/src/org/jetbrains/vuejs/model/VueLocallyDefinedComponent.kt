@@ -1,6 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSInitializerOwner
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
@@ -45,7 +47,7 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
       delegate: VueComponent,
       source: JSInitializerOwner,
     ): VueLocallyDefinedComponent<*>? =
-      source.asSafely<JSTypeOwner>()?.jsType
+      source.takeIf { it is JSTypeOwner }?.getJSType(JSTypeEngineMode.Service)
         ?.asSafely<JSStringLiteralTypeImpl>()?.literal
         ?.let { VueInitializerTextLiteralLocallyDefinedComponent(it, delegate, source) }
 

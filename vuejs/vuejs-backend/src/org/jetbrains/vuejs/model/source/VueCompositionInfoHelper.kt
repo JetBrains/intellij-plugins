@@ -50,6 +50,7 @@ object VueCompositionInfoHelper {
 
   fun getUnwrappedRefElement(element: PsiElement?, context: PsiElement): VueImplicitElement? {
     val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
+    // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueCompletionTest$WithoutServiceTest#testScriptSetup and VueCompletionTest#testScriptSetupTs
     val jsType = (resolved as? JSTypeOwner)?.jsType
     val name = resolved?.name
     return if (jsType != null && name != null) {

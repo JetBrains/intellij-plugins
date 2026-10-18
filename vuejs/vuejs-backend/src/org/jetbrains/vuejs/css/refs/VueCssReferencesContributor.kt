@@ -103,6 +103,7 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
           .takeIf {
             it !is JSFunctionItem
             && it?.name?.startsWith("$") == false
+            // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueCompletionTest#testStyleVBindScriptSetupCss
             && !isFunctionType((it as? JSTypeOwner)?.jsType)
           }
           ?.let {

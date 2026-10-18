@@ -379,6 +379,8 @@ private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
 
   val typeArgument = call.typeArguments
     .firstOrNull()
+  // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueComponentTest#testDefineEmitsPropertyContractTupleParameters
+  // and VueComponentTest#testDefineEmitsPropertyContractNonTupleParameters
   val typeArgumentType = typeArgument
     ?.jsType
     ?.asRecordType()
@@ -618,6 +620,7 @@ private class VueScriptSetupPropertyContractEvent(
     val typeArgumentPtr = typeArgument.createSmartPointer()
     val name = signature.memberName
     return Pointer {
+      // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueComponentTest#testDefineEmitsPropertyContractTupleParameters
       typeArgumentPtr
         .dereference()
         ?.jsType
@@ -687,6 +690,7 @@ private class VueScriptSetupModelDecl(
         else -> null
       } as? JSObjectLiteralExpression
 
+      // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueTypeResolveTest#testModelPropsTS and VueCompletionTest$WithoutServiceTest#testDefineModelAttribute
       val jsType = typeArgs.firstOrNull()?.jsType
                    ?: options?.let { VueSourceModelPropType(name, it) }
                    ?: JSAnyType.get(call)

@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.libraries.vuex.model.component
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -193,6 +195,7 @@ private class VuexMappedSourceComputedStateProperty(
   override val linkedElement: JSElement
     get() = getCachedVuexImplicitElement(element, true, name, JSImplicitElement.Type.Property) { name, resolved ->
       when (resolved) {
+        // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VuexCompletionTest#testStorefrontThisCompletion
         is JSProperty -> resolved.jsType
         is JSFunctionItem -> resolved.returnType
         else -> null
@@ -246,7 +249,7 @@ private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSEle
 
   if (element is JSProperty) {
     function = element.tryGetFunctionInitializer()
-    if (function == null && JSTypeUtils.isStringOrStringUnion(element.jsType, false)) {
+    if (function == null && JSTypeUtils.isStringOrStringUnion(element.getJSType(JSTypeEngineMode.Service), false)) {
       element.initializer?.let {
         element = it
       }

@@ -1,6 +1,8 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSRecordType.TypeMember
@@ -61,7 +63,7 @@ internal object VueTypedDirectives {
     if (source !is JSTypeOwner)
       return null
 
-    val jsType = source.jsType
+    val jsType = source.getJSType(JSTypeEngineMode.Service)
                  ?: return null
 
     val mounted = jsType.asRecordType()
@@ -80,6 +82,8 @@ internal object VueTypedDirectives {
   private fun PsiElement.functionParameterType(
     parameterIndex: Int,
   ): JSType? =
+    // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueHighlightingTest$WithLegacyPluginTest#testDirectivesFromNestedObjectPlugin_vapor
+    // and VueHighlightingTest$WithLegacyPluginTest#testDirectivesFromNestedFunctionPlugin_vapor
     when (this) {
       is JSFunction -> parameters.getOrNull(parameterIndex)?.jsType
       is JSTypeOwner -> jsType?.functionParameterType(parameterIndex)

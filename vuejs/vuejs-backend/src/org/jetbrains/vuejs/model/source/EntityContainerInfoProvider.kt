@@ -1,6 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypesImpl
@@ -147,6 +149,7 @@ interface EntityContainerInfoProvider<T> {
         }
 
       private fun getBooleanValue(element: Any?): Boolean =
+        // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VuexCompletionTest#testStarImportCompletion
         element?.asSafely<JSTypeOwner>()
           ?.jsType?.substitute()
           ?.asSafely<JSBooleanLiteralTypeImpl>()
@@ -204,7 +207,7 @@ interface EntityContainerInfoProvider<T> {
             if (it.isNotEmpty()) return it
           }
         return if (canBeObject)
-          processJSTypeMembers(property.jsType)
+          processJSTypeMembers(property.getJSType(JSTypeEngineMode.Service))
         else
           emptyList()
       }

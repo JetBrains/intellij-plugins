@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.diagnostic.PluginException
 import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSElement
@@ -130,7 +132,7 @@ class VuexStatePropertyImpl(
 ) : VuexNamedSymbolImpl(name, source),
     VuexStateProperty {
   override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
-    return VuexStoreStateElement(qualifiedName.substring(namespace.length), qualifiedName, source, (source as? JSTypeOwner)?.jsType)
+    return VuexStoreStateElement(qualifiedName.substring(namespace.length), qualifiedName, source, source.takeIf { it is JSTypeOwner }?.getJSType(JSTypeEngineMode.Service))
   }
 }
 

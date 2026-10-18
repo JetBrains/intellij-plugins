@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -303,7 +305,7 @@ private fun getFromType(cur: PsiElement?): PsiElement? {
   // Trying to resolve using JSDefinitionExpression may lead
   // to stack overflow
   //if (cur is JSDefinitionExpression) return null
-  val jsType = (cur as? JSTypeOwner)?.jsType
+  val jsType = cur?.takeIf { it is JSTypeOwner }?.getJSType(JSTypeEngineMode.Service)
                  // Functional components do not have source - save on substitution time
                  ?.takeIf { it !is JSGenericTypeImpl || it.type.typeText != FUNCTIONAL_COMPONENT_TYPE }
                ?: return null
@@ -397,6 +399,7 @@ fun JSType.fixPrimitiveTypes(): JSType =
   }
 
 private fun getPropTypeFromConstructor(expression: JSExpression): JSType {
+  // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueCompletionTest$WithoutServiceTest#testCastedObjectProps
   return getPropTypeFromGenericType((expression as? TypeScriptAsExpression)?.type?.jsType)
          ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
                            JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
@@ -430,6 +433,7 @@ fun getLocalFromPropOptions(expression: JSExpression?): Boolean =
 private fun getBooleanFromPropOptions(expression: JSExpression?, propName: String) =
   (expression as? JSObjectLiteralExpression)
     ?.findProperty(propName)
+    // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueDocumentationTest$WithLegacyPluginTest#testPropertyTypeDoc
     ?.jsType
     ?.let { type ->
       if (type is JSWidenType) type.originalType else type
@@ -452,7 +456,7 @@ fun getPropOptionality(options: JSExpression?, required: Boolean): Boolean =
 fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
   (expression as? JSObjectLiteralExpression)
     ?.findProperty(PROPS_DEFAULT_PROP)
-    ?.jsType
+    ?.getJSType(JSTypeEngineMode.Service)
     ?.substitute()
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? =

@@ -1,6 +1,8 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
@@ -36,7 +38,7 @@ data class VueTypedDirective(
     get() = VUE_GLOBAL_DIRECTIVES
 
   override val type: JSType?
-    get() = source.jsType
+    get() = source.getJSType(JSTypeEngineMode.Service)
 
   override val thisType: JSType
     get() = JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)

@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
@@ -480,7 +482,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             functionInitializer.returnType
           }
           else {
-            sourceElement.jsType?.let {
+            sourceElement.getJSType(JSTypeEngineMode.Service)?.let {
               JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement, false))
             }
           }
@@ -505,6 +507,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       get() = JSResolveUtil.getElementJSType(linkedElement)
                 ?.takeIf { it !is JSNamedType || it.isStaticOrInstance != JSContext.STATIC }
               ?: linkedElement.asSafely<JSTypedEntity>()?.jsType
+              // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueCompletionTest$WithoutServiceTest#testComputedTypeJS
+              // and VueCompletionTest$WithoutServiceTest#testVueCompletionInsideScript
               ?: linkedElement.asSafely<JSTypeOwner>()?.jsType
 
     override fun createPointer(): Pointer<VueSourceMethod> =
@@ -585,7 +589,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     private fun getInjectionKeyType(options: JSExpression?): VueInjectKey? {
       val property = (options as? JSObjectLiteralExpression)?.findProperty(INJECT_FROM) ?: return null
-      val propertyType = property.jsType?.let { type -> if (type is JSWidenType) type.originalType else type }?.substitute()
+      val propertyType = property.getJSType(JSTypeEngineMode.Service)?.let { type -> if (type is JSWidenType) type.originalType else type }?.substitute()
       return when {
         propertyType is JSStringLiteralTypeImpl -> VueInjectKey(name = propertyType.literal)
         isInjectionSymbolType(propertyType) -> resolveInjectionSymbol(property.initializerOrStub)?.let { VueInjectKey(symbol = it) }

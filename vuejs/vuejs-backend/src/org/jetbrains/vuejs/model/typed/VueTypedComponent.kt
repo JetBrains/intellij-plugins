@@ -77,6 +77,8 @@ class VueTypedComponent private constructor(
 
     return when (componentDefinition) {
       is JSTypeOwner -> {
+        // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueCompletionTest$WithoutServiceTest#testGlobalComponentFromVueFileDefaultProperty
+        // and VueCompletionTest$WithoutServiceTest#testGlobalComponentFromVueFileIndexedAccess
         val type = componentDefinition.jsType
                    ?: return null
 

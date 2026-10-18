@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSFile
@@ -26,7 +28,7 @@ class NuxtConfigImpl(override val file: PsiFile, nuxt2_15: Boolean) : NuxtConfig
   override val sourceDir: VirtualFile? =
     configLiteral
       ?.findProperty("srcDir")
-      ?.jsType
+      ?.getJSType(JSTypeEngineMode.Service)
       ?.asSafely<JSStringLiteralTypeImpl>()
       ?.literal
       ?.let { file.virtualFile?.parent?.findFileByRelativePath(it) }
