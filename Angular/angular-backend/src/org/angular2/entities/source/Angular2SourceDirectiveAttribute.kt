@@ -48,7 +48,7 @@ class Angular2SourceDirectiveAttribute private constructor(
         if (it.size != 2) return@let true
         it[1].asSafely<JSObjectLiteralExpression>()
           ?.findProperty(OPTIONAL_PROP)
-          ?.jsType
+          ?.getJSType(JSTypeEngineMode.Service)
           ?.substitute()
           ?.asSafely<JSBooleanLiteralTypeImpl>()
           ?.literal != true

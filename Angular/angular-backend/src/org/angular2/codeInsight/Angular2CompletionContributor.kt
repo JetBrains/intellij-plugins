@@ -215,6 +215,7 @@ class Angular2CompletionContributor : CompletionContributor() {
             val transformTypes = transformMembers
               .asSequence()
               .mapNotNull { transform ->
+                // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2NgModuleImportQuickFixesTest#testLowercasePipeCompletion
                 (transform as? JSTypeOwner)?.jsType?.substitute(parameters.originalFile)
                   ?.asSafely<JSFunctionType>()?.let { Pair(transform, it) }
               }

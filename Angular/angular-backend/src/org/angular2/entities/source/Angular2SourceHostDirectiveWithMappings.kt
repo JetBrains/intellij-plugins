@@ -32,6 +32,7 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
     get() =
       definition.let { def ->
         CachedValuesManager.getCachedValue(def) {
+          // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2HighlightingTest#testHostDirectiveWithInheritance
           val directive = def.findProperty(Angular2DecoratorUtil.DIRECTIVE_PROP)
             ?.jsType
             ?.substitute()

@@ -1,5 +1,7 @@
 package org.angular2.entities.source
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.model.Pointer
@@ -60,7 +62,7 @@ class Angular2SourceStandalonePseudoModule(override val sourceElement: TypeScrip
     get() = getName()
 
   override val entityJsType: JSType?
-    get() = sourceElement.jsType
+    get() = sourceElement.getJSType(JSTypeEngineMode.Service)
 
   override val isModifiable: Boolean
     get() = false

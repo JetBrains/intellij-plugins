@@ -1,5 +1,7 @@
 package org.angular2.entities
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
@@ -22,7 +24,7 @@ interface Angular2ClassBasedDirective : Angular2Directive, Angular2ClassBasedEnt
                 Angular2TemplateGuard(
                   guard.name!!.removePrefix(Angular2ControlFlowBuilder.NG_TEMPLATE_GUARD_PREFIX),
                   if (guard.asSafely<TypeScriptField>()
-                      ?.jsType?.let {
+                      ?.getJSType(JSTypeEngineMode.Service)?.let {
                         if (it is JSExoticStringLiteralType)
                           it.asSimpleLiteralType()
                         else

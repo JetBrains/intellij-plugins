@@ -18,6 +18,7 @@ class Angular2IvyDirectiveAttribute internal constructor(
   private val mySource: JSTypeDeclaration,
 ) : Angular2DirectiveAttribute {
 
+  // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2IvyModelTest#testPureIvyConstructorAttribute
   override val type: JSType
     get() = withTypeEvaluationLocation(mySource) { mySource.jsType }
 

@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSElementBase
@@ -143,7 +145,7 @@ abstract class Angular2SourceDirectiveProperty(
         ?.typeArguments
         ?.takeIf { it.size == 1 }
         ?.getOrNull(0)
-        ?.jsType
+        ?.getJSType(JSTypeEngineMode.Service)
       ?: withTypeEvaluationLocation(owner) {
         signature.jsType
           ?.takeIf { it !is JSPrimitiveType }

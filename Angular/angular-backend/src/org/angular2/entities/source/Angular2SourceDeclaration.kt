@@ -16,6 +16,8 @@ abstract class Angular2SourceDeclaration(decorator: ES6Decorator, implicitElemen
   override val isStandalone: Boolean
     get() = getCachedValue {
       val property = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.STANDALONE_PROP)
+      // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2HighlightingTest#testIonic8 and
+      // Angular2CompilerFlagsTest#testStrictInputAccessModifiersAbsent
       val type = property?.jsType
       val result = type.asSafely<JSPrimitiveLiteralType<*>>()?.literal?.asSafely<Boolean>()
                    ?: Angular2EntityUtils.isStandaloneDefault(decorator)
