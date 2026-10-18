@@ -27,23 +27,7 @@ internal class MdxBlockProvider(private val ownership: MdxMarkdownOwnership) : M
         }
         else null
       }
-      MdxBlockKind.JSX -> {
-        val element = MdxJsxScanner.scanJsxElement(localText, 0)
-        if (element != null &&
-            element.termination != MdxJsxScanner.Termination.UNTERMINATED &&
-            localText.subSequence(element.range.endOffset, localText.length).isBlank()) {
-          ImmediateBlock(
-            MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT,
-            MdxBlockNodeFactory.createFlowElementNodes(
-              element,
-              absoluteStart,
-              includeRoot = false,
-              paragraphRange = ownership.flowParagraphRange(element, stateInfo.currentConstraints, absoluteStart),
-            ),
-          )
-        }
-        else null
-      }
+      MdxBlockKind.JSX -> null
       MdxBlockKind.EXPRESSION -> {
         val expressionEnd = MdxExpressionBoundaryScanner.findExpressionEnd(localText, 0, localText.length)
         if (expressionEnd != -1 && localText.subSequence(expressionEnd, localText.length).isBlank()) {
@@ -72,7 +56,7 @@ internal class MdxBlockProvider(private val ownership: MdxMarkdownOwnership) : M
         productionHolder,
         absoluteStart,
         pos.offsetInCurrentLine + start.offsetInLine,
-        MdxJsxScanner.openingElementIdentity(pos.originalText, absoluteStart),
+        MdxJsxScanner.openingElementIdentity(localText, 0),
         pos.originalText,
         localText.toString(),
       )

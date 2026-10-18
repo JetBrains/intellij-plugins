@@ -1,7 +1,6 @@
 package org.intellij.plugin.mdx.lang.parse
 
 import com.intellij.openapi.util.TextRange
-import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 
 internal object MdxBlockNodeFactory {
@@ -9,12 +8,8 @@ internal object MdxBlockNodeFactory {
     element: MdxJsxScanner.Element,
     shift: Int = 0,
     includeRoot: Boolean = true,
-    paragraphRange: TextRange? = null,
   ): List<SequentialParser.Node> {
     val nodes = createElementNodes(element, shift).toMutableList()
-    paragraphRange?.let {
-      nodes.add(SequentialParser.Node(it.toMarkdownRange(), MarkdownElementTypes.PARAGRAPH))
-    }
     if (includeRoot) {
       nodes.add(SequentialParser.Node(element.range.shiftRight(shift).toMarkdownRange(), MdxMarkdownLibElementTypes.MDX_JSX_FLOW_ELEMENT))
     }

@@ -9,6 +9,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.TestModeFlags
@@ -183,6 +184,36 @@ class MdxLiveEditingTest : MdxTestBase() {
 
     val tagNames = nodesOfTypeAllRoots(XML_TAG_NAME).map { it.text }
     assertTrue("Transiently mismatched tags must remain in MdxJS PSI: $tagNames", tagNames.containsAll(listOf("dix", "div")))
+  }
+
+  @Test
+  fun testWrappedParagraphEditsConvergeToFreshParse() {
+    fun psiSignature(): List<String> {
+      PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
+      return allRoots().map { DebugUtil.psiToString(it, false) }
+    }
+
+    val text = "<div>\n    <p>this\n        is\n        broken</p>\n</div>"
+    myFixture.configureByText("wrapped.mdx", text)
+    val fresh = psiSignature()
+    assertEquals(2, allRoots().size)
+    assertEquals(2, nodesOfType(myFixture.file, "MDX_JSX_FLOW_ELEMENT").size)
+    assertEquals(4, nodesOfTypeAllRoots(XML_TAG_NAME).size)
+    assertEquals(listOf("this\n        is\n        broken"), nodesOfType(myFixture.file, "PARAGRAPH").map { it.text })
+    assertNoPsiErrors()
+
+    val document = myFixture.editor.document
+    for (end in text.indices.reversed()) {
+      WriteCommandAction.runWriteCommandAction(myFixture.project) { document.deleteString(end, end + 1) }
+      psiSignature()
+    }
+    for (character in text) {
+      WriteCommandAction.runWriteCommandAction(myFixture.project) { document.insertString(document.textLength, character.toString()) }
+      psiSignature()
+    }
+    assertEquals(fresh, psiSignature())
+    assertEquals(listOf("this\n        is\n        broken"), nodesOfType(myFixture.file, "PARAGRAPH").map { it.text })
+    assertNoPsiErrors()
   }
 
   @Test

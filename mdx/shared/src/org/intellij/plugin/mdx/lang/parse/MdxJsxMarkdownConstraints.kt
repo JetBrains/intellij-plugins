@@ -7,6 +7,7 @@ internal class MdxJsxMarkdownConstraints(
   private val parent: MarkdownConstraints,
   private val blockStartIndent: Int,
   private val elementIdentity: MdxJsxScanner.ElementIdentity?,
+  private val elementEnd: () -> Int?,
   private val opaqueBlock: Boolean = false,
   override val charsEaten: Int = blockStartIndent,
 ) : MarkdownConstraints {
@@ -41,10 +42,8 @@ internal class MdxJsxMarkdownConstraints(
   }
 
   override fun applyToNextLine(pos: LookaheadText.Position?): MarkdownConstraints {
+    if (pos == null || elementEnd()?.let { it <= pos.offset } == true) return parent.applyToNextLine(pos)
     val modifiedParent = if (parent is MdxMarkdownConstraints) parent.applyToNextJsxLine(pos) else parent.applyToNextLine(pos)
-    if (pos == null) {
-      return modifiedParent
-    }
     if (opaqueBlock) {
       val contentOffset = firstNonWhitespaceOffset(pos.currentLine, modifiedParent.charsEaten)
       return copy(
@@ -103,7 +102,7 @@ internal class MdxJsxMarkdownConstraints(
     opaqueBlock: Boolean = this.opaqueBlock,
     charsEaten: Int,
   ): MdxJsxMarkdownConstraints {
-    return MdxJsxMarkdownConstraints(parent, blockStartIndent, elementIdentity, opaqueBlock, charsEaten)
+    return MdxJsxMarkdownConstraints(parent, blockStartIndent, elementIdentity, elementEnd, opaqueBlock, charsEaten)
   }
 
   private fun firstNonWhitespaceOffset(line: CharSequence, start: Int = 0): Int {

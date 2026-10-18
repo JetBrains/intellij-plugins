@@ -11,7 +11,9 @@ import org.intellij.markdown.parser.MarkerProcessor
 import org.intellij.markdown.parser.MarkerProcessorFactory
 import org.intellij.markdown.parser.ProductionHolder
 import org.intellij.markdown.parser.constraints.MarkdownConstraints
+import org.intellij.markdown.parser.markerblocks.MarkerBlock
 import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
+import org.intellij.markdown.parser.markerblocks.impl.ParagraphMarkerBlock
 import org.intellij.markdown.parser.markerblocks.providers.CodeBlockProvider
 import org.intellij.markdown.parser.markerblocks.providers.HtmlBlockProvider
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
@@ -81,14 +83,63 @@ private class MdxMarkerProcessor(
     }
   }
 
+  override fun createNewMarkerBlocks(pos: LookaheadText.Position, productionHolder: ProductionHolder): List<MarkerBlock> {
+    val owner = markersStack.lastOrNull() as? MdxJsxBlockMarkerBlock
+    val openingStart = owner?.takeOpeningParagraphStart()
+    if (openingStart != null) {
+      return listOf(createOpeningParagraph(owner, openingStart, pos))
+    }
+    val blocks = super.createNewMarkerBlocks(pos, productionHolder)
+    val block = blocks.singleOrNull()
+    if (block is MdxJsxBlockMarkerBlock) {
+      val start = block.takeOpeningParagraphStart() ?: return blocks
+      return blocks + createOpeningParagraph(block, start, pos)
+    }
+    if (block is ParagraphMarkerBlock) {
+      val paragraphOwner = markersStack.filterIsInstance<MdxJsxBlockMarkerBlock>().lastOrNull() ?: return blocks
+      return listOf(paragraphOwner.createParagraph(
+        pos.offset, pos.nextLineOrEofOffset, block.getBlockConstraints(), block.interruptsParagraph,
+        paragraphObserver(paragraphOwner),
+      ))
+    }
+    return blocks
+  }
+
+  private fun createOpeningParagraph(owner: MdxJsxBlockMarkerBlock, start: Int, pos: LookaheadText.Position): MarkerBlock {
+    val constraints = owner.getBlockConstraints()
+    return owner.createParagraph(start, pos.nextLineOrEofOffset, constraints, { next, nextConstraints ->
+      nextConstraints.types.size <= constraints.types.lastIndexOf('>') ||
+      providers.any { it.interruptsParagraph(next, nextConstraints) }
+    }, paragraphObserver(owner))
+  }
+
+  private fun paragraphObserver(owner: MdxJsxBlockMarkerBlock): (LookaheadText.Position) -> Unit {
+    val owners = markersStack.filterIsInstance<MdxJsxBlockMarkerBlock>().toMutableList()
+    if (owners.lastOrNull() !== owner) owners.add(owner)
+    return { pos ->
+      for (index in owners.indices.reversed()) owners[index].observeParagraphLine(pos)
+    }
+  }
+
   override fun populateConstraintsTokens(
     pos: LookaheadText.Position,
     constraints: MarkdownConstraints,
     productionHolder: ProductionHolder,
   ) {
+    super.populateConstraintsTokens(pos, toGfmConstraints(constraints), productionHolder)
+  }
+
+  override fun populateContinuedConstraintsTokens(
+    pos: LookaheadText.Position,
+    constraints: MarkdownConstraints,
+    productionHolder: ProductionHolder,
+  ) {
+    super.populateContinuedConstraintsTokens(pos, toGfmConstraints(constraints), productionHolder)
+  }
+
+  private fun toGfmConstraints(constraints: MarkdownConstraints): MarkdownConstraints {
     val markdown = if (constraints is MdxJsxMarkdownConstraints) constraints.markdownConstraints() else constraints
-    val gfm = if (markdown is MdxMarkdownConstraints) markdown.asGfmConstraints() else markdown
-    super.populateConstraintsTokens(pos, gfm, productionHolder)
+    return if (markdown is MdxMarkdownConstraints) markdown.asGfmConstraints() else markdown
   }
 
   override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> = providers

@@ -83,6 +83,24 @@ class MdxScannerPerformanceTest {
   }
 
   @Test
+  fun wrappedFlowParagraphParsingScalesLinearly() {
+    for (openingBreak in listOf("", "\n")) {
+      assertLinearGrowth("wrapped flow paragraph") { lines ->
+        markdownParsingAccesses("<div>\n<p>$openingBreak" + "text\n".repeat(lines) + "last</p>\n</div>")
+      }
+    }
+  }
+
+  @Test
+  fun singleLineFlowParagraphParsingScalesLinearly() {
+    for (body in listOf("text", "text\ncontinued")) {
+      assertLinearGrowth("adjacent flow paragraphs") { lines ->
+        markdownParsingAccesses("<p>$body</p>\n".repeat(lines))
+      }
+    }
+  }
+
+  @Test
   fun inlineJsxParsingScalesLinearly() {
     assertLinearGrowth("inline JSX parsing", ::inlineJsxParsingAccesses)
     assertLinearGrowth("mixed inline parsing", ::mixedInlineParsingAccesses)

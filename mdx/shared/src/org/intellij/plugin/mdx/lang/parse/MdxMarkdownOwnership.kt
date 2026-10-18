@@ -38,31 +38,6 @@ internal class MdxMarkdownOwnership(
     return paragraphEnd(line.position, line.constraints, line.position.originalText.length)
   }
 
-  fun flowParagraphRange(
-    element: MdxJsxScanner.Element,
-    constraints: MarkdownConstraints,
-    shift: Int = 0,
-  ): TextRange? {
-    val opening = element.tags.firstOrNull() ?: return null
-    val closing = element.tags.lastOrNull() ?: return null
-    if (opening.kind != MdxJsxScanner.TagKind.OPENING || closing.kind != MdxJsxScanner.TagKind.CLOSING) return null
-    val start = opening.range.endOffset + shift
-    val end = closing.range.startOffset + shift
-    if (start >= end) return null
-
-    val line = checkNotNull(lines.floorEntry(start)).value
-    val text = line.position.originalText
-    val firstLineEnd = line.position.nextLineOrEofOffset.coerceAtMost(end)
-    if (text.subSequence(start, firstLineEnd).isBlank()) return null
-    var paragraphEnd = paragraphEnd(line.position, constraints, end)
-    val multiline = paragraphEnd > firstLineEnd
-    while (paragraphEnd > start && if (multiline) text[paragraphEnd - 1] == '\n' || text[paragraphEnd - 1] == '\r'
-      else text[paragraphEnd - 1].isWhitespace()) {
-      paragraphEnd--
-    }
-    return TextRange(start, paragraphEnd).takeUnless { it.isEmpty }
-  }
-
   private fun paragraphEnd(pos: LookaheadText.Position, constraints: MarkdownConstraints, limit: Int): Int {
     val paragraph = ParagraphMarkerBlock(constraints, ProductionHolder().mark(), ::interruptsParagraph)
     var next = pos.nextLinePosition()

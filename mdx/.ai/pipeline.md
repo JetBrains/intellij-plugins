@@ -63,8 +63,9 @@ At a constrained line start, `MdxBlockProvider` dispatches one of three kinds:
 | JSX | A parsed JSX tag or recoverable opening-tag prefix | `MdxJsxScanner` |
 | Expression | `{` after at most three spaces | `MdxExpressionBoundaryScanner` |
 
-A complete single-line construct is emitted immediately. Multiline constructs share the line and
-finalization lifecycle in `MdxBlockMarkerBlock`, but use separate ownership policies:
+Complete single-line ESM and expression blocks are emitted immediately.
+JSX blocks use `MdxJsxBlockMarkerBlock` at every line count.
+Multiline constructs share the finalization lifecycle in `MdxBlockMarkerBlock`, but use separate ownership policies:
 
 - `MdxJsxBlockMarkerBlock` scans only through the lines the marker has observed. It allows nested
   Markdown once the opening tag is complete. One persistent JSX session retains its cursor, tag
@@ -93,22 +94,28 @@ Named tags and fragments only close identical identities.
 `MdxJsxMarkdownConstraints` carries JSX ownership and tag or fragment identity through nested Markdown constraints.
 It classifies a closing tag as current, ancestor, or mismatched. Every JSX wrapper survives each
 list or blockquote modifier. The stored indentation stays separate from the number of consumed characters.
+Each JSX wrapper expires after its element ends.
 
 `MdxMarkdownConstraints` delegates modifier recognition to GFM and retains the indentation skipped by JSX.
 List continuation uses the stored content indentation. Blockquotes can start beyond three spaces inside JSX.
 Tabs advance to the next tab stop. Ordinary Markdown keeps the CommonMark continuation rules.
 
-`MdxMarkdownOwnership` records each observed line with its actual constraints. It uses the configured
-block providers and `ParagraphMarkerBlock` to determine paragraph ends. Code-span opacity and flow
-paragraph projection share this information. This replaces separate guesses about headings, lists,
-blockquotes, and fences.
+`MdxMarkdownOwnership` records each observed line with its actual constraints.
+It uses the configured block providers and `ParagraphMarkerBlock` to predict paragraph ends for code-span opacity.
+
+`MdxFlowParagraph` retains a real `ParagraphMarkerBlock` for each JSX body paragraph.
+The marker uses a private `ProductionHolder` with positions bounded by the JSX body.
+When a paragraph continues, it notifies its JSX owners from innermost to outermost before it advances the output position.
+Single-line and multiline JSX use the same paragraph lifecycle.
+Each JSX owner publishes its syntax before its completed paragraphs, so expressions remain inside paragraphs with the same range.
+Recovery retains completed paragraphs when it omits an unstable JSX root.
 
 `MdxMarkerProcessor.updateStateInfo` announces fence-opener opacity before existing JSX markers scan the line.
 This protects JSX closers inside the fence info string. Completed fence productions then provide
 their full opaque ranges.
 
-`MdxBlockNodeFactory` converts JSX and ESM results to Markdown nodes. It receives any leading paragraph
-range from `MdxMarkdownOwnership`. Recognition and node projection remain separate.
+`MdxBlockNodeFactory` converts JSX and ESM results to Markdown nodes.
+Paragraph markers supply paragraph productions. Recognition and node projection remain separate.
 
 ### Inline recognition
 
@@ -141,7 +148,7 @@ Flow parsing keeps the existing block-marker owners and avoids duplicate owners 
 | `MdxExpressionBoundaryScanner` | JavaScript `{...}` boundaries using the platform JS/JSX lexer |
 | `MdxEsmScanner` | Top-level module-statement completeness, recovery, and missing separators |
 | `MdxCodeFenceProvider` | Standard fence ownership plus recovery from an unclosed fence at an active JSX closer |
-| `MdxMarkdownOwnership` | Shared paragraph boundaries and early fence-opener opacity from real Markdown constraints and providers |
+| `MdxMarkdownOwnership` | Provisional paragraph boundaries for code-span opacity and early fence-opener opacity |
 | `MdxMarkdownCodeSpanScanner` | Provisional flow code-span opacity before paragraph inline parsing runs |
 
 `MdxExpressionBoundaryScanner` and `MdxEsmScanner` delegate strings, templates, comments, regular
@@ -240,6 +247,7 @@ Formatter changes must preserve both Markdown nesting and the projected JavaScri
 
 - Markdown AST nodes, not a separate template scan, decide which source ranges are MDX.
 - JSX flow children remain available to the Markdown block parser.
+- Each JSX body paragraph has one marker owner. Continued paragraphs notify their JSX owners and stop before the enclosing closing tag.
 - A complete nested JSX marker is transparent to ancestor JSX markers. ESM, expressions, and fences are opaque.
 - JSX scans are bounded by the marker's observed prefix. Incomplete editor input uses conservative
   recovery and must not publish a movable root over a Markdown sibling.

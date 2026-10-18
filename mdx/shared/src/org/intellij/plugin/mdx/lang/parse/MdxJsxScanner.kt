@@ -70,6 +70,9 @@ internal object MdxJsxScanner {
     val isInJavaScript: Boolean
       get() = activeTag?.isOpeningTag == true || activeExpression?.session?.advanceTo(exposedEnd) == -1
 
+    val endOffset: Int?
+      get() = if (termination == null) null else cursor
+
     fun advanceTo(limit: Int): Element? {
       mdxCancellableText(text)
       require(limit in exposedEnd..scanEnd) {

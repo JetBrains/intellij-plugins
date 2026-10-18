@@ -69,8 +69,7 @@ internal abstract class MdxBlockMarkerBlock(myConstraints: MarkdownConstraints,
     }
     prepareForLine()
     if (isCurrentBlockTerminated()) {
-      scheduleClose(pos.offset)
-      return activeProcessingResult()
+      return MarkerBlock.ProcessingResult.DEFAULT
     }
     val candidateEndOffset = pos.nextLineOrEofOffset
     if (!shouldAppendLine(pos, candidateEndOffset)) {
