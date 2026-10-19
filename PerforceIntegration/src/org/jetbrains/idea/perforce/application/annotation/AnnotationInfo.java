@@ -28,10 +28,16 @@ public final class AnnotationInfo {
   private final String myContent;
   private final long[] myRevisions;
   private final boolean myUseChangelistNumbers;
+  private final boolean myFollowIntegrations;
   private static final Logger LOG = Logger.getInstance(AnnotationInfo.class);
 
   public AnnotationInfo(String output, boolean useChangelistNumbers) throws IOException, VcsException {
+    this(output, useChangelistNumbers, false);
+  }
+
+  public AnnotationInfo(String output, boolean useChangelistNumbers, boolean followIntegrations) throws IOException, VcsException {
     myUseChangelistNumbers = useChangelistNumbers;
+    myFollowIntegrations = followIntegrations;
     //noinspection IOResourceOpenedButNotSafelyClosed
     final LineNumberReader reader = new LineNumberReader(new StringReader(output));
     String line;
@@ -68,6 +74,10 @@ public final class AnnotationInfo {
 
   public boolean isUseChangelistNumbers() {
     return myUseChangelistNumbers;
+  }
+
+  public boolean isFollowIntegrations() {
+    return myFollowIntegrations;
   }
 
   public int getLineCount() {

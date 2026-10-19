@@ -94,6 +94,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public boolean REVERT_FILES_AFTER_SHELF = true;
   public @NlsSafe String CHARSET = PerforcePhysicalConnectionParametersI.getCharsetNone();
   public boolean SHOW_BRANCHES_HISTORY = true;
+  public boolean ANNOTATE_FOLLOW_INTEGRATIONS = false;
   public boolean ENABLED = true;
   public boolean USE_LOGIN = true;
   public boolean INTEGRATE_RUN_RESOLVE = true;

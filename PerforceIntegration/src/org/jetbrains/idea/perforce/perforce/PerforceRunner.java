@@ -1022,6 +1022,24 @@ public final class PerforceRunner implements PerforceRunnerI {
                                                            @Nullable String user,
                                                            int maxCount, boolean showIntegrated, List<String> fileSpecs)
     throws VcsException {
+    String stdout = runSubmittedChanges(connection, client, user, maxCount, showIntegrated, fileSpecs);
+    return parsePerforceChangeLists(stdout, connection, new PerforceChangeCache(myProject));
+  }
+
+  /**
+   * Runs {@code p4 changes -s submitted -i -l} on the file specs.
+   * The result also has the changelists of the files that were integrated into the specified files.
+   */
+  public List<ChangeListData> getSubmittedChangeListDataWithIntegrations(@NotNull P4Connection connection, List<String> fileSpecs)
+    throws VcsException {
+    return OutputMessageParser.processChangesOutput(runSubmittedChanges(connection, null, null, 0, true, fileSpecs));
+  }
+
+  private String runSubmittedChanges(@NotNull P4Connection connection,
+                                     @Nullable String client,
+                                     @Nullable String user,
+                                     int maxCount, boolean showIntegrated, List<String> fileSpecs)
+    throws VcsException {
     final CommandArguments arguments = CommandArguments.createOn(P4Command.changes);
     arguments.append("-s").append("submitted");
     if (showIntegrated) {
@@ -1046,7 +1064,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     final ExecResult execResult = executeP4Command(arguments.getArguments(), connection);
     checkError(execResult, connection);
-    return parsePerforceChangeLists(execResult.getStdout(), connection, new PerforceChangeCache(myProject));
+    return execResult.getStdout();
   }
 
   private static String dateSpec(final Date after, final Date before, final Long afterChange, final Long beforeChange, boolean strictlyAfter) {
@@ -1591,7 +1609,13 @@ public final class PerforceRunner implements PerforceRunnerI {
     commands.add("annotate");
     commands.add("-q");
     boolean useChangelistNumbers = false;
-    if (mySettings.SHOW_BRANCHES_HISTORY && isAnnotateBranchSupported(connection)) {
+    boolean followIntegrations = false;
+    if (mySettings.ANNOTATE_FOLLOW_INTEGRATIONS && isAnnotateFollowIntegrationsSupported(connection)) {
+      commands.add("-I");
+      useChangelistNumbers = true;
+      followIntegrations = true;
+    }
+    else if (mySettings.SHOW_BRANCHES_HISTORY && isAnnotateBranchSupported(connection)) {
       commands.add("-i");
       useChangelistNumbers = true;
     }
@@ -1604,7 +1628,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     final ExecResult execResult = executeP4Command(ArrayUtilRt.toStringArray(commands), connection);
     checkError(execResult, connection);
     try {
-      return new AnnotationInfo(execResult.getStdout(), useChangelistNumbers);
+      return new AnnotationInfo(execResult.getStdout(), useChangelistNumbers, followIntegrations);
     }
     catch (IOException e) {
       throw new VcsException(e);
@@ -1615,6 +1639,14 @@ public final class PerforceRunner implements PerforceRunnerI {
     ServerVersion version = myPerforceManager.getServerVersion(connection);
     if (version == null) return false;
     return version.getVersionYear() > 2005 || version.getVersionYear() == 2005 && version.getVersionNum() >= 2;
+  }
+
+  private boolean isAnnotateFollowIntegrationsSupported(final @Nullable P4Connection connection) throws VcsException {
+    ServerVersion version = myPerforceManager.getServerVersion(connection);
+    if (version != null && version.supportsAnnotateFollowIntegrations()) return true;
+    LOG.info("Server version " + (version == null ? "unknown" : version.getVersionYear() + "." + version.getVersionNum()) +
+             " does not support 'p4 annotate -I'");
+    return false;
   }
 
   private boolean isAnnotateIgnoringWhitespaceSupported(final @Nullable P4Connection connection) throws VcsException {

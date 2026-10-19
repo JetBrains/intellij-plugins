@@ -186,6 +186,11 @@ internal class PerforceConfigPanel(private val myProject: Project, private val m
         .bindText({ mySettings.PATH_TO_P4VC }, { mySettings.PATH_TO_P4VC = it.trim() })
     }
     row { checkBox(PerforceBundle.message("checkbox.configure.perforce.show.branching.history")).bindSelected(mySettings::SHOW_BRANCHES_HISTORY) }
+    row {
+      checkBox(PerforceBundle.message("checkbox.configure.perforce.annotate.follow.integrations"))
+        .bindSelected(mySettings::ANNOTATE_FOLLOW_INTEGRATIONS)
+        .comment(PerforceBundle.message("checkbox.configure.perforce.annotate.follow.integrations.comment"))
+    }
     row { checkBox(PerforceBundle.message("checkbox.configure.perforce.show.integrated.changelists")).bindSelected(mySettings::SHOW_INTEGRATED_IN_COMMITTED_CHANGES) }
     row {
       label(PerforceBundle.message("server.timeout")).gap(RightGap.SMALL)

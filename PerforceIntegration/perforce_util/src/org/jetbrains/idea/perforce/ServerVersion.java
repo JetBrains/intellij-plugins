@@ -42,6 +42,10 @@ public class ServerVersion {
   
   public boolean supportsShelve() { return isAtLeast(2009, 1); }
 
+  public boolean supportsAnnotateFollowIntegrations() {
+    return isAtLeast(2010, 2);
+  }
+
   public boolean supportsIgnoresCommand() {
     return isAtLeast(2015, 2);
   }

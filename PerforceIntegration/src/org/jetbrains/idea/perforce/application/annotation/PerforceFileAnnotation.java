@@ -18,6 +18,7 @@ package org.jetbrains.idea.perforce.application.annotation;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vcs.VcsKey;
 import com.intellij.openapi.vcs.annotate.AnnotationTooltipBuilder;
@@ -30,6 +31,7 @@ import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.actions.ShowAllSubmittedFilesAction;
 import org.jetbrains.idea.perforce.application.PerforceFileRevision;
@@ -43,10 +45,13 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class PerforceFileAnnotation extends FileAnnotation {
   private final AnnotationInfo myAnnotationInfo;
+
   private final P4Revision[] myRevisions;
+  private final Map<Long, ChangeListData> myIntegratedChanges;
   private final VirtualFile myFile;
   private final long myRevision;
 
@@ -57,10 +62,12 @@ public class PerforceFileAnnotation extends FileAnnotation {
   public PerforceFileAnnotation(final AnnotationInfo annotationInfo,
                                 final VirtualFile file,
                                 P4Revision[] revisions,
+                                @NotNull Map<Long, ChangeListData> integratedChanges,
                                 final Project project, final @NotNull P4Connection connection, long revision) {
     super(project);
     myAnnotationInfo = annotationInfo;
     myRevisions = revisions;
+    myIntegratedChanges = integratedChanges;
     myProject = project;
     myFile = file;
     myRevision = revision;
@@ -76,9 +83,9 @@ public class PerforceFileAnnotation extends FileAnnotation {
     new PerforceAnnotationAspect(LineAnnotationAspect.REVISION, VcsBundle.message("line.annotation.aspect.revision"), false) {
       @Override
       public String getValue(int lineNumber) {
-        P4Revision p4Revision = findRevisionForLine(lineNumber);
-        if (p4Revision != null) {
-          return String.valueOf(p4Revision.getChangeNumber());
+        LineChange change = findChangeForLine(lineNumber);
+        if (change != null) {
+          return String.valueOf(change.number());
         }
         else {
           return "";
@@ -90,9 +97,9 @@ public class PerforceFileAnnotation extends FileAnnotation {
     new PerforceAnnotationAspect(LineAnnotationAspect.AUTHOR, VcsBundle.message("line.annotation.aspect.author"), true) {
       @Override
       public String getValue(int lineNumber) {
-        P4Revision p4Revision = findRevisionForLine(lineNumber);
-        if (p4Revision != null) {
-          return p4Revision.getUser();
+        LineChange change = findChangeForLine(lineNumber);
+        if (change != null) {
+          return change.user();
         }
         else {
           return "";
@@ -104,9 +111,9 @@ public class PerforceFileAnnotation extends FileAnnotation {
     new PerforceAnnotationAspect(LineAnnotationAspect.DATE, VcsBundle.message("line.annotation.aspect.date"), true) {
       @Override
       public String getValue(int lineNumber) {
-        P4Revision p4Revision = findRevisionForLine(lineNumber);
-        if (p4Revision != null) {
-          return FileAnnotation.formatDate(p4Revision.getDate());
+        LineChange change = findChangeForLine(lineNumber);
+        if (change != null) {
+          return formatDate(change.date());
         }
         else {
           return "";
@@ -130,12 +137,12 @@ public class PerforceFileAnnotation extends FileAnnotation {
   }
 
   private @Nullable @NlsContexts.Tooltip String getToolTip(int lineNumber, boolean asHtml) {
-    P4Revision revision = findRevisionForLine(lineNumber);
-    if (revision == null) return null;
+    LineChange change = findChangeForLine(lineNumber);
+    if (change == null) return null;
 
     return AnnotationTooltipBuilder.buildSimpleTooltip(getProject(), asHtml, PerforceBundle.message("file.revision"),
-                                                       String.valueOf(revision.getChangeNumber()),
-                                                       revision.getSubmitMessage());
+                                                       String.valueOf(change.number()),
+                                                       change.description());
   }
 
   @Override
@@ -158,6 +165,21 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return null;
   }
 
+  private @Nullable LineChange findChangeForLine(int lineNumber) {
+    P4Revision p4Revision = findRevisionForLine(lineNumber);
+    if (p4Revision != null) {
+      return new LineChange(p4Revision.getChangeNumber(), p4Revision.getUser(), p4Revision.getDate(), p4Revision.getSubmitMessage());
+    }
+    if (!myAnnotationInfo.isFollowIntegrations()) return null;
+
+    ChangeListData data = myIntegratedChanges.get(myAnnotationInfo.getRevision(lineNumber));
+    if (data == null) return null;
+    return new LineChange(data.NUMBER, data.USER, ChangeListData.parseChangelistDate(data.DATE), data.DESCRIPTION);
+  }
+
+  private record LineChange(long number, @NlsSafe String user, Date date, @NlsSafe String description) {
+  }
+
   @Override
   public VcsRevisionNumber getLineRevisionNumber(final int lineNumber) {
     P4Revision p4Revision = findRevisionForLine(lineNumber);
@@ -169,8 +191,8 @@ public class PerforceFileAnnotation extends FileAnnotation {
 
   @Override
   public @Nullable Date getLineDate(int lineNumber) {
-    P4Revision p4Revision = findRevisionForLine(lineNumber);
-    return p4Revision == null ? null : p4Revision.getDate();
+    LineChange change = findChangeForLine(lineNumber);
+    return change == null ? null : change.date();
   }
 
   @Override
@@ -195,14 +217,13 @@ public class PerforceFileAnnotation extends FileAnnotation {
 
     @Override
     protected void showAffectedPaths(int lineNum) {
-      P4Revision p4Revision = findRevisionForLine(lineNum);
+      LineChange change = findChangeForLine(lineNum);
       P4Connection connection = PerforceConnectionManager.getInstance(myProject).getConnectionForFile(myFile);
-      if (p4Revision != null && connection != null) {
-        final long changeNumber = p4Revision.getChangeNumber();
-        ShowAllSubmittedFilesAction.showAllSubmittedFiles(myProject, changeNumber,
-                                                          p4Revision.getSubmitMessage(),
-                                                          p4Revision.getDate(),
-                                                          p4Revision.getUser(),
+      if (change != null && connection != null) {
+        ShowAllSubmittedFilesAction.showAllSubmittedFiles(myProject, change.number(),
+                                                          change.description(),
+                                                          change.date(),
+                                                          change.user(),
                                                           connection);
       }
     }

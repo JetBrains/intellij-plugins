@@ -1,12 +1,32 @@
 package org.jetbrains.idea.perforce;
 
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.DateTimeException;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 
 public class ChangeListData {
+  private static final Logger LOG = Logger.getInstance(ChangeListData.class);
+
   public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.US).withZone(ZoneId.systemDefault());
   public static final DateTimeFormatter DATE_ONLY_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.US).withZone(ZoneId.systemDefault());
+
+  public static @NotNull Date parseChangelistDate(@NotNull String date) {
+    try {
+      // Perforce before 2003.1 did not include time in 'p4 changes' output
+      DateTimeFormatter format = date.indexOf(':') >= 0 ? DATE_FORMAT : DATE_ONLY_FORMAT;
+      return Date.from(Instant.from(format.parse(date)));
+    }
+    catch (DateTimeException e) {
+      LOG.warn(e);
+      return new Date();
+    }
+  }
 
   public long NUMBER;
   public String DESCRIPTION;
