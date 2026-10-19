@@ -8,12 +8,12 @@ import org.jetbrains.qodana.util.QodanaMessageReporter
 internal object StructuralFingerprintDebugLog {
   private val LOG = logger<StructuralFingerprintDebugLog>()
 
-  fun log(message: String, messageReporter: QodanaMessageReporter? = null) {
+  fun log(message: String) {
     val fullMessage = "QODANA STRUCTURAL FINGERPRINT DEBUG: $message"
     LOG.warn(fullMessage)
     println(fullMessage)
     System.err.println(fullMessage)
-    (messageReporter ?: QodanaMessageReporter.DEFAULT).reportError(fullMessage)
+    QodanaMessageReporter.DEFAULT.reportError(fullMessage)
   }
 }
 

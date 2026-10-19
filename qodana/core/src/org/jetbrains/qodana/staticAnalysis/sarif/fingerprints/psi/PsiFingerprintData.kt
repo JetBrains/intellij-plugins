@@ -9,7 +9,6 @@ import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.mergeAdditionalFin
 
 internal enum class FingerprintSource(val sarifValue: String) {
   PROBLEM_DESCRIPTOR_PSI("problemDescriptorPsi"),
-  DOM_PROBLEM_DESCRIPTOR("domProblemDescriptor"),
 }
 
 internal data class PsiFingerprintData(

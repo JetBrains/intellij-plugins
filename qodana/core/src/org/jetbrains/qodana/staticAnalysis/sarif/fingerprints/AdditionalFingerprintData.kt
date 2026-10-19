@@ -3,18 +3,14 @@ package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
 
-internal sealed interface AdditionalFingerprintData {
-  fun stableKey(): String
-}
-
 internal data class InspectionFingerprintData(
   val entries: List<Entry>,
-) : AdditionalFingerprintData {
+) {
   init {
     require(entries.isNotEmpty()) { "Inspection fingerprint data must not be empty" }
   }
 
-  override fun stableKey(): String {
+  fun stableKey(): String {
     return buildString {
       append("inspection")
       entries.forEach { entry ->
@@ -34,8 +30,8 @@ internal data class InspectionFingerprintData(
 
 internal data class XmlSemanticIdentity(
   val identity: String,
-) : AdditionalFingerprintData {
-  override fun stableKey(): String = "xml|$identity"
+) {
+  fun stableKey(): String = "xml|$identity"
 }
 
 internal data class AdditionalFingerprintDataHolder(
@@ -79,11 +75,7 @@ internal data class AdditionalFingerprintDataHolder(
     }
 
     fun fromSerialized(value: Any?): AdditionalFingerprintDataHolder {
-      return when (value) {
-        null -> EMPTY
-        is AdditionalFingerprintDataHolder -> value
-        else -> SerializedFingerprintObject.from(value)?.toAdditionalFingerprintDataHolder() ?: EMPTY
-      }
+      return value as? AdditionalFingerprintDataHolder ?: EMPTY
     }
   }
 }
@@ -100,58 +92,4 @@ internal fun PropertyBag.mergeAdditionalFingerprintData(additionalFingerprintDat
 
 internal fun Result.additionalFingerprintData(): AdditionalFingerprintDataHolder {
   return properties?.additionalFingerprintData() ?: AdditionalFingerprintDataHolder.EMPTY
-}
-
-private class SerializedFingerprintObject private constructor(private val values: Map<*, *>) {
-  fun nestedObject(name: String): SerializedFingerprintObject? = from(values[name])
-
-  fun string(name: String): String? = values[name] as? String
-
-  fun entries(name: String): SerializedFingerprintEntries? = SerializedFingerprintEntries.from(values[name])
-
-  fun toAdditionalFingerprintDataHolder(): AdditionalFingerprintDataHolder {
-    return AdditionalFingerprintDataHolder(
-      inspectionFingerprintData = nestedObject("inspectionFingerprintData")?.toInspectionFingerprintData(),
-      xmlSemanticIdentity = nestedObject("xmlSemanticIdentity")?.toXmlSemanticIdentity(),
-    )
-  }
-
-  fun toInspectionFingerprintData(): InspectionFingerprintData? {
-    val inspectionEntries = entries("entries")
-      ?.objects()
-      ?.mapNotNull { it.toInspectionFingerprintEntry() }
-      ?.sortedBy(InspectionFingerprintData.Entry::name)
-      .orEmpty()
-
-    return inspectionEntries
-      .takeIf { it.isNotEmpty() }
-      ?.let(::InspectionFingerprintData)
-  }
-
-  fun toInspectionFingerprintEntry(): InspectionFingerprintData.Entry? {
-    val name = string("name") ?: return null
-    val value = string("value") ?: return null
-    return InspectionFingerprintData.Entry(name, value)
-  }
-
-  fun toXmlSemanticIdentity(): XmlSemanticIdentity? {
-    val identity = string("identity") ?: return null
-    return XmlSemanticIdentity(identity)
-  }
-
-  companion object {
-    fun from(value: Any?): SerializedFingerprintObject? {
-      return (value as? Map<*, *>)?.let(::SerializedFingerprintObject)
-    }
-  }
-}
-
-private class SerializedFingerprintEntries private constructor(private val values: List<*>) {
-  fun objects(): List<SerializedFingerprintObject> = values.mapNotNull(SerializedFingerprintObject::from)
-
-  companion object {
-    fun from(value: Any?): SerializedFingerprintEntries? {
-      return (value as? List<*>)?.let(::SerializedFingerprintEntries)
-    }
-  }
 }
