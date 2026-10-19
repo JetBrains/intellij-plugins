@@ -746,6 +746,21 @@ class MdxFormatterTest : MdxTestBase() {
   @Test
   fun testMixedInlineAndBlockChildrenWrapsClosingTag() = doTest()
 
+  /** JSX flow elements keep their line breaks when "Keep line breaks in text" is off. WEB-37966. */
+  @Test
+  fun testJsxFlowElementsKeepLineBreaksWithoutKeepLineBreaksInText() = doTestWithoutKeepLineBreaksInText()
+
+  /** JSX in an ESM block keeps its line breaks when "Keep line breaks in text" is off, as in a real .tsx file. WEB-37966. */
+  @Test
+  fun testJsxInEsmBlockKeepsLineBreaksWithoutKeepLineBreaksInText() = doTestWithoutKeepLineBreaksInText()
+
+  private fun doTestWithoutKeepLineBreaksInText() {
+    CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+      settings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_KEEP_LINE_BREAKS_IN_TEXT = false
+      doTest(testName, testName)
+    }
+  }
+
   /**
    * JSX inside an ESM (import/export) statement's function body is fully formatter-aware, matching a real
    * .tsx file: MDX_ESM_BLOCK is no longer an opaque leaf, so a mis-indented `return` line inside
