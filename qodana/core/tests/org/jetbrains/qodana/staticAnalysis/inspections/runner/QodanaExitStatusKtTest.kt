@@ -331,7 +331,7 @@ class QodanaExitStatusKtTest {
   }
 
   @Test
-  fun `should not count reverse scoped old stage results without baseline state as new`() {
+  fun `should count all reverse scoped old stage results when unchanged results are not kept`() {
     val cfg = emptyConfig.copy(
       script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(STAGE_ARG to Stage.OLD.name)),
       failureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = 0))
@@ -343,11 +343,11 @@ class QodanaExitStatusKtTest {
       val actual = withRun {
         it.setup(cfg, resultOf(HighlightSeverity.ERROR))
 
-        assertThat(it.resultSummary).isEqualTo(mapOf(ResultSummaryContributor.TOTAL_KEY to 0))
+        assertThat(it.resultSummary?.get(ResultSummaryContributor.TOTAL_KEY)).isEqualTo(1)
         setInvocationExitStatus(it, cfg)
       }
 
-      assertThat(actual).isSuccessful()
+      assertThat(actual.code).isEqualTo(255)
     }
     finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)

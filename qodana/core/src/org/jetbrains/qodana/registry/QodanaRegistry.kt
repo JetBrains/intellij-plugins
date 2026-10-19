@@ -15,6 +15,8 @@ object QodanaRegistry {
   const val REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY: String = "qd.reduced.scope.include.removed.files.enabled"
   @VisibleForTesting
   const val INSPECTION_VETO_ENABLE_KEY: String = "qd.inspection.veto.enabled"
+  @VisibleForTesting
+  const val REVERSE_SCOPED_INCLUDE_UNCHANGED_ENABLE_KEY: String = "qd.reverse.scoped.include.unchanged.enabled"
 
   val isQodanaLicenseAgreementCallbackEnabled: Boolean
     get() = Registry.`is`("qd.license.agreement.callback.enabled", true)
@@ -36,6 +38,9 @@ object QodanaRegistry {
 
   val isInspectionVetoEnabled: Boolean
     get() = Registry.`is`(INSPECTION_VETO_ENABLE_KEY, false)
+
+  val isReverseScopedIncludeUnchangedEnabled: Boolean
+    get() = Registry.`is`(REVERSE_SCOPED_INCLUDE_UNCHANGED_ENABLE_KEY, false)
 
   val openSarifInEditor: Boolean
     get() = Registry.`is`("qd.open.sarif.in.editor", false)

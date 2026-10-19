@@ -30,6 +30,7 @@ import org.jetbrains.qodana.cloudclient.asSuccess
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.respond200PublishReport
 import org.jetbrains.qodana.registry.QodanaRegistry.REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY
+import org.jetbrains.qodana.registry.QodanaRegistry.REVERSE_SCOPED_INCLUDE_UNCHANGED_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
@@ -71,6 +72,8 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor
+import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
 
 /**
  * See [org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase] for basic usage.
@@ -667,6 +670,47 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       runAnalysis()
       assertEmptySarifResults()
       assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+    } finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  @Test
+  fun `testReverseScoped-script-old-stage-unchanged-results`(): Unit = runBlocking {
+    Registry.get(REVERSE_SCOPED_INCLUDE_UNCHANGED_ENABLE_KEY).setValue(true, testRootDisposable)
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.OLD.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/B.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runAnalysis()
+      assertSarifResults()
+      assertEquals(mapOf(ResultSummaryContributor.TOTAL_KEY to 0), manager.sarifRun.resultSummary)
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }

@@ -39,6 +39,7 @@ import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
+import org.jetbrains.qodana.registry.QodanaRegistry
 
 internal const val STAGE_ARG = "stage"
 internal const val RESULT_PRINTING_SKIPPED = "qodana.result.skipped"
@@ -73,6 +74,14 @@ private fun logReverseScopedDebug(label: String, run: Run, config: QodanaConfig)
     }
   }
 }
+
+/**
+ * Options of the OLD-stage comparison with the analysis of the parent revision.
+ * With [QodanaRegistry.isReverseScopedIncludeUnchangedEnabled], the matched results stay in the report as unchanged.
+ * Otherwise only the new results stay, as in the other scripts.
+ */
+private fun oldStageComparisonOptions(): Options =
+  if (QodanaRegistry.isReverseScopedIncludeUnchangedEnabled) Options(false, true, true, true) else Options(false, false, false, false)
 
 enum class Stage {
   NEW,
@@ -168,7 +177,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
     runContext.runAnalysis(context = inspectionContext)
     inspectionContext.populateRunWithInspectionResults(runOld)
     logReverseScopedDebug("OLD freshly analyzed runOld", runOld, runContext.config)
-    BaselineCalculation.compare(report, reportOld, Options(false, true, true, true))
+    BaselineCalculation.compare(report, reportOld, oldStageComparisonOptions())
     logReverseScopedDebug("OLD after compare runNew", runNew, runContext.config)
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)

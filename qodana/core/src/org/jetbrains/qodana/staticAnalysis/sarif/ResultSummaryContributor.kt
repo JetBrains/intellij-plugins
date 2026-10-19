@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 import com.intellij.openapi.project.Project
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedDebugLog
@@ -31,8 +32,9 @@ internal class ResultSummaryContributor : SarifReportContributor {
     val scopedBaselinePath = System.getProperty(SCOPED_BASELINE_PROPERTY)
     val enabled = when {
       baseline != null -> true
+      !QodanaRegistry.isReverseScopedIncludeUnchangedEnabled -> false
       script.name != REVERSE_SCOPED_SCRIPT_NAME -> false
-      stage != Stage.OLD.name -> false
+      stage != Stage.OLD.name && stage != Stage.FIXES.name -> false
       else -> scopedBaselinePath != null
     }
     ReverseScopedDebugLog.log {

@@ -87,7 +87,7 @@ abstract class ComparingScript(
       BaselineCalculation.compare(
         report,
         beforeReport,
-        Options(false, true, true, true)
+        Options(false, false,false, false)
       )
       // compare current and baseline to generate the final report
       applyBaselineCalculation(report, config, runContext.scope, messageReporter)
