@@ -3,6 +3,7 @@ package com.intellij.dts.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.dts.dtsFixture
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +29,7 @@ abstract class DtsInspectionTest(
 
   protected open suspend fun doInspectionTest() {
     myFixture.configureByFile(dts.testFile)
-    myFixture.checkHighlighting()
+    writeIntentReadAction { myFixture.checkHighlighting() }
   }
 
   protected suspend fun doQuickfixTest(name: String) {
