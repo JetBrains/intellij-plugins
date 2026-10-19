@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.util.progress.reportProgressScope
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -66,6 +67,15 @@ interface InspectionToolScopeExtender {
    * Used to prevent redundant computation.
    */
   suspend fun extendScope(virtualFile: VirtualFile, project: Project, acceptedFiles: Map<VirtualFile, Set<String>>): List<VirtualFile>
+
+  /**
+   * Tells whether the inspections of this extender must not run at all in the current incremental run.
+   * Qodana asks only when the `qd.inspection.veto.enabled` registry key is on and the change set is not empty.
+   *
+   * @param changedPaths The paths in the change set of the run.
+   * @param project The current project.
+   */
+  fun shouldVeto(changedPaths: Set<Path>, project: Project): Boolean = false
 }
 
 suspend fun collectExtendedFiles(

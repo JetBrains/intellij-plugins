@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.codeInspection.ex.EnabledInspectionsProvider
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.VirtualFile
@@ -10,12 +11,13 @@ import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
-import org.jetbrains.qodana.staticAnalysis.scopes.QodanaInspectionVetoer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+
+private val LOG = logger<QodanaGlobalInspectionIncrementalContext>()
 
 /**
  * Instantiated in the case of scoped-like scripts for incremental analysis.
@@ -43,12 +45,22 @@ class QodanaGlobalInspectionIncrementalContext(
 
   private fun isInExtendedScope(inspectionId: String, file: VirtualFile): Boolean {
     if (!QodanaRegistry.isScopeExtendingEnabled) return false
-    val extender = extenderCache.computeIfAbsent(inspectionId) { QodanaScopeExtenderProvider.getExtender(it) } ?: return false
+    val extender = getExtender(inspectionId) ?: return false
     val fileExtenders = scopeExtended[file] ?: return false
     return extender.name in fileExtenders
   }
 
   private fun isVetoed(inspectionId: String): Boolean {
-    return vetoCache.computeIfAbsent(inspectionId) { QodanaInspectionVetoer.isVetoed(it, changedPaths, project) }
+    if (!QodanaRegistry.isInspectionVetoEnabled || changedPaths.isEmpty()) return false
+    return vetoCache.computeIfAbsent(inspectionId) {
+      val extender = getExtender(inspectionId) ?: return@computeIfAbsent false
+      extender.shouldVeto(changedPaths, project).also { vetoed ->
+        if (vetoed) LOG.info("Inspection $inspectionId does not run in this incremental run: its scope extender ${extender.name} vetoed it")
+      }
+    }
+  }
+
+  private fun getExtender(inspectionId: String): InspectionToolScopeExtender? {
+    return extenderCache.computeIfAbsent(inspectionId) { QodanaScopeExtenderProvider.getExtender(it) }
   }
 }
