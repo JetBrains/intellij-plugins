@@ -63,6 +63,11 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-ultimate",
         "@community//idea/customization/plugin",
         "//plugins/ultimate-plugin",
+        "//contrib/flex",
+        "@community//plugins/maven/plugin",
+        "//plugins/JavaScriptDebugger:javascript-debugger",
+        "@community//platform/navbar/plugin",
+        "//plugins/wechat-miniprogram",
     ],
 )
 
@@ -98,6 +103,11 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-ultimate:javascript-ultimate_test_lib",
         "@community//idea/customization/plugin:plugin_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "//contrib/flex:flex_test_lib",
+        "@community//plugins/maven/plugin:plugin_test_lib",
+        "//plugins/JavaScriptDebugger:javascript-debugger_test_lib",
+        "@community//platform/navbar/plugin:plugin_test_lib",
+        "//plugins/wechat-miniprogram:wechat-miniprogram_test_lib",
     ],
     deps = [
         # do not sort,

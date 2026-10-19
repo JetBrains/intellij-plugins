@@ -25,6 +25,9 @@ jvm_library(
         "//plugins/ultimate-plugin",
         "@community//platform/structure-view-impl/frontend",
         "@community//platform/structure-view-impl/backend",
+        "@community//java/plugin",
+        "@community//java/java-backend:backend",
+        "@community//aether-dependency-resolver/plugin",
     ],
 )
 
@@ -67,6 +70,9 @@ jvm_library(
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
         "@community//platform/structure-view-impl/frontend:frontend_test_lib",
         "@community//platform/structure-view-impl/backend:backend_test_lib",
+        "@community//java/plugin:plugin_test_lib",
+        "@community//java/java-backend:backend_test_lib",
+        "@community//aether-dependency-resolver/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
