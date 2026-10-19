@@ -74,7 +74,8 @@ public interface PbSymbolOwner extends PbElement {
       return Collections.emptyList();
     }
     QualifiedName absoluteName = childScope.append(relativeName);
-    return getPbFile().getLocalQualifiedSymbolMap().get(absoluteName);
+    Collection<PbSymbol> pbSymbols = getPbFile().getLocalQualifiedSymbolMap().get(absoluteName);
+    return pbSymbols == null ? List.of() : pbSymbols;
   }
 
   /**
