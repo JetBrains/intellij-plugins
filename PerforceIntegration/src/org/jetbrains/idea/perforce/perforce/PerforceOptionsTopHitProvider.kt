@@ -16,6 +16,7 @@ private fun cdEnableOffline(project: Project): CheckboxDescriptor =         Chec
 private fun cdDumpCommandsToLog(project: Project): CheckboxDescriptor =     CheckboxDescriptor(PerforceBundle.message("checkbox.toggle.perforce.log.commands"), configuration(project)::showCmds, groupName = p4OptionGroupName)
 private fun cdUseLoginAuth(project: Project): CheckboxDescriptor =          CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.use.login.authentication"), configuration(project)::USE_LOGIN, groupName = p4OptionGroupName)
 private fun cdShowBranchingHistory(project: Project): CheckboxDescriptor =  CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.branching.history"), configuration(project)::SHOW_BRANCHES_HISTORY, groupName = p4OptionGroupName)
+private fun cdAnnotateFollowIntegrations(project: Project): CheckboxDescriptor = CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.annotate.follow.integrations"), configuration(project)::ANNOTATE_FOLLOW_INTEGRATIONS, groupName = p4OptionGroupName)
 private fun cdShowIntegrated(project: Project): CheckboxDescriptor =        CheckboxDescriptor(PerforceBundle.message("checkbox.configure.perforce.show.integrated.changelists"), configuration(project)::SHOW_INTEGRATED_IN_COMMITTED_CHANGES, groupName = p4OptionGroupName)
 private fun cdUseP4Jobs(project: Project): CheckboxDescriptor =             CheckboxDescriptor(PerforceBundle.message("perforce.use.perforce.jobs"), configuration(project)::USE_PERFORCE_JOBS, groupName = p4OptionGroupName)
 // @formatter:on
@@ -49,6 +50,7 @@ internal class PerforceOptionsTopHitProvider : VcsOptionsTopHitProviderBase() {
         cdDumpCommandsToLog(project),
         cdUseLoginAuth(project),
         cdShowBranchingHistory(project),
+        cdAnnotateFollowIntegrations(project),
         cdShowIntegrated(project),
         cdUseP4Jobs(project)
       ).map(CheckboxDescriptor::asOptionDescriptor)

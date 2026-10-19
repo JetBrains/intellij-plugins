@@ -15,6 +15,7 @@
  */
 package org.jetbrains.idea.perforce.application;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsException;
@@ -27,8 +28,11 @@ import com.intellij.openapi.vcs.vfs.VcsVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.vcs.AnnotationProviderEx;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.annotation.AnnotationInfo;
 import org.jetbrains.idea.perforce.application.annotation.PerforceFileAnnotation;
@@ -38,7 +42,13 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class PerforceAnnotationProvider implements AnnotationProviderEx {
+  private static final Logger LOG = Logger.getInstance(PerforceAnnotationProvider.class);
+
   private final Project myProject;
   private final PerforceRunner myRunner;
 
@@ -70,26 +80,70 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
     long revision = p4Revision == null ? -1 : p4Revision.getRevisionNumber();
 
     final AnnotationInfo annotationInfo = myRunner.annotate(connection, pathAtRevision, revision);
-    return new AnnotationPrecursor(annotationInfo, fileLog, revision, p4Revision, connection);
+    Map<Long, ChangeListData> integratedChanges = loadIntegratedChanges(connection, annotationInfo, fileLog, pathAtRevision, revision);
+    return new AnnotationPrecursor(annotationInfo, fileLog, integratedChanges, revision, p4Revision, connection);
+  }
+
+  /**
+   * With {@code p4 annotate -I}, a line can belong to a changelist of another depot file.
+   * The file log does not have such changelists, so we get them from {@code p4 changes -i}.
+   * If that command fails, the result is empty and these lines show no changelist.
+   */
+  private @NotNull Map<Long, ChangeListData> loadIntegratedChanges(@NotNull P4Connection connection,
+                                                                   @NotNull AnnotationInfo annotationInfo,
+                                                                   P4Revision @NotNull [] fileLog,
+                                                                   @NotNull String pathAtRevision,
+                                                                   long revision) {
+    if (!annotationInfo.isFollowIntegrations()) return Map.of();
+
+    LongSet missing = new LongOpenHashSet();
+    for (int line = 0; line < annotationInfo.getLineCount(); line++) {
+      missing.add(annotationInfo.getRevision(line));
+    }
+    for (P4Revision p4Revision : fileLog) {
+      missing.remove(p4Revision.getChangeNumber());
+    }
+    if (missing.isEmpty()) return Map.of();
+
+    String fileSpec = revision == -1 ? pathAtRevision : pathAtRevision + "#" + revision;
+    List<ChangeListData> changes;
+    try {
+      changes = myRunner.getSubmittedChangeListDataWithIntegrations(connection, List.of(fileSpec));
+    }
+    catch (VcsException e) {
+      LOG.warn("Cannot load the integrated changelists of " + fileSpec, e);
+      return Map.of();
+    }
+
+    Map<Long, ChangeListData> result = new HashMap<>();
+    for (ChangeListData data : changes) {
+      if (missing.contains(data.NUMBER)) {
+        result.put(data.NUMBER, data);
+      }
+    }
+    return result;
   }
 
   private class AnnotationPrecursor {
     final AnnotationInfo info;
     final P4Revision[] fileLog;
+    final Map<Long, ChangeListData> integratedChanges;
     final long changeNumber;
     final @Nullable P4Revision p4Revision;
     final P4Connection connection;
 
-    AnnotationPrecursor(AnnotationInfo info, P4Revision[] fileLog, long changeNumber, @Nullable P4Revision p4Revision, P4Connection connection) {
+    AnnotationPrecursor(AnnotationInfo info, P4Revision[] fileLog, Map<Long, ChangeListData> integratedChanges, long changeNumber,
+                        @Nullable P4Revision p4Revision, P4Connection connection) {
       this.info = info;
       this.fileLog = fileLog;
+      this.integratedChanges = integratedChanges;
       this.changeNumber = changeNumber;
       this.p4Revision = p4Revision;
       this.connection = connection;
     }
-    
+
     FileAnnotation createAnnotation(@NotNull VirtualFile file) {
-      return new PerforceFileAnnotation(info, file, fileLog, myProject, connection, changeNumber);
+      return new PerforceFileAnnotation(info, file, fileLog, integratedChanges, myProject, connection, changeNumber);
     }
   }
 

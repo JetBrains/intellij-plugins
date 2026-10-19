@@ -16,7 +16,6 @@
 
 package org.jetbrains.idea.perforce.perforce;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vcs.AbstractVcs;
@@ -39,16 +38,12 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 public class PerforceChangeList implements CommittedChangeList {
-  private static final Logger LOG = Logger.getInstance(PerforceChangeList.class);
-
   private Date myDate;
   private long myNumber;
   private String myDescription;
@@ -62,19 +57,7 @@ public class PerforceChangeList implements CommittedChangeList {
   public PerforceChangeList(final @NotNull ChangeListData data, final Project project, final @NotNull P4Connection connection, PerforceChangeCache changeCache) {
     myChangeCache = changeCache;
     myUser = data.USER;
-    try {
-      // Perforce before 2003.1 did not include date in 'p4 changes' output
-      if (data.DATE.indexOf(':') >= 0) {
-        myDate = Date.from(Instant.from(ChangeListData.DATE_FORMAT.parse(data.DATE)));
-      }
-      else {
-        myDate = Date.from(Instant.from(ChangeListData.DATE_ONLY_FORMAT.parse(data.DATE)));
-      }
-    }
-    catch (DateTimeParseException e) {
-      LOG.error(e);
-      myDate = new Date();
-    }
+    myDate = ChangeListData.parseChangelistDate(data.DATE);
     myNumber = data.NUMBER;
     myDescription = data.DESCRIPTION;
     myClient = data.CLIENT;
