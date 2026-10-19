@@ -131,6 +131,11 @@
     <orderEntry type="module" module-name="intellij.javascript.ultimate" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.idea.customization.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.flex" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.maven.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.navbar.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.wechat.miniprogram" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
 </module>
