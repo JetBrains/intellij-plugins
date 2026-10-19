@@ -2,6 +2,7 @@ package com.intellij.deno.roots
 
 import com.intellij.deno.entities.DenoEntity
 import com.intellij.deno.excludeCondition
+import com.intellij.lang.javascript.library.JSLibraryToResolveScopeContributor
 import com.intellij.openapi.roots.SyntheticLibrary
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.virtualFile
@@ -12,14 +13,14 @@ import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileSetExclusionCondi
 import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileSetRegistrar
 import com.intellij.workspaceModel.core.fileIndex.impl.ModuleOrLibrarySourceRootData
 
-class DenoWorkspaceFileIndexContributor : WorkspaceFileIndexContributor<DenoEntity> {
+class DenoWorkspaceFileIndexContributor : WorkspaceFileIndexContributor<DenoEntity>, JSLibraryToResolveScopeContributor {
   override val entityClass: Class<DenoEntity>
     get() = DenoEntity::class.java
 
   override fun registerFileSets(entity: DenoEntity, registrar: WorkspaceFileSetRegistrar, storage: EntityStorage) {
     if (!useWorkspaceModel()) return
-    if (entity.denoTypes == null && entity.depsFile == null) return
-    val allRootUrls = listOfNotNull(entity.denoTypes, entity.depsFile)
+    val allRootUrls = listOfNotNull(entity.denoTypes, entity.depsFile, entity.npmFolder)
+    if (allRootUrls.isEmpty()) return
     val allRootFiles = allRootUrls.mapNotNull { it.virtualFile }
     val exclusionCondition = SyntheticLibraryExcludeFileSetCondition(excludeCondition, allRootFiles)
     allRootUrls.forEach { url ->

@@ -1,8 +1,8 @@
 package com.intellij.deno
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.deno.roots.createDenoEntity
-import com.intellij.deno.roots.removeDenoEntity
+import com.intellij.deno.roots.updateDenoEntity
+import com.intellij.deno.roots.useWorkspaceModel
 import com.intellij.deno.service.DenoLspIntegrationProvider
 import com.intellij.deno.settings.DenoRuntimeType
 import com.intellij.ide.util.PropertiesComponent
@@ -11,13 +11,11 @@ import com.intellij.javascript.runtime.settings.isJavaScriptRuntimeSettingsPageE
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.TypeScriptJSXFileType
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
@@ -28,7 +26,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspClientManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.util.ThrowableRunnable
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import kotlinx.coroutines.CoroutineScope
 
@@ -164,8 +161,13 @@ class DenoSettings(
     return getDenoCache() + "/npm"
   }
 
+  /** A changed cache path moves the cache folders, so the libraries are updated later on the EDT. */
   fun setDenoCache(path: String) {
+    val oldDenoCache = getDenoCache()
     this.state.denoCache = if (DenoUtil.getDenoCache() == path) "" else path
+    if (getDenoCache() != oldDenoCache) {
+      ApplicationManager.getApplication().invokeLater({ updateLibraries() }, project.disposed)
+    }
   }
 
   fun getDenoInit(): String {
@@ -195,36 +197,45 @@ class DenoSettings(
         val lspClientManager = LspClientManager.getInstance(project)
         if (useDeno == UseDeno.ENABLE || useDeno == UseDeno.CONFIGURE_AUTOMATICALLY) {
           lspClientManager.startClientsIfNeeded(DenoLspIntegrationProvider::class.java)
-          createDenoEntity(project)
         }
         else {
           lspClientManager.stopClients(DenoLspIntegrationProvider::class.java)
-          removeDenoEntity(project)
         }
       }
     }
 
-    WriteAction.run(
-      ThrowableRunnable<ConfigurationException> {
+    updateDenoEntity(project)
+    if (!useWorkspaceModel()) {
+      ApplicationManager.getApplication().runWriteAction {
         val newRoots = libraryProvider.getRootsToWatch(project)
         AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
-
-        DaemonCodeAnalyzer.getInstance(project).restart("DenoSettings.setUseDenoAndReload")
-      })
+      }
+    }
+    DaemonCodeAnalyzer.getInstance(project).restart("DenoSettings.setUseDenoAndReload")
   }
 
   @RequiresEdt
   fun updateLibraries() {
-    val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
-    val oldRoots = libraryProvider.getRootsToWatch(project)
-    ApplicationManager.getApplication().runWriteAction {
-      val fs = StandardFileSystems.local()
-      val deps = fs.refreshAndFindFileByPath(getDenoCacheDeps())
-      val npm = fs.refreshAndFindFileByPath(getDenoNpm())
-      VfsUtil.markDirtyAndRefresh(false, true, true, deps, npm)
-      val newRoots = libraryProvider.getRootsToWatch(project)
-      AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
+    if (!useWorkspaceModel()) {
+      val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
+      val oldRoots = libraryProvider.getRootsToWatch(project)
+      ApplicationManager.getApplication().runWriteAction {
+        refreshDenoCacheFolders()
+        val newRoots = libraryProvider.getRootsToWatch(project)
+        AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
+      }
     }
+    else {
+      ApplicationManager.getApplication().runWriteAction { refreshDenoCacheFolders() }
+    }
+    updateDenoEntity(project)
+  }
+
+  private fun refreshDenoCacheFolders() {
+    val fs = StandardFileSystems.local()
+    val deps = fs.refreshAndFindFileByPath(getDenoCacheDeps())
+    val npm = fs.refreshAndFindFileByPath(getDenoNpm())
+    VfsUtil.markDirtyAndRefresh(false, true, true, deps, npm)
   }
 }
 

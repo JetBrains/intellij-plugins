@@ -28,6 +28,11 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       readField("depsFile")
       return dataSource.depsFile
     }
+  override val npmFolder: VirtualFileUrl?
+    get() {
+      readField("npmFolder")
+      return dataSource.npmFolder
+    }
   override val denoTypes: VirtualFileUrl?
     get() {
       readField("denoTypes")
@@ -62,12 +67,14 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       dataSource as DenoEntity
       if (this.entitySource != dataSource.entitySource) this.entitySource = dataSource.entitySource
       if (this.depsFile != dataSource.depsFile) this.depsFile = dataSource.depsFile
+      if (this.npmFolder != dataSource.npmFolder) this.npmFolder = dataSource.npmFolder
       if (this.denoTypes != dataSource.denoTypes) this.denoTypes = dataSource.denoTypes
       updateChildToParentReferences(parents)
     }
 
     override fun index() {
       index(this, "depsFile", this.depsFile)
+      index(this, "npmFolder", this.npmFolder)
       index(this, "denoTypes", this.denoTypes)
     }
 
@@ -89,6 +96,17 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
           index(this, "depsFile", value)
         }
       }
+    override var npmFolder: VirtualFileUrl?
+      get() = getEntityData().npmFolder
+      set(value) {
+        checkModificationAllowed()
+        getEntityData(true).npmFolder = value
+        changedProperty.add("npmFolder")
+        val _diff = diff
+        if (_diff != null) {
+          index(this, "npmFolder", value)
+        }
+      }
     override var denoTypes: VirtualFileUrl?
       get() = getEntityData().denoTypes
       set(value) {
@@ -108,6 +126,7 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   var depsFile: VirtualFileUrl? = null
+  var npmFolder: VirtualFileUrl? = null
   var denoTypes: VirtualFileUrl? = null
   override fun newInstance(): DenoEntity = DenoEntityImpl(this)
   override fun newBuilderInstance(): ModifiableWorkspaceEntityBase<DenoEntity, *> = DenoEntityImpl.Builder(null)
@@ -122,6 +141,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun createDetachedEntity(parents: List<WorkspaceEntityBuilder<*>>): WorkspaceEntityBuilder<*> {
     return DenoEntity(entitySource) {
       this.depsFile = this@DenoEntityData.depsFile
+      this.npmFolder = this@DenoEntityData.npmFolder
       this.denoTypes = this@DenoEntityData.denoTypes
     }
   }
@@ -137,6 +157,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
     other as DenoEntityData
     if (this.entitySource != other.entitySource) return false
     if (this.depsFile != other.depsFile) return false
+    if (this.npmFolder != other.npmFolder) return false
     if (this.denoTypes != other.denoTypes) return false
     return true
   }
@@ -146,6 +167,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
     if (this.javaClass != other.javaClass) return false
     other as DenoEntityData
     if (this.depsFile != other.depsFile) return false
+    if (this.npmFolder != other.npmFolder) return false
     if (this.denoTypes != other.denoTypes) return false
     return true
   }
@@ -153,6 +175,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun hashCode(): Int {
     var result = entitySource.hashCode()
     result = 31 * result + depsFile.hashCode()
+    result = 31 * result + npmFolder.hashCode()
     result = 31 * result + denoTypes.hashCode()
     return result
   }
@@ -160,6 +183,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun hashCodeIgnoringEntitySource(): Int {
     var result = javaClass.hashCode()
     result = 31 * result + depsFile.hashCode()
+    result = 31 * result + npmFolder.hashCode()
     result = 31 * result + denoTypes.hashCode()
     return result
   }

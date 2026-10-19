@@ -2,63 +2,76 @@ package com.intellij.deno.roots
 
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.entities.DenoEntity
+import com.intellij.deno.entities.DenoEntityBuilder
 import com.intellij.deno.entities.DenoEntitySource
 import com.intellij.deno.service.DenoTypings
 import com.intellij.deno.useDenoLibrary
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.platform.backend.workspace.WorkspaceModel
-import com.intellij.platform.backend.workspace.toVirtualFileUrl
+import com.intellij.platform.backend.workspace.storeAndGet
 import com.intellij.platform.workspace.storage.MutableEntityStorage
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import org.jetbrains.annotations.ApiStatus
 
-internal fun createDenoEntity(project: Project) {
-  if (!useWorkspaceModel()) {
-    return
-  }
-
-  val (depsVirtualFile, denoTypingsVirtualFile) = getRoots(project)
-
-  val virtualFileUrlManager = WorkspaceModel.getInstance(project).getVirtualFileUrlManager()
+/**
+ * Makes the [DenoEntity] in the workspace model match [createDenoEntity].
+ * Call it after a change of the Deno settings or of the Deno cache.
+ *
+ * `WorkspaceEntityLifecycleSupporterUtils.ensureEntitiesInWorkspaceAreAsProviderDefined` does the same work, but it is a suspend function.
+ * The callers run on the EDT and expect the entity to be up to date when this function returns, so the change to it is postponed.
+ */
+@RequiresEdt
+@ApiStatus.Internal
+fun updateDenoEntity(project: Project) {
+  if (project.isDefault) return
+  val expected = createDenoEntity(project)
+  val workspaceModel = WorkspaceModel.getInstance(project)
+  val current = workspaceModel.currentSnapshot.entities(DenoEntity::class.java).toList()
+  val upToDate = if (expected == null) current.isEmpty() else current.size == 1 && expected.hasSameRoots(current.single())
+  if (upToDate) return
 
   val builder = MutableEntityStorage.create()
-  builder addEntity DenoEntity(DenoEntitySource) {
-    this.denoTypes = denoTypingsVirtualFile?.toVirtualFileUrl(virtualFileUrlManager)
-    this.depsFile = depsVirtualFile?.toVirtualFileUrl(virtualFileUrlManager)
+  if (expected != null) {
+    builder.addEntity(expected)
   }
-
   ApplicationManager.getApplication().runWriteAction {
-    WorkspaceModel.getInstance(project).updateProjectModel("Create Deno entity") { newBuilder ->
-      newBuilder.replaceBySource({ it is DenoEntitySource }, builder)
+    workspaceModel.updateProjectModel("Update Deno entity") { storage ->
+      storage.replaceBySource({ it is DenoEntitySource }, builder)
     }
   }
 }
 
-internal fun removeDenoEntity(project: Project) {
-  if (!useWorkspaceModel()) {
-    return
-  }
+/**
+ * Creates the [DenoEntity] with the Deno cache folders and the Deno typings, or returns `null` when the project does not use the Deno library.
+ *
+ * The cache folders are stored by path, so the file index picks them up when `deno cache` creates them later.
+ */
+@ApiStatus.Internal
+fun createDenoEntity(project: Project): DenoEntityBuilder? {
+  if (!useWorkspaceModel() || !useDenoLibrary(project)) return null
 
-  ApplicationManager.getApplication().runWriteAction {
-    WorkspaceModel.getInstance(project).updateProjectModel("Remove Deno entity") { builder ->
-      builder.entitiesBySource { it is DenoEntitySource }.forEach { builder.removeEntity(it) }
-    }
+  val settings = DenoSettings.getService(project)
+  val urlManager = WorkspaceModel.getInstance(project).getVirtualFileUrlManager()
+  val typings = DenoTypings.getInstance(project).getDenoTypingsVirtualFile()
+  // The cache path comes from a settings field and can end with a slash. A URL keeps an empty segment, so a doubled slash would give a
+  // URL that differs from the URL of the folder.
+  fun folderUrl(path: String) = urlManager.storeAndGet(VfsUtilCore.pathToUrl(FileUtil.toCanonicalPath(path)))
+  return DenoEntity(DenoEntitySource) {
+    depsFile = folderUrl(settings.getDenoCacheDeps())
+    npmFolder = folderUrl(settings.getDenoNpm())
+    denoTypes = typings?.let { urlManager.storeAndGet(it) }
   }
 }
 
-internal fun getRoots(project: Project): Pair<VirtualFile?, VirtualFile?> {
-  val service = DenoSettings.getService(project)
-  if (!useDenoLibrary(project)) return null to null
-
-  val denoPackages = service.getDenoCacheDeps()
-  val typings = DenoTypings.getInstance(project)
-  val depsVirtualFile = StandardFileSystems.local().findFileByPath(denoPackages)
-  val denoTypingsVirtualFile = typings.getDenoTypingsVirtualFile()
-  return depsVirtualFile to denoTypingsVirtualFile
+@ApiStatus.Internal
+fun DenoEntityBuilder.hasSameRoots(entity: DenoEntity): Boolean {
+  return depsFile == entity.depsFile && npmFolder == entity.npmFolder && denoTypes == entity.denoTypes
 }
 
 internal fun useWorkspaceModel(): Boolean {
-  return Registry.`is`("deno.use.workspace.model.roots", false)
+  return Registry.`is`("deno.use.workspace.model.roots", true)
 }

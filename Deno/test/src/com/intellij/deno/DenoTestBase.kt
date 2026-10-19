@@ -1,5 +1,6 @@
 package com.intellij.deno
 
+import com.intellij.deno.roots.updateDenoEntity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.RootsChangeRescanningInfo
@@ -16,7 +17,10 @@ abstract class DenoTestBase : BasePlatformTestCase() {
     val service = DenoSettings.getService(project)
     val before = service.getUseDeno()
     service.setUseDenoAndReload(UseDeno.ENABLE)
-    disposeOnTearDown(Disposable { service.setUseDeno(before) })
+    disposeOnTearDown(Disposable {
+      service.setUseDeno(before)
+      updateDenoEntity(project)
+    })
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 

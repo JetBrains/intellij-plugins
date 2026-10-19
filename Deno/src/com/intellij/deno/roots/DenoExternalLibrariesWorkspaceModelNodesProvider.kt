@@ -1,6 +1,7 @@
 package com.intellij.deno.roots
 
 import com.intellij.deno.DenoBundle
+import com.intellij.deno.DenoUtil
 import com.intellij.deno.entities.DenoEntity
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesWorkspaceModelNode
@@ -14,9 +15,9 @@ class DenoExternalLibrariesWorkspaceModelNodesProvider : ExternalLibrariesWorksp
 
   override fun createNode(entity: DenoEntity, project: Project, settings: ViewSettings?): AbstractTreeNode<*>? {
     if (!useWorkspaceModel()) return null
-    if (entity.denoTypes == null && entity.depsFile == null) return null
-    return ExternalLibrariesWorkspaceModelNode(project,
-                                               listOfNotNull(entity.denoTypes?.virtualFile, entity.depsFile?.virtualFile),
-                                               DenoBundle.message("deno.library.name"), settings)
+    val roots = listOfNotNull(entity.denoTypes, entity.depsFile, entity.npmFolder).mapNotNull { it.virtualFile }
+    if (roots.isEmpty()) return null
+    return ExternalLibrariesWorkspaceModelNode(project, roots, emptyList(), DenoBundle.message("deno.library.name"),
+                                               DenoUtil.getDefaultDenoIcon(), settings)
   }
 }

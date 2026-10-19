@@ -14,6 +14,7 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 interface DenoEntityBuilder : WorkspaceEntityBuilder<DenoEntity> {
   override var entitySource: EntitySource
   var depsFile: VirtualFileUrl?
+  var npmFolder: VirtualFileUrl?
   var denoTypes: VirtualFileUrl?
 }
 

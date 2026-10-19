@@ -46,6 +46,14 @@ internal object MetadataStorageImpl : MetadataStorageBase() {
                                                       OwnPropertyMetadata(isComputable = false,
                                                                           isKey = false,
                                                                           isOpen = false,
+                                                                          name = "npmFolder",
+                                                                          valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = true,
+                                                                                                                              typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                                                                fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
+                                                                          withDefault = false),
+                                                      OwnPropertyMetadata(isComputable = false,
+                                                                          isKey = false,
+                                                                          isOpen = false,
                                                                           name = "denoTypes",
                                                                           valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = true,
                                                                                                                               typeMetadata = FinalClassMetadata.KnownClass(
@@ -57,7 +65,7 @@ internal object MetadataStorageImpl : MetadataStorageBase() {
   }
 
   override fun initializeMetadataHash() {
-    addMetadataHash(typeFqn = "com.intellij.deno.entities.DenoEntity", metadataHash = 2083686760)
+    addMetadataHash(typeFqn = "com.intellij.deno.entities.DenoEntity", metadataHash = -1518242107)
     addMetadataHash(typeFqn = "com.intellij.platform.workspace.storage.EntitySource", metadataHash = 332274491)
     addMetadataHash(typeFqn = "com.intellij.deno.entities.DenoEntitySource", metadataHash = 718852721)
   }
