@@ -73,7 +73,7 @@ private class MdxMarkerProcessor(
 
   override fun updateStateInfo(pos: LookaheadText.Position) {
     super.updateStateInfo(pos)
-    if (pos.offsetInCurrentLine != -1 && pos.offset != 0) return
+    if (pos.offsetInCurrentLine > 0) return
     val constraints = if (pos.offsetInCurrentLine == -1) stateInfo.nextConstraints else stateInfo.currentConstraints
     val fenceOpener = ownership.observeLine(pos, constraints) ?: return
     for (marker in markersStack) {
