@@ -74,10 +74,10 @@ internal class XmlProblem(
       }
     }.also { result ->
       fingerprintData?.structuralSignals?.let { result.addStructuralFingerprints(it) }
-      StructuralFingerprintDebugLog.log(
+      StructuralFingerprintDebugLog.log {
         "XmlProblem.getSarif ruleId=${result.ruleId}, file=${getFile()}, module=${getModule()}, " +
         "fingerprintData=${fingerprintData != null}, ${result.structuralFingerprintDebugSummary()}"
-      )
+      }
     }
   }
 

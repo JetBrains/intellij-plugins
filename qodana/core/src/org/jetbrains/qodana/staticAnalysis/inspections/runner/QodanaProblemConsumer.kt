@@ -53,13 +53,13 @@ class QodanaProblemConsumer(
     val userData = descriptor as? UserDataHolderEx
     var descriptorPsiSummary = "<not ProblemDescriptorBase>"
     val fingerprintData = getFingerprintData(descriptor) { descriptorPsiSummary = it }
-    StructuralFingerprintDebugLog.log(
+    StructuralFingerprintDebugLog.log {
       "QodanaProblemConsumer.consume inspection=${toolWrapper.shortName}, " +
       "descriptor=${descriptor.javaClass.name}, descriptorPsi=$descriptorPsiSummary, " +
       "fingerprintData=${fingerprintData != null}, source=${fingerprintData?.source}, " +
       "signals=${fingerprintData?.structuralSignals?.structuralSignalsDebugSummary() ?: "<none>"}, " +
       "additionalFingerprintData=${fingerprintData?.additionalFingerprintData?.isEmpty() == false}"
-    )
+    }
 
     val problem = XmlProblem(
       element,
@@ -77,7 +77,9 @@ class QodanaProblemConsumer(
 
     return runReadActionBlocking {
       val element = baseDescriptor.psiElement
-      onDescriptorPsi(element?.debugSummary() ?: "<null>")
+      if (StructuralFingerprintDebugLog.isEnabled) {
+        onDescriptorPsi(element?.debugSummary() ?: "<null>")
+      }
       if (element != null && element.isValid) {
         PsiFingerprintDataExtractor.extract(element, FingerprintSource.PROBLEM_DESCRIPTOR_PSI)
       } else {

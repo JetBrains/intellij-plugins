@@ -1,19 +1,24 @@
 package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints
 
+import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.Result
-import org.jetbrains.qodana.util.QodanaMessageReporter
 
+/**
+ * Debug log of the structural fingerprints and of the duplicate results that share a hash.
+ *
+ * It is off by default.
+ * To turn it on, add `#org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog` to `idea.log.debug.categories`.
+ */
 internal object StructuralFingerprintDebugLog {
   private val LOG = logger<StructuralFingerprintDebugLog>()
 
-  fun log(message: String) {
-    val fullMessage = "QODANA STRUCTURAL FINGERPRINT DEBUG: $message"
-    LOG.warn(fullMessage)
-    println(fullMessage)
-    System.err.println(fullMessage)
-    QodanaMessageReporter.DEFAULT.reportError(fullMessage)
+  val isEnabled: Boolean
+    get() = LOG.isDebugEnabled
+
+  fun log(message: () -> String) {
+    LOG.debug { "QODANA STRUCTURAL FINGERPRINT DEBUG: ${message()}" }
   }
 }
 

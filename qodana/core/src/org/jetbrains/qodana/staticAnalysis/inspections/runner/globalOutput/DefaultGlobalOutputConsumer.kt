@@ -25,10 +25,10 @@ class DefaultGlobalOutputConsumer : GlobalOutputConsumer {
     for (path in paths) {
       consumeOutputXmlFile(path) { inspectionId, root ->
         val problems = root.getChildren("problem")
-        StructuralFingerprintDebugLog.log(
+        StructuralFingerprintDebugLog.log {
           "DefaultGlobalOutputConsumer.consumeOwnedFiles path=$path, inspection=$inspectionId, " +
           "localTool=${root.getAttributeValue(GlobalInspectionContextBase.LOCAL_TOOL_ATTRIBUTE)}, problems=${problems.size}"
-        )
+        }
         consumer(problems.map { XmlProblem(it) }, inspectionId)
       }
     }

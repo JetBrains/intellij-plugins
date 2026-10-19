@@ -88,14 +88,14 @@ private fun processSameHash(resultJsons: List<String>): Result? {
   }
 
   val uniqueTags = uniqueResults.flatMap { it.getOrAssignProperties().tags }.distinct()
-  StructuralFingerprintDebugLog.log(
+  StructuralFingerprintDebugLog.log {
     "resultsFlowByGroup.sameHash results=${results.size}, unique=${uniqueResults.size}, " +
     "candidates=${
       uniqueResults.joinToString { result ->
         "${result.ruleId}:score=${result.fingerprintMetadataScore()}:${result.structuralFingerprintDebugSummary()}"
       }
     }"
-  )
+  }
   val resultToSubmit = uniqueResults.minWithOrNull(
     compareByDescending<Result> { it.fingerprintMetadataScore() }.thenBy { it.hashCode() }
   )!!.apply {
@@ -104,10 +104,10 @@ private fun processSameHash(resultJsons: List<String>): Result? {
     val properties = this.getOrAssignProperties()
     uniqueTags.filter { !properties.tags.contains(it) }.forEach { properties.tags.add(it) }
   }
-  StructuralFingerprintDebugLog.log(
+  StructuralFingerprintDebugLog.log {
     "resultsFlowByGroup.sameHash.selected ruleId=${resultToSubmit.ruleId}, " +
     "score=${resultToSubmit.fingerprintMetadataScore()}, ${resultToSubmit.structuralFingerprintDebugSummary()}"
-  )
+  }
   return resultToSubmit
 }
 
