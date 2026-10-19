@@ -1,11 +1,15 @@
-package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi
+package org.jetbrains.qodana.xml
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.AdditionalFingerprintDataHolder
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaXmlSemanticIdentityProvider
+
+internal class XmlSemanticIdentityProvider : QodanaXmlSemanticIdentityProvider {
+  override fun extractIdentity(element: PsiElement): String? = XmlSemanticIdentityExtractor.extractIdentity(element)
+}
 
 internal object XmlSemanticIdentityExtractor {
   private const val VERSION = "v1"
@@ -25,9 +29,9 @@ internal object XmlSemanticIdentityExtractor {
     "forClass",
   )
 
-  fun extractAdditionalFingerprintData(element: PsiElement): AdditionalFingerprintDataHolder {
-    val target = findTarget(element) ?: return AdditionalFingerprintDataHolder.EMPTY
-    return AdditionalFingerprintDataHolder.fromXmlSemanticIdentity("$VERSION|${target.identity()}")
+  fun extractIdentity(element: PsiElement): String? {
+    val target = findTarget(element) ?: return null
+    return "$VERSION|${target.identity()}"
   }
 
   private fun findTarget(element: PsiElement): XmlTarget? {

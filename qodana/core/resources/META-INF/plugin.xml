@@ -22,6 +22,7 @@
     <module name="intellij.qodana.sarif" loading="embedded"/>
     <module name="intellij.qodana.json"/>
     <module name="intellij.qodana.yaml"/>
+    <module name="intellij.qodana.xml"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>
     <module name="intellij.qodana.git"/>
@@ -130,8 +131,6 @@
     <module name="intellij.platform.vcs.impl"/>
     <module name="intellij.platform.vcs.log"/>
     <module name="intellij.platform.vcs.log.impl"/>
-    <module name="intellij.xml.parser"/>
-    <module name="intellij.xml.psi"/>
     <!-- endregion -->
   </dependencies>
 
@@ -320,6 +319,9 @@
       <with attribute="implementationClass"
             implements="org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaPsiStructuralFingerprintsProvider"/>
     </extensionPoint>
+    <extensionPoint name="xmlSemanticIdentityProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaXmlSemanticIdentityProvider"
+                    dynamic="true"/>
     <extensionPoint name="projectDescriber"
                     interface="org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber"
                     dynamic="true"/>

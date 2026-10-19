@@ -1,0 +1,63 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.qodana.xml` start
+content_module_jar(module = ":xml")
+### auto-generated section `dev intellij.qodana.xml` end
+
+### auto-generated section `build intellij.qodana.xml` start
+jvm_library(
+    name = "xml",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.xml",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "//contrib/qodana",
+        "@community//platform/core-api:core",
+        "@community//platform/util",
+        "@community//xml/xml-psi-api:psi",
+    ],
+)
+
+jvm_library(
+    name = "xml_test_lib",
+    testonly = True,
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.qodana.xml",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        ":xml",
+        "//contrib/qodana:qodana_test_lib",
+        "@community//platform/core-api:core_test_lib",
+        "@community//platform/util:util_test_lib",
+        "@community//xml/xml-psi-api:psi_test_lib",
+    ],
+)
+### auto-generated section `build intellij.qodana.xml` end
+
+### auto-generated section `iml intellij.qodana.xml` start
+exports_files(
+    [
+        "intellij.qodana.xml.iml",
+        "resources/intellij.qodana.xml.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.qodana.xml` end

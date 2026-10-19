@@ -1,0 +1,13 @@
+<idea-plugin>
+  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
+  <dependencies>
+    <plugin id="org.intellij.qodana"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.xml.psi"/>
+  </dependencies>
+  <!-- endregion -->
+
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <xmlSemanticIdentityProvider implementation="org.jetbrains.qodana.xml.XmlSemanticIdentityProvider"/>
+  </extensions>
+</idea-plugin>
