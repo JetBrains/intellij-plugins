@@ -31,9 +31,10 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
 
   override fun isMine(project: Project, hostFile: VirtualFile): Boolean {
     val psiFile = getPsiFileSystemItem(project, hostFile)
-    return psiFile is StylesheetFile
-           || CssSupportLoader.isInFileThatSupportsEmbeddedCss(psiFile)
-           || (psiFile is JSFile && Angular2LangUtil.isAngular2Context(project, hostFile))
+    return (psiFile is StylesheetFile
+            || CssSupportLoader.isInFileThatSupportsEmbeddedCss(psiFile)
+            || (psiFile is JSFile && Angular2LangUtil.isAngular2Context(project, hostFile)))
+           && AngularConfigProvider.findAngularProject(project, hostFile) != null
   }
 
   override fun processContexts(
