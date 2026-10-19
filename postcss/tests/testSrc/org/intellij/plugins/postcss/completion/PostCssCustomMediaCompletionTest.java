@@ -1,6 +1,5 @@
 package org.intellij.plugins.postcss.completion;
 
-import com.intellij.idea.IJIgnore;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +45,6 @@ public class PostCssCustomMediaCompletionTest extends PostCssCompletionTestBase 
     doTestPreferred("--test", "--test2");
   }
 
-  @IJIgnore(issue = "IJI-3451")
   public void testCustomMediaPriorityWithImport() {
     myFixture.configureByFile("definition.pcss");
     doTestPreferred(Pair.create("z-in-file", "customMediaPriorityWithImport.pcss:3"), Pair.create("test", "definition.pcss:1"));

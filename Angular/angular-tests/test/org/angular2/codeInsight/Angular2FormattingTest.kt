@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
-import com.intellij.idea.IJIgnore
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
@@ -150,7 +149,6 @@ class Angular2FormattingTest : Angular2TestCase("formatting") {
   }
 
   @Test
-  @IJIgnore(issue = "IJI-3451")
   fun testUnusedComponentImports() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0,
                      checkResult = true,

@@ -3,7 +3,6 @@ package org.angular2.codeInsight
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.idea.IJIgnore
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -581,7 +580,6 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
   @Test
-  @IJIgnore(issue = "IJI-3451")
   fun testCssCustomPropertyExternalTemplate() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "test.css")
 
