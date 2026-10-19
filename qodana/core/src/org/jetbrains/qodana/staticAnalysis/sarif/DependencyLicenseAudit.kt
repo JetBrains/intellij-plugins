@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getBaselineReport
-import org.jetbrains.qodana.util.QodanaMessageReporter
 
 data class DependencyLicenseAuditResult(
   val prohibited: Set<String>,
@@ -34,7 +33,7 @@ interface DependencyLicenseAuditProvider {
  * unknown license is absent from the baseline; in full mode they reflect all offending dependencies.
  */
 internal class DependencyLicenseAuditContributor : SarifReportContributor {
-  override fun contribute(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter) {
+  override fun contribute(run: Run, project: Project, config: QodanaConfig) {
     val conditions = config.failureConditions.dependencyLicenses
     if (!conditions.failOnProhibited && !conditions.failOnUnknown) return
 

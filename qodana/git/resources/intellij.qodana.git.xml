@@ -1,7 +1,7 @@
 <idea-plugin>
   <!-- Generated dependencies; run Generate Product Layouts to regenerate -->
-  <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="org.intellij.qodana"/>
     <module name="intellij.libraries.kotlinx.coroutines.core"/>
     <module name="intellij.platform.analysis"/>
@@ -19,11 +19,10 @@
     <module name="intellij.platform.vcs.log"/>
     <module name="intellij.platform.vcs.log.impl"/>
     <module name="intellij.qodana.sarif"/>
-    <module name="intellij.qodana.util"/>
     <module name="intellij.vcs.git.backend"/>
     <module name="intellij.vcs.git.shared"/>
+    <!-- endregion -->
   </dependencies>
-  <!-- endregion -->
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.GitReportContributor"/>

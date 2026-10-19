@@ -9,7 +9,6 @@ import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedDebugLog
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
-import org.jetbrains.qodana.util.QodanaMessageReporter
 
 private const val MATCHED_BY_PROPERTY = "matchedMethod"
 
@@ -42,7 +41,7 @@ internal class ResultSummaryContributor : SarifReportContributor {
     return enabled
   }
 
-  override fun contribute(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter) {
+  override fun contribute(run: Run, project: Project, config: QodanaConfig) {
     val countOnlyNewResults = config.countOnlyNewResultsInSummary()
     val baselineFilter: (Result) -> Boolean = when {
       !countOnlyNewResults -> { _ -> true }

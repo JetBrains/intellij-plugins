@@ -16,7 +16,6 @@ import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectL
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
 import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedDebugLog
-import org.jetbrains.qodana.util.QodanaMessageReporter
 
 private val logger by lazy { logger<ExitStatus>() }
 
@@ -50,11 +49,7 @@ private fun Run.debugMatchedByCounts(): Map<String, Int> =
     .groupingBy { it }
     .eachCount()
 
-internal fun setInvocationExitStatus(
-  run: Run,
-  config: QodanaConfig,
-  messageReporter: QodanaMessageReporter = QodanaMessageReporter.EMPTY,
-) {
+internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
   val summary = run.resultSummary ?: run {
     logger.warn("Cannot update exit code because the result summary has not been generated. See ${ResultSummaryContributor::class.qualifiedName}")
     return

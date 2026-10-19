@@ -4,15 +4,14 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
-import org.jetbrains.qodana.util.QodanaMessageReporter
 
 interface SarifReportContributor {
-  fun contribute(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter)
+  fun contribute(run: Run, project: Project, config: QodanaConfig)
 
   companion object {
-    fun runContributors(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter) {
+    fun runContributors(run: Run, project: Project, config: QodanaConfig) {
       EP_NAME.forEachExtensionSafe { contributor ->
-        contributor.contribute(run, project, config, messageReporter)
+        contributor.contribute(run, project, config)
       }
     }
 

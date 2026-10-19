@@ -23,7 +23,6 @@ import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERT
 import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
 import org.jetbrains.qodana.staticAnalysis.sarif.withKind
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Test
 import kotlin.io.path.Path
 
@@ -65,7 +64,7 @@ class QodanaExitStatusKtTest {
       .withProperties(PropertyBag().apply { put("ideaSeverity", severity.name) })
 
   private fun Run.setup(cfg: QodanaConfig = emptyConfig, vararg results: Result) {
-    ResultSummaryContributor().contribute(withResults(results.toList()), DummyProject.getInstance(), cfg, QodanaMessageReporter.EMPTY)
+    ResultSummaryContributor().contribute(withResults(results.toList()), DummyProject.getInstance(), cfg)
   }
 
   @Test

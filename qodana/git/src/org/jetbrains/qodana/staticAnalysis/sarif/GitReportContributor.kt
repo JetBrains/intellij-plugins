@@ -12,7 +12,6 @@ import git4idea.repo.GitRepository
 import git4idea.repo.GitRepositoryManager
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
-import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.net.URI
 import java.net.URISyntaxException
 
@@ -20,7 +19,7 @@ private val LOG = logger<GitReportContributor>()
 
 class GitReportContributor : SarifReportContributor {
 
-  override fun contribute(run: Run, project: Project, config: QodanaConfig, messageReporter: QodanaMessageReporter) {
+  override fun contribute(run: Run, project: Project, config: QodanaConfig) {
     val projectDir = project.guessProjectDir() ?: return
     val repository = GitRepositoryManager.getInstance(project).getRepositoryForFileQuick(projectDir)
     if (repository != null) {
