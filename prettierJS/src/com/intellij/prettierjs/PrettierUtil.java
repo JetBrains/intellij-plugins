@@ -61,6 +61,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static com.intellij.diagnostic.ControlFlowExceptionsKt.rethrowControlFlowException;
 import static com.intellij.prettierjs.PrettierConfig.createFromMap;
 
 public final class PrettierUtil {
@@ -252,6 +253,7 @@ public final class PrettierUtil {
       }
     }
     catch (Exception e) {
+      rethrowControlFlowException(e);
       LOG.info(String.format("Could not read config data from file [%s]", file.getVirtualFile().getPath()), e);
     }
     return null;

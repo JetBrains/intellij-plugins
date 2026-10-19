@@ -3,12 +3,21 @@ package com.intellij.prettierjs.unit;
 
 import com.google.gson.Gson;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.transformer.TextPresentationTransformer;
+import com.intellij.openapi.vfs.transformer.TextPresentationTransformers;
 import com.intellij.prettierjs.PrettierConfig;
 import com.intellij.prettierjs.PrettierJSTestUtil;
 import com.intellij.prettierjs.PrettierUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.LineSeparator;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PrettierConfigParsingTest extends BasePlatformTestCase {
 
@@ -100,6 +109,35 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
              endOfLine: crlf
              vueIndentScriptAndStyle: true"""
     );
+  }
+
+  public void testCancelledReadDoesNotCacheConfig() {
+    var config = myFixture.addFileToProject(".prettierrc.json", "{\"tabWidth\": 3}").getVirtualFile();
+    // The parser loads the text through the transformer only when the file has no cached document.
+    assertNull(FileDocumentManager.getInstance().getCachedDocument(config));
+    var cancelNextLoad = new AtomicBoolean(true);
+    ApplicationManager.getApplication().getService(TextPresentationTransformers.class).addExplicitExtension(
+      config.getFileType(),
+      new TextPresentationTransformer() {
+        @Override
+        public @NotNull CharSequence fromPersistent(@NotNull CharSequence text, @NotNull VirtualFile virtualFile) {
+          if (virtualFile.equals(config) && cancelNextLoad.getAndSet(false)) {
+            throw new ProcessCanceledException();
+          }
+          return text;
+        }
+
+        @Override
+        public @NotNull CharSequence toPersistent(@NotNull CharSequence text, @NotNull VirtualFile virtualFile) {
+          return text;
+        }
+      },
+      getTestRootDisposable());
+
+    assertThrows(ProcessCanceledException.class, () -> PrettierUtil.parseConfig(getProject(), config));
+    var parsed = PrettierUtil.parseConfig(getProject(), config);
+    assertNotNull(parsed);
+    assertEquals(3, parsed.tabWidth);
   }
 
   private static void assertSameConfig(PrettierConfig expected, PrettierConfig actual) {
