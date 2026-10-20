@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.Java11Shim
 
 interface AngularConfigProvider {
 
@@ -23,7 +23,7 @@ interface AngularConfigProvider {
       val configFile = PsiManager.getInstance(project).findFile(config.file)
                        ?: return config.getProject(context)
       return CachedValuesManager.getCachedValue(configFile) {
-        CachedValueProvider.Result.create(ContainerUtil.createConcurrentWeakMap<VirtualFile, AngularProject>(),
+        CachedValueProvider.Result.create(Java11Shim.INSTANCE.createConcurrentWeakMap<VirtualFile, AngularProject>(),
                                           configFile, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }.computeIfAbsent(context) {
         config.getProject(it)
