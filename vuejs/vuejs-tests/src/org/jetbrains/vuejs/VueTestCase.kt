@@ -28,7 +28,6 @@ import org.junit.ComparisonFailure
 
 enum class VueTestMode {
   DEFAULT,
-  LEGACY_PLUGIN,
   TS_GO_PROXY,
   NO_PLUGIN,
 
@@ -77,9 +76,7 @@ abstract class VueTestCase(
     configureVueSettings(project, testRootDisposable, testMode)
 
     when (testMode) {
-      VueTestMode.DEFAULT,
-      VueTestMode.LEGACY_PLUGIN,
-        -> {
+      VueTestMode.DEFAULT -> {
         val bundledVersion = configuration.getVueLanguageToolsVersion()!!
 
         val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {

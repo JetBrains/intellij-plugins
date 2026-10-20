@@ -3,16 +3,12 @@ package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 class VueAutoPopupTest :
   VueAutoPopupTestBase() {
-
-  class WithLegacyPluginTest :
-    VueAutoPopupTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
   class WithTsGoProxyTest :
     VueAutoPopupTestBase(testMode = VueTestMode.TS_GO_PROXY)

@@ -18,16 +18,12 @@ import org.jetbrains.vuejs.VueCreateFromTemplateHandler.Companion.VUE_COMPOSITIO
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 class VueNewComponentTest :
   VueNewComponentTestBase() {
-
-  class WithLegacyPluginTest :
-    VueNewComponentTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
 
   class WithTsGoProxyTest :
     VueNewComponentTestBase(testMode = VueTestMode.TS_GO_PROXY)
