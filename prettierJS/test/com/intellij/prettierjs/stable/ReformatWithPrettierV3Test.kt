@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs.stable
 
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.openapi.actionSystem.IdeActions
@@ -150,6 +151,27 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
 
   fun testCommentAfterStatement() = withInstallation {
     configureRunOnReformat { doTestEditorReformat("") }
+  }
+
+  // Postfix Template Tests
+
+  fun testPostfixIfTemplate() = withInstallation {
+    configureRunOnReformat {
+      // The code style modifier waits for Prettier with a timeout.
+      // The test turns the modifier off, so the indentation does not depend on the timeout.
+      val state = PrettierConfiguration.getInstance(project).state
+      val codeStyleSettingsModifierEnabled = state.codeStyleSettingsModifierEnabled
+      state.codeStyleSettingsModifierEnabled = false
+      try {
+        TemplateManagerImpl.setTemplateTesting(testRootDisposable)
+        myFixture.configureFromTempProjectFile("toReformat.js")
+        myFixture.type('\t')
+        myFixture.checkResultByFile("${getTestName(true)}/toReformat_after.js", true)
+      }
+      finally {
+        state.codeStyleSettingsModifierEnabled = codeStyleSettingsModifierEnabled
+      }
+    }
   }
 
   // Monorepo Tests
