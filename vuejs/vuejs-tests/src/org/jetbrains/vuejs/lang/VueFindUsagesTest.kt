@@ -16,10 +16,6 @@ import org.junit.runners.JUnit4
 class VueFindUsagesTest :
   VueFindUsagesTestBase() {
 
-  @Ignore
-  class WithLegacyPluginTest :
-    VueFindUsagesTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
-
   class WithTsGoProxyTest :
     VueFindUsagesTestBase(testMode = VueTestMode.TS_GO_PROXY)
 

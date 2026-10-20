@@ -47,45 +47,6 @@ import java.io.File
 class VueHighlightingTest :
   VueHighlightingWithPluginTestBase() {
 
-  class WithLegacyPluginTest :
-    VueHighlightingWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN) {
-    @Ignore
-    // flaky
-    override fun testCompositionApiBasic_0_4_0() {
-    }
-
-    @Ignore
-    // flaky
-    override fun testDynamicArguments() {
-    }
-
-    @Ignore
-    // flaky
-    override fun testSlotSyntax() {
-    }
-
-    @Ignore
-    // flaky
-    override fun testVueNoTagOmission() {
-    }
-
-    @Ignore
-    // flaky
-    override fun testCompRequiredAttributesTest() {
-    }
-
-    @Ignore
-    // flaky
-    override fun testCompRequiredAttributesTestTS() {
-    }
-
-    @Ignore
-    // flaky
-    override fun testDirectivesWithoutParameters() {
-    }
-
-  }
-
   class WithTsGoProxyTest :
     VueHighlightingTestBase(testMode = VueTestMode.TS_GO_PROXY) {
 

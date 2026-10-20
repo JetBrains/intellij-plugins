@@ -30,9 +30,6 @@ private val FILTER_DEFAULT_ATTRIBUTES = (filterOutStandardHtmlSymbols
 class VueCompletionTest :
   VueCompletionWithPluginTestBase() {
 
-  class WithLegacyPluginTest :
-    VueCompletionWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
-
   class WithTsGoProxyTest :
     VueCompletionTestBase(testMode = VueTestMode.TS_GO_PROXY) {
 

@@ -30,7 +30,7 @@ internal fun getAppropriateVueLSVersion(
   project: Project,
   context: VirtualFile,
 ): VueLanguageToolsVersion {
-  return if (isVue2(project, context) || VueServiceTestMixin.forceLegacyPluginUsage) {
+  return if (isVue2(project, context)) {
     // supports Vue
     VueLanguageToolsVersion.LEGACY
   }

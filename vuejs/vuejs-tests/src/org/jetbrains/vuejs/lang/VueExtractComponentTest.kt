@@ -13,9 +13,6 @@ import org.junit.runners.JUnit4
 class VueExtractComponentTest :
   VueExtractComponentTestBase() {
 
-  class WithLegacyPluginTest :
-    VueExtractComponentTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
-
   class WithTsGoProxyTest :
     VueExtractComponentTestBase(testMode = VueTestMode.TS_GO_PROXY)
 

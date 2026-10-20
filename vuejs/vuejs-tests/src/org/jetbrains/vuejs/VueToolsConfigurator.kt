@@ -4,7 +4,6 @@ package org.jetbrains.vuejs
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
-import org.jetbrains.vuejs.lang.typescript.service.VueServiceTestMixin.setForceLegacyPluginUsage
 
 class VueToolsConfigurator(
   private val testMode: VueTestMode,
@@ -22,12 +21,6 @@ class VueToolsConfigurator(
 
     configured = true
     bundledVersion = getRequiredHybridModeBundledVersion(fixture, testMode)
-                     ?: return
-
-    setForceLegacyPluginUsage(
-      bundledVersion == VueLanguageToolsVersion.LEGACY,
-      fixture.testRootDisposable,
-    )
   }
 
   fun getBundledVersion(): VueLanguageToolsVersion? {

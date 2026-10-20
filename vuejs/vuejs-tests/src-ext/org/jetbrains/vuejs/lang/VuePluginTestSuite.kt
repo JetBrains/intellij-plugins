@@ -20,20 +20,6 @@ class VuePluginTestSuite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-  VueAutoPopupTest.WithLegacyPluginTest::class,
-  VueCompletionTest.WithLegacyPluginTest::class,
-  VueDocumentationTest.WithLegacyPluginTest::class,
-  VueExtractComponentTest.WithLegacyPluginTest::class,
-  VueFindUsagesTest.WithLegacyPluginTest::class,
-  VueGotoDeclarationTest.WithLegacyPluginTest::class,
-  VueHighlightingTest.WithLegacyPluginTest::class,
-  VueNewComponentTest.WithLegacyPluginTest::class,
-  VueRenameTest.WithLegacyPluginTest::class,
-)
-class VueLegacyPluginTestSuite
-
-@RunWith(Suite::class)
-@Suite.SuiteClasses(
   VueAutoPopupTest.WithTsGoProxyTest::class,
   VueCompletionTest.WithTsGoProxyTest::class,
   VueDocumentationTest.WithTsGoProxyTest::class,

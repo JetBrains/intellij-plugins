@@ -57,9 +57,6 @@ import org.junit.runners.JUnit4
 class VueGotoDeclarationTest :
   VueGotoDeclarationWithPluginTestBase() {
 
-  class WithLegacyPluginTest :
-    VueGotoDeclarationWithPluginTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
-
   class WithTsGoProxyTest :
     VueGotoDeclarationWithPluginTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
