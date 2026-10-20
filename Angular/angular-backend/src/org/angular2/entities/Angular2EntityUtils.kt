@@ -3,6 +3,8 @@ package org.angular2.entities
 
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
+import com.intellij.javascript.typeEngine.getTypeofTSType
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -358,11 +360,14 @@ object Angular2EntityUtils {
     Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_19)
 
   fun jsTypeFromAcceptInputType(clz: TypeScriptClass?, name: String): JSType? =
-    clz
-      ?.staticJSType
-      ?.asRecordType(clz)
-      ?.findPropertySignature(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
-      ?.getJSType()
+    clz?.let {
+      withTypeEvaluationLocation(it) {
+        it.getTypeofTSType()
+          ?.getProperty(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
+          ?.getType()
+          ?.asJSType()
+      }
+    }
 
   private fun Collection<Angular2Entity>.render(): String =
     this.asSequence().map { it.getName() }.sorted().joinToString(", ")
