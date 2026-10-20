@@ -57,6 +57,5 @@
     <orderEntry type="module" module-name="intellij.java.frontback.psi" />
     <orderEntry type="module" module-name="intellij.microservices.jvm.config.yaml" />
     <orderEntry type="module" module-name="intellij.java.backend" />
-    <orderEntry type="module" module-name="intellij.platform.scratch" />
   </component>
 </module>

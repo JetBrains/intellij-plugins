@@ -3,7 +3,7 @@ package com.intellij.openRewrite.run.before
 import com.intellij.execution.ExecutionBundle
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.openRewrite.OpenRewriteBundle
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -100,8 +100,10 @@ internal class OpenRewriteInstallBeforeRunTaskDialog(
         scratchFileField = cell(TextFieldWithBrowseButton(ActionListener {
           var toSelect = getFileFromEditor()
           if (toSelect == null) {
-            val scratchesRoot = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance())
-            toSelect = StandardFileSystems.local().findFileByPath(scratchesRoot)
+            val scratchesRoot = ScratchUtil.findScratchesRootType()
+            if (scratchesRoot != null) {
+              toSelect = StandardFileSystems.local().findFileByPath(ScratchFileService.getInstance().getRootPath(scratchesRoot))
+            }
           }
           val descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor().withExtensionFilter(JavaFileType.INSTANCE)
           val file = FileChooser.chooseFile(descriptor, scratchFileField, project, toSelect)

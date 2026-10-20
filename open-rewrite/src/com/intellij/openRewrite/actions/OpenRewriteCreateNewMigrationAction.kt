@@ -2,7 +2,7 @@ package com.intellij.openRewrite.actions
 
 import com.intellij.ide.IdeView
 import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -34,7 +34,8 @@ internal class OpenRewriteCreateNewMigrationAction : DumbAwareAction() {
   }
 
   private fun findDirectory(): VirtualFile? {
-    val rootPath = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance())
+    val scratchesRoot = ScratchUtil.findScratchesRootType() ?: return null
+    val rootPath = ScratchFileService.getInstance().getRootPath(scratchesRoot)
     return StandardFileSystems.local().findFileByPath(rootPath)?.takeIf { it.isDirectory }
   }
 }
