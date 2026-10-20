@@ -2,10 +2,12 @@
 package org.jetbrains.vuejs.tsc
 
 import com.intellij.javascript.types.TSType
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
+import com.intellij.lang.typescript.tsc.TypeScriptCompilerEvaluationFacade
 import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.psi.PsiElement
@@ -63,6 +65,36 @@ class VueTypeScriptServiceGetElementTypeTest :
     """.trimIndent()
     configureByText("App.vue", code)
     doTestInstantiateMappedType()
+  }
+
+  /**
+   * @see [testGetResolvedSignature]
+   */
+  // WEB-80163
+  @Test
+  fun testGetResolvedSignatureVue() {
+    // language=vue
+    val code = """
+    <script setup lang="ts">
+    interface Foo{
+        bar(p:string): void;
+        bar(p:number): void;
+        bar(p:any): void;
+    }
+    function baz(foo:Foo) {
+        foo.bar(1);
+    }
+    </script>
+    """.trimIndent()
+    configureByText("App.vue", code)
+
+    waitForServiceInitialized()
+    val element = findElement("foo.bar(1)", JSCallExpression::class)
+    val resolvedSignature = inReadAction(element) {
+      TypeScriptCompilerEvaluationFacade.getResolvedSignature(element)
+    }
+
+    inReadAction { assertEquals("bar(p:number): void", resolvedSignature?.text) }
   }
 
   // WEB-68084
