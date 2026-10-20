@@ -119,6 +119,8 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     if (myModule != null) {
       ApplicationManager.getApplication().runWriteAction(() -> {
         myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
+        FlexModuleSdkSync.syncModuleSdk(myModule);
+        // Two build configurations with one SDK can still link different SDK roots.
         resetHighlighting(myModule.getProject());
       });
       persist();

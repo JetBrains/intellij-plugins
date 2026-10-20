@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdkManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.BuildConfigurationEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -22,12 +21,10 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableSharedLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleLibraryEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.SharedLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -35,7 +32,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ExportableOrderEntry;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -48,7 +44,6 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
@@ -374,13 +369,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       // ---------------- SDK and shared libraries entries ----------------------
       Map<Library, Boolean> librariesToAdd = new LinkedHashMap<>(); // Library -> add_library_entry_flag
 
-      final Collection<String> sdkNames = new HashSet<>();
       for (Editor editor : myModule2Editors.get(module)) {
-        final SdkEntry sdkEntry = editor.getDependencies().getSdkEntry();
-        if (sdkEntry != null) {
-          sdkNames.add(sdkEntry.getName());
-        }
-
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof ModuleLibraryEntry moduleLibraryEntry) {
             usedModulesLibrariesIds.add(moduleLibraryEntry.getLibraryId());
@@ -399,17 +388,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
 
-      final Sdk sdk;
-      if (sdkNames.isEmpty()) {
-        sdk = null;
-      }
-      else if (sdkNames.size() == 1) {
-        sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkNames.iterator().next());
-      }
-      else {
-        sdk = FlexCompositeSdkManager.getInstance().getOrCreateSdk(ArrayUtilRt.toStringArray(sdkNames));
-      }
-      modifiableModel.setSdk(sdk);
+      final List<Editor> moduleEditors = myModule2Editors.get(module);
+      final FlexBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+      final String activeName = activeConfiguration != null ? activeConfiguration.getName() : null;
+      // The same choice as FlexBuildConfigurationManagerImpl.updateActiveConfiguration makes after the commit.
+      final Editor activeEditor = ContainerUtil.find(moduleEditors, editor -> activeName != null && activeName.equals(editor.getName()));
+      final Editor effectiveActiveEditor = activeEditor != null ? activeEditor : ContainerUtil.getFirstItem(moduleEditors);
+      modifiableModel.setSdk(FlexModuleSdkSync.expectedModuleSdk(moduleEditors, effectiveActiveEditor));
 
       Collection<OrderEntry> entriesToRemove = new ArrayList<>();
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
@@ -496,6 +481,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       //}
 
       if (myProject != null) {
+        FlexModuleSdkSync.syncBuildConfigurationSdks(myProject);
         FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
         if (!renamedConfigs.isEmpty()) {
           myProject.getMessageBus().syncPublisher(FlexBuildConfigurationChangeListener.TOPIC).buildConfigurationsRenamed(renamedConfigs);

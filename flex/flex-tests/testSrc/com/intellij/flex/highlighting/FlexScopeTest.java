@@ -17,13 +17,21 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildC
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexModuleSdkSync;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -31,8 +39,10 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.testFramework.VfsTestUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("ConstantConditions")
@@ -213,6 +223,69 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     GotoClassModel2 model = new GotoClassModel2(myProject);
     Object[] elements = model.getElementsByName("Application", true, "");
     assertEquals(4, elements.length);
+  }
+
+  /**
+   * The module SDK is the SDK of the active build configuration. The SDK of another build configuration is still a library, because the
+   * Flex entity of build configuration SDKs refers to it, and an SDK that no build configuration uses is not.
+   */
+  public void testSdkIsLibraryWhileABuildConfigurationUsesIt() {
+    final Sdk flexSdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true, getTestRootDisposable());
+    final VirtualFile flexmojosRoot = getTempDir().createVirtualDir();
+    final VirtualFile marker = VfsTestUtil.createFile(flexmojosRoot, "marker.txt", "");
+    final Sdk flexmojosSdk = WriteAction.compute(() -> {
+      final ProjectJdkTable jdkTable = ProjectJdkTable.getInstance();
+      final Sdk sdk = jdkTable.createSdk("Flexmojos test SDK", FlexmojosSdkType.getInstance());
+      final SdkModificator modificator = sdk.getSdkModificator();
+      modificator.setHomePath(flexmojosRoot.getPath());
+      modificator.addRoot(flexmojosRoot, OrderRootType.CLASSES);
+      modificator.commitChanges();
+      jdkTable.addJdk(sdk, getTestRootDisposable());
+      return sdk;
+    });
+    assertFalse("no build configuration uses the SDK", ProjectFileIndex.getInstance(myProject).isInLibrary(marker));
+
+    WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.setName("1");
+      FlexTestUtils.setSdk(bc1, flexSdk);
+      final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      bc2.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
+      bc2.setName("2");
+      bc2.getDependencies().setSdkEntry(Factory.createSdkEntry(flexmojosSdk.getName()));
+    }));
+    assertTrue("the inactive build configuration uses the SDK", ProjectFileIndex.getInstance(myProject).isInLibrary(marker));
+
+    WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
+      final ModifiableFlexBuildConfiguration bc2 = ContainerUtil.find(editor.getConfigurations(myModule), bc -> "2".equals(bc.getName()));
+      FlexTestUtils.setSdk(bc2, flexSdk);
+    }));
+    assertFalse("no build configuration uses the SDK any more", ProjectFileIndex.getInstance(myProject).isInLibrary(marker));
+  }
+
+  public void testModuleSdkFollowsActiveBuildConfiguration() {
+    final Pair<Sdk, Sdk> sdks = prepareTwoSdks();
+    final FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(myModule);
+
+    bcManager.setActiveBuildConfiguration(bcManager.findConfigurationByName("1"));
+    assertEquals(sdks.first.getName(), ModuleRootManager.getInstance(myModule).getSdk().getName());
+
+    bcManager.setActiveBuildConfiguration(bcManager.findConfigurationByName("2"));
+    assertEquals(sdks.second.getName(), ModuleRootManager.getInstance(myModule).getSdk().getName());
+  }
+
+  /** An `.iml` file from an older version names the removed composite SDK. The sync gives the module a real SDK instead. */
+  public void testCompositeSdkDependencyIsMigrated() {
+    final Pair<Sdk, Sdk> sdks = prepareTwoSdks();
+    final FlexBuildConfigurationManager bcManager = FlexBuildConfigurationManager.getInstance(myModule);
+    bcManager.setActiveBuildConfiguration(bcManager.findConfigurationByName("2"));
+    ModuleRootModificationUtil.updateModel(myModule, model ->
+      model.setInvalidSdk(sdks.first.getName() + "\t" + sdks.second.getName(), "__CompositeFlexSdk__"));
+    assertNull(ModuleRootManager.getInstance(myModule).getSdk());
+
+    WriteAction.run(() -> FlexModuleSdkSync.syncAllModuleSdks(myProject));
+
+    assertEquals(sdks.second.getName(), ModuleRootManager.getInstance(myModule).getSdk().getName());
   }
 
   public Pair<Sdk, Sdk> prepareTwoSdks() {
