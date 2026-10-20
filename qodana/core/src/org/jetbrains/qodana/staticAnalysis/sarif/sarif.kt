@@ -85,8 +85,6 @@ internal const val QODANA_SEVERITY_KEY = "qodanaSeverity"
 internal const val QODANA_NOTIFICATION_KIND = "qodanaKind"
 internal const val QODANA_NEW_RESULT_SUMMARY = "qodanaNewResultSummary"
 internal const val QODANA_FAILURE_CONDITIONS = "qodanaFailureConditions"
-internal const val QODANA_FINGERPRINT_SOURCE = "qodanaFingerprintSource"
-internal const val QODANA_XML_SEMANTIC_FINGERPRINT_APPLIED = "qodanaXmlSemanticFingerprintApplied"
 
 internal const val RELATED_PROBLEMS_CHILD_HASH_PROP = "relatedProblemsChildHash"
 internal const val RELATED_PROBLEMS_ROOT_HASH_PROP = "relatedProblemsRootHash"

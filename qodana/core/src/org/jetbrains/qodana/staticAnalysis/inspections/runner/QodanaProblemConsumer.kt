@@ -17,7 +17,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileState
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.FingerprintSource
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintDataExtractor
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.structuralSignalsDebugSummary
@@ -56,7 +55,7 @@ class QodanaProblemConsumer(
     StructuralFingerprintDebugLog.log {
       "QodanaProblemConsumer.consume inspection=${toolWrapper.shortName}, " +
       "descriptor=${descriptor.javaClass.name}, descriptorPsi=$descriptorPsiSummary, " +
-      "fingerprintData=${fingerprintData != null}, source=${fingerprintData?.source}, " +
+      "fingerprintData=${fingerprintData != null}, " +
       "signals=${fingerprintData?.structuralSignals?.structuralSignalsDebugSummary() ?: "<none>"}, " +
       "additionalFingerprintData=${fingerprintData?.additionalFingerprintData?.isEmpty() == false}"
     }
@@ -81,7 +80,7 @@ class QodanaProblemConsumer(
         onDescriptorPsi(element?.debugSummary() ?: "<null>")
       }
       if (element != null && element.isValid) {
-        PsiFingerprintDataExtractor.extract(element, FingerprintSource.PROBLEM_DESCRIPTOR_PSI)
+        PsiFingerprintDataExtractor.extract(element)
       } else {
         null
       }

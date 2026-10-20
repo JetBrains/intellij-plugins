@@ -5,11 +5,10 @@ import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.AdditionalFingerpr
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
 
 internal object PsiFingerprintDataExtractor {
-  fun extract(element: PsiElement, source: FingerprintSource? = null): PsiFingerprintData {
+  fun extract(element: PsiElement): PsiFingerprintData {
     return PsiFingerprintData(
       structuralSignals = if (areStructuralFingerprintsEnabled) PsiSignalExtractor.extractSignals(element) else null,
       additionalFingerprintData = extractXmlSemanticIdentity(element),
-      source = source,
     )
   }
 
