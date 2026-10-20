@@ -8,17 +8,18 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.components.CustomImlComponentService;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.RootsChangeRescanningInfo;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.platform.workspace.jps.serialization.CustomImlComponentNameContributor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
@@ -36,9 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-@State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME)
-public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
-  implements PersistentStateComponent<FlexBuildConfigurationManagerImpl.State> {
+public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager {
 
   private static final Logger LOG = Logger.getInstance(FlexBuildConfigurationManagerImpl.class.getName());
 
@@ -55,26 +54,38 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     myModuleLevelCompilerOptions = module == null ? new CompilerOptionsImpl() : new CompilerOptionsImpl(module.getProject(), true);
 
     if (myModule != null) {
-      myModule.getProject().getMessageBus().connect(myModule).subscribe(ModuleListener.TOPIC, new ModuleListener() {
+      final State stored = getComponentService().getComponentValue(myModule, COMPONENT_NAME, State.class);
+      if (stored != null) {
+        loadState(stored);
+      }
+      myModuleLevelCompilerOptions.addOptionsListener(new CompilerOptionsListener() {
         @Override
-        public void beforeModuleRemoved(@NotNull Project project, @NotNull Module module) {
-          if (module != myModule) {
-            removeDependenciesOn(module);
-          }
+        public void optionsInTableChanged() {
+          persist();
         }
-      });
+
+        @Override
+        public void additionalOptionsChanged() {
+          persist();
+        }
+      }, FlexBuildConfigurationManagerFactory.getInstance(myModule.getProject()));
     }
   }
 
-  private void removeDependenciesOn(Module module) {
+  void removeDependenciesOn(Module module) {
+    boolean removed = false;
     for (ModifiableFlexBuildConfiguration configuration : myConfigurations) {
       // TODO remove 'optimize for' links
       for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
         DependencyEntry entry = i.next();
-        if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).findModule() == module) {
+        if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).getModuleName().equals(module.getName())) {
           i.remove();
+          removed = true;
         }
       }
+    }
+    if (removed) {
+      persist();
     }
   }
 
@@ -110,6 +121,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
         myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
         resetHighlighting(myModule.getProject());
       });
+      persist();
     }
     else {
       myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
@@ -137,6 +149,7 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     FlexBuildConfigurationImpl[] validatedConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
     doSetBuildConfigurations(validatedConfigurations);
     updateActiveConfiguration(activeName);
+    persist();
   }
 
   void doSetBuildConfigurations(FlexBuildConfigurationImpl[] configurations) {
@@ -156,7 +169,6 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     }
   }
 
-  @Override
   public State getState() {
     final State state = new State();
     for (FlexBuildConfigurationImpl configuration : myConfigurations) {
@@ -167,7 +179,6 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     return state;
   }
 
-  @Override
   public void loadState(final @NotNull State state) {
     if (myModule == null) {
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
@@ -181,6 +192,22 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
     doSetBuildConfigurations(getValidatedConfigurations(configurations));
     updateActiveConfiguration(state.myActiveConfigurationName);
     myModuleLevelCompilerOptions.loadState(state.myModuleLevelCompilerOptions);
+  }
+
+  /**
+   * Stores the current model in the module's {@code .iml} component after the current EDT task.
+   */
+  void persist() {
+    if (myModule == null) {
+      return;
+    }
+    ApplicationManager.getApplication().invokeLater(
+      () -> WriteAction.run(() -> getComponentService().setComponentValueBlocking(myModule, COMPONENT_NAME, getState())),
+      myModule.getDisposed());
+  }
+
+  private @NotNull CustomImlComponentService getComponentService() {
+    return CustomImlComponentService.getInstance(myModule.getProject());
   }
 
   static void resetHighlighting(Project project) {
@@ -246,6 +273,13 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
       namesBefore.add(newName);
     }
     return result;
+  }
+
+  static final class ComponentNameContributor implements CustomImlComponentNameContributor {
+    @Override
+    public @NotNull String getComponentName() {
+      return COMPONENT_NAME;
+    }
   }
 
   public static class State {

@@ -115,6 +115,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
         "//plugins/JavaScriptLanguage/javascript-structure-view:javascript-structureView",
         "@community//platform/platform-impl/concurrency",
+        "@community//platform/workspace/jps",
     ],
 )
 
@@ -211,6 +212,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
         "//plugins/JavaScriptLanguage/javascript-structure-view:javascript-structureView_test_lib",
         "@community//platform/platform-impl/concurrency:concurrency_test_lib",
+        "@community//platform/workspace/jps:jps_test_lib",
     ],
 )
 ### auto-generated section `build intellij.flex` end

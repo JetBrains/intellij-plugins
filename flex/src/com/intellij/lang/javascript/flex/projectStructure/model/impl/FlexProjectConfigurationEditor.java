@@ -787,9 +787,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
   }
 
-  public static void makeNonStructuralModification(final FlexBuildConfiguration bc,
+  public static void makeNonStructuralModification(final @NotNull Module module,
+                                                   final FlexBuildConfiguration bc,
                                                    final Consumer<? super NonStructuralModifiableBuildConfiguration> consumer) {
     consumer.consume(new NonStructuralModifiableBuildConfiguration((FlexBuildConfigurationImpl)bc));
+    FlexBuildConfigurationManagerFactory.getInstance(module.getProject()).getService(module).persist();
   }
 }
 

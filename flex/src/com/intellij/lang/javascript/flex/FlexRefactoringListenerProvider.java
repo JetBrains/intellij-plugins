@@ -138,7 +138,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
           final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
                                    bc.getMainClass().substring(oldPackageWithDot.length());
-          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setMainClass(mainClass));
+          FlexProjectConfigurationEditor.makeNonStructuralModification(module, bc, configuration -> configuration.setMainClass(mainClass));
         }
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
@@ -162,7 +162,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
           }
 
           if (changed) {
-            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setRLMs(newRLMs));
+            FlexProjectConfigurationEditor.makeNonStructuralModification(module, bc, configuration -> configuration.setRLMs(newRLMs));
           }
         }
       }
@@ -198,7 +198,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     private void classNameChanged(final String oldClassName, final String newClassName) {
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().equals(oldClassName)) {
-          FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setMainClass(newClassName));
+          FlexProjectConfigurationEditor.makeNonStructuralModification(myModule, bc, configuration -> configuration.setMainClass(newClassName));
         }
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
@@ -220,7 +220,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
           }
 
           if (changed) {
-            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, configuration -> configuration.setRLMs(newRLMs));
+            FlexProjectConfigurationEditor.makeNonStructuralModification(myModule, bc, configuration -> configuration.setRLMs(newRLMs));
           }
         }
       }
@@ -281,7 +281,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
           }
 
           if (changed) {
-            FlexProjectConfigurationEditor.makeNonStructuralModification(bc,
+            FlexProjectConfigurationEditor.makeNonStructuralModification(myModule, bc,
                                                                          configuration -> configuration.setCssFilesToCompile(newCssFiles));
           }
         }
@@ -298,7 +298,7 @@ public final class FlexRefactoringListenerProvider implements RefactoringElement
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
-          FlexProjectConfigurationEditor.makeNonStructuralModification(bc,
+          FlexProjectConfigurationEditor.makeNonStructuralModification(myModule, bc,
                                                                        configuration -> configuration.getCompilerOptions().setAdditionalConfigFilePath(newFilePath));
         }
 

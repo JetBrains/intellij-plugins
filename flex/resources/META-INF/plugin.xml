@@ -74,6 +74,7 @@
     <module name="intellij.platform.util.text.matching"/>
     <module name="intellij.platform.util.ui"/>
     <module name="intellij.platform.webide"/>
+    <module name="intellij.platform.workspace.jps"/>
     <module name="intellij.platform.workspace.storage"/>
     <module name="intellij.properties.backend"/>
     <module name="intellij.properties.backend.psi"/>
@@ -239,8 +240,8 @@
 
     <configuration.ModuleStructureExtension id="FlexBuildConfigurations"
                                             implementation="com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension"/>
-    <moduleService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager"
-                   serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl"/>
+    <workspaceModel.customImlComponentNameContributor
+      implementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl$ComponentNameContributor"/>
     <projectService serviceInterface="com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder"
                     serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectLevelCompilerOptionsHolderImpl"/>
     <orderEnumerationHandlerFactory
