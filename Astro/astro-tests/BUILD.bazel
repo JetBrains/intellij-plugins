@@ -117,6 +117,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
         "@community//xml/xml-analysis-impl:analysis-impl",
         "@community//xml/xml-analysis-impl:analysis-impl_test_lib",
         "@community//xml/impl",

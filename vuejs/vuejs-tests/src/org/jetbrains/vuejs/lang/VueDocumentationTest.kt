@@ -2,27 +2,30 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
-import com.intellij.lang.javascript.TrackFailedTestRule
+import com.intellij.lang.javascript.TrackFailedTestExtension
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
+@TestApplication
 class VueDocumentationTest :
   VueDocumentationWithPluginTestBase() {
 
-  @Ignore
+  @TestApplication
+  @Disabled
   class WithTsGoProxyTest :
     VueDocumentationTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
+  @TestApplication
   class WithoutServiceTest :
     VueDocumentationTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
@@ -32,9 +35,9 @@ abstract class VueDocumentationWithPluginTestBase(
 ) : VueDocumentationTestBase(testMode = testMode) {
 
   // TODO: use separate expected data
-  @Rule
+  @RegisterExtension
   @JvmField
-  val rule: TestRule = TrackFailedTestRule(
+  val rule: TrackFailedTestExtension = TrackFailedTestExtension(
     "testEmitEvents",
     "testFromDefinitions",
     "testGenericComponentProp",
@@ -43,13 +46,12 @@ abstract class VueDocumentationWithPluginTestBase(
   )
 }
 
-@RunWith(JUnit4::class)
 abstract class VueDocumentationTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("documentation", testMode = testMode) {
 
   private val defaultTestFileName: String
-    get() = "${getTestName(false)}.vue"
+    get() = "${vue.getTestName(false)}.vue"
 
   @Test
   fun testFromDefinitions() {
@@ -58,7 +60,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testTSLibraryElement() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = defaultTestFileName,
     ) {
       val element = file.findElementAt(caretOffset)
@@ -67,7 +69,7 @@ abstract class VueDocumentationTestBase(
       documentationProvider as ExternalDocumentationProvider
       val urls = documentationProvider.getUrlFor(elementAtCaret, element)
       assertNotNull(urls)
-      assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
+      assertNull(documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false), "$urls")
     }
   }
 
@@ -88,7 +90,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testInnerLevelTemplateStdAttrNoDoc() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = defaultTestFileName,
     ) {
       checkNoDocumentationAtCaret()
@@ -137,7 +139,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testMergedWebTypesComponents() {
-    doLookupTest(
+    vue.doLookupTest(
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
       configureFileName = defaultTestFileName,
       renderTypeText = false,
@@ -149,7 +151,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testMergedWebTypesPropsGlobal() {
-    doLookupTest(
+    vue.doLookupTest(
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
       configureFileName = defaultTestFileName,
       checkDocumentation = true,
@@ -160,7 +162,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testMergedWebTypesPropsLocal() {
-    doLookupTest(
+    vue.doLookupTest(
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
       configureFileName = defaultTestFileName,
       checkDocumentation = true,
@@ -171,7 +173,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testMergedWebTypesSlots() {
-    doLookupTest(
+    vue.doLookupTest(
       VueTestModule.NAIVE_UI_2_33_2_PATCHED,
       configureFileName = defaultTestFileName,
       renderTypeText = false,
@@ -181,10 +183,10 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testMergedWebTypesPropsSource() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       dir = true,
       configurators = listOf(
-        UseLocalPackageJsonConfigurator(),
+        vue.UseLocalPackageJsonConfigurator(),
       ),
       configureFile = false,
     ) {
@@ -212,7 +214,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testPrimeVueMergedProps() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VueTestModule.PRIMEVUE_3_8_2,
       configureFileName = defaultTestFileName,
     ) {
@@ -278,7 +280,7 @@ abstract class VueDocumentationTestBase(
 
   @Test
   fun testNoComponentDocInCodeCompletion() {
-    doLookupTest(
+    vue.doLookupTest(
       configureFileName = defaultTestFileName,
       renderPriority = false,
       renderTypeText = false,
@@ -292,7 +294,7 @@ abstract class VueDocumentationTestBase(
   private fun doTest(
     vararg modules: VueTestModule,
   ) {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       modules = modules,
       configureFileName = defaultTestFileName,
     ) {

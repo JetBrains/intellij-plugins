@@ -3,17 +3,24 @@ package org.intellij.prisma.completion
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.noAutoComplete
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.assertj.core.api.Assertions.assertThat
 import org.intellij.prisma.PrismaTestCase
 import org.intellij.prisma.ide.documentation.PrismaDocumentationProvider
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaFileType
 import org.intellij.prisma.reformatDocumentation
+import org.junit.jupiter.api.Assertions.assertNotNull
 
 abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(testCasePath) {
-  protected fun completeSelected(
+  protected suspend fun completeSelected(
     source: String,
     expected: String,
     selected: String,
@@ -22,11 +29,11 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
     return completeAndGetLookupElements(source, expected, selected, additionalFile)
   }
 
-  protected fun getLookupElements(source: String): Array<LookupElement> {
+  protected suspend fun getLookupElements(source: String): Array<LookupElement> {
     return completeAndGetLookupElements(source, source)
   }
 
-  private fun completeAndGetLookupElements(
+  private suspend fun completeAndGetLookupElements(
     source: String,
     expected: String,
     selected: String? = null,
@@ -42,8 +49,10 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
       if (selected != null) {
         val selectedItem = myFixture.lookupElements?.find { it.lookupString == selected }
         assertNotNull(selectedItem)
-        myFixture.lookup.currentItem = selectedItem
-        myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+        withContext(Dispatchers.EDT) {
+          myFixture.lookup.currentItem = selectedItem
+          myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+        }
         myFixture.checkResult(expected)
       }
       lookupElements
@@ -56,30 +65,33 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
     myFixture.checkResult(expected)
   }
 
-  protected fun noCompletion(source: String) {
-    assertSize(0, completeAndGetLookupElements(source, source))
+  protected suspend fun noCompletion(source: String) {
+    assertThat(completeAndGetLookupElements(source, source)).isEmpty()
   }
 
-  protected fun checkLookupDocumentation(lookupElements: Array<LookupElement>, lookupString: String) {
+  protected suspend fun checkLookupDocumentation(lookupElements: Array<LookupElement>, lookupString: String) {
     checkLookupDocumentation(lookupElements.find { it.lookupString == lookupString })
   }
 
-  protected fun checkLookupDocumentation(lookupElement: LookupElement?) {
-    val element = lookupElement?.psiElement
-    assertNotNull(element)
-    val doc = PrismaDocumentationProvider().generateDoc(element!!, null)?.let {
+  protected suspend fun checkLookupDocumentation(lookupElement: LookupElement?) {
+    val generated = readAction {
+      val element = lookupElement?.psiElement
+      assertNotNull(element)
+      PrismaDocumentationProvider().generateDoc(element!!, null)
+    }
+    val doc = generated?.let {
       assertNotNull(it)
       reformatDocumentation(project, it)
     }
-    assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc!!)
+    PlatformTestUtil.assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc!!)
   }
 
   protected fun checkLookupElementsInSplitSchema(fileDir: String? = null, includePrimitive: Boolean = false) {
-    doConfiguredTest(dir = true, configureFileName = "${if (fileDir != null) "$fileDir/" else ""}$testName.$defaultExtension") {
+    web.doConfiguredTest(dir = true, configureFileName = "${if (fileDir != null) "$fileDir/" else ""}${web.testName}.${web.defaultExtension}") {
       checkLookupItems(
         renderPriority = true,
         renderTypeText = true,
-        expectedDataLocation = testName,
+        expectedDataLocation = web.testName,
         lookupItemFilter = {
           if (!includePrimitive) {
             it.lookupString !in PrismaConstants.PrimitiveTypes.ALL

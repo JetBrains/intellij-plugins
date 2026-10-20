@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.TrackFailedTestRule
+import com.intellij.lang.javascript.TrackFailedTestExtension
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunctionItem
@@ -33,9 +33,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.testFramework.assertInstanceOf
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.asSafely
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
@@ -48,18 +49,24 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
+@TestApplication
 class VueGotoDeclarationTest :
   VueGotoDeclarationWithPluginTestBase() {
 
+  @TestApplication
   class WithTsGoProxyTest :
     VueGotoDeclarationWithPluginTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
+  @TestApplication
   class WithoutServiceTest :
     VueGotoDeclarationTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
@@ -68,14 +75,13 @@ abstract class VueGotoDeclarationWithPluginTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueGotoDeclarationTestBase(testMode = testMode) {
 
-  @Rule
+  @RegisterExtension
   @JvmField
-  val rule: TestRule = TrackFailedTestRule(
+  val rule: TrackFailedTestExtension = TrackFailedTestExtension(
     "testResolveLocallyInsideComponent",
   )
 }
 
-@RunWith(JUnit4::class)
 abstract class VueGotoDeclarationTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("gotoDeclaration", testMode = testMode) {
@@ -86,7 +92,7 @@ abstract class VueGotoDeclarationTestBase(
     expectedFileName: String? = null,
     vararg fileData: Pair<String, String>,
   ) {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       for ((fileName, fileContent) in fileData) {
@@ -103,7 +109,7 @@ abstract class VueGotoDeclarationTestBase(
 
   @Test
   fun testResolveInjectionToPropInObject() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveToPropInObject.vue", """
@@ -160,7 +166,7 @@ abstract class VueGotoDeclarationTestBase(
 
   @Test
   fun testResolveAttributeInPascalCaseUsageInPropsArray() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveAttributeInPascalCaseUsageInPropsArray.vue", """
@@ -178,15 +184,15 @@ abstract class VueGotoDeclarationTestBase(
   let message25620 = 111;
 </script>""")
       val literal = polySymbolSourceAtCaret()
-      assertInstanceOf(literal, JSLiteralExpression::class.java)
-      assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
+      assertInstanceOf(JSLiteralExpression::class.java, literal)
+      assertInstanceOf(JSArrayLiteralExpression::class.java, literal!!.parent)
       assertEquals("'pascalCase'", literal.text)
     }
   }
 
   @Test
   fun testResolveIntoComputedProperty() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveIntoComputedProperty.vue", """
@@ -204,14 +210,14 @@ export default {
 }
 </script>""")
       val property = polySymbolSourceAtCaret()
-      assertInstanceOf<JSFunctionItem>((property as JSImplicitElement).context)
+      assertInstanceOf(JSFunctionItem::class.java, (property as JSImplicitElement).context)
       assertEquals("testRight", (property.context as JSFunctionItem).name)
     }
   }
 
   @Test
   fun testResolveIntoComputedES6FunctionProperty() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveIntoComputedES6FunctionProperty.vue", """
@@ -231,14 +237,14 @@ export default {
       val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val property = reference!!.resolve()
-      assertInstanceOf<JSFunctionItem>((property as JSImplicitElement).context)
+      assertInstanceOf(JSFunctionItem::class.java, (property as JSImplicitElement).context)
       assertEquals("testRight", (property.context as JSFunctionItem).name)
     }
   }
 
   @Test
   fun testResolveIntoMethodsFromBoundAttributes() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("child.vue", """
@@ -274,7 +280,7 @@ export default {
       val reference = getReferenceAtCaretPosition()
       assertNotNull(reference)
       val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
-      assertInstanceOf<JSProperty>(property)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("me215thod", (property as JSProperty).name)
     }
   }
@@ -344,7 +350,7 @@ export default {
 
   @Test
   fun testResolveLocallyInsideComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
 
@@ -532,14 +538,14 @@ export default {
     }
     else {
       val property = if (target is JSImplicitElement) target.parent else target
-      assertInstanceOf<JSProperty>(property)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals(expectedPropertyName, (property as JSProperty).name)
     }
   }
 
   @Test
   fun testIntoVForVar() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("IntoVForVar.vue", """
@@ -555,13 +561,13 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<VueJSVForExpression>(variable!!.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable!!.parent.parent)
     }
   }
 
   @Test
   fun testVForDetailsResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("IntoVForDetailsResolve.vue", """
@@ -587,14 +593,14 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()
       assertNotNull(part)
-      assertInstanceOf<JSProperty>(part)
-      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
+      assertInstanceOf(JSProperty::class.java, part)
+      assertInstanceOf(JSObjectLiteralExpression::class.java, part!!.parent)
     }
   }
 
   @Test
   fun testVForIteratedExpressionResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("VForIteratedExpressionResolve.vue", """
@@ -620,14 +626,14 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertNotNull(part)
-      assertInstanceOf<JSProperty>(part)
-      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
+      assertInstanceOf(JSProperty::class.java, part)
+      assertInstanceOf(JSObjectLiteralExpression::class.java, part!!.parent)
     }
   }
 
   @Test
   fun testIntoVForVarInPug() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("IntoVForVarInPug.vue", """
@@ -640,13 +646,13 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<VueJSVForExpression>(variable!!.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable!!.parent.parent)
     }
   }
 
   @Test
   fun testVForDetailsResolveInPug() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("IntoVForDetailsResolveInPug.vue", """
@@ -669,14 +675,14 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()
       assertNotNull(part)
-      assertInstanceOf<JSProperty>(part)
-      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
+      assertInstanceOf(JSProperty::class.java, part)
+      assertInstanceOf(JSObjectLiteralExpression::class.java, part!!.parent)
     }
   }
 
   @Test
   fun testVForIteratedExpressionResolveInPug() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("VForIteratedExpressionResolveInPug.vue", """
@@ -699,14 +705,14 @@ export default {
       assertNotNull(reference)
       val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
       assertNotNull(part)
-      assertInstanceOf<JSProperty>(part)
-      assertInstanceOf<JSObjectLiteralExpression>(part!!.parent)
+      assertInstanceOf(JSProperty::class.java, part)
+      assertInstanceOf(JSObjectLiteralExpression::class.java, part!!.parent)
     }
   }
 
   @Test
   fun testIntoVForVarInHtml() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("IntoVForVarInHtml.html", """
@@ -722,13 +728,13 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<VueJSVForExpression>(variable!!.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable!!.parent.parent)
     }
   }
 
   @Test
   fun testKeyIntoForResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("KeyIntoForResolve.vue", """
@@ -753,15 +759,15 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<JSVarStatement>(variable!!.parent)
-      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
-      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
+      assertInstanceOf(JSVarStatement::class.java, variable!!.parent)
+      assertInstanceOf(JSParenthesizedExpression::class.java, variable.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable.parent.parent.parent)
     }
   }
 
   @Test
   fun testVIfIntoForResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("VIfIntoForResolve.vue", """
@@ -786,15 +792,15 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<JSVarStatement>(variable!!.parent)
-      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
-      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
+      assertInstanceOf(JSVarStatement::class.java, variable!!.parent)
+      assertInstanceOf(JSParenthesizedExpression::class.java, variable.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable.parent.parent.parent)
     }
   }
 
   @Test
   fun testKeyIntoForResolveHtml() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("KeyIntoForResolveHtml.html", """
@@ -808,9 +814,9 @@ export default {
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<JSVarStatement>(variable!!.parent)
-      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
-      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
+      assertInstanceOf(JSVarStatement::class.java, variable!!.parent)
+      assertInstanceOf(JSParenthesizedExpression::class.java, variable.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable.parent.parent.parent)
     }
   }
 
@@ -901,7 +907,7 @@ new Vue({
 
   @Test
   fun testKeyIntoForResolvePug() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("KeyIntoForResolvePug.vue", """
@@ -914,15 +920,15 @@ new Vue({
       assertNotNull(reference)
       val variable = reference!!.resolve()
       assertNotNull(variable)
-      assertInstanceOf<JSVarStatement>(variable!!.parent)
-      assertInstanceOf<JSParenthesizedExpression>(variable.parent.parent)
-      assertInstanceOf<VueJSVForExpression>(variable.parent.parent.parent)
+      assertInstanceOf(JSVarStatement::class.java, variable!!.parent)
+      assertInstanceOf(JSParenthesizedExpression::class.java, variable.parent.parent)
+      assertInstanceOf(VueJSVForExpression::class.java, variable.parent.parent.parent)
     }
   }
 
   @Test
   fun testResolveForRenamedGlobalComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("libComponent.vue", """
@@ -949,16 +955,16 @@ export default {
 """)
 
       val literal = polySymbolSourceAtCaret()
-      assertInstanceOf(literal, JSLiteralExpression::class.java)
+      assertInstanceOf(JSLiteralExpression::class.java, literal)
       assertEquals("'libComponentProp'", literal!!.text)
-      assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
+      assertInstanceOf(JSArrayLiteralExpression::class.java, literal.parent)
       assertEquals("props", (literal.parent.parent as JSProperty).name)
     }
   }
 
   @Test
   fun testLocalQualifiedNameOfGlobalComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("LocalQualifiedNameOfGlobalComponent.js", """
@@ -977,16 +983,16 @@ export default {
     """.trimIndent())
 
       val property = polySymbolSourceAtCaret()
-      assertInstanceOf(property, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("kuku", (property as JSProperty).name)
-      assertInstanceOf(property.parent.parent, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
     }
   }
 
   @Test
   fun testResolveVueRouterComponents() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByFile("vue-router.js")
@@ -997,16 +1003,16 @@ export default {
     """.trimIndent())
 
       val property = polySymbolSourceAtCaret()
-      assertInstanceOf(property, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("to", (property as JSProperty).name)
-      assertInstanceOf(property.parent.parent, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
     }
   }
 
   @Test
   fun testResolveIntoGlobalComponentInLocalVar() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveIntoGlobalComponentInLocalVarComponent.js", """
@@ -1034,9 +1040,9 @@ export default {
 
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
-      assertInstanceOf<JSProperty>(property)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("from", (property as JSProperty).name)
-      assertInstanceOf<JSProperty>(property.parent.parent)
+      assertInstanceOf(JSProperty::class.java, property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
     }
   }
@@ -1063,7 +1069,7 @@ Vue.component(alias, WiseComp)
 
   @Test
   fun testGlobalComponentLiteral() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("index.js", """
@@ -1079,16 +1085,16 @@ Vue.component('global-comp-literal', {
 </template>
 """)
       val property = polySymbolSourceAtCaret()
-      assertInstanceOf(property, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
-      assertInstanceOf<JSProperty>(property.parent.parent)
+      assertInstanceOf(JSProperty::class.java, property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
     }
   }
 
   @Test
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("LocalPropsInArrayInCompAttrsAndWithKebabCaseAlso.vue",
@@ -1106,15 +1112,15 @@ Vue.component('global-comp-literal', {
 </script>
 """)
       val literal = polySymbolSourceAtCaret()
-      assertInstanceOf(literal, JSLiteralExpression::class.java)
+      assertInstanceOf(JSLiteralExpression::class.java, literal)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
-      assertInstanceOf<JSArrayLiteralExpression>(literal.parent)
+      assertInstanceOf(JSArrayLiteralExpression::class.java, literal.parent)
     }
   }
 
   @Test
   fun testLocalPropsInArrayInCompAttrsRef() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("LocalPropsInArrayInCompAttrsRef.vue",
@@ -1134,15 +1140,15 @@ const props = ['oneTwo']
 """)
       val literal = polySymbolSourceAtCaret()
       assertNotNull(literal)
-      assertInstanceOf<JSLiteralExpression>(literal)
+      assertInstanceOf(JSLiteralExpression::class.java, literal)
       assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
-      assertInstanceOf<JSArrayLiteralExpression>(literal.parent)
+      assertInstanceOf(JSArrayLiteralExpression::class.java, literal.parent)
     }
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsArray() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("compUI.vue", """
@@ -1167,16 +1173,16 @@ const props = ['oneTwo']
 </script>
 """)
       val literal = polySymbolSourceAtCaret()
-      assertInstanceOf(literal, JSLiteralExpression::class.java)
+      assertInstanceOf(JSLiteralExpression::class.java, literal)
       assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
       assertEquals("compUI.vue", literal.containingFile.name)
-      assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
+      assertInstanceOf(JSArrayLiteralExpression::class.java, literal.parent)
     }
   }
 
   @Test
   fun testImportedComponentPropsInCompAttrsObjectRef() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("compUI.vue", """
@@ -1203,7 +1209,7 @@ const props = {seeMe: {}}
 """)
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
-      assertInstanceOf<JSProperty>(property)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("seeMe", (property as JSProperty).name)
       assertEquals("compUI.vue", property.containingFile.name)
     }
@@ -1211,7 +1217,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testImportedComponentPropsInCompAttrsAsObject() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("compUI.vue", """
@@ -1239,8 +1245,8 @@ const props = {seeMe: {}}
 """)
       val property = polySymbolSourceAtCaret()
       assertNotNull(property)
-      assertInstanceOf<JSProperty>(property)
-      assertInstanceOf<JSProperty>(property!!.parent.parent)
+      assertInstanceOf(JSProperty::class.java, property)
+      assertInstanceOf(JSProperty::class.java, property!!.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
       assertEquals("seeMe", (property as JSProperty).name)
       assertEquals("compUI.vue", property.containingFile.name)
@@ -1249,7 +1255,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveMixinProp() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("MixinWithProp.vue", """
@@ -1295,9 +1301,9 @@ const props = {seeMe: {}}
 """)
 
       val property = polySymbolSourceAtCaret()
-      assertInstanceOf(property, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property)
       assertEquals("mixinProp", (property as JSProperty).name)
-      assertInstanceOf(property.parent.parent, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, property.parent.parent)
       assertEquals("props", (property.parent.parent as JSProperty).name)
       assertEquals("MixinWithProp.vue", property.containingFile.name)
     }
@@ -1305,7 +1311,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testTwoExternalMixins() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("FirstMixin.vue", """
@@ -1338,9 +1344,9 @@ const props = {seeMe: {}}
 """)
       val checkResolve = { propName: String, file: String ->
         val literal = polySymbolSourceAtCaret()
-        assertInstanceOf(literal, JSLiteralExpression::class.java)
+        assertInstanceOf(JSLiteralExpression::class.java, literal)
         assertEquals(propName, (literal as JSLiteralExpression).stringValue)
-        assertInstanceOf(literal.parent.parent, JSProperty::class.java)
+        assertInstanceOf(JSProperty::class.java, literal.parent.parent)
         assertEquals("props", (literal.parent.parent as JSProperty).name)
         assertEquals(file, literal.containingFile.name)
       }
@@ -1355,7 +1361,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveIntoLocalMixin() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveIntoLocalMixin.vue", """
@@ -1388,7 +1394,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveInMixinLiteral() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("ResolveInMixinLiteral.vue", """
@@ -1417,15 +1423,15 @@ const props = {seeMe: {}}
 
   private fun CodeInsightTestFixture.doTestResolveIntoProperty(name: String) {
     val property = polySymbolSourceAtCaret()
-    assertInstanceOf(property, JSProperty::class.java)
+    assertInstanceOf(JSProperty::class.java, property)
     assertEquals(name, (property as JSProperty).name)
-    assertInstanceOf(property.parent.parent, JSProperty::class.java)
+    assertInstanceOf(JSProperty::class.java, property.parent.parent)
     assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
   @Test
   fun testResolveIntoGlobalMixin1() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("GlobalMixins.js", globalMixinText())
@@ -1446,7 +1452,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveIntoGlobalMixin2() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("GlobalMixins.js", globalMixinText())
@@ -1467,7 +1473,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testTypeScriptResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("TypeScriptResolve.vue", """
@@ -1477,14 +1483,14 @@ const props = {seeMe: {}}
       assertNotNull(reference)
       val function = reference!!.resolve()
       assertNotNull(function)
-      assertInstanceOf<TypeScriptFunction>(function)
+      assertInstanceOf(TypeScriptFunction::class.java, function)
       assertEquals("lib.es5.d.ts", function!!.containingFile.name)
     }
   }
 
   @Test
   fun testECMA5Resolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("TypeScriptResolve.vue", """
@@ -1494,14 +1500,14 @@ const props = {seeMe: {}}
       assertNotNull(reference)
       val function = reference!!.resolve()
       assertNotNull(function)
-      assertInstanceOf<TypeScriptFunction>(function)
+      assertInstanceOf(TypeScriptFunction::class.java, function)
       assertEquals("lib.es5.d.ts", function!!.containingFile.name)
     }
   }
 
   @Test
   fun testVBindResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("VBindCommonResolve.vue", """
@@ -1523,7 +1529,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveGlobalCustomDirective() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "CustomDirectives.vue",
       dirName = "../common/customDirectives",
       dir = true,
@@ -1543,7 +1549,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveLocalCustomDirective() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "CustomDirectives.vue",
       dirName = "../common/customDirectives",
       dir = true,
@@ -1564,7 +1570,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveLocalCustomDirectiveLinkedFiles() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "CustomDirectives.html",
       dirName = "../common/customDirectivesLinkedFiles",
       dir = true,
@@ -1585,28 +1591,28 @@ const props = {seeMe: {}}
 
   private fun CodeInsightTestFixture.doTestResolveIntoDirective(directive: String, fileName: String) {
     val property = polySymbolSourceAtCaret()
-    assertNotNull(directive, property)
+    assertNotNull(property, directive)
     when (property) {
       is JSProperty -> {
-        assertEquals(directive, directive, property.name)
-        assertEquals(directive, fileName, property.containingFile.name)
+        assertEquals(directive, property.name, directive)
+        assertEquals(fileName, property.containingFile.name, directive)
       }
       is JSCallExpression -> {
-        assertNotNull(directive, property.text)
-        assertEquals(directive, directive, (property.arguments[0] as JSLiteralExpression).stringValue)
-        assertEquals(directive, fileName, property.containingFile.name)
+        assertNotNull(property.text, directive)
+        assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue, directive)
+        assertEquals(fileName, property.containingFile.name, directive)
       }
       is JSObjectLiteralExpression -> {
-        assertNotNull(directive, property.text)
-        assertEquals(directive, fileName, property.containingFile.name)
+        assertNotNull(property.text, directive)
+        assertEquals(fileName, property.containingFile.name, directive)
       }
-      else -> assertTrue("$directive class: ${property?.javaClass?.name}", false)
+      else -> assertTrue(false, "$directive class: ${property?.javaClass?.name}")
     }
   }
 
   @Test
   fun testResolveIntoVueDefinitions() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_5_3,
       configureFile = false,
     ) {
@@ -1622,13 +1628,13 @@ const props = {seeMe: {}}
       val target = reference!!.resolve()
       assertNotNull(target)
       assertEquals("options.d.ts", target!!.containingFile.name)
-      assertInstanceOf<TypeScriptPropertySignature>(target)
+      assertInstanceOf(TypeScriptPropertySignature::class.java, target)
     }
   }
 
   @Test
   fun testResolveElementUiComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VueTestModule.ELEMENT_UI_2_0_5,
       configureFile = false,
     ) {
@@ -1645,7 +1651,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testResolveMintUiComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_5_3,
       VueTestModule.MINT_UI_2_2_3,
       configureFile = false,
@@ -1663,7 +1669,7 @@ const props = {seeMe: {}}
 
   @Test
   fun testElementUiDatePickerLikeComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("date-picker.js", """
@@ -1693,7 +1699,7 @@ export default DatePicker;
 
   @Test
   fun testResolveSimpleObjectMemberComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("a.vue", "")
@@ -1748,7 +1754,7 @@ Object.keys(obj).forEach(key => {
 
   @Test
   fun testResolveObjectWithSpreadComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("a.vue", "")
@@ -1806,7 +1812,7 @@ Object.keys(other).forEach(key => {
 
   @Test
   fun testResolveObjectWithSpreadLiteralComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("a.vue", "")
@@ -1835,7 +1841,7 @@ Object.keys(other).forEach(key => {
 
   @Test
   fun testResolveWithExplicitForInComponentsBindingEs6() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("a.vue", "")
@@ -1869,7 +1875,7 @@ components.install = (Vue, options = {}) => {
 
   @Test
   fun testResolveWithExplicitForInComponentsBinding() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("a.vue", "")
@@ -1903,7 +1909,7 @@ components.install = (Vue, options = {}) => {
 
   @Test
   fun testResolveWithClassComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       createTwoClassComponents(myFixture)
@@ -1939,7 +1945,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testResolveWithClassComponentTs() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       createTwoClassComponents(myFixture, true)
@@ -1966,7 +1972,7 @@ export default class UsageComponent extends Vue {
 """)
       val target = resolveToPolySymbolSource("<<caret>LongComponent/>")
       assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
-      assertInstanceOf(target, JSProperty::class.java)
+      assertInstanceOf(JSProperty::class.java, target)
       checkGotoDeclaration(
         fromSignature = "<<caret>LongComponent/>",
         declarationSignature = "export default class <caret>LongComponent",
@@ -1977,7 +1983,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testLocalComponentsExtendsResolve() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       createLocalComponentsExtendsData(myFixture, false)
@@ -1990,13 +1996,13 @@ export default class UsageComponent extends Vue {
   private fun CodeInsightTestFixture.doResolveIntoLibraryComponent(compName: String, fileName: String) {
     val target = polySymbolSourceAtCaret()
     assertEquals(fileName, target!!.containingFile.name)
-    assertInstanceOf<JSProperty>(target.parent)
+    assertInstanceOf(JSProperty::class.java, target.parent)
     assertEquals(compName, StringUtil.unquoteString((target.parent as JSProperty).value!!.text))
   }
 
   @Test
   fun testResolveWithRecursiveMixins() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       defineRecursiveMixedMixins(myFixture)
@@ -2017,7 +2023,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testCssClassInPug() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("foo.vue", "<template lang='pug'>\n" +
@@ -2056,7 +2062,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testComponentModelProperty() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_6_10,
       configureFile = false,
     ) {
@@ -2077,7 +2083,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testResolveToUnresolvedComponent() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("a.vue", """
@@ -2097,7 +2103,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testAtComponentResolution() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_6_10,
       configureFile = false,
     ) {
@@ -2106,11 +2112,11 @@ export default class UsageComponent extends Vue {
 
       val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
 
-      assertSameElements(getNames(component.props), "bar", "foo_prop", "name", "checked")
-      assertSameElements(getNames(component.data), "foo", "foo_prop", "foo_data")
-      assertSameElements(getNames(component.computed), "computedBar", "computedSetter", "syncedName")
-      assertSameElements(getNames(component.methods), "addToCount", "getBar", "resetCount")
-      assertSameElements(getNames(component.emits), "add-to-count", "reset", "update:name")
+      assertThat(getNames(component.props)).containsOnly("bar", "foo_prop", "name", "checked")
+      assertThat(getNames(component.data)).containsOnly("foo", "foo_prop", "foo_data")
+      assertThat(getNames(component.computed)).containsOnly("computedBar", "computedSetter", "syncedName")
+      assertThat(getNames(component.methods)).containsOnly("addToCount", "getBar", "resetCount")
+      assertThat(getNames(component.emits)).containsOnly("add-to-count", "reset", "update:name")
       assertEquals("checked", component.model?.prop)
       assertEquals("change", component.model?.event)
     }
@@ -2118,7 +2124,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testAtComponentResolutionTs() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_6_10,
       configureFile = false,
     ) {
@@ -2127,11 +2133,11 @@ export default class UsageComponent extends Vue {
 
       val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
 
-      assertSameElements(getNames(component.props), "bar", "foo_prop", "name", "checked")
-      assertSameElements(getNames(component.data), "foo", "foo_prop", "foo_data")
-      assertSameElements(getNames(component.computed), "computedBar", "computedSetter", "syncedName")
-      assertSameElements(getNames(component.methods), "addToCount", "getBar", "resetCount")
-      assertSameElements(getNames(component.emits), "add-to-count", "reset", "update:name")
+      assertThat(getNames(component.props)).containsOnly("bar", "foo_prop", "name", "checked")
+      assertThat(getNames(component.data)).containsOnly("foo", "foo_prop", "foo_data")
+      assertThat(getNames(component.computed)).containsOnly("computedBar", "computedSetter", "syncedName")
+      assertThat(getNames(component.methods)).containsOnly("addToCount", "getBar", "resetCount")
+      assertThat(getNames(component.emits)).containsOnly("add-to-count", "reset", "update:name")
       assertEquals("checked", component.model?.prop)
       assertEquals("change", component.model?.event)
     }
@@ -2139,12 +2145,12 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testWebTypesSource() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "src/App.vue",
       dirName = "web-types-source",
       dir = true,
       configurators = listOf(
-        UseLocalPackageJsonConfigurator(),
+        vue.UseLocalPackageJsonConfigurator(),
       ),
     ) {
       mapOf(
@@ -2157,9 +2163,7 @@ export default class UsageComponent extends Vue {
         Pair("<relative-module<caret>-default>", "export default class {\n  def: string\n}")
       )
         .forEach { testCase ->
-          assertEquals(
-            testCase.value,
-            resolveToPolySymbolSource(testCase.key)
+          assertEquals(testCase.value, resolveToPolySymbolSource(testCase.key)
               .let {
                 (it as? JSImplicitElement)?.context ?: it
               }.text)
@@ -2169,7 +2173,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testVueDefaultSymbols() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_5_3,
       configureFile = false,
     ) {
@@ -2182,26 +2186,23 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testResolveVueLoaderStyleReference() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "App.vue",
       dirName = "resolve-vue-loader-url",
       dir = true,
       configurators = listOf(
-        UseLocalPackageJsonConfigurator(),
+        vue.UseLocalPackageJsonConfigurator(),
       ),
     ) {
-      assertEquals(
-        "vue-multiselect.min.css",
-        resolveReference("vue-multiselect.<caret>min.css").containingFile.name,
-      )
+      assertEquals("vue-multiselect.min.css", resolveReference("vue-multiselect.<caret>min.css").containingFile.name)
     }
   }
 
   @Test
   fun testSlotName() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configurators = listOf(
-        UseLocalPackageJsonConfigurator(),
+        vue.UseLocalPackageJsonConfigurator(),
       ),
       configureFile = false,
     ) {
@@ -2220,7 +2221,7 @@ export default class UsageComponent extends Vue {
         for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
                                  "<$tag><div slot=\"$slotWithCaret\"")) {
           val element = resolveToPolySymbolSource(signature)
-          assertEquals(signature, slotDeclText, element.text)
+          assertEquals(slotDeclText, element.text, signature)
         }
       }
     }
@@ -2228,7 +2229,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testFilters() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       additionalDependencies = mapOf(
         "some_lib" to "0.0.0",
       ),
@@ -2244,7 +2245,7 @@ export default class UsageComponent extends Vue {
       )) {
         val element = resolveReference("<caret>${filterName}")
         val text = if (element is JSImplicitElement) element.parent.text else element.text
-        assertEquals(filterName, resolvedItemText, text)
+        assertEquals(resolvedItemText, text, filterName)
       }
       assertUnresolvedReference("<caret>wrongFilter")
     }
@@ -2252,7 +2253,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testImportedProps() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "main.vue",
       dirName = "props-import-resolve",
       dir = true,
@@ -2265,60 +2266,43 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testMixinExtend() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_6_10,
       configureFileName = "test.vue",
       dirName = "vue-sfc-extend-mixin",
       dir = true,
     ) {
-      assertEquals(
-        "test.vue",
-        resolveReference("\"sty<caret>le\"").containingFile.name)
+      assertEquals("test.vue", resolveReference("\"sty<caret>le\"").containingFile.name)
       moveToOffsetBySignature("\"<caret>classes\"")
       completeBasic()
-      assertContainsElements(renderLookupItems(true, true, true),
-                             "classes (tailText=' (mixin.ts)'; typeText=null; priority=101.0; bold)",
-                             "style (tailText=' (test.vue)'; typeText=null; priority=101.0; bold)"
-      )
-      assertEquals(
-        "mixin.ts",
-        resolveReference("{{ class<caret>es }}").containingFile.name)
-      assertEquals(
-        "mixin.ts",
-        resolveReference("\"class<caret>es\"").containingFile.name)
+      assertThat(renderLookupItems(true, true, true)).contains("classes (tailText=' (mixin.ts)'; typeText=null; priority=101.0; bold)", "style (tailText=' (test.vue)'; typeText=null; priority=101.0; bold)")
+      assertEquals("mixin.ts", resolveReference("{{ class<caret>es }}").containingFile.name)
+      assertEquals("mixin.ts", resolveReference("\"class<caret>es\"").containingFile.name)
     }
   }
 
   @Test
   fun testTypedMixins() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VUE_2_6_10,
       configureFileName = "component.vue",
       dirName = "vue-sfc-typed-mixins",
       dir = true,
     ) {
-      assertEquals(
-        "mixin.ts",
-        resolveReference("\"show<caret>1\"").containingFile.name)
+      assertEquals("mixin.ts", resolveReference("\"show<caret>1\"").containingFile.name)
       moveToOffsetBySignature("\"show<caret>1\"")
       completeBasic()
-      assertContainsElements(renderLookupItems(true, true, true),
-                             "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
-                             "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
-                             "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
+      assertThat(renderLookupItems(true, true, true)).contains("show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)", "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)", "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
       moveToOffsetBySignature("this.<caret>show2()")
       completeBasic()
-      assertContainsElements(renderLookupItems(true, true, true),
-                             "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
-                             "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
-                             "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
+      assertThat(renderLookupItems(true, true, true)).contains("show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)", "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)", "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
 
     }
   }
 
   @Test
   fun testGotoDeclarationDirectives() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByFile("gotoDeclarationDirectives.vue")
@@ -2329,7 +2313,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testGotoDeclarationTS() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByFile("gotoDeclarationTS.vue")
@@ -2341,7 +2325,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testNoScriptSection() {
-    doGotoDeclarationTest(
+    vue.doGotoDeclarationTest(
       configureFileName = "test.vue",
       dir = true,
       fromSignature = "<no-script<caret>-section>",
@@ -2352,7 +2336,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testLazyLoaded() {
-    doGotoDeclarationTest(
+    vue.doGotoDeclarationTest(
       configureFileName = "main.vue",
       dir = true,
       fromSignature = "<Hello<caret>World",
@@ -2363,7 +2347,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testScriptSetupTagNavigation() {
-    doGotoDeclarationTest(
+    vue.doGotoDeclarationTest(
       configureFileName = "HelloWorld.vue",
       dir = true,
       fromSignature = "<Sam<caret>ple/>",
@@ -2374,7 +2358,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testScriptSetupRef() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       dir = true,
       configurators = listOf(
         VueTsConfigFile(
@@ -2399,7 +2383,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testScriptSetupRefTS() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       dir = true,
       configurators = listOf(
         VueTsConfigFile(
@@ -2424,7 +2408,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testScriptSetupPropShadowing() {
-    doGotoDeclarationTest(
+    vue.doGotoDeclarationTest(
       fromSignature = "{{<caret>foo}}",
       declarationSignature = "const <caret>foo = 2",
     )
@@ -2432,7 +2416,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testCreateApp() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       dirName = "../common/createApp",
       dir = true,
       configureFile = false,
@@ -2451,7 +2435,7 @@ export default class UsageComponent extends Vue {
       ).forEach { (signature, offset, expectedFileName) ->
         configureFromTempProjectFile("index.html")
         if (offset == null) {
-          assertEmpty("Expected empty for $signature", multiResolveSymbolReference(signature))
+          assertThat(multiResolveSymbolReference(signature)).describedAs("Expected empty for $signature").isEmpty()
         }
         else {
           checkGotoDeclaration(signature, offset, expectedFileName)
@@ -2463,7 +2447,7 @@ export default class UsageComponent extends Vue {
   @Test
   fun testGlobalComponentCompositionApiFromUnlinkedTemplate() {
     // WEB-55665
-    doConfiguredTest(
+    vue.doConfiguredTest(
       dirName = "../common/createApp",
       dir = true,
       configureFile = false,
@@ -2479,14 +2463,14 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testSameMixinsViaStubsAndViaPsi() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       val dir = copyDirectoryToProject("../sameMixinsViaStubsAndViaPsi", ".")
       val mixinJsFile = dir.findChild("mixin.spec.js")
       val mixinJsPsiFile = mixinJsFile?.let { PsiManager.getInstance(project).findFile(mixinJsFile) }
       if (mixinJsPsiFile == null) {
-        fail("broken test data")
+        fail<Unit>("broken test data")
         return@doConfiguredTest
       }
 
@@ -2500,29 +2484,26 @@ export default class UsageComponent extends Vue {
       assertNotNull(mixinJsPsiFile.treeElement)
       val mixinsViaPsi = VueModelManager.getGlobal(mixinJsPsiFile).mixins
 
-      assertSameElements(mixinsViaStubs, mixinsViaPsi)
+      assertThat(mixinsViaStubs).hasSameElementsAs(mixinsViaPsi)
     }
   }
 
   @Test
   fun testMixinQualifiedReference() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "Test.vue",
       dir = true,
     ) {
-      assertEquals(
-        "clickMixin.js",
-        resolveReference("cl<caret>icked(").containingFile.name,
-      )
+      assertEquals("clickMixin.js", resolveReference("cl<caret>icked(").containingFile.name)
     }
   }
 
   @Test
   fun testScriptSetupCustomEmitInObjectLiteral() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
-      configureByFile("${testName}.vue")
+      configureByFile("${vue.testName}.vue")
       sequenceOf(
         "@<caret>add" to "<caret>add,\n",
         "@ch<caret>ange" to "<caret>change(ctx) {\n",
@@ -2535,10 +2516,10 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testPropsConstructorsAndGenerics() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
-      configureByFile("${testName}.vue")
+      configureByFile("${vue.testName}.vue")
       sequenceOf(
         "m<caret>sg=\"You did it!\"" to "<caret>msg: {type:",
         "auto<caret>focus :value" to "<caret>autofocus: Boolean",
@@ -2618,8 +2599,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectLiteral() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'me<caret>ssage'",
       declarationSignature = "<caret>message: 'hello",
@@ -2629,8 +2610,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectLiteralProvidedInApp() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'me<caret>ssage'",
       declarationSignature = "<caret>message: 'hello",
@@ -2640,8 +2621,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectAlias() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'me<caret>ssage'",
       declarationSignature = "<caret>message: 'msg'",
@@ -2651,8 +2632,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectAliasDuplicatedName() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'me<caret>ssage'",
       declarationSignature = "<caret>message: 'msg'",
@@ -2662,8 +2643,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectProperty() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "m<caret>essage",
       declarationSignature = "<caret>message: 'msg'",
@@ -2673,8 +2654,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectDeepNested() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'provide<caret>Deep'",
       declarationSignature = "<caret>provideDeep: 12",
@@ -2684,11 +2665,11 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectScriptSetup() {
-    doConfiguredTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doConfiguredTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
     ) {
-      disableAstLoadingFilter()
+      vue.disableAstLoadingFilter()
 
       enableInspections(VueInspectionsProvider())
       checkGotoDeclaration(
@@ -2701,8 +2682,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectAppGlobal() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'global<caret>Provide'",
       declarationSignature = "app.provide(<caret>'globalProvide'",
@@ -2712,8 +2693,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testInjectSetup() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "'inject<caret>Setup'",
       declarationSignature = "provide(<caret>'injectSetup'",
@@ -2723,8 +2704,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testImportFromContextScriptScope() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "items: IT<caret>est[]",
       declarationSignature = "export interface <caret>ITest",
@@ -2734,7 +2715,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testDefineSlots() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       configureByText("DefineSlots.vue", """
@@ -2774,7 +2755,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testDefineSlotDefault() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       copyDirectoryToProject("defineSlotDefault", "")
@@ -2790,19 +2771,16 @@ export default class UsageComponent extends Vue {
       </template>
     """.trimIndent())
 
-      assertEquals(
-        "default?: (props: { field: FieldSlotPropText }) => any",
-        multiResolveSymbolReference("v-sl<caret>ot='{ field }'")
+      assertEquals("default?: (props: { field: FieldSlotPropText }) => any", multiResolveSymbolReference("v-sl<caret>ot='{ field }'")
           .filterIsInstance<PolySymbol>()
           .asSingleSymbol()
-          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
-      )
+          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text)
     }
   }
 
   @Test
   fun testDefineSlotDefaultTemplate() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       copyDirectoryToProject("defineSlotDefault", "")
@@ -2820,19 +2798,16 @@ export default class UsageComponent extends Vue {
       </template>
     """.trimIndent())
 
-      assertEquals(
-        "default?: (props: { field: FieldSlotPropText }) => any",
-        multiResolveSymbolReference("v-sl<caret>ot='{ field }'")
+      assertEquals("default?: (props: { field: FieldSlotPropText }) => any", multiResolveSymbolReference("v-sl<caret>ot='{ field }'")
           .filterIsInstance<PolySymbol>()
           .asSingleSymbol()
-          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
-      )
+          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text)
     }
   }
 
   @Test
   fun testDefineSlotDefaultNamed() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       copyDirectoryToProject("defineSlotDefault", "")
@@ -2850,13 +2825,10 @@ export default class UsageComponent extends Vue {
       </template>
     """.trimIndent())
 
-      assertEquals(
-        "default?: (props: { field: FieldSlotPropText }) => any",
-        multiResolveSymbolReference("v-slot:def<caret>ault='{ field }'")
+      assertEquals("default?: (props: { field: FieldSlotPropText }) => any", multiResolveSymbolReference("v-slot:def<caret>ault='{ field }'")
           .filterIsInstance<PolySymbol>()
           .asSingleSymbol()
-          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text
-      )
+          ?.asSafely<PsiLinkedPolySymbol>()?.linkedElement?.text)
     }
   }
 
@@ -2897,8 +2869,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testBindShorthand() {
-    doConfiguredTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doConfiguredTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
     ) {
       val declarations = myFixture
@@ -2911,14 +2883,14 @@ export default class UsageComponent extends Vue {
         .mapNotNull { if (it.linkedElement is JSImplicitElement) it.linkedElement?.context else it.linkedElement }
         .map { it.text }
         .toList()
-      assertSameElements(declarations, "inputProp = 'abc'", "inputProp?: string")
+      assertThat(declarations).containsOnly("inputProp = 'abc'", "inputProp?: string")
     }
   }
 
   @Test
   fun testNavigateThroughTypeofReferenceToImport() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dirName = "globalComponentsWithTypeofImport",
       dir = true,
       fromSignature = "ButtonS<caret>FC",
@@ -2929,7 +2901,7 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testResolveGlobalAppComponent() {
-    doGotoDeclarationTest(
+    vue.doGotoDeclarationTest(
       configureFileName = "ForComponent.vue",
       dir = true,
       fromSignature = "<Global<caret>Component></GlobalComponent>",
@@ -2940,8 +2912,8 @@ export default class UsageComponent extends Vue {
 
   @Test
   fun testComponentCustomProperties() {
-    doGotoDeclarationTest(
-      configureFileName = "${getTestName(false)}.vue",
+    vue.doGotoDeclarationTest(
+      configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
       fromSignature = "{{\$te<caret>st}}",
       declarationSignature = "<caret>\$test: string",

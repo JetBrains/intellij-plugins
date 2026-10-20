@@ -1,43 +1,61 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
+import com.intellij.openapi.application.EDT
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroPathAttributeResolveTest : AstroCodeInsightTestCase("codeInsight/resolve") {
 
-  fun testAHrefIndexResolve() {
+  @Test
+  fun testAHrefIndexResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest("index.astro")
   }
 
-  fun testCustomLinkHrefDirectoryResolve() {
+  @Test
+  fun testCustomLinkHrefDirectoryResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest("insideDeclaration")
   }
 
-  fun testLinkHrefFileResolve() {
+  @Test
+  fun testLinkHrefFileResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest("component.astro")
   }
 
-  fun testAHrefFileWithExtensionResolve() {
+  @Test
+  fun testAHrefFileWithExtensionResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest("component.astro")
   }
 
-  fun testLinkHrefNotPagesResolve() {
+  @Test
+  fun testLinkHrefNotPagesResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest("index.astro")
   }
 
-  fun testLinkHrefUnresolvedDirectoryResolve() {
+  @Test
+  fun testLinkHrefUnresolvedDirectoryResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest()
   }
 
-  fun testRoutePathImportNotResolve() {
+  @Test
+  fun testRoutePathImportNotResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest()
   }
 
-  fun testPathImportResolve() {
+  @Test
+  fun testPathImportResolve(): Unit = timeoutRunBlocking {
     doPathResolveTest("component.astro")
   }
 
-  private fun doPathResolveTest(destination: String? = null) {
-    checkResolveToDestination(destination, myFixture, getTestName(false), "astro")
+  private suspend fun doPathResolveTest(destination: String? = null) {
+    // The helper copies the files and resolves the reference at the caret without a read action.
+    withContext(Dispatchers.EDT) {
+      checkResolveToDestination(destination, myFixture, astro.getTestName(false), "astro")
+    }
   }
 }

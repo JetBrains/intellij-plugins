@@ -1,30 +1,31 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class VueAutoPopupTest :
   VueAutoPopupTestBase() {
 
+  @TestApplication
   class WithTsGoProxyTest :
     VueAutoPopupTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
+  @TestApplication
   class WithoutServiceTest :
     VueAutoPopupTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
-@RunWith(JUnit4::class)
 abstract class VueAutoPopupTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("autoPopup", testMode = testMode) {
 
   @Test
   fun testEventsAfterAt() =
-    doEditorTypingTest(checkResult = false) {
+    vue.doEditorTypingTest(checkResult = false) {
       type("@")
       checkLookupItems { item ->
         item.lookupString.let {
@@ -35,7 +36,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testEventsAfterVOnColon() =
-    doEditorTypingTest(checkResult = false) {
+    vue.doEditorTypingTest(checkResult = false) {
       type(":")
       checkLookupItems { item ->
         item.lookupString.let {
@@ -46,7 +47,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testVBindShorthand() =
-    doEditorTypingTest(checkResult = false) {
+    vue.doEditorTypingTest(checkResult = false) {
       type(":")
       assertLookupShown()
       type("a")
@@ -59,7 +60,7 @@ abstract class VueAutoPopupTestBase(
 
   @Test
   fun testNoAutopopupAfterMinus() =
-    doEditorTypingTest(checkResult = false) {
+    vue.doEditorTypingTest(checkResult = false) {
       type("-")
       assertLookupNotShown()
     }

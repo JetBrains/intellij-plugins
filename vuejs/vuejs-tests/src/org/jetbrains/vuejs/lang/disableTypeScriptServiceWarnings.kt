@@ -3,10 +3,10 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter
 import com.intellij.javascript.testFramework.isTypeScriptServiceHighlightingInfo
-import com.intellij.polySymbols.testFramework.HybridTestCase
+import com.intellij.polySymbols.testFramework.HybridFixture
 import com.intellij.testFramework.ExtensionTestUtil
 
-internal fun HybridTestCase.disableTypeScriptServiceWarnings() {
+internal fun HybridFixture.disableTypeScriptServiceWarnings() {
   ExtensionTestUtil.addExtensions(
     pointName = HighlightInfoFilter.EXTENSION_POINT_NAME,
     extensionsToAdd = listOf(

@@ -1,14 +1,25 @@
 package org.intellij.prisma
 
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.prisma.lang.psi.PrismaNamedElement
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
 private const val CARET = "<caret>"
 private const val TARGET = "<target>"
 
+@TestApplication
 class PrismaResolveTest : PrismaTestCase("resolve") {
-  fun testTypeReference() {
+  @Test
+  fun testTypeReference(): Unit = timeoutRunBlocking {
     checkLocalResolve(
       """
             model Post {
@@ -23,7 +34,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
     )
   }
 
-  fun testTypeReferenceIgnoreConfigurationBlocks() {
+  @Test
+  fun testTypeReferenceIgnoreConfigurationBlocks(): Unit = timeoutRunBlocking {
     checkLocalResolve(
       """
             datasource Database {
@@ -42,7 +54,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
     )
   }
 
-  fun testFieldExpressionReference() {
+  @Test
+  fun testFieldExpressionReference(): Unit = timeoutRunBlocking {
     checkLocalResolve("""
             datasource db {
               provider = "postgresql"
@@ -56,7 +69,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
         """.trimIndent())
   }
 
-  fun testFieldReference() {
+  @Test
+  fun testFieldReference(): Unit = timeoutRunBlocking {
     checkLocalResolve("""
             datasource db {
               provider = "postgresql"
@@ -70,7 +84,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
         """.trimIndent())
   }
 
-  fun testFieldReferenceNamedArgument() {
+  @Test
+  fun testFieldReferenceNamedArgument(): Unit = timeoutRunBlocking {
     checkLocalResolve("""
             datasource db {
               provider = "postgresql"
@@ -84,7 +99,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
         """.trimIndent())
   }
 
-  fun testRelationAttributeReferences() {
+  @Test
+  fun testRelationAttributeReferences(): Unit = timeoutRunBlocking {
     checkLocalResolve("""
             model Post {
               id       Int    @id @default(autoincrement())
@@ -100,7 +116,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
         """.trimIndent())
   }
 
-  fun testBlockAttributeUniqueCompositeType() {
+  @Test
+  fun testBlockAttributeUniqueCompositeType(): Unit = timeoutRunBlocking {
     checkLocalResolve("""
             datasource db {
               provider = "mongodb"
@@ -124,7 +141,8 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
         """.trimIndent())
   }
 
-  fun testBlockAttributeIndexCompositeType() {
+  @Test
+  fun testBlockAttributeIndexCompositeType(): Unit = timeoutRunBlocking {
     checkLocalResolve("""
             datasource db {
               provider = "mongodb"
@@ -148,15 +166,18 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
         """.trimIndent())
   }
 
+  @Test
   fun testLocalResolveHasPriority() {
-    doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = getTestFileName())
+    web.doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = getTestFileName())
   }
 
+  @Test
   fun testGlobalModelResolve() {
-    doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = "address.prisma")
+    web.doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = "address.prisma")
   }
 
-  fun testSchemaNameReference() {
+  @Test
+  fun testSchemaNameReference(): Unit = timeoutRunBlocking {
     checkGotoDeclarationFromText(
       """
         generator client {
@@ -187,19 +208,21 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
     )
   }
 
-  private fun checkGotoDeclarationFromText(source: String, fromSignature: String, declarationSignature: String) {
+  private suspend fun checkGotoDeclarationFromText(source: String, fromSignature: String, declarationSignature: String) {
     myFixture.configureByText("schema.prisma", source)
-    myFixture.checkGotoDeclaration(fromSignature, declarationSignature)
+    withContext(Dispatchers.EDT) {
+      myFixture.checkGotoDeclaration(fromSignature, declarationSignature)
+    }
   }
 
-  private fun checkLocalResolve(source: String): PrismaNamedElement {
+  private suspend fun checkLocalResolve(source: String): PrismaNamedElement {
     val targetOffset = findExpectedTargetOffset(source)
     val text = source.replace(TARGET, "")
     val file = myFixture.configureByText("schema.prisma", text)
-    val reference = file.findReferenceAt(myFixture.caretOffset)
-    val resolve = reference?.resolve()
-    val expectedTarget =
-      PsiTreeUtil.getParentOfType(file.findElementAt(targetOffset), PrismaNamedElement::class.java)
+    val (resolve, expectedTarget) = readAction {
+      val reference = file.findReferenceAt(myFixture.caretOffset)
+      reference?.resolve() to PsiTreeUtil.getParentOfType(file.findElementAt(targetOffset), PrismaNamedElement::class.java)
+    }
     assertNotNull(resolve)
     assertNotNull(expectedTarget)
     assertEquals(expectedTarget, resolve)

@@ -1,7 +1,14 @@
 package org.intellij.prisma.completion
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keywords") {
-  fun testRootKeywords() {
+  @Test
+  fun testRootKeywords(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {}
@@ -15,9 +22,10 @@ class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keyword
             """.trimIndent(),
       "model"
     )
-    assertSameElements(lookupElements.strings, "model", "datasource", "generator", "type", "enum")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("model", "datasource", "generator", "type", "enum")
   }
 
+  @Test
   fun testFinishRootKeyword() {
     completeBasic(
       """
@@ -33,23 +41,28 @@ class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keyword
     )
   }
 
+  @Test
   fun testKeywordInEmptyFile() {
     completeBasic("mo<caret>", "model <caret>")
   }
 
-  fun testNoKeywordsInDeclaration() {
+  @Test
+  fun testNoKeywordsInDeclaration(): Unit = timeoutRunBlocking {
     noCompletion("model <caret>")
   }
 
-  fun testNoKeywordsInBlock() {
+  @Test
+  fun testNoKeywordsInBlock(): Unit = timeoutRunBlocking {
     noCompletion("model M { <caret> }")
   }
 
-  fun testTypeKeywordDoc() {
+  @Test
+  fun testTypeKeywordDoc(): Unit = timeoutRunBlocking {
     checkLookupDocumentation(getLookupElements("<caret>").find("type"))
   }
 
-  fun testNoEnumInSqlite() {
+  @Test
+  fun testNoEnumInSqlite(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
                 datasource db {
@@ -58,11 +71,12 @@ class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keyword
                 <caret>
             """.trimIndent()
     )
-    assertDoesntContain(lookupElements.strings, "enum")
-    assertContainsElements(lookupElements.strings, "model")
+    assertThat(lookupElements.strings).doesNotContain("enum")
+    assertThat(lookupElements.strings).contains("model")
   }
 
-  fun testNoKeywordsBetweenBrackets() {
+  @Test
+  fun testNoKeywordsBetweenBrackets(): Unit = timeoutRunBlocking {
     noCompletion(
       """
             model M {

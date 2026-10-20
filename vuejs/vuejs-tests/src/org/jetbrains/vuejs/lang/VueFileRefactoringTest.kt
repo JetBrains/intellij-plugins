@@ -5,9 +5,11 @@ import com.intellij.javascript.testFramework.web.checkImports
 import com.intellij.javascript.testFramework.web.moveFiles
 import com.intellij.javascript.testFramework.web.renameFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
+import org.junit.jupiter.api.Test
 
 /**
  * Moves or renames the files that `src/pages/index.vue` imports, or moves the page itself.
@@ -17,32 +19,39 @@ import org.jetbrains.vuejs.VueTsConfigFile
  * Each project has its own `tsconfig.json`, so the default one of [VueTestCase] is disabled.
  * The `tsconfig.json` sets `allowJs`, as the Astro base config does, so the three framework tests check the same case.
  */
+@TestApplication
 class VueFileRefactoringTest : VueTestCase("refactoring/file", testMode = VueTestMode.NO_PLUGIN) {
+  @Test
   fun testMoveComponentRelativeImport() =
     doMoveComponentsTest("relativeImport",
                          "../components/sub/Hello.vue -> src/components/sub/Hello.vue",
                          "../components/sub/animals.js -> src/components/sub/animals.ts")
 
+  @Test
   fun testMoveComponentPathAlias() =
     doMoveComponentsTest("pathAlias",
                          "@components/sub/Hello.vue -> src/components/sub/Hello.vue",
                          "@components/sub/animals.js -> src/components/sub/animals.ts")
 
+  @Test
   fun testMovePageRelativeImport() =
     doMovePageTest("relativeImport",
                    "../../components/Hello.vue -> src/components/Hello.vue",
                    "../../components/animals.js -> src/components/animals.ts")
 
+  @Test
   fun testMovePagePathAlias() =
     doMovePageTest("pathAlias",
                    "@components/Hello.vue -> src/components/Hello.vue",
                    "@components/animals.js -> src/components/animals.ts")
 
+  @Test
   fun testRenameComponentRelativeImport() =
     doRenameComponentsTest("relativeImport",
                            "../components/Greeting.vue -> src/components/Greeting.vue",
                            "../components/pets.js -> src/components/pets.ts")
 
+  @Test
   fun testRenameComponentPathAlias() =
     doRenameComponentsTest("pathAlias",
                            "@components/Greeting.vue -> src/components/Greeting.vue",
@@ -70,7 +79,7 @@ class VueFileRefactoringTest : VueTestCase("refactoring/file", testMode = VueTes
     expectedImports: Array<out String>,
     refactoring: CodeInsightTestFixture.() -> Unit,
   ) =
-    doConfiguredTest(dir = true, dirName = project, configureFileName = "src/pages/index.vue",
+    vue.doConfiguredTest(dir = true, dirName = project, configureFileName = "src/pages/index.vue",
                      configurators = listOf(VueTsConfigFile(enabled = false))) {
       refactoring()
       checkImports(importingFile, *expectedImports)

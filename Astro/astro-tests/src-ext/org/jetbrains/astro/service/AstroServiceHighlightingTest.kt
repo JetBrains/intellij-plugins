@@ -5,17 +5,23 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroServiceHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting/service", useLsp = true) {
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun allowDocumentChangesDuringHighlighting() {
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 
+  @Test
   fun testHighlightingUpdatesAfterRemovingDeclaration() {
-    doConfiguredTest {
+    astro.doConfiguredTest {
       checkLspHighlighting()
 
       val document = getDocument(file)
@@ -36,8 +42,7 @@ class AstroServiceHighlightingTest : AstroCodeInsightTestCase("codeInsight/highl
       // doHighlighting() runs once without retry, so it fails if the diagnostics restart
       // mechanism in AstroLspTypeScriptService is broken.
       val errors = doHighlighting(HighlightSeverity.ERROR)
-      assertTrue("Expected an error on 'greet' after removing its declaration, but got: $errors",
-                 errors.any { it.description?.contains("greet") == true })
+      assertTrue(errors.any { it.description?.contains("greet") == true }, "Expected an error on 'greet' after removing its declaration, but got: $errors")
     }
   }
 }

@@ -2,72 +2,93 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.openapi.util.registry.RegistryManager
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", useLsp = true) {
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun increaseServiceItemsLimit() {
     RegistryManager.getInstance().get("typescript.service.completion.serviceItemsLimit").setValue(2000, myFixture.testRootDisposable)
   }
 
-  fun testHtmlElements() = doLookupTest()
-  fun testHtmlAttributes() = doLookupTest()
-  fun testCharEntities() = doLookupTest()
+  @Test
+  fun testHtmlElements() = astro.doLookupTest()
+  @Test
+  fun testHtmlAttributes() = astro.doLookupTest()
+  @Test
+  fun testCharEntities() = astro.doLookupTest()
 
+  @Test
   fun testScriptTagAttributes() =
-    doLookupTest {
+    astro.doLookupTest {
       it.priority > 4
     }
 
+  @Test
   fun testStyleTagAttributes() =
-    doLookupTest {
+    astro.doLookupTest {
       it.priority > 4
     }
 
+  @Test
   fun testImportedComponent() =
-    doLookupTest(additionalFiles = listOf("component.astro"))
+    astro.doLookupTest(additionalFiles = listOf("component.astro"))
 
+  @Test
   fun testFrontmatterKeywords() =
-    doLookupTest(additionalFiles = listOf("component.astro")) {
+    astro.doLookupTest(additionalFiles = listOf("component.astro")) {
       it.priority.toInt() == JSLookupPriority.KEYWORDS_PRIORITY.priorityValue
       || it.priority.toInt() == JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
     }
 
+  @Test
   fun testPropsInterface() =
-    doLookupTest()
+    astro.doLookupTest()
 
+  @Test
   fun testBaseOnType() =
-    doLookupTest()
+    astro.doLookupTest()
 
+  @Test
   fun testTemplateLookupRoot() =
-    doLookupTest()
+    astro.doLookupTest()
 
+  @Test
   fun testTemplateLookupNestedHtml() =
-    doLookupTest {
+    astro.doLookupTest {
       it.priority > 0
     }
 
+  @Test
   fun testAstroComponentProps() =
-    doLookupTest(additionalFiles = listOf("component.astro"))
+    astro.doLookupTest(additionalFiles = listOf("component.astro"))
 
+  @Test
   fun testAstroComponentProps2() =
-    doLookupTest(additionalFiles = listOf("component.astro"))
+    astro.doLookupTest(additionalFiles = listOf("component.astro"))
 
+  @Test
   fun testAstroDirectives() =
-    doLookupTest(additionalFiles = listOf("react-component.tsx")) {
+    astro.doLookupTest(additionalFiles = listOf("react-component.tsx")) {
       it.priority > 4
     }
 
+  @Test
   fun testAstroDirectives2() =
-    doLookupTest(additionalFiles = listOf("react-component.tsx"))
+    astro.doLookupTest(additionalFiles = listOf("react-component.tsx"))
 
+  @Test
   fun testAliasedComponentImport() =
-    doConfiguredTest(dir = true, configureFileName = "src/layout/App.astro") {
+    astro.doConfiguredTest(dir = true, configureFileName = "src/layout/App.astro") {
       completeBasic()
-      checkResultByFile("$testName/src/layout/App.after.astro")
+      checkResultByFile("${astro.testName}/src/layout/App.after.astro")
     }
 
-  fun testAwait() = doEditorTypingTest(
+  @Test
+  fun testAwait() = astro.doEditorTypingTest(
     checkResult = false,
   ) {
     type("awa")
@@ -76,29 +97,35 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
     )
   }
 
-  fun testReactComponent() = doLookupTest(
+  @Test
+  fun testReactComponent() = astro.doLookupTest(
     dir = true,
     configureFileName = "index.astro"
   )
 
-  fun testReactComponentProps() = doLookupTest(
+  @Test
+  fun testReactComponentProps() = astro.doLookupTest(
     dir = true,
     configureFileName = "index.astro"
   )
 
-  fun testAstroComponent() = doLookupTest(
+  @Test
+  fun testAstroComponent() = astro.doLookupTest(
     dir = true,
     configureFileName = "index.astro"
   )
 
-  fun testAstroComponentFrontmatter() = doLookupTest(
+  @Test
+  fun testAstroComponentFrontmatter() = astro.doLookupTest(
     dir = true,
     configureFileName = "index.astro"
   )
 
-  fun testAstroLibComponent() = doLookupTest()
+  @Test
+  fun testAstroLibComponent() = astro.doLookupTest()
 
-  fun testTemplatePartCompletionReload() = doEditorTypingTest(
+  @Test
+  fun testTemplatePartCompletionReload() = astro.doEditorTypingTest(
     dir = true,
     configureFileName = "index.astro",
     checkResult = false,
@@ -116,15 +143,18 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
     checkLookupItems()
   }
 
-  fun testCssClass() = doLookupTest(
+  @Test
+  fun testCssClass() = astro.doLookupTest(
     dir = true,
     configureFileName = "index.astro",
     additionalFiles = listOf("global.css", "foo.astro")
   )
 
-  fun testEmmetAbbreviation() = doLookupTest()
+  @Test
+  fun testEmmetAbbreviation() = astro.doLookupTest()
 
-  fun testSlotNameAttribute() = doLookupTest() {
+  @Test
+  fun testSlotNameAttribute() = astro.doLookupTest() {
     it.priority > 4 || it.lookupString.startsWith("s")
   }
 

@@ -1,11 +1,17 @@
 package org.jetbrains.astro.codeInsight
 
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroRenameTest : AstroCodeInsightTestCase("codeInsight/refactoring/rename") {
-  fun testAstroComponentProp() = doSymbolRenameTest("astroComponentProp.astro", "renamedProp")
+  @Test
+  fun testAstroComponentProp() = astro.doSymbolRenameTest("astroComponentProp.astro", "renamedProp")
 
-  fun testAstroComponentProp2() = doSymbolRenameTest("component.astro", "renamedProp")
+  @Test
+  fun testAstroComponentProp2() = astro.doSymbolRenameTest("component.astro", "renamedProp")
 
-  fun testReactNamespacedComponent() = doSymbolRenameTest("index.astro", "NewComponent")
+  @Test
+  fun testReactNamespacedComponent() = astro.doSymbolRenameTest("index.astro", "NewComponent")
 }

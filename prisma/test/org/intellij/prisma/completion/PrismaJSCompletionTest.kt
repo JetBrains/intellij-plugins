@@ -1,22 +1,27 @@
 package org.intellij.prisma.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.testFramework.UsefulTestCase
-import junit.framework.TestCase
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaJSCompletionTest : PrismaCompletionTestBase("completion/js") {
+  @Test
   fun testApiClientField() {
     val lookupElements = doDirTest()
-    UsefulTestCase.assertSize(2, lookupElements)
+    assertThat(lookupElements).hasSize(2)
     val userField = lookupElements.first()
-    TestCase.assertEquals("user", userField.lookupString)
+    assertEquals("user", userField.lookupString)
     val userType = userField.presentation?.typeText!!
-    TestCase.assertTrue(userType.startsWith("Prisma.UserDelegate"))
+    assertTrue(userType.startsWith("Prisma.UserDelegate"))
   }
 
   private fun doDirTest(ext: String = "js"): Array<LookupElement> {
-    val dir = myFixture.copyDirectoryToProject(getTestName(true), ".")
-    val filename = "${getTestName(true)}.$ext"
+    val dir = myFixture.copyDirectoryToProject(web.getTestName(true), ".")
+    val filename = "${web.getTestName(true)}.$ext"
     myFixture.configureFromExistingVirtualFile(dir.findChild(filename)!!)
     return myFixture.completeBasic() ?: emptyArray()
   }

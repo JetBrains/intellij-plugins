@@ -1,26 +1,30 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.typescript.compiler.preventTypeScriptServiceRestartOnContextChange
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 import org.jetbrains.vuejs.intentions.extractComponent.getContextForExtractComponentIntention
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class VueExtractComponentTest :
   VueExtractComponentTestBase() {
 
+  @TestApplication
   class WithTsGoProxyTest :
     VueExtractComponentTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
+  @TestApplication
   class WithoutServiceTest :
     VueExtractComponentTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
-@RunWith(JUnit4::class)
 abstract class VueExtractComponentTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
 ) : VueTestCase("extract_component", testMode = testMode) {
@@ -131,7 +135,7 @@ abstract class VueExtractComponentTestBase(
   }
 
   @Test
-  @Ignore
+  @Disabled
   fun testExtractForPug__options() {
     doExtractTest()
   }
@@ -182,7 +186,7 @@ abstract class VueExtractComponentTestBase(
   }
 
   @Test
-  @Ignore
+  @Disabled
   fun testCleanupPugIfNameIsUsed__options() {
     doExtractTest(newCompName = "dd")
   }
@@ -296,25 +300,29 @@ abstract class VueExtractComponentTestBase(
     numTags: Int = 1,
     newCompName: String = "NewComponent",
   ) {
-    doConfiguredTest(
-      VueTestModule.VUE_3_6_0,
-      dir = true,
-      checkResult = true,
-      configureFileName = "App.vue",
-    ) {
-      val element = file.findElementAt(editor.caretModel.currentCaret.offset)
-      assertNotNull(element)
-      val context = getContextForExtractComponentIntention(editor, element!!)
-      assertNotNull(context)
-      assertEquals(numTags, context!!.size)
+    // The new component changes the PolyContext, and the change restarts the TypeScript service on the EDT.
+    // The test runs off the EDT, so the restart can run during the test.
+    preventTypeScriptServiceRestartOnContextChange {
+      vue.doConfiguredTest(
+        VueTestModule.VUE_3_6_0,
+        dir = true,
+        checkResult = true,
+        configureFileName = "App.vue",
+      ) {
+        val element = file.findElementAt(editor.caretModel.currentCaret.offset)
+        assertNotNull(element)
+        val context = getContextForExtractComponentIntention(editor, element!!)
+        assertNotNull(context)
+        assertEquals(numTags, context!!.size)
 
-      val refactoring = VueExtractComponentRefactoring(
-        project = project,
-        list = context,
-        editor = editor,
-      )
+        val refactoring = VueExtractComponentRefactoring(
+          project = project,
+          list = context,
+          editor = editor,
+        )
 
-      refactoring.perform(newCompName)
+        refactoring.perform(newCompName)
+      }
     }
   }
 }

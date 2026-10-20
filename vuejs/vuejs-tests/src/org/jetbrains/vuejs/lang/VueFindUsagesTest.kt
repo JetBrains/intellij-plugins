@@ -3,61 +3,59 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
-@Ignore
+@TestApplication
+@Disabled
 class VueFindUsagesTest :
   VueFindUsagesTestBase() {
 
+  @TestApplication
   class WithTsGoProxyTest :
     VueFindUsagesTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
+  @TestApplication
   class WithoutServiceTest :
     VueFindUsagesTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
-@RunWith(JUnit4::class)
 abstract class VueFindUsagesTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("findUsages", testMode = testMode) {
-
-  override val dirModeByDefault: Boolean =
-    true
+) : VueTestCase("findUsages", testMode = testMode, dirModeByDefault = true) {
 
   private fun CodeInsightTestFixture.useSeparateTestDataPath() {
-    testDataPath += "/$defaultDirName"
+    testDataPath += "/${vue.defaultDirName}"
   }
 
   @Test
   fun testPrivateComponentGetter() {
-    doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testPrivateComponentSetter() {
-    doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testPrivateComponentMethod() {
-    doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testPrivateConstructorField() {
-    doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(configureFileName = "App.vue")
   }
 
   @Test
   fun testScriptSetupRef() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configurators = listOf(
         VueTsConfigFile(
           vueCompilerOptions = VueCompilerOptions(
@@ -76,35 +74,35 @@ abstract class VueFindUsagesTestBase(
         "const fo<caret>o2",
         "const fo<caret>o3",
       ).forEachIndexed { index, signature ->
-        checkUsages(signature, "usages.$index")
+        vue.checkUsages(signature, "usages.$index")
       }
     }
   }
 
   @Test
   fun testScriptSetupImportedDirective() {
-    doFindUsagesTest(configureFileName = "vFocus.js")
+    vue.doFindUsagesTest(configureFileName = "vFocus.js")
   }
 
   @Test
   fun testTypedComponents() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       VueTestModule.HEADLESS_UI_1_4_1,
       VueTestModule.NAIVE_UI_2_19_11,
       configureFileName = "typedComponentsClassic.vue",
     ) {
       useSeparateTestDataPath()
 
-      checkUsages(" Dia<caret>log,", "usages.classic.headlessui")
-      checkUsages(" N<caret>Affix,", "usages.classic.naive-ui")
-      checkUsages(" Fo<caret>o:", "usages.classic.foo")
-      checkUsages(" Ba<caret>r:", "usages.classic.bar")
+      vue.checkUsages(" Dia<caret>log,", "usages.classic.headlessui")
+      vue.checkUsages(" N<caret>Affix,", "usages.classic.naive-ui")
+      vue.checkUsages(" Fo<caret>o:", "usages.classic.foo")
+      vue.checkUsages(" Ba<caret>r:", "usages.classic.bar")
 
       configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
-      checkUsages("export declare let Dia<caret>log:", "usages.headlessui")
+      vue.checkUsages("export declare let Dia<caret>log:", "usages.headlessui")
 
       configureFromTempProjectFile("node_modules/naive-ui/lib/affix/src/Affix.d.ts")
-      checkUsages(
+      vue.checkUsages(
         "declare const _defa<caret>ult:",
         "usages.naive-ui",
         scope = GlobalSearchScopesCore.directoryScope(project, tempDirFixture.findOrCreateDir("."), true),
@@ -114,36 +112,36 @@ abstract class VueFindUsagesTestBase(
 
   @Test
   fun testCreateApp() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "main.ts",
       dirName = "../common/createApp",
     ) {
       useSeparateTestDataPath()
 
-      checkUsages("\"f<caret>oo", "createApp.foo")
-      checkUsages("\"B<caret>ar", "createApp.bar")
-      checkUsages("\"C<caret>ar", "createApp.car")
-      checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
+      vue.checkUsages("\"f<caret>oo", "createApp.foo")
+      vue.checkUsages("\"B<caret>ar", "createApp.bar")
+      vue.checkUsages("\"C<caret>ar", "createApp.car")
+      vue.checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
     }
   }
 
   @Test
   fun testComponentEmitsDefinitions() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFile = false,
     ) {
       useSeparateTestDataPath()
 
       configureFromTempProjectFile("defineComponent.vue")
-      checkUsages("\"test<caret>-event", "$testName.test-event")
+      vue.checkUsages("\"test<caret>-event", "${vue.testName}.test-event")
 
       configureFromTempProjectFile("defineEmits.vue")
-      checkUsages("'f<caret>oo", "$testName.foo")
+      vue.checkUsages("'f<caret>oo", "${vue.testName}.foo")
     }
   }
 
   @Test
   fun testComponentFile() {
-    doFileUsagesTest(fileName = "SomeComponent.vue")
+    vue.doFileUsagesTest(fileName = "SomeComponent.vue")
   }
 }

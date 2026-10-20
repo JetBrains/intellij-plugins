@@ -7,22 +7,27 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ReadResult
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.platform.testFramework.core.FileComparisonFailedError
+import com.intellij.polySymbols.testFramework.HybridFixtureContext
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.plugins.stylus.StylusLanguage
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
+import org.junit.jupiter.api.Test
 
-class VueTypingTest : VueTestCase("typing") {
+@TestApplication
+class VueTypingTest : VueTestCase(VueTestMode.DEFAULT, { VueTypingFixture(it) }) {
 
-  override val testName: String get() = getTestName(false)
-
+  @Test
   fun testStylusEnterEnd() =
     // For some weird reason, doEditorTypingTest does not work here...
-    doConfiguredTest(configureCodeStyleSettings = {
+    vue.doConfiguredTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
@@ -34,9 +39,10 @@ class VueTypingTest : VueTestCase("typing") {
       type("\n")
     }
 
+  @Test
   fun testSassEnterEnd() =
     // For some weird reason, doEditorTypingTest does not work here...
-    doConfiguredTest(configureCodeStyleSettings = {
+    vue.doConfiguredTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
@@ -48,8 +54,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\n")
     }
 
+  @Test
   fun testPugEnterEnd() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
@@ -61,8 +68,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\n")
     }
 
+  @Test
   fun testJSEnterStart() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
@@ -74,8 +82,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\n")
     }
 
+  @Test
   fun testStylusBackspace() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
@@ -87,8 +96,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b\b")
     }
 
+  @Test
   fun testStylusBackspace2() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
@@ -100,8 +110,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b\b")
     }
 
+  @Test
   fun testPugBackspace() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
@@ -113,8 +124,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b\b")
     }
 
+  @Test
   fun testPugBackspace2() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
@@ -126,8 +138,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b\b")
     }
 
+  @Test
   fun testSassBackspace() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
@@ -139,8 +152,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b\b")
     }
 
+  @Test
   fun testJSBackspace() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
@@ -152,8 +166,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b")
     }
 
+  @Test
   fun testHtmlBackspace() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
@@ -164,8 +179,9 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b")
     }
 
+  @Test
   fun testScssBackspace() =
-    doEditorTypingTest(configureCodeStyleSettings = {
+    vue.doEditorTypingTest(configureCodeStyleSettings = {
       getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
@@ -177,25 +193,29 @@ class VueTypingTest : VueTestCase("typing") {
       type("\b")
     }
 
+  @Test
   fun testInjectedJsonEnterHandler() =
-    doEditorTypingTest {
+    vue.doEditorTypingTest {
       type("{\n\"foo\":12\n")
     }
 
   // WEB-61505
+  @Test
   fun testAutoStringInterpolation() =
-    doEditorTypingTest {
+    vue.doEditorTypingTest {
       type("{")
 
     }
 
+  @Test
   fun testAutoStringInterpolationDirective() =
-    doEditorTypingTest {
+    vue.doEditorTypingTest {
       type("{")
     }
 
+  @Test
   fun testPasteIntoJsxFreshlyTypedAttr() =
-    doEditorTypingTest {
+    vue.doEditorTypingTest {
       performEditorAction(IdeActions.ACTION_EDITOR_COPY)
       invokeAndWaitIfNeeded {
         editor.caretModel.primaryCaret.setSelection(0, 0)
@@ -205,8 +225,9 @@ class VueTypingTest : VueTestCase("typing") {
       performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
     }
 
+  @Test
   fun testInvalidElementOnTyping() =
-    doEditorTypingTest(checkResult = false) {
+    vue.doEditorTypingTest(checkResult = false) {
       // It is possible to get PsiInvalidElement exception here,
       // if caching of source component info is incorrect.
       performHighlighting()
@@ -214,4 +235,11 @@ class VueTypingTest : VueTestCase("typing") {
       performHighlighting()
     }
 
+}
+
+/**
+ * The state of [VueTypingTest]: a [VueFixture] whose test name keeps the first letter of the test method name.
+ */
+private class VueTypingFixture(context: HybridFixtureContext) : VueFixture(context, "typing", VueTestMode.DEFAULT) {
+  override val testName: String get() = getTestName(false)
 }

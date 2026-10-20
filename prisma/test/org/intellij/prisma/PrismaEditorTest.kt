@@ -1,8 +1,12 @@
 package org.intellij.prisma
 
+import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.prisma.lang.PrismaFileType
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaEditorTest : PrismaTestCase("") {
+  @Test
   fun testEnterInFile() {
     doEnterTest(
       """
@@ -19,6 +23,7 @@ class PrismaEditorTest : PrismaTestCase("") {
     )
   }
 
+  @Test
   fun testEnterInBlock() {
     doEnterTest(
       """

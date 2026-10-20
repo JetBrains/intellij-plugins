@@ -1,9 +1,14 @@
 package org.jetbrains.astro.codeInsight
 
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroFindUsagesTest : AstroCodeInsightTestCase("codeInsight/navigation/findUsages") {
-  fun testAstroComponentProp() = doFindUsagesTest()
+  @Test
+  fun testAstroComponentProp() = astro.doFindUsagesTest()
 
-  fun testComponentFile() = doFileUsagesTest(fileName = "src/components/temp/ManyImportsUpd.astro")
+  @Test
+  fun testComponentFile() = astro.doFileUsagesTest(fileName = "src/components/temp/ManyImportsUpd.astro")
 }

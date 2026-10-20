@@ -2,18 +2,22 @@
 package org.jetbrains.vuejs
 
 import com.intellij.injected.editor.DocumentWindow
-import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
+import com.intellij.javascript.testFramework.web.WebFrameworkFixture
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.platform.lsp.testFramework.waitForDiagnosticsFromLspServer
+import com.intellij.polySymbols.testFramework.HybridFixtureContext
 import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
-import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
@@ -34,17 +38,63 @@ enum class VueTestMode {
   ;
 }
 
-abstract class VueTestCase(
-  override val testCasePath: String,
-  private val testMode: VueTestMode = VueTestMode.DEFAULT,
-) : WebFrameworkTestCase(
-  mode = if (testMode != VueTestMode.NO_PLUGIN) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform,
+/**
+ * The base of the Vue code insight tests. The fixture [vue] is a [VueFixture].
+ * Each test gets a new project. Without [VueTestMode.NO_PLUGIN], the project is a heavy project with the TypeScript service.
+ * A sub-base passes [createFixture] to replace the hooks of [VueFixture] with a sub-fixture.
+ */
+abstract class VueTestCase protected constructor(
+  testMode: VueTestMode,
+  createFixture: (context: HybridFixtureContext) -> VueFixture,
 ) {
+
+  constructor(
+    testCasePath: String,
+    testMode: VueTestMode = VueTestMode.DEFAULT,
+    dirModeByDefault: Boolean = false,
+  ) : this(testMode, { VueFixture(it, testCasePath, testMode, dirModeByDefault) })
+
+  protected val vue: VueFixture by hybridFixture(
+    { if (testMode != VueTestMode.NO_PLUGIN) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform },
+  ) { createFixture(it) }
+
+  protected val myFixture: CodeInsightTestFixture get() = vue.fixture
+
+  protected val project: Project get() = vue.project
+}
+
+/**
+ * The state of [VueTestCase]: a [WebFrameworkFixture] with the Vue test data root and the `vue` extension.
+ * The fixture adds the [VueToolsConfigurator] and a [VueTsConfigFile], adds the Vue modules,
+ * and starts the TypeScript service of [testMode] before each configured test.
+ * Call a member from a background thread.
+ */
+open class VueFixture(
+  context: HybridFixtureContext,
+  testCasePath: String,
+  val testMode: VueTestMode,
+  dirModeByDefault: Boolean = false,
+) : WebFrameworkFixture(
+  context,
+  testDataRoot = getVueTestDataPath(),
+  testCasePath = testCasePath,
+  defaultExtension = "vue",
+  defaultDependencies = mapOf(),
+  dirModeByDefault = dirModeByDefault,
+) {
+
+  /**
+   * The filter of the directory comparison. A test reads it to visit the same files.
+   */
+  public override val directoriesCompareFileFilter: VirtualFileFilter
+    get() = super.directoriesCompareFileFilter
 
   override fun adjustConfigurators(
     configurators: List<PolySymbolsTestConfigurator>,
   ): List<PolySymbolsTestConfigurator> =
     buildList {
+      add(VueSettingsConfigurator())
+
       addAll(super.adjustConfigurators(configurators))
 
       add(VueToolsConfigurator(testMode))
@@ -66,6 +116,17 @@ abstract class VueTestCase(
       add(VueTestModule.VUE_TSCONFIG_0_9_1)
     }.toTypedArray()
 
+  /**
+   * Applies the Vue settings of [testMode] before the configured file opens in the editor.
+   * The test runs off the EDT, so the editor listeners can send a request to a TypeScript service as soon as the file opens.
+   * With the settings of [testMode], the request goes to the service of [testMode].
+   */
+  private inner class VueSettingsConfigurator : PolySymbolsTestConfigurator {
+    override fun configure(fixture: CodeInsightTestFixture) {
+      configureVueSettings(project, testRootDisposable, testMode)
+    }
+  }
+
   private fun TestConfiguration.getVueLanguageToolsVersion(): VueLanguageToolsVersion? =
     configurators
       .filterIsInstance<VueToolsConfigurator>()
@@ -73,13 +134,17 @@ abstract class VueTestCase(
       .getBundledVersion()
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    configureVueSettings(project, testRootDisposable, testMode)
+    // The configuration of the project can schedule a restart of the language services on the EDT.
+    // The restart runs before the setup of the service, as in a test that runs on the EDT.
+    runInEdtAndWait {
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    }
 
     when (testMode) {
       VueTestMode.DEFAULT -> {
         val bundledVersion = configuration.getVueLanguageToolsVersion()!!
 
-        val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
+        val service = TypeScriptServiceTestMixin.setUpTypeScriptService(fixture) {
           it is VuePluginTypeScriptService
           && it.runtime == VueServiceRuntime(bundledVersion)
         } as TypeScriptServerServiceImpl
@@ -93,7 +158,7 @@ abstract class VueTestCase(
       VueTestMode.TS_GO_PROXY -> {
         disableAstLoadingFilter()
 
-        TypeScriptServiceTestMixin.setUpTypeScriptService(fixture = myFixture) {
+        TypeScriptServiceTestMixin.setUpTypeScriptService(fixture = fixture) {
           it::class == TypeScriptGoLspService::class
         }
 
@@ -106,29 +171,24 @@ abstract class VueTestCase(
     if (configuration.configurators.any { it is VueTsConfigFile && it.checkUsage }) {
       TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
         testRootDisposable,
-        myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
+        fixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
       )
     }
 
-    configuration.configurators
-      .filterIsInstance<VueLspConfigurator>()
-      .forEach { it.waitForLspServer(myFixture) }
-
+    // The wait for the language server dispatches the events of the EDT.
     runInEdtAndWait {
+      configuration.configurators
+        .filterIsInstance<VueLspConfigurator>()
+        .forEach { it.waitForLspServer(fixture) }
+
       FileDocumentManager.getInstance().saveAllDocuments()
     }
   }
 
-  override val testDataRoot: String
-    get() = getVueTestDataPath()
-
-  override val defaultExtension: String
-    get() = "vue"
-
-  override val defaultDependencies: Map<String, String>
-    get() = mapOf()
-
-  protected fun disableAstLoadingFilterWhenPluginUsed() {
+  /**
+   * Disables the AST loading filter, unless the test runs with [VueTestMode.NO_PLUGIN]. Call it from any thread.
+   */
+  fun disableAstLoadingFilterWhenPluginUsed() {
     if (testMode != VueTestMode.NO_PLUGIN)
       disableAstLoadingFilter()
   }

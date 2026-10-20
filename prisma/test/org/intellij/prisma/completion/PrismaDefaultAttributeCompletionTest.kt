@@ -1,9 +1,15 @@
 package org.intellij.prisma.completion
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.intellij.prisma.lang.PrismaConstants.Functions
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completion/defaultAttribute") {
-  fun testCockroach() {
+  @Test
+  fun testCockroach(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 datasource db {
@@ -23,10 +29,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.SEQUENCE
     )
-    assertSameElements(lookupElements.strings, Functions.DBGENERATED, Functions.SEQUENCE)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.DBGENERATED, Functions.SEQUENCE)
   }
 
-  fun testCockroachBigIntField() {
+  @Test
+  fun testCockroachBigIntField(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 datasource db {
@@ -46,10 +53,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.AUTOINCREMENT
     )
-    assertSameElements(lookupElements.strings, Functions.DBGENERATED, Functions.SEQUENCE, Functions.AUTOINCREMENT)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.DBGENERATED, Functions.SEQUENCE, Functions.AUTOINCREMENT)
   }
 
-  fun testSequence() {
+  @Test
+  fun testSequence(): Unit = timeoutRunBlocking {
     completeSelected(
       """
                 datasource db {
@@ -71,7 +79,8 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
     )
   }
 
-  fun testSequenceAfterVirtual() {
+  @Test
+  fun testSequenceAfterVirtual(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 datasource db {
@@ -92,10 +101,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
       "minValue"
     )
 
-    assertDoesntContain(lookupElements.strings, "virtual")
+    assertThat(lookupElements.strings).doesNotContain("virtual")
   }
 
-  fun testSequenceNoVirtualAfterParam() {
+  @Test
+  fun testSequenceNoVirtualAfterParam(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
                 datasource db {
@@ -107,11 +117,12 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent()
     )
 
-    assertDoesntContain(lookupElements.strings, "virtual")
-    assertContainsElements(lookupElements.strings, "maxValue")
+    assertThat(lookupElements.strings).doesNotContain("virtual")
+    assertThat(lookupElements.strings).contains("maxValue")
   }
 
-  fun testMySQL() {
+  @Test
+  fun testMySQL(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 datasource db {
@@ -131,10 +142,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.DBGENERATED
     )
-    assertSameElements(lookupElements.strings, Functions.DBGENERATED, Functions.AUTOINCREMENT)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.DBGENERATED, Functions.AUTOINCREMENT)
   }
 
-  fun testAutoincrementOnlyOnNumeric() {
+  @Test
+  fun testAutoincrementOnlyOnNumeric(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
                 datasource db {
@@ -145,10 +157,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
                 }
             """.trimIndent()
     )
-    assertDoesntContain(lookupElements.strings, Functions.AUTOINCREMENT)
+    assertThat(lookupElements.strings).doesNotContain(Functions.AUTOINCREMENT)
   }
 
-  fun testMongo() {
+  @Test
+  fun testMongo(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 datasource db {
@@ -168,10 +181,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.AUTO
     )
-    assertSameElements(lookupElements.strings, Functions.AUTO, Functions.AUTOINCREMENT)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.AUTO, Functions.AUTOINCREMENT)
   }
 
-  fun testNow() {
+  @Test
+  fun testNow(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -184,12 +198,13 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.NOW
     )
-    assertDoesntContain(lookupElements.strings, Functions.SEQUENCE, Functions.CUID)
-    assertContainsElements(lookupElements.strings, Functions.DBGENERATED)
+    assertThat(lookupElements.strings).doesNotContain(Functions.SEQUENCE, Functions.CUID)
+    assertThat(lookupElements.strings).contains(Functions.DBGENERATED)
     checkLookupDocumentation(lookupElements, Functions.NOW)
   }
 
-  fun testCuid() {
+  @Test
+  fun testCuid(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -202,10 +217,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.CUID
     )
-    assertContainsElements(lookupElements.strings, Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
+    assertThat(lookupElements.strings).contains(Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
   }
 
-  fun testCuidNullableType() {
+  @Test
+  fun testCuidNullableType(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -218,10 +234,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.CUID
     )
-    assertContainsElements(lookupElements.strings, Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
+    assertThat(lookupElements.strings).contains(Functions.CUID, Functions.UUID, Functions.NANOID, Functions.ULID)
   }
 
-  fun testCuidVersions() {
+  @Test
+  fun testCuidVersions(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -234,10 +251,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       "2"
     )
-    assertContainsElements(lookupElements.strings, "1", "2")
+    assertThat(lookupElements.strings).contains("1", "2")
   }
 
-  fun testForListType() {
+  @Test
+  fun testForListType(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 datasource db {
@@ -256,10 +274,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       Functions.DBGENERATED
     )
-    assertSameElements(lookupElements.strings, Functions.DBGENERATED)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.DBGENERATED)
   }
 
-  fun testForBoolean() {
+  @Test
+  fun testForBoolean(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -272,10 +291,11 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       "false"
     )
-    assertContainsElements(lookupElements.strings, "true", "false")
+    assertThat(lookupElements.strings).contains("true", "false")
   }
 
-  fun testForBooleanNullable() {
+  @Test
+  fun testForBooleanNullable(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -288,6 +308,6 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
             """.trimIndent(),
       "false"
     )
-    assertContainsElements(lookupElements.strings, "true", "false")
+    assertThat(lookupElements.strings).contains("true", "false")
   }
 }

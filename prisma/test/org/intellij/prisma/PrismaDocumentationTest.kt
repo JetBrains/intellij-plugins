@@ -2,140 +2,177 @@
 package org.intellij.prisma
 
 import com.intellij.codeInsight.documentation.DocumentationManager
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaDocumentationTest : PrismaTestCase("documentation") {
-  override fun setUp() {
-    super.setUp()
-
+  @BeforeEach
+  fun setUpColorScheme() {
     val colorsManager = EditorColorsManager.getInstance()
     val schemeBefore = colorsManager.globalScheme
     colorsManager.setGlobalScheme(colorsManager.getScheme("Darcula"))
-    Disposer.register(testRootDisposable) {
+    Disposer.register(web.testRootDisposable) {
       colorsManager.setGlobalScheme(schemeBefore)
     }
   }
 
-  fun testModel() {
+  @Test
+  fun testModel(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testKeyword() {
+  @Test
+  fun testKeyword(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testKeywordType() {
+  @Test
+  fun testKeywordType(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testKeywordTypeInAlias() {
+  @Test
+  fun testKeywordTypeInAlias(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testType() {
+  @Test
+  fun testType(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testEnum() {
+  @Test
+  fun testEnum(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testEnumValue() {
+  @Test
+  fun testEnumValue(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testGenerator() {
+  @Test
+  fun testGenerator(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testDatasource() {
+  @Test
+  fun testDatasource(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testField() {
+  @Test
+  fun testField(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testFieldTrailingDoc() {
+  @Test
+  fun testFieldTrailingDoc(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testKeyValue() {
+  @Test
+  fun testKeyValue(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testPrimitiveType() {
+  @Test
+  fun testPrimitiveType(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testUnsupportedType() {
+  @Test
+  fun testUnsupportedType(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testDatasourceField() {
+  @Test
+  fun testDatasourceField(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testGeneratorField() {
+  @Test
+  fun testGeneratorField(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testBlockAttribute() {
+  @Test
+  fun testBlockAttribute(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testBlockAttributeParam() {
+  @Test
+  fun testBlockAttributeParam(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testBlockAttributeFieldArgument() {
+  @Test
+  fun testBlockAttributeFieldArgument(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testFieldAttribute() {
+  @Test
+  fun testFieldAttribute(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testFieldAttributeParam() {
+  @Test
+  fun testFieldAttributeParam(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testDatasourceProviderValue() {
+  @Test
+  fun testDatasourceProviderValue(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testDatasourceUrlFunction() {
+  @Test
+  fun testDatasourceUrlFunction(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testStringLiteralVariant() {
+  @Test
+  fun testStringLiteralVariant(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testRelationField() {
+  @Test
+  fun testRelationField(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testDefaultValue() {
+  @Test
+  fun testDefaultValue(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testNativeTypeNamespace() {
+  @Test
+  fun testNativeTypeNamespace(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  fun testDocComment() {
+  @Test
+  fun testDocComment(): Unit = timeoutRunBlocking {
     doTest()
   }
 
-  private fun doTest() {
+  private suspend fun doTest() {
     val file = myFixture.configureByFile(getTestFileName())
-    val originalElement = file.findElementAt(myFixture.caretOffset)
-    val element = DocumentationManager.getInstance(myFixture.project)
-      .findTargetElement(myFixture.editor, file, originalElement)
-    val provider = DocumentationManager.getProviderFromElement(element, originalElement)
-    val doc = provider.generateDoc(element, originalElement)?.let { reformatDocumentation(project, it) } ?: "<empty>"
-    assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc)
+    val generated = readAction {
+      val originalElement = file.findElementAt(myFixture.caretOffset)
+      val element = DocumentationManager.getInstance(myFixture.project)
+        .findTargetElement(myFixture.editor, file, originalElement)
+      val provider = DocumentationManager.getProviderFromElement(element, originalElement)
+      provider.generateDoc(element, originalElement)
+    }
+    val doc = generated?.let { reformatDocumentation(project, it) } ?: "<empty>"
+    PlatformTestUtil.assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc)
   }
 }

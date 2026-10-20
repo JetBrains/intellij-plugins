@@ -9,24 +9,21 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.testFramework.PlatformTestUtil.assertDirectoriesEqual
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Test
 import java.io.FileNotFoundException
 
 private const val __TRANSPILE__: String = "__transpile__"
 
-@RunWith(JUnit4::class)
+@TestApplication
 class VueKolarTranspilerTest :
-  VueTestCase("kolar", VueTestMode.TS_GO_PROXY) {
-
-  override val dirModeByDefault: Boolean = true
+  VueTestCase("kolar", VueTestMode.TS_GO_PROXY, dirModeByDefault = true) {
 
   fun doTest() {
-    doConfiguredTest(
+    vue.doConfiguredTest(
       configureFileName = "src/App.vue",
     ) {
       val actualDir = transpile()
@@ -37,7 +34,7 @@ class VueKolarTranspilerTest :
   }
 
   private fun CodeInsightTestFixture.getExpectedTranspiledDataDir(): VirtualFile {
-    val path = "$testDataPath/${testName}__transpiled"
+    val path = "$testDataPath/${vue.testName}__transpiled"
     return StandardFileSystems.local().findFileByPath(path)
            ?: throw FileNotFoundException(path)
   }
@@ -68,7 +65,7 @@ class VueKolarTranspilerTest :
       root,
       object : VirtualFileVisitor<Any>() {
         override fun visitFileEx(file: VirtualFile): Result =
-          if (!directoriesCompareFileFilter.accept(file))
+          if (!vue.directoriesCompareFileFilter.accept(file))
             SKIP_CHILDREN
           else {
             if (isSourceFile(file)) {

@@ -1,13 +1,19 @@
 package org.intellij.prisma.completion
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.intellij.prisma.ide.schema.types.PrismaIndexAlgorithm
 import org.intellij.prisma.ide.schema.types.PrismaOperatorClass
 import org.intellij.prisma.ide.schema.types.PrismaReferentialAction
 import org.intellij.prisma.ide.schema.types.PrismaSortOrder
 import org.intellij.prisma.lang.PrismaConstants.Functions
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase("") {
-  fun testBlockAttributeIndexPostgreSQLType() {
+  @Test
+  fun testBlockAttributeIndexPostgreSQLType(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -18,10 +24,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, PrismaIndexAlgorithm.values().map { it.name })
+    assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(PrismaIndexAlgorithm.values().map { it.name })
   }
 
-  fun testBlockAttributeIndexMySQLOnFieldSort() {
+  @Test
+  fun testBlockAttributeIndexMySQLOnFieldSort(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -34,13 +41,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      PrismaSortOrder.values().map { it.name }
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(PrismaSortOrder.values().map { it.name })
   }
 
-  fun testBlockAttributeIndexSQLServerClustered() {
+  @Test
+  fun testBlockAttributeIndexSQLServerClustered(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
             datasource db {
@@ -60,10 +65,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
         """.trimIndent(),
       "true"
     )
-    assertSameElements(lookupElements.strings, "true", "false")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("true", "false")
   }
 
-  fun testFieldAttributeIdSQLServerClustered() {
+  @Test
+  fun testFieldAttributeIdSQLServerClustered(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -74,10 +80,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, "true", "false")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("true", "false")
   }
 
-  fun testFieldAttributeRelationSQLServerOnDelete() {
+  @Test
+  fun testFieldAttributeRelationSQLServerOnDelete(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -97,16 +104,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      PrismaReferentialAction.Cascade.name,
-      PrismaReferentialAction.NoAction.name,
-      PrismaReferentialAction.SetDefault.name,
-      PrismaReferentialAction.SetNull.name,
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(PrismaReferentialAction.Cascade.name, PrismaReferentialAction.NoAction.name, PrismaReferentialAction.SetDefault.name, PrismaReferentialAction.SetNull.name)
   }
 
-  fun testFieldAttributeRelationMySQLOnDelete() {
+  @Test
+  fun testFieldAttributeRelationMySQLOnDelete(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -126,17 +128,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      PrismaReferentialAction.Cascade.name,
-      PrismaReferentialAction.NoAction.name,
-      PrismaReferentialAction.Restrict.name,
-      PrismaReferentialAction.SetDefault.name,
-      PrismaReferentialAction.SetNull.name,
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(PrismaReferentialAction.Cascade.name, PrismaReferentialAction.NoAction.name, PrismaReferentialAction.Restrict.name, PrismaReferentialAction.SetDefault.name, PrismaReferentialAction.SetNull.name)
   }
 
-  fun testBlockAttributeIndexOpsNativeType() {
+  @Test
+  fun testBlockAttributeIndexOpsNativeType(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -149,15 +145,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      Functions.RAW,
-      PrismaOperatorClass.BpcharBloomOps.name,
-      PrismaOperatorClass.BpcharMinMaxOps.name,
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.RAW, PrismaOperatorClass.BpcharBloomOps.name, PrismaOperatorClass.BpcharMinMaxOps.name)
   }
 
-  fun testBlockAttributeIndexOpsFieldType() {
+  @Test
+  fun testBlockAttributeIndexOpsFieldType(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -170,16 +162,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      Functions.RAW,
-      PrismaOperatorClass.Float8BloomOps.name,
-      PrismaOperatorClass.Float8MinMaxOps.name,
-      PrismaOperatorClass.Float8MinMaxMultiOps.name,
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.RAW, PrismaOperatorClass.Float8BloomOps.name, PrismaOperatorClass.Float8MinMaxOps.name, PrismaOperatorClass.Float8MinMaxMultiOps.name)
   }
 
-  fun testBlockAttributeIndexOpsFieldTypeOptional() {
+  @Test
+  fun testBlockAttributeIndexOpsFieldTypeOptional(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -192,16 +179,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      Functions.RAW,
-      PrismaOperatorClass.Int4BloomOps.name,
-      PrismaOperatorClass.Int4MinMaxOps.name,
-      PrismaOperatorClass.Int4MinMaxMultiOps.name,
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.RAW, PrismaOperatorClass.Int4BloomOps.name, PrismaOperatorClass.Int4MinMaxOps.name, PrismaOperatorClass.Int4MinMaxMultiOps.name)
   }
 
-  fun testBlockAttributeIndexOpsFieldTypeList() {
+  @Test
+  fun testBlockAttributeIndexOpsFieldTypeList(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -214,14 +196,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      Functions.RAW,
-      PrismaOperatorClass.ArrayOps.name,
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.RAW, PrismaOperatorClass.ArrayOps.name)
   }
 
-  fun testBlockAttributeIndexFields() {
+  @Test
+  fun testBlockAttributeIndexFields(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -237,10 +216,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, "id", "isDeleted")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("id", "isDeleted")
   }
 
-  fun testFieldAttributeRelationReferences() {
+  @Test
+  fun testFieldAttributeRelationReferences(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             model Post {
@@ -258,13 +238,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(
-      lookupElements.strings,
-      "id", "posts", "name", "createdAt"
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("id", "posts", "name", "createdAt")
   }
 
-  fun testFieldAttributeRelationReferencesNoEnumValues() {
+  @Test
+  fun testFieldAttributeRelationReferencesNoEnumValues(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             model Post {
@@ -280,10 +258,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertEmpty(lookupElements.strings)
+    assertThat(lookupElements.strings).isEmpty()
   }
 
-  fun testFieldAttributeDefaultEnumValues() {
+  @Test
+  fun testFieldAttributeDefaultEnumValues(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -299,10 +278,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, Functions.DBGENERATED, "EN", "FR")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.DBGENERATED, "EN", "FR")
   }
 
-  fun testFieldAttributeDefaultNoModelValues() {
+  @Test
+  fun testFieldAttributeDefaultNoModelValues(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -318,10 +298,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertDoesntContain(lookupElements.strings, "id", "name")
+    assertThat(lookupElements.strings).doesNotContain("id", "name")
   }
 
-  fun testBlockAttributeNoFieldsInFieldExpression() {
+  @Test
+  fun testBlockAttributeNoFieldsInFieldExpression(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -337,10 +318,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
         """.trimIndent()
     )
 
-    assertDoesntContain(lookupElements.strings, "id", "title", "email")
+    assertThat(lookupElements.strings).doesNotContain("id", "title", "email")
   }
 
-  fun testBlockAttributeUniqueCompositeType() {
+  @Test
+  fun testBlockAttributeUniqueCompositeType(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
             datasource db {
@@ -366,10 +348,11 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
             }
         """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, "name", "size", "zip")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("name", "size", "zip")
   }
 
-  fun testBlockAttributeShardKeys() {
+  @Test
+  fun testBlockAttributeShardKeys(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements("""
       generator client {
         provider        = "prisma-client-js"
@@ -402,6 +385,6 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
         authorId  Int?
       }
     """.trimIndent())
-    assertSameElements(lookupElements.strings, "id", "email")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("id", "email")
   }
 }

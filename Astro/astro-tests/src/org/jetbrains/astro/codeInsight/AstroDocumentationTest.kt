@@ -6,40 +6,50 @@ import com.intellij.platform.backend.documentation.PsiDocumentationTargetProvide
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentation", useLsp = true) {
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun registerTypeScriptDocumentation() {
     PsiDocumentationTargetProvider.EP_NAME.point
-      .registerExtension(TypeScriptDocumentationTargetProvider(), testRootDisposable)
+      .registerExtension(TypeScriptDocumentationTargetProvider(), astro.testRootDisposable)
     JSLanguageServiceUtil.setTimeout(10000, myFixture.testRootDisposable)
   }
 
+  @Test
   fun testHtmlTag() = doTest()
 
+  @Test
   fun testHtmlAttribute() = doTest()
 
+  @Test
   fun testHtmlTagLookup() = doLookupTest {
     it.lookupString in listOf("div", "table")
   }
 
+  @Test
   fun testHtmlAttributeLookup() = doLookupTest {
     it.lookupString in listOf("src", "title")
   }
 
+  @Test
   fun testAstroDirective() = doTest()
 
+  @Test
   fun testComponentProp() {
-    doConfiguredTest(additionalFiles = listOf("component.astro")) {
+    astro.doConfiguredTest(additionalFiles = listOf("component.astro")) {
       checkDocumentationAtCaret()
     }
   }
 
   //region Test configuration and helper methods
   private fun doTest() {
-    doConfiguredTest {
+    astro.doConfiguredTest {
       checkDocumentationAtCaret()
     }
   }
@@ -47,7 +57,7 @@ class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentati
   private fun doLookupTest(
     lookupFilter: (item: LookupElementInfo) -> Boolean = { true },
   ) {
-    doConfiguredTest {
+    astro.doConfiguredTest {
       checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, lookupItemFilter = lookupFilter)
     }
   }

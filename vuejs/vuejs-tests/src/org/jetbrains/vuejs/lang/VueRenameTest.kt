@@ -26,28 +26,27 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class VueRenameTest :
   VueRenameTestBase() {
 
+  @TestApplication
   class WithTsGoProxyTest :
     VueRenameTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
+  @TestApplication
   class WithoutServiceTest :
     VueRenameTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
-@RunWith(JUnit4::class)
 abstract class VueRenameTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("rename", testMode = testMode) {
-
-  override val dirModeByDefault: Boolean = true
+) : VueTestCase("rename", testMode = testMode, dirModeByDefault = true) {
 
   @Test
   fun testComponentFieldFromTemplate() =
@@ -140,19 +139,19 @@ abstract class VueRenameTestBase(
   @Test
   fun testComponentFile() =
     withRenameUsages(false) {
-      doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
+      vue.doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
   @Test
   fun testComponentFileWithUsages() =
     withRenameUsages(true) {
-      doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
+      vue.doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
   @Test
   fun testComponentFileWithReexports() =
     withRenameUsages(true) {
-      doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
+      vue.doFileRenameTest("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
   @Test
@@ -404,10 +403,10 @@ abstract class VueRenameTestBase(
   }
 
   private fun doRenameTest(
-    mainFile: String = "$testName.$defaultExtension",
+    mainFile: String = "${vue.testName}.${vue.defaultExtension}",
     newName: String,
   ) {
-    doSymbolRenameTest(
+    vue.doSymbolRenameTest(
       mainFile = mainFile,
       newName = newName,
     )

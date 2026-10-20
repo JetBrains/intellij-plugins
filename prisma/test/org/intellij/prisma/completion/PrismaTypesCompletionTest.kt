@@ -1,9 +1,15 @@
 package org.intellij.prisma.completion
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.intellij.prisma.lang.PrismaConstants
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
-  fun testPrimitiveTypes() {
+  @Test
+  fun testPrimitiveTypes(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model Model {
@@ -17,11 +23,12 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
             """.trimIndent(),
       "DateTime"
     )
-    assertSameElements(lookupElements.strings, PrismaConstants.PrimitiveTypes.ALL + "Model")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(PrismaConstants.PrimitiveTypes.ALL + "Model")
     checkLookupDocumentation(lookupElements, "DateTime")
   }
 
-  fun testTypeDeclarations() {
+  @Test
+  fun testTypeDeclarations(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model User {}
@@ -41,10 +48,11 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
             """.trimIndent(),
       "Lang"
     )
-    assertContainsElements(lookupElements.strings, "User", "Lang", "Ty", "M")
+    assertThat(lookupElements.strings).contains("User", "Lang", "Ty", "M")
   }
 
-  fun testNoDecimalInMongo() {
+  @Test
+  fun testNoDecimalInMongo(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
                 datasource db { 
@@ -55,10 +63,11 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
                 }
             """.trimIndent(),
     )
-    assertDoesntContain(lookupElements.strings, PrismaConstants.PrimitiveTypes.DECIMAL)
+    assertThat(lookupElements.strings).doesNotContain(PrismaConstants.PrimitiveTypes.DECIMAL)
   }
 
-  fun testUnsupportedType() {
+  @Test
+  fun testUnsupportedType(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
                 model M {
@@ -75,14 +84,17 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
     checkLookupDocumentation(lookupElements, "Unsupported")
   }
 
+  @Test
   fun testGlobalTypes() {
     checkLookupElementsInSplitSchema()
   }
 
+  @Test
   fun testGlobalTypesSchemaDir() {
     checkLookupElementsInSplitSchema("prisma/schema")
   }
 
+  @Test
   fun testTypesMonorepo() {
     checkLookupElementsInSplitSchema("module1/schema/feature1")
   }

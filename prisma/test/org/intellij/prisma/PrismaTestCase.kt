@@ -1,15 +1,23 @@
 package org.intellij.prisma
 
-import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
+import com.intellij.javascript.testFramework.web.WebFrameworkFixture
+import com.intellij.javascript.testFramework.web.webFrameworkFixture
+import com.intellij.openapi.project.Project
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.intellij.prisma.lang.PrismaFileType
 
-abstract class PrismaTestCase(override val testCasePath: String) : WebFrameworkTestCase() {
-  override val testDataRoot: String
-    get() = getPrismaTestDataPath()
-  override val defaultExtension: String
-    get() = PrismaFileType.defaultExtension
-  override val defaultDependencies: Map<String, String>
-    get() = emptyMap()
+abstract class PrismaTestCase(testCasePath: String) {
+  protected val web: WebFrameworkFixture by webFrameworkFixture(
+    testDataRoot = getPrismaTestDataPath(),
+    testCasePath = testCasePath,
+    defaultExtension = PrismaFileType.defaultExtension,
+  )
 
-  protected fun getTestFileName(ext: String = "prisma"): String = "${getTestName(true)}.$ext"
+  protected val myFixture: CodeInsightTestFixture get() = web.fixture
+
+  protected val project: Project get() = web.project
+
+  protected val testDataPath: String get() = web.testDataPath
+
+  protected fun getTestFileName(ext: String = "prisma"): String = "${web.getTestName(true)}.$ext"
 }

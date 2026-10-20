@@ -1,7 +1,14 @@
 package org.intellij.prisma.completion
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+@TestApplication
 class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyValue") {
-  fun testDatasourceField() {
+  @Test
+  fun testDatasourceField(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
           datasource db {
@@ -14,11 +21,12 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       """.trimIndent(),
       "url"
     )
-    assertSameElements(lookupElements.strings, "directUrl", "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions", "schemas")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("directUrl", "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions", "schemas")
     checkLookupDocumentation(lookupElements, "url")
   }
 
-  fun testDatasourceNoRelationModeForMongo() {
+  @Test
+  fun testDatasourceNoRelationModeForMongo(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
           datasource db {
@@ -27,10 +35,11 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
           }
       """.trimIndent()
     )
-    assertSameElements(lookupElements.strings, "directUrl", "url", "shadowDatabaseUrl")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("directUrl", "url", "shadowDatabaseUrl")
   }
 
-  fun testDatasourceExtensions() {
+  @Test
+  fun testDatasourceExtensions(): Unit = timeoutRunBlocking {
     completeSelected(
       """
           datasource db {
@@ -49,7 +58,8 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
     )
   }
 
-  fun testGeneratorField() {
+  @Test
+  fun testGeneratorField(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
           generator client {
@@ -62,18 +72,12 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       """.trimIndent(),
       "provider"
     )
-    assertSameElements(
-      lookupElements.strings,
-      "provider",
-      "output",
-      "binaryTargets",
-      "previewFeatures",
-      "engineType",
-    )
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("provider", "output", "binaryTargets", "previewFeatures", "engineType")
     checkLookupDocumentation(lookupElements, "provider")
   }
 
-  fun testGeneratorPreviewFeatures() {
+  @Test
+  fun testGeneratorPreviewFeatures(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
           generator client {
@@ -90,10 +94,11 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       """.trimIndent(),
       "previewFeatures"
     )
-    assertSameElements(lookupElements.strings, "output", "binaryTargets", "previewFeatures")
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder("output", "binaryTargets", "previewFeatures")
   }
 
-  fun testGeneratorBinaryTargets() {
+  @Test
+  fun testGeneratorBinaryTargets(): Unit = timeoutRunBlocking {
     completeSelected(
       """
           generator client {
@@ -108,7 +113,8 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
     )
   }
 
-  fun testGeneratorWithPrismaClientProvider() {
+  @Test
+  fun testGeneratorWithPrismaClientProvider(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
           generator client {
@@ -117,16 +123,11 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
           }
       """.trimIndent()
     )
-    assertContainsElements(
-      lookupElements.strings,
-      "runtime",
-      "moduleFormat",
-      "generatedFileExtension",
-      "importFileExtension"
-    )
+    assertThat(lookupElements.strings).contains("runtime", "moduleFormat", "generatedFileExtension", "importFileExtension")
   }
 
-  fun testGeneratorWithDefaultProvider() {
+  @Test
+  fun testGeneratorWithDefaultProvider(): Unit = timeoutRunBlocking {
     val lookupElements = getLookupElements(
       """
           generator client {
@@ -135,12 +136,6 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
           }
       """.trimIndent()
     )
-    assertDoesntContain(
-      lookupElements.strings,
-      "runtime",
-      "moduleFormat",
-      "generatedFileExtension",
-      "importFileExtension"
-    )
+    assertThat(lookupElements.strings).doesNotContain("runtime", "moduleFormat", "generatedFileExtension", "importFileExtension")
   }
 }

@@ -1,5 +1,9 @@
 package org.intellij.prisma.completion
 
+import com.intellij.openapi.application.readAction
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
@@ -7,9 +11,12 @@ import org.intellij.prisma.ide.schema.types.PrismaPreviewFeature
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import com.intellij.openapi.util.text.StringUtil.wrapWithDoubleQuote as quoted
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values") {
-  fun testDatasourceProvider() {
+  @Test
+  fun testDatasourceProvider(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
           datasource db {
@@ -23,14 +30,17 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
       """.trimIndent(),
       "\"sqlserver\""
     )
-    val element = PrismaSchemaProvider
-      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(myFixture.file.findElementAt(myFixture.caretOffset)))
-      .getElement(PrismaSchemaKind.DATASOURCE_FIELD, PrismaConstants.DatasourceFields.PROVIDER)!!
-    assertSameElements(lookupElements.strings, element.variants.map { quoted(it.label.orEmpty()) })
+    val element = readAction {
+      PrismaSchemaProvider
+        .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(myFixture.file.findElementAt(myFixture.caretOffset)))
+        .getElement(PrismaSchemaKind.DATASOURCE_FIELD, PrismaConstants.DatasourceFields.PROVIDER)!!
+    }
+    assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(element.variants.map { quoted(it.label.orEmpty()) })
     checkLookupDocumentation(lookupElements, "\"sqlserver\"")
   }
 
-  fun testDatasourceProviderInLiteral() {
+  @Test
+  fun testDatasourceProviderInLiteral(): Unit = timeoutRunBlocking {
     completeSelected(
       """
           datasource db {
@@ -46,7 +56,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testDatasourceUrlFunction() {
+  @Test
+  fun testDatasourceUrlFunction(): Unit = timeoutRunBlocking {
     val lookupElements = completeSelected(
       """
           datasource db {
@@ -63,11 +74,12 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
       "env"
     )
 
-    assertSameElements(lookupElements.strings, Functions.ENV)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.ENV)
     checkLookupDocumentation(lookupElements, Functions.ENV)
   }
 
-  fun testDatasourceUrlFunctionSkipInQuotes() {
+  @Test
+  fun testDatasourceUrlFunctionSkipInQuotes(): Unit = timeoutRunBlocking {
     noCompletion(
       """
           datasource db {
@@ -77,7 +89,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testDatasourceUrlFunctionArgs() {
+  @Test
+  fun testDatasourceUrlFunctionArgs(): Unit = timeoutRunBlocking {
     val item = quoted("DATABASE_URL")
     val lookupElements = completeSelected(
       """
@@ -94,10 +107,11 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
       """.trimIndent(),
       item
     )
-    assertSameElements(lookupElements.strings, item)
+    assertThat(lookupElements.strings).containsExactlyInAnyOrder(item)
   }
 
-  fun testDatasourceUrlFunctionArgsInQuoted() {
+  @Test
+  fun testDatasourceUrlFunctionArgsInQuoted(): Unit = timeoutRunBlocking {
     val item = "DATABASE_URL"
     completeSelected(
       """
@@ -116,7 +130,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testDatasourceRelationMode() {
+  @Test
+  fun testDatasourceRelationMode(): Unit = timeoutRunBlocking {
     completeSelected(
       """
           datasource db {
@@ -134,7 +149,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testGeneratorPreviewFeatures() {
+  @Test
+  fun testGeneratorPreviewFeatures(): Unit = timeoutRunBlocking {
     val feature = PrismaPreviewFeature.RelationJoins.presentation
 
     completeSelected(
@@ -152,7 +168,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testGeneratorPreviewFeaturesLastItem() {
+  @Test
+  fun testGeneratorPreviewFeaturesLastItem(): Unit = timeoutRunBlocking {
     val feature1 = PrismaPreviewFeature.ShardKeys.presentation
     val feature2 = PrismaPreviewFeature.RelationJoins.presentation
 
@@ -170,10 +187,11 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
       quoted(feature1),
     )
 
-    assertDoesntContain(lookupElements.strings, quoted(feature2))
+    assertThat(lookupElements.strings).doesNotContain(quoted(feature2))
   }
 
-  fun testGeneratorPreviewFeaturesCompleteUnquoted() {
+  @Test
+  fun testGeneratorPreviewFeaturesCompleteUnquoted(): Unit = timeoutRunBlocking {
     val feature = PrismaPreviewFeature.RelationJoins.presentation
 
     completeSelected(
@@ -191,7 +209,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testGeneratorPreviewFeaturesOnlyInList() {
+  @Test
+  fun testGeneratorPreviewFeaturesOnlyInList(): Unit = timeoutRunBlocking {
     noCompletion(
       """
           generator client {
@@ -201,7 +220,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testGeneratorPreviewFeaturesNotAfterComma() {
+  @Test
+  fun testGeneratorPreviewFeaturesNotAfterComma(): Unit = timeoutRunBlocking {
     val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
 
@@ -216,7 +236,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testGeneratorPreviewFeaturesBetweenCommaAndValue() {
+  @Test
+  fun testGeneratorPreviewFeaturesBetweenCommaAndValue(): Unit = timeoutRunBlocking {
     val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
@@ -240,7 +261,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
   }
 
-  fun testGeneratorPreviewFeaturesAtStart() {
+  @Test
+  fun testGeneratorPreviewFeaturesAtStart(): Unit = timeoutRunBlocking {
     val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
@@ -262,10 +284,6 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
       """.trimIndent(),
       quoted(featureToComplete)
     )
-    assertDoesntContain(
-      lookupElements.strings,
-      quoted(feature1),
-      quoted(feature2)
-    )
+    assertThat(lookupElements.strings).doesNotContain(quoted(feature1), quoted(feature2))
   }
 }

@@ -3,14 +3,20 @@ package org.jetbrains.astro.codeInsight.highlighting
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.codeInsight.ASTRO_CONFIG_FILES
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlighting") {
 
+  @Test
   fun testCharEntityResolution() = doTest()
 
+  @Test
   fun testClientDirectives() = doTest(additionalFiles = listOf("react-component.tsx"))
 
+  @Test
   fun testImplicitConfigUsage() {
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection())
     ASTRO_CONFIG_FILES.forEach {
@@ -24,15 +30,18 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
     }
   }
 
+  @Test
   fun testPagesPathResolving() {
     myFixture.enableInspections(HtmlUnknownTargetInspection())
-    val dir = getTestName(true)
+    val dir = astro.getTestName(true)
     myFixture.copyDirectoryToProject(dir, "")
     myFixture.testHighlighting(true, false, true, "src/usage/usage.astro")
   }
 
+  @Test
   fun testSlotElement() = doTest()
 
+  @Test
   fun testShorthandAttributeRequired() {
     myFixture.configureByText("test.astro", """
       ---
@@ -44,6 +53,7 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
     myFixture.testHighlighting()
   }
 
+  @Test
   fun testImportFromFrontmatterInAstro() {
     myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection())
     myFixture.addFileToProject("Helper.astro", """
@@ -76,6 +86,7 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
     myFixture.testHighlighting()
   }
 
+  @Test
   fun testImportFromFrontmatterInTs() {
     myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection())
     myFixture.addFileToProject("Helper.astro", """
