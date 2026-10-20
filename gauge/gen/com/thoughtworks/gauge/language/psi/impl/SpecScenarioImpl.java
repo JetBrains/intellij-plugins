@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.thoughtworks.gauge.language.psi.SpecScenario;
 import com.thoughtworks.gauge.language.psi.SpecStep;
+import com.thoughtworks.gauge.language.psi.SpecTable;
 import com.thoughtworks.gauge.language.psi.SpecTags;
 import com.thoughtworks.gauge.language.psi.SpecVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,12 @@ public class SpecScenarioImpl extends ASTWrapperPsiElement implements SpecScenar
     @NotNull
     public List<SpecStep> getStepList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, SpecStep.class);
+    }
+
+    @Override
+    @Nullable
+    public SpecTable getTable() {
+        return findChildByClass(SpecTable.class);
     }
 
     @Override
