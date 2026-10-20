@@ -235,6 +235,19 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
+  /**
+   * Moves an installed package from the root `node_modules` into the `node_modules` of [targetDir].
+   * npm hoists every package into the root. The move gives a nested package its own copy, as pnpm does.
+   */
+  protected fun moveInstalledPackage(packageName: String, targetDir: String) {
+    val installedPackage = myFixture.findFileInTempDir("${NodeModuleUtil.NODE_MODULES}/$packageName")
+                           ?: error("Package $packageName is not installed")
+    val target = myFixture.findFileInTempDir(targetDir) ?: error("Directory $targetDir not found")
+    WriteAction.run<Throwable> {
+      installedPackage.move(this, VfsUtil.createDirectoryIfMissing(target, NodeModuleUtil.NODE_MODULES))
+    }
+  }
+
   protected fun doReformatFile(extension: String) {
     doReformatFile("toReformat", extension)
   }

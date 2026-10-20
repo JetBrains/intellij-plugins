@@ -1,6 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import * as prettier from "prettier";
 import {Options} from "prettier"
+import * as path from "path";
+import {createRequire} from "module";
 
 type PrettierApi = typeof prettier & {
     prettierPath: string;
@@ -132,6 +134,7 @@ export class PrettierPlugin implements LanguagePlugin {
         if (config.filepath == null) {
             config.filepath = args.path;
         }
+        resolvePluginsFromFile(config, args.path);
 
         config.rangeStart = args.start;
         config.rangeEnd = args.end;
@@ -180,6 +183,32 @@ async function performFormat(
     }
 
     return { formatted: await api.format(args.content, config) };
+}
+
+/**
+ * Prettier imports a plugin that a config names by its package name from `process.cwd()`.
+ * The service starts in the directory that holds the `prettier` package.
+ * A plugin that only a nested package depends on is not found there.
+ * This function resolves such a plugin from the formatted file instead,
+ * as the Prettier CLI started in the package directory does.
+ * A name that does not resolve stays as is, so that Prettier reports the missing plugin.
+ */
+function resolvePluginsFromFile(config: Options, filePath: string): void {
+    const plugins = config.plugins;
+    if (!Array.isArray(plugins) || plugins.length === 0 || !path.isAbsolute(filePath)) {
+        return;
+    }
+    const requireFromFile = createRequire(filePath);
+    config.plugins = plugins.map((plugin) => {
+        if (typeof plugin !== "string" || plugin.startsWith(".") || path.isAbsolute(plugin)) {
+            return plugin;
+        }
+        try {
+            return requireFromFile.resolve(plugin);
+        } catch {
+            return plugin;
+        }
+    });
 }
 
 function requireInContext(

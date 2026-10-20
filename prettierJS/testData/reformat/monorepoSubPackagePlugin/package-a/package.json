@@ -1,0 +1,10 @@
+{
+  "name": "package-a",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "prettier-plugin-svelte": "3.3.3"
+  }
+}

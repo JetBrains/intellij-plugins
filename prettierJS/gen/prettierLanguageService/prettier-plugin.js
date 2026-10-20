@@ -37,6 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrettierPlugin = void 0;
+var path = require("path");
+var module_1 = require("module");
 var PrettierPlugin = /** @class */ (function () {
     function PrettierPlugin() {
     }
@@ -154,6 +156,7 @@ var PrettierPlugin = /** @class */ (function () {
                         if (config.filepath == null) {
                             config.filepath = args.path;
                         }
+                        resolvePluginsFromFile(config, args.path);
                         config.rangeStart = args.start;
                         config.rangeEnd = args.end;
                         return [2 /*return*/, config];
@@ -209,6 +212,32 @@ function performFormat(api, config, args) {
                 case 8: return [2 /*return*/, (_b.formatted = _c.sent(), _b)];
             }
         });
+    });
+}
+/**
+ * Prettier imports a plugin that a config names by its package name from `process.cwd()`.
+ * The service starts in the directory that holds the `prettier` package.
+ * A plugin that only a nested package depends on is not found there.
+ * This function resolves such a plugin from the formatted file instead,
+ * as the Prettier CLI started in the package directory does.
+ * A name that does not resolve stays as is, so that Prettier reports the missing plugin.
+ */
+function resolvePluginsFromFile(config, filePath) {
+    var plugins = config.plugins;
+    if (!Array.isArray(plugins) || plugins.length === 0 || !path.isAbsolute(filePath)) {
+        return;
+    }
+    var requireFromFile = (0, module_1.createRequire)(filePath);
+    config.plugins = plugins.map(function (plugin) {
+        if (typeof plugin !== "string" || plugin.startsWith(".") || path.isAbsolute(plugin)) {
+            return plugin;
+        }
+        try {
+            return requireFromFile.resolve(plugin);
+        }
+        catch (_a) {
+            return plugin;
+        }
     });
 }
 function requireInContext(modulePathToRequire, contextPath) {

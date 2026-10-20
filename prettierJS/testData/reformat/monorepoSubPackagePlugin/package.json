@@ -1,0 +1,12 @@
+{
+  "name": "prettier-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "prettier": "$PRETTIER_VERSION$",
+    "prettier-plugin-svelte": "3.3.3",
+    "svelte": "5.25.0"
+  }
+}

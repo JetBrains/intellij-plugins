@@ -270,6 +270,12 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
     myFixture.checkResultByFile("$dirName/toReformat_after.js")
   }
 
+  fun testMonorepoSubPackagePlugin() = withInstallation {
+    // npm hoists every package into the root `node_modules`. The move gives `package-a` the plugin that only it depends on.
+    moveInstalledPackage("prettier-plugin-svelte", "package-a")
+    doReformatFile("package-a/toReformat", "js")
+  }
+
   // Special Cases
 
   fun testAutoconfigured() = withSubdirInstallation("autoconfigured", "subdir") {
