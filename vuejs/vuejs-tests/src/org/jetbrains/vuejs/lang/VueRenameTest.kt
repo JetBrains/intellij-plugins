@@ -36,9 +36,6 @@ import org.junit.runners.JUnit4
 class VueRenameTest :
   VueRenameTestBase() {
 
-  class WithLegacyPluginTest :
-    VueRenameTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
-
   class WithTsGoProxyTest :
     VueRenameTestBase(testMode = VueTestMode.TS_GO_PROXY)
 
