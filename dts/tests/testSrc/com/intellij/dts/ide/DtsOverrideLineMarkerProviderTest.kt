@@ -5,15 +5,15 @@ import com.intellij.dts.dtsFixture
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/ide/lineMark")
 class DtsOverrideLineMarkerProviderTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = projectFixture(tempPathFixture, openAfterCreation = true)
 
   private val dts by dtsFixture(projectFixture)
 

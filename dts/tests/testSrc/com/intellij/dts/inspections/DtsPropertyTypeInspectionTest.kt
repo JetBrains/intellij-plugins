@@ -8,15 +8,10 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/propertyType")
-class DtsPropertyTypeInspectionTest : DtsInspectionTest(DtsPropertyTypeInspection::class) {
+class DtsPropertyTypeInspectionTest : DtsInspectionTest(DtsPropertyTypeInspection::class, needsZephyr = true) {
   @Test
   fun `test default property`() = dtsTimeoutRunBlocking { doInspectionTest() }
 
   @Test
   fun `test binding property`() = dtsTimeoutRunBlocking { doInspectionTest() }
-
-  override suspend fun doInspectionTest() {
-    dts.addZephyr()
-    super.doInspectionTest()
-  }
 }

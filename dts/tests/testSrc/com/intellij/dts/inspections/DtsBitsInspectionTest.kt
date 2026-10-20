@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/bits")
-class DtsBitsInspectionTest : DtsInspectionTest(DtsBitsInspection::class) {
+class DtsBitsInspectionTest : DtsInspectionTest(DtsBitsInspection::class, needsZephyr = false) {
   @Test
   fun `test valid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 

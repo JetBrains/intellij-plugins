@@ -26,7 +26,7 @@ class DtsIncludePathCompletionTest : DtsQuoteCompletionTestBase(
   quote = '"',
 )
 
-abstract class DtsQuoteCompletionTestBase(private val surrounding: String, private val quote: Char) : DtsCompletionTest() {
+abstract class DtsQuoteCompletionTestBase(private val surrounding: String, private val quote: Char) : DtsCompletionTest(needsZephyr = false) {
   @Test
   fun `test new string`() = dtsTimeoutRunBlocking {
     doQuoteTest(

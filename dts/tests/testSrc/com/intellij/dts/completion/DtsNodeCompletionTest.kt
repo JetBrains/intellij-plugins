@@ -6,7 +6,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsNodeCompletionTest : DtsCompletionTest() {
+class DtsNodeCompletionTest : DtsCompletionTest(needsZephyr = false) {
   private suspend fun bundledNodes(callback: suspend (name: String, lookupString: String) -> Unit) {
     for (node in DtsZephyrBundledBindings.NODE_BINDINGS) {
       callback(node, node)

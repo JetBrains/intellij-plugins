@@ -5,15 +5,15 @@ import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 @TestApplication
 class DtsPathReferenceTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = projectFixture(tempPathFixture, openAfterCreation = true)
 
   private val dts by dtsFixture(projectFixture)
 

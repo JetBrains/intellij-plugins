@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/fixes/createProperty")
-class DtsCreatePropertyFixTest : DtsInspectionTest(DtsRequiredPropertyInspection::class, extension = "dts") {
+class DtsCreatePropertyFixTest : DtsInspectionTest(DtsRequiredPropertyInspection::class, needsZephyr = true, extension = "dts") {
   @Test
   fun `test in empty node`() = dtsTimeoutRunBlocking { doTest() }
 
@@ -29,7 +29,6 @@ class DtsCreatePropertyFixTest : DtsInspectionTest(DtsRequiredPropertyInspection
   fun `test multiple`() = dtsTimeoutRunBlocking { doTest() }
 
   private suspend fun doTest() {
-    dts.addZephyr()
     doQuickfixTest("Create property")
   }
 }

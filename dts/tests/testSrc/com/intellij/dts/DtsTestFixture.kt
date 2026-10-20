@@ -3,19 +3,19 @@ package com.intellij.dts
 import com.intellij.application.options.CodeStyle
 import com.intellij.dts.core.lang.DtsFileType
 import com.intellij.dts.core.settings.DtsSettings
-import com.intellij.dts.core.util.DtsUtil
 import com.intellij.dts.core.zephyr.DtsZephyrProvider
 import com.intellij.idea.AppMode
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.fixture.TestFixture
+import com.intellij.testFramework.junit5.fixture.moduleFixture
+import com.intellij.testFramework.junit5.fixture.pathInProjectFixture
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.testFramework.junit5.fixture.testFixture
 import com.intellij.testFramework.junit5.fixture.testNameFixture
 import kotlinx.coroutines.CoroutineScope
@@ -23,8 +23,10 @@ import org.junit.jupiter.api.fail
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Locale
+import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.copyToRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.pathString
@@ -44,8 +46,14 @@ fun dtsTimeoutRunBlocking(action: suspend CoroutineScope.() -> Unit) {
   timeoutRunBlocking(defaultTestTimeout, action = action)
 }
 
-fun dtsFixture(projectFixture: TestFixture<Project>, extension: String = "dtsi"): TestFixture<DtsTestFixture> = testFixture("dtsFixture") {
-  val codeInsight = codeInsightModuleFixture(projectFixture).init()
+fun dtsFixture(
+  projectFixture: TestFixture<Project>,
+  extension: String = "dtsi",
+): TestFixture<DtsTestFixture> = testFixture("dtsFixture") {
+  val projectRoot = projectFixture.pathInProjectFixture(Path(""))
+  projectFixture.moduleFixture(projectRoot, addPathToSourceRoot = true).init()
+
+  val codeInsight = codeInsightFixture(projectFixture, projectRoot).init()
   val methodName = testNameFixture(lowerCaseFirstLetter = false).init()
 
   val settings = CodeStyle.getSettings(codeInsight.project).getIndentOptions(DtsFileType)
@@ -56,6 +64,37 @@ fun dtsFixture(projectFixture: TestFixture<Project>, extension: String = "dtsi")
     .toPascalCase()
 
   initialized(DtsTestFixture(codeInsight, testName, extension)) {}
+}
+
+@OptIn(ExperimentalPathApi::class)
+fun dtsProjectFixture(
+  tempPathFixture: TestFixture<Path>,
+  withZephyr: Boolean = false,
+  openAfterCreation: Boolean = false,
+): TestFixture<Project> {
+  return testFixture("dtsProjectFixture") {
+    val tempPath = tempPathFixture.init()
+    val zephyrTarget = tempPath.resolve("zephyr")
+
+    val zephyrPath = DTS_TEST_DATA_PATH.resolve("zephyr")
+    if (withZephyr) {
+      zephyrPath.copyToRecursively(zephyrTarget, followLinks = false)
+    }
+
+    val project = projectFixture(tempPathFixture, openAfterCreation = openAfterCreation).init()
+
+    if (withZephyr) {
+      val zephyrAbsPath = zephyrTarget.absolutePathString()
+      DtsSettings.of(project).update {
+        zephyrRoot = zephyrAbsPath
+        zephyrBoard = "$zephyrAbsPath/boards/xtensa/esp32"
+      }
+
+      DtsZephyrProvider.of(project).awaitInit()
+    }
+
+    initialized(project) {}
+  }
 }
 
 class DtsTestFixture internal constructor(
@@ -80,21 +119,6 @@ class DtsTestFixture internal constructor(
     return codeInsight.addFileToProject(path, text)
   }
 
-  suspend fun addZephyr() {
-    val zephyr = DTS_TEST_DATA_PATH.resolve("zephyr").absolutePathString()
-
-    ModuleRootModificationUtil.addContentRoot(codeInsight.module, zephyr)
-
-    VfsUtil.markDirtyAndRefresh(false, true, true, DtsUtil.findFile(zephyr)!!)
-
-    DtsSettings.of(project).update {
-      zephyrRoot = zephyr
-      zephyrBoard = "$zephyr/boards/xtensa/esp32"
-    }
-
-    DtsZephyrProvider.of(project).awaitInit()
-  }
-
   fun getFixture(path: String): String {
     return Files.readString(DTS_TEST_DATA_PATH.resolve(path))
   }
@@ -104,7 +128,7 @@ class DtsTestFixture internal constructor(
   }
 
   fun makeRelativeToWorkingDirectory(path: String): String {
-    return path.replace(DTS_TEST_DATA_PATH.invariantSeparatorsPathString, "WORKING_DIRECTORY")
+    return path.replace(Path(codeInsight.tempDirPath).invariantSeparatorsPathString, "WORKING_DIRECTORY")
   }
 
   fun compareWithTestFixture(extension: String, actual: String) {

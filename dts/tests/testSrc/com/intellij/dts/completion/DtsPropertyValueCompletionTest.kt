@@ -5,7 +5,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsPropertyValueCompletionTest : DtsCompletionTest() {
+class DtsPropertyValueCompletionTest : DtsCompletionTest(needsZephyr = true) {
   private val unproductiveStatements = """
         // comment
         /include/ "file"
@@ -267,8 +267,6 @@ class DtsPropertyValueCompletionTest : DtsCompletionTest() {
   }
 
   private suspend fun doTest(lookup: String, input: String, after: String, compatible: String = "") {
-    dts.addZephyr()
-
     val surrounding = """
       / {
         compatible = "$compatible"; 

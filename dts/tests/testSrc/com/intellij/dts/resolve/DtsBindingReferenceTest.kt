@@ -2,10 +2,11 @@ package com.intellij.dts.resolve
 
 import com.intellij.dts.core.lang.symbols.DtsBindingSymbol
 import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsProjectFixture
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction
 import com.intellij.testFramework.junit5.TestApplication
-import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -14,9 +15,8 @@ import kotlin.io.path.invariantSeparatorsPathString
 
 @TestApplication
 class DtsBindingReferenceTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = dtsProjectFixture(tempPathFixture, withZephyr = true, openAfterCreation = true)
 
   private val dts by dtsFixture(projectFixture)
 
@@ -42,8 +42,6 @@ class DtsBindingReferenceTest {
     compatible: List<String>,
     bindingPath: Path,
   ) {
-    dts.addZephyr()
-
     val compatibleValue = compatible.joinToString { "\"$it\"" }
 
     dts.configureByText("""
@@ -57,6 +55,7 @@ class DtsBindingReferenceTest {
     val reference = myFixture.findSingleReferenceAtCaret()
     val target = readAction { reference.resolveReference().filterIsInstance<DtsBindingSymbol>().first() }
 
-    assertEquals(bindingPath.invariantSeparatorsPathString, dts.makeRelativeToWorkingDirectory(target.binding.path!!))
+    assertEquals(bindingPath.invariantSeparatorsPathString,
+                 dts.makeRelativeToWorkingDirectory(target.binding.path!!))
   }
 }

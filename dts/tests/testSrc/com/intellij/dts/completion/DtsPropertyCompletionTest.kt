@@ -5,7 +5,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsPropertyCompletionTest : DtsCompletionTest() {
+class DtsPropertyCompletionTest : DtsCompletionTest(needsZephyr = false) {
   @Test
   fun `test new property (compatible)`() = dtsTimeoutRunBlocking {
     doTest(

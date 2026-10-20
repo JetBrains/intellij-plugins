@@ -8,15 +8,10 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/undeclaredProperty")
-class DtsUndeclaredPropertyInspectionTest : DtsInspectionTest(DtsUndeclaredPropertyInspection::class) {
+class DtsUndeclaredPropertyInspectionTest : DtsInspectionTest(DtsUndeclaredPropertyInspection::class, needsZephyr = true) {
   @Test
   fun `test child binding unresolved override`() = dtsTimeoutRunBlocking { doInspectionTest() }
 
   @Test
   fun `test default properties`() = dtsTimeoutRunBlocking { doInspectionTest() }
-
-  override suspend fun doInspectionTest() {
-    dts.addZephyr()
-    super.doInspectionTest()
-  }
 }

@@ -5,21 +5,24 @@ import com.intellij.dts.DTS_TEST_DATA_PATH
 import com.intellij.dts.core.lang.DtsFileType
 import com.intellij.dts.core.lang.DtsLanguage
 import com.intellij.dts.core.settings.DtsCodeStyleSettings
+import com.intellij.dts.dtsFixture
 import com.intellij.openapi.project.Project
-import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightModuleFixture
 import com.intellij.psi.formatter.FormatterTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.io.File
 
 abstract class DtsFormattingTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = projectFixture(tempPathFixture, openAfterCreation = true)
 
-  private val myFixture by codeInsightModuleFixture(projectFixture)
+  private val dtsFixture by dtsFixture(projectFixture)
+
+  private val myFixture
+    get() = dtsFixture.codeInsight
 
   private val project: Project get() = myFixture.project
 

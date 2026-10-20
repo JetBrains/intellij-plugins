@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsPathReferenceTest : DtsCompletionTest() {
+class DtsPathReferenceTest : DtsCompletionTest(needsZephyr = true) {
   @BeforeEach
   fun addIncludedFiles() {
     myFixture.addFileToProject("a.dtsi", "/ { nodeA {}; };")
@@ -44,7 +44,6 @@ class DtsPathReferenceTest : DtsCompletionTest() {
 
   @Test
   fun testEmptyOverlay() = dtsTimeoutRunBlocking {
-    dts.addZephyr()
     myFixture.configureByText("esp32.overlay", "&{/<caret>} {};")
 
     assertThat(myFixture.completeBasic()).hasSize(10)

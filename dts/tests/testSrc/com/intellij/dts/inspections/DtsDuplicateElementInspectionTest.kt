@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/duplicateElement")
-class DtsDuplicateElementInspectionTest : DtsInspectionTest(DtsDuplicateElementInspection::class) {
+class DtsDuplicateElementInspectionTest : DtsInspectionTest(DtsDuplicateElementInspection::class, needsZephyr = false) {
   @Test
   fun `test property`() = dtsTimeoutRunBlocking { doInspectionTest() }
 

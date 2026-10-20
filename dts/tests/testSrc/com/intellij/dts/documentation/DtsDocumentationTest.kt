@@ -1,24 +1,24 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsProjectFixture
 import com.intellij.lang.documentation.ide.IdeDocumentationTargetProvider
 import com.intellij.openapi.application.readAction
 import com.intellij.platform.backend.documentation.impl.computeDocumentationAsync
-import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.assertj.core.api.Assertions.assertThat
 
-abstract class DtsDocumentationTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+abstract class DtsDocumentationTest(needsZephyr: Boolean) {
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = dtsProjectFixture(tempPathFixture, withZephyr = needsZephyr, openAfterCreation = true)
 
   protected val dts by dtsFixture(projectFixture)
 
   protected val myFixture get() = dts.codeInsight
 
-  protected open suspend fun doTest() {
+  protected suspend fun doTest() {
     val content = dts.getTestFixture("overlay")
 
     myFixture.configureByText("esp32.overlay", content)

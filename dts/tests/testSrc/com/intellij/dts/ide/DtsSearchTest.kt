@@ -9,15 +9,15 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.util.startOffset
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 @TestApplication
 class DtsSearchTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = projectFixture(tempPathFixture, openAfterCreation = true)
 
   private val dts by dtsFixture(projectFixture, extension = "dts")
 

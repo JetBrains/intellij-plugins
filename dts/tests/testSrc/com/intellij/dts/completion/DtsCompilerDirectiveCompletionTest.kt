@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsCompilerDirectiveCompletionTest : DtsCompletionTest() {
+class DtsCompilerDirectiveCompletionTest : DtsCompletionTest(needsZephyr = false) {
   @Test
   fun testRootV1() = dtsTimeoutRunBlocking {
     doTest(

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/propertyName")
-class DtsPropertyNameInspectionTest : DtsInspectionTest(DtsPropertyNameInspection::class) {
+class DtsPropertyNameInspectionTest : DtsInspectionTest(DtsPropertyNameInspection::class, needsZephyr = false) {
   @Test
   fun `test invalid`() = dtsTimeoutRunBlocking { doInspectionTest() }
 

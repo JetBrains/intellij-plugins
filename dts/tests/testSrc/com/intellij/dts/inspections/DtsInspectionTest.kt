@@ -2,9 +2,10 @@ package com.intellij.dts.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsProjectFixture
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeIntentReadAction
-import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.BeforeEach
@@ -12,11 +13,11 @@ import kotlin.reflect.KClass
 
 abstract class DtsInspectionTest(
   private vararg val inspectionClass: KClass<out LocalInspectionTool>,
+  needsZephyr: Boolean,
   extension: String = "dtsi",
 ) {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = dtsProjectFixture(tempPathFixture, withZephyr = needsZephyr, openAfterCreation = true)
 
   protected val dts by dtsFixture(projectFixture, extension)
 
@@ -27,7 +28,7 @@ abstract class DtsInspectionTest(
     myFixture.enableInspections(inspectionClass.map { it.java })
   }
 
-  protected open suspend fun doInspectionTest() {
+  protected suspend fun doInspectionTest() {
     myFixture.configureByFile(dts.testFile)
     writeIntentReadAction { myFixture.checkHighlighting() }
   }

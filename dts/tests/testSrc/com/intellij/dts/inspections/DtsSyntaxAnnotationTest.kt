@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/syntax")
-class DtsSyntaxAnnotationTest : DtsInspectionTest() {
+class DtsSyntaxAnnotationTest : DtsInspectionTest(needsZephyr = false) {
   @Test
   fun `test empty char`() = dtsTimeoutRunBlocking { doInspectionTest() }
 

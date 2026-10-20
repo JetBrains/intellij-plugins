@@ -13,6 +13,7 @@ import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -31,9 +32,8 @@ private class PsiToString(node: ASTNode) : RecursiveTreeElementWalkingVisitor(no
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/ide/iterateLeafs")
 class DtsIterateLeafsTest {
-  companion object {
-    private val projectFixture = projectFixture(openAfterCreation = true)
-  }
+  private val tempPathFixture = tempPathFixture()
+  private val projectFixture = projectFixture(tempPathFixture, openAfterCreation = true)
 
   private val dts by dtsFixture(projectFixture)
 

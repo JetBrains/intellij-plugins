@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/documentation/binding")
-class DtsBindingDocumentationTest : DtsDocumentationTest() {
+class DtsBindingDocumentationTest : DtsDocumentationTest(needsZephyr = true) {
   @Test
   fun `test compatible espressif,esp32-eth`() = dtsTimeoutRunBlocking { doTest() }
 
@@ -31,9 +31,4 @@ class DtsBindingDocumentationTest : DtsDocumentationTest() {
 
   @Test
   fun `test nested ref child`() = dtsTimeoutRunBlocking { doTest() }
-
-  override suspend fun doTest() {
-    dts.addZephyr()
-    super.doTest()
-  }
 }

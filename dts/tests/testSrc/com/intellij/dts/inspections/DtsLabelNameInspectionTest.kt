@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/labelName")
-class DtsLabelNameInspectionTest : DtsInspectionTest(DtsLabelNameInspection::class) {
+class DtsLabelNameInspectionTest : DtsInspectionTest(DtsLabelNameInspection::class, needsZephyr = false) {
   @Test
   fun `test invalid start`() = dtsTimeoutRunBlocking { doInspectionTest() }
 

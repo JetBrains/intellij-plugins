@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsLabelReferenceTest : DtsCompletionTest() {
+class DtsLabelReferenceTest : DtsCompletionTest(needsZephyr = true) {
   @BeforeEach
   fun addIncludedFiles() {
     myFixture.addFileToProject("a.dtsi", "/ { labelA: nodeA {}; };")
@@ -92,7 +92,6 @@ class DtsLabelReferenceTest : DtsCompletionTest() {
 
   @Test
   fun testEmptyOverlay() = dtsTimeoutRunBlocking {
-    dts.addZephyr()
     myFixture.configureByText("esp32.overlay", "&<caret>")
 
     assertThat(myFixture.completeBasic()).hasSize(56)

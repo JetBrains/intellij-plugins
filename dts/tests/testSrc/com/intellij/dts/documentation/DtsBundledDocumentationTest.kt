@@ -22,7 +22,7 @@ private val DTS_TEST_ROOT_PATH: Path = dtsRootPath.resolve("core")
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/documentation/bundled")
-class DtsBundledDocumentationTest : DtsDocumentationTest() {
+class DtsBundledDocumentationTest : DtsDocumentationTest(needsZephyr = false) {
   @BeforeEach
   fun awaitBundledBindings() {
     timeoutRunBlocking(30.seconds) {

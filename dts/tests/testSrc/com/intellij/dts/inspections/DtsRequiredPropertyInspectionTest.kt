@@ -8,31 +8,29 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/inspections/requiredProperty")
-class DtsRequiredPropertyInspectionTest : DtsInspectionTest(DtsRequiredPropertyInspection::class, extension = "dts") {
+class DtsRequiredPropertyInspectionTest : DtsInspectionTest(DtsRequiredPropertyInspection::class, needsZephyr = true, extension = "dts") {
   @Test
-  fun `test node`() = dtsTimeoutRunBlocking { doInspectionTest() }
-
-  @Test
-  fun `test ref node`() = dtsTimeoutRunBlocking { doInspectionTest() }
+  fun `test node`() = dtsTimeoutRunBlocking { doTest() }
 
   @Test
-  fun `test delete property`() = dtsTimeoutRunBlocking { doInspectionTest() }
+  fun `test ref node`() = dtsTimeoutRunBlocking { doTest() }
 
   @Test
-  fun `test delete node`() = dtsTimeoutRunBlocking { doInspectionTest() }
+  fun `test delete property`() = dtsTimeoutRunBlocking { doTest() }
 
   @Test
-  fun `test delete node ref`() = dtsTimeoutRunBlocking { doInspectionTest() }
+  fun `test delete node`() = dtsTimeoutRunBlocking { doTest() }
 
   @Test
-  fun `test delete node root`() = dtsTimeoutRunBlocking { doInspectionTest() }
+  fun `test delete node ref`() = dtsTimeoutRunBlocking { doTest() }
 
-  override suspend fun doInspectionTest() {
-    dts.addZephyr()
+  @Test
+  fun `test delete node root`() = dtsTimeoutRunBlocking { doTest() }
 
+  private suspend fun doTest() {
     val declaration = dts.getFixture("inspections/requiredProperty/Declaration.dtsi")
     dts.addFile("Declaration.dtsi", declaration)
 
-    super.doInspectionTest()
+    doInspectionTest()
   }
 }

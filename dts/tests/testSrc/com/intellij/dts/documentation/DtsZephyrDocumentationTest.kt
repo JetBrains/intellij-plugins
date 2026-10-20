@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 @TestApplication
 @TestDataPath($$"$PROJECT_ROOT/contrib/dts/tests/testData/documentation/zephyr")
-class DtsZephyrDocumentationTest : DtsDocumentationTest() {
+class DtsZephyrDocumentationTest : DtsDocumentationTest(needsZephyr = true) {
   @Test
   fun `test property binding`() = dtsTimeoutRunBlocking { doTest() }
 
@@ -52,9 +52,4 @@ class DtsZephyrDocumentationTest : DtsDocumentationTest() {
 
   @Test
   fun `test on i2c bus`() = dtsTimeoutRunBlocking { doTest() }
-
-  override suspend fun doTest() {
-    dts.addZephyr()
-    super.doTest()
-  }
 }

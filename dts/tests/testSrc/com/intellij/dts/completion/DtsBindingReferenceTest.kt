@@ -5,7 +5,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsBindingReferenceTest : DtsCompletionTest() {
+class DtsBindingReferenceTest : DtsCompletionTest(needsZephyr = true) {
   @Test
   fun `test compatible espressif,esp32-eth`() = dtsTimeoutRunBlocking {
     doTest(
@@ -32,8 +32,6 @@ class DtsBindingReferenceTest : DtsCompletionTest() {
   }
 
   private suspend fun doTest(variations: List<String>, lookupString: String) {
-    dts.addZephyr()
-
     val input = "compatible = \"<caret>\""
 
     for (variation in listOf("", lookupString) + variations) {

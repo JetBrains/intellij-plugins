@@ -5,7 +5,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsBraceTypingTest : DtsCompletionTest() {
+class DtsBraceTypingTest : DtsCompletionTest(needsZephyr = false) {
   @Test
   fun `test completes root node brace`() = dtsTimeoutRunBlocking {
     doTypeTest(

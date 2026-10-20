@@ -5,7 +5,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class DtsSemicolonTypingTest : DtsCompletionTest() {
+class DtsSemicolonTypingTest : DtsCompletionTest(needsZephyr = false) {
   @Test
   fun testValidProperty() = dtsTimeoutRunBlocking {
     doTest(
