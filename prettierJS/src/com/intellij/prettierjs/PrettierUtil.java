@@ -182,6 +182,15 @@ public final class PrettierUtil {
     return configs.size() == 1 ? configs.getFirst() : null;
   }
 
+  /**
+   * Returns {@code true} if a content root holds a Prettier config file at any depth.
+   * A library root, such as {@code node_modules}, does not count.
+   * The lookup reads the file name index, so the caller needs a read action and smart mode.
+   */
+  public static boolean hasConfigFileInContent(@NotNull Project project) {
+    return JSLinterConfigFileUtil.hasConfigFiles(project, ArrayUtil.toStringArray(CONFIG_FILE_NAMES));
+  }
+
   public static @Nullable VirtualFile findFileConfig(@NotNull Project project, @NotNull VirtualFile from) {
     Ref<VirtualFile> result = Ref.create();
     JSProjectUtil.processDirectoriesUpToContentRoot(project, from, directory -> {

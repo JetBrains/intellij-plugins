@@ -18,6 +18,10 @@ class PrettierConfigurationTest : PrettierConfigurationTestBase() {
 
   fun testSubPackageMultipleAutoMixed() = doTest(expectedMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC)
 
+  fun testRootDependencyNestedConfig() = doTest(expectedMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC)
+
+  fun testRootDependencyNestedPackageJsonConfig() = doTest(expectedMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC)
+
   fun testSubPackageDisabled() = doTest(expectedMode = PrettierConfiguration.ConfigurationMode.DISABLED)
 
   fun testSubPackageDisabledNoPrettier() = doTest(expectedMode = PrettierConfiguration.ConfigurationMode.DISABLED)

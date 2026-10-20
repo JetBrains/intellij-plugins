@@ -55,6 +55,22 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  fun testRootDependencyNestedConfig() = doTest(
+    expectedEventData = mapOf(
+      "enabled_status" to "AUTOMATIC",
+      "package_declaration_location" to "IN_PROJECT_ROOT_PACKAGE",
+      "config_location" to "CONFIG_FILE"
+    )
+  )
+
+  fun testRootDependencyNestedPackageJsonConfig() = doTest(
+    expectedEventData = mapOf(
+      "enabled_status" to "AUTOMATIC",
+      "package_declaration_location" to "IN_PROJECT_ROOT_PACKAGE",
+      "config_location" to "PACKAGE_JSON"
+    )
+  )
+
   fun testSubPackageDisabled() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "UNCHANGED",

@@ -68,20 +68,23 @@ class PrettierConfiguratorService(private val project: Project, @VisibleForTesti
     val packageJsonFiles = PackageJsonFileManager.getInstance(project)
       .getValidPackageJsonFiles()
       .map { PackageJsonData.getOrCreate(it) }
-      .filter { it.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME) }
 
-    val detectionMetrics = packageJsonFiles.fold(DetectionMetrics()) { acc, packageJson ->
-      val directory = packageJson.packageJsonFile.parent
-      acc.apply {
-        if (directory == baseDir) {
-          hasRootDependency = true
+    val detectionMetrics = DetectionMetrics()
+    for (packageJson in packageJsonFiles) {
+      if (packageJson.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
+        if (packageJson.packageJsonFile.parent == baseDir) {
+          detectionMetrics.hasRootDependency = true
         }
         else {
-          dependencySubdirectoryCount++
+          detectionMetrics.dependencySubdirectoryCount++
         }
-        hasConfigInPackageJson = hasConfigInPackageJson || packageJson.hasConfigSection()
-        hasConfigFile = hasConfigFile || PrettierUtil.findSingleConfigInDirectory(directory) != null
       }
+      if (packageJson.hasConfigSection()) {
+        detectionMetrics.hasConfigInPackageJson = true
+      }
+    }
+    if (detectionMetrics.hasRootDependency || detectionMetrics.dependencySubdirectoryCount > 0) {
+      detectionMetrics.hasConfigFile = PrettierUtil.hasConfigFileInContent(project)
     }
 
     val packageDeclarationLocation = determinePackageDeclarationLocation(detectionMetrics)
