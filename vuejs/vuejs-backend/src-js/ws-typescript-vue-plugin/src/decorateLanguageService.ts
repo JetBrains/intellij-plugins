@@ -38,28 +38,34 @@ export function decorateIdeLanguageServiceExtensions(
       })
   }
 
-  languageService.webStormGetElementType = (options) => {
-    const {fileName} = options
-    if (!isVueFile(fileName))
-      return webStormGetElementType(options)
+  function withMapper<
+    O extends ts.WebStormGetWithOffsetsOptions,
+    R extends Record<never, never>,
+  >(source: (options: O) => R | undefined): (options: O) => R | undefined {
+    return (options) => {
+      const {fileName} = options
+      if (!isVueFile(fileName))
+        return source(options)
 
-    const generatedOffsets = toGeneratedRange(language, fileName, options.startOffset, options.endOffset)
-    if (!generatedOffsets)
-      // throw error?
-      return undefined
+      const generatedOffsets = toGeneratedRange(language, fileName, options.startOffset, options.endOffset)
+      if (!generatedOffsets)
+        // throw error?
+        return undefined
 
-    const [startOffset, endOffset] = generatedOffsets
-    return webStormGetElementType({
-      ...options,
-      startOffset,
-      endOffset,
-      reverseMapper: createReverseMapper(options.ts, language),
-    })
+      const [startOffset, endOffset] = generatedOffsets
+      return source({
+        ...options,
+        startOffset,
+        endOffset,
+        reverseMapper: createReverseMapper(options.ts, language),
+      })
+    }
   }
 
+  languageService.webStormGetElementType = withMapper(webStormGetElementType)
   languageService.webStormGetCompletionSymbols = withReverseMapper(webStormGetCompletionSymbols)
   languageService.webStormGetSymbolType = withReverseMapper(webStormGetSymbolType)
   languageService.webStormGetTypeProperties = withReverseMapper(webStormGetTypeProperties)
   languageService.webStormGetTypeProperty = withReverseMapper(webStormGetTypeProperty)
-  languageService.webStormGetResolvedSignature = withReverseMapper(webStormGetResolvedSignature)
+  languageService.webStormGetResolvedSignature = withMapper(webStormGetResolvedSignature)
 }
