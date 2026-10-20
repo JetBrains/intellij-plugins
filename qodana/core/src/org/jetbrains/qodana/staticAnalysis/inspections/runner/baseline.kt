@@ -67,7 +67,6 @@ internal suspend fun applyBaselineCalculation(
 
   // This mutates the `report` parameter!
   BaselineCalculation.compare(report, baseline, options)
-  SplitModeBaselineFallbackMatcher.apply(report, baseline)
 }
 
 private fun getOptions(scope: QodanaAnalysisScope, config: QodanaConfig): BaselineCalculation.Options {
