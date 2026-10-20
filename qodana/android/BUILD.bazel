@@ -10,7 +10,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.android.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"],
+    runtime_deps = [
+        # do not sort,
+        "@community//plugins/kotlin:kotlin-plugin-community-main",
+        "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework",
+    ],
 )
 
 jvm_library(
@@ -30,6 +34,7 @@ jvm_library(
         # do not sort,
         ":android-tests",
         "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
+        "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework_test_lib",
     ],
     deps = [
         # do not sort,
