@@ -28,7 +28,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.prettierjs.PrettierUtil.getPrettierLanguageServicePath
 import com.intellij.util.PathUtilRt
 import com.intellij.webcore.util.JsonUtil
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.future
+import kotlinx.coroutines.withContext
 import java.util.concurrent.CompletableFuture
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.isRegularFile
@@ -94,16 +96,24 @@ internal class PrettierLanguageServiceImpl(
     }
   }
 
+  /**
+   * Runs the environment check, the service start, and [body] in the service coroutine scope.
+   * The environment check reads the file system, so it does not run on the caller thread.
+   * The caller can hold the read lock and can cancel the returned future.
+   */
   private fun <R> withServiceAndEnv(
     prettierPackage: NodePackage,
     errorResult: (String) -> R,
     body: suspend (process: JSLanguageServiceQueue) -> R?,
   ): CompletableFuture<R?> {
-    checkEnvAndSetError(prettierPackage)?.let { err ->
-      return CompletableFuture.completedFuture(errorResult(err.message))
-    }
     return inactivityTracker.useService {
       PrettierLanguageServiceManager.getInstance(project).cs.future {
+        val envError = withContext(Dispatchers.IO) {
+          checkEnvAndSetError(prettierPackage)
+        }
+        if (envError != null) {
+          return@future errorResult(envError.message)
+        }
         val process = getProcess()
         if (process == null || !process.isValid) {
           val msg = PrettierBundle.message("service.not.started.message")
