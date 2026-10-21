@@ -5,15 +5,18 @@ import org.junit.jupiter.api.Test
 
 
 @TestApplication
-class AstroImplicitlyUsedHighlightingTest : AstroHighlightingTestBase("codeInsight/highlighting/implicitlyUsed") {
+class AstroImplicitlyUsedHighlightingTest {
+
+  private val astro: AstroHighlightingFixture by astroHighlightingFixture("codeInsight/highlighting/implicitlyUsed")
+
   @Test
-  fun testGetStaticPaths() = doTest()
+  fun testGetStaticPaths() = astro.doTest()
   @Test
-  fun testGetStaticPathsVariableDeclaration() = doTest()
+  fun testGetStaticPathsVariableDeclaration() = astro.doTest()
   @Test
-  fun testPrerender() = doTest()
+  fun testPrerender() = astro.doTest()
   @Test
-  fun testPartial() = doTest()
+  fun testPartial() = astro.doTest()
   @Test
-  fun testPropsTypeAlias() = doTest()
+  fun testPropsTypeAlias() = astro.doTest()
 }

@@ -7,18 +7,21 @@ import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentation", useLsp = true) {
+class AstroDocumentationTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/documentation", useLsp = true)
 
   @BeforeEach
   fun registerTypeScriptDocumentation() {
     PsiDocumentationTargetProvider.EP_NAME.point
       .registerExtension(TypeScriptDocumentationTargetProvider(), astro.testRootDisposable)
-    JSLanguageServiceUtil.setTimeout(10000, myFixture.testRootDisposable)
+    JSLanguageServiceUtil.setTimeout(10000, astro.fixture.testRootDisposable)
   }
 
   @Test

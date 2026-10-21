@@ -8,55 +8,57 @@ import org.jetbrains.astro.codeInsight.ASTRO_CONFIG_FILES
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlighting") {
+class AstroHighlightingTest {
+
+  private val astro: AstroHighlightingFixture by astroHighlightingFixture("codeInsight/highlighting")
 
   @Test
-  fun testCharEntityResolution() = doTest()
+  fun testCharEntityResolution() = astro.doTest()
 
   @Test
-  fun testClientDirectives() = doTest(additionalFiles = listOf("react-component.tsx"))
+  fun testClientDirectives() = astro.doTest(additionalFiles = listOf("react-component.tsx"))
 
   @Test
   fun testImplicitConfigUsage() {
-    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection())
+    astro.fixture.enableInspections(JSUnusedGlobalSymbolsInspection())
     ASTRO_CONFIG_FILES.forEach {
-      myFixture.addFileToProject(it, """
+      astro.fixture.addFileToProject(it, """
         import { defineConfig } from 'astro/config'
   
         // https://astro.build/config
         export default defineConfig({})
       """.trimIndent())
-      myFixture.testHighlighting(it)
+      astro.fixture.testHighlighting(it)
     }
   }
 
   @Test
   fun testPagesPathResolving() {
-    myFixture.enableInspections(HtmlUnknownTargetInspection())
+    astro.fixture.enableInspections(HtmlUnknownTargetInspection())
     val dir = astro.getTestName(true)
-    myFixture.copyDirectoryToProject(dir, "")
-    myFixture.testHighlighting(true, false, true, "src/usage/usage.astro")
+    astro.fixture.copyDirectoryToProject(dir, "")
+    astro.fixture.testHighlighting(true, false, true, "src/usage/usage.astro")
   }
 
   @Test
-  fun testSlotElement() = doTest()
+  fun testSlotElement() = astro.doTest()
 
   @Test
   fun testShorthandAttributeRequired() {
-    myFixture.configureByText("test.astro", """
+    astro.fixture.configureByText("test.astro", """
       ---
       const src = 'myImage.png';
       const alt = 'placeholder';
       ---
       <img {src} {alt}>
     """.trimIndent())
-    myFixture.testHighlighting()
+    astro.fixture.testHighlighting()
   }
 
   @Test
   fun testImportFromFrontmatterInAstro() {
-    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection())
-    myFixture.addFileToProject("Helper.astro", """
+    astro.fixture.enableInspections(TypeScriptUnresolvedReferenceInspection())
+    astro.fixture.addFileToProject("Helper.astro", """
       ---
       export interface TestInterface {
         foo: string;
@@ -73,7 +75,7 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
       <div>Helper</div>
     """.trimIndent())
 
-    myFixture.configureByText("Usage.astro", """
+    astro.fixture.configureByText("Usage.astro", """
       ---
       import { TestInterface, utilFunction, Inner } from './Helper.astro';
 
@@ -83,13 +85,13 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
       ---
       <div>{result + value}</div>
     """.trimIndent())
-    myFixture.testHighlighting()
+    astro.fixture.testHighlighting()
   }
 
   @Test
   fun testImportFromFrontmatterInTs() {
-    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection())
-    myFixture.addFileToProject("Helper.astro", """
+    astro.fixture.enableInspections(TypeScriptUnresolvedReferenceInspection())
+    astro.fixture.addFileToProject("Helper.astro", """
       ---
       export interface TestInterface {
         foo: string;
@@ -102,12 +104,12 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
       <div>Component</div>
     """.trimIndent())
 
-    myFixture.configureByText("usage.ts", """
+    astro.fixture.configureByText("usage.ts", """
       import { TestInterface, utilFunction} from './Helper.astro';
 
       const value: TestInterface = { foo: 'test' };
       utilFunction(value);
     """.trimIndent())
-    myFixture.testHighlighting()
+    astro.fixture.testHighlighting()
   }
 }

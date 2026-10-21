@@ -6,11 +6,14 @@ import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroPathAttributeResolveTest : AstroCodeInsightTestCase("codeInsight/resolve") {
+class AstroPathAttributeResolveTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/resolve")
 
   @Test
   fun testAHrefIndexResolve(): Unit = timeoutRunBlocking {
@@ -55,7 +58,7 @@ class AstroPathAttributeResolveTest : AstroCodeInsightTestCase("codeInsight/reso
   private suspend fun doPathResolveTest(destination: String? = null) {
     // The helper copies the files and resolves the reference at the caret without a read action.
     withContext(Dispatchers.EDT) {
-      checkResolveToDestination(destination, myFixture, astro.getTestName(false), "astro")
+      checkResolveToDestination(destination, astro.fixture, astro.getTestName(false), "astro")
     }
   }
 }

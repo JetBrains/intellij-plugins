@@ -5,7 +5,8 @@ import com.intellij.javascript.testFramework.web.moveFiles
 import com.intellij.javascript.testFramework.web.renameFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.jetbrains.astro.AstroTestModule
 import org.junit.jupiter.api.Test
 
@@ -16,7 +17,10 @@ import org.junit.jupiter.api.Test
  * The `pathAlias` project adds the `@components` path alias and imports through it.
  */
 @TestApplication
-class AstroFileRefactoringTest : AstroCodeInsightTestCase("codeInsight/refactoring/file") {
+class AstroFileRefactoringTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/refactoring/file")
+
   @Test
   fun testMoveComponentRelativeImport() =
     doMoveComponentsTest("relativeImport",

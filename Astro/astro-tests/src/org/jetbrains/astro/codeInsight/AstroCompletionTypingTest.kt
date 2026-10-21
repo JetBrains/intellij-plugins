@@ -2,12 +2,16 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.jetbrains.astro.AstroTestModule
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroCompletionTypingTest : AstroCodeInsightTestCase("codeInsight/completion") {
+class AstroCompletionTypingTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/completion")
+
   @Test
   fun testImportComponent() =
     doTypingTest("Compo\n", additionalFiles = listOf("component.astro"))

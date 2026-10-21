@@ -5,7 +5,6 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
@@ -14,34 +13,31 @@ import com.intellij.polySymbols.testFramework.HybridTestMode
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.astro.service.AstroLspTypeScriptService
 import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
+import org.jetbrains.annotations.TestOnly
 
 /**
- * The base of the Astro code insight tests. The fixture [astro] is an [AstroFixture].
- * Each test gets a new project. With [useLsp], the project is a heavy project with the Astro language server.
+ * Creates an [AstroFixture] for the test data under [testCasePath].
+ * With [useLsp], each test gets a new heavy project with the Astro language server. Otherwise the tests share the light project.
+ * Declare the result as an instance property.
  */
-abstract class AstroCodeInsightTestCase protected constructor(
-  testCasePath: String,
-  useLsp: Boolean,
-  createFixture: (context: HybridFixtureContext, testCasePath: String, useLsp: Boolean) -> AstroFixture,
-) {
-
-  constructor(testCasePath: String, useLsp: Boolean = false) : this(testCasePath, useLsp, ::AstroFixture)
-
-  protected val astro: AstroFixture by hybridFixture({ if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform }) {
-    createFixture(it, testCasePath, useLsp)
-  }
-
-  protected val myFixture: CodeInsightTestFixture get() = astro.fixture
-
-  protected val project: Project get() = astro.project
-}
+@TestOnly
+fun astroFixture(testCasePath: String, useLsp: Boolean = false): TestFixture<AstroFixture> =
+  astroFixture(useLsp) { AstroFixture(it, testCasePath, useLsp) }
 
 /**
- * The state of [AstroCodeInsightTestCase]: a [WebFrameworkFixture] with the Astro test data root, the `astro` extension,
+ * Creates a sub-fixture of [AstroFixture] with [create]. [useLsp] selects the project, as in [astroFixture].
+ */
+@TestOnly
+fun <T : AstroFixture> astroFixture(useLsp: Boolean, create: (HybridFixtureContext) -> T): TestFixture<T> =
+  hybridFixture({ if (useLsp) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform }, create)
+
+/**
+ * A [WebFrameworkFixture] with the Astro test data root, the `astro` extension,
  * and the `astro` dependency.
  * With [useLsp], the fixture enables the Astro language server, adds a `tsconfig.json` file and the [AstroTestModule.ASTRO_5_14_4] module,
  * and waits until the server opens the configured file.

@@ -1,11 +1,15 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroFindUsagesTest : AstroCodeInsightTestCase("codeInsight/navigation/findUsages") {
+class AstroFindUsagesTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/navigation/findUsages")
+
   @Test
   fun testAstroComponentProp() = astro.doFindUsagesTest()
 

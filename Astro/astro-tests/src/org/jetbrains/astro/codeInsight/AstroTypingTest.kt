@@ -1,11 +1,14 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroTypingTest : AstroCodeInsightTestCase("codeInsight/typing") {
+class AstroTypingTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/typing")
 
   @Test
   fun testBracesInExpressions() = doTest("{([{")

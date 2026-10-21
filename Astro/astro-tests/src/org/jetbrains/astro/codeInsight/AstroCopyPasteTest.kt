@@ -2,11 +2,14 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.javascript.testFramework.web.configureAndCopyPaste
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroCopyPasteTest : AstroCodeInsightTestCase("codeInsight/copyPaste") {
+class AstroCopyPasteTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/copyPaste")
 
   @Test
   fun testBasic() {

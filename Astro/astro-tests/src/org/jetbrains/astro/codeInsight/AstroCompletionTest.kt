@@ -3,15 +3,19 @@ package org.jetbrains.astro.codeInsight
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", useLsp = true) {
+class AstroCompletionTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/completion", useLsp = true)
+
   @BeforeEach
   fun increaseServiceItemsLimit() {
-    RegistryManager.getInstance().get("typescript.service.completion.serviceItemsLimit").setValue(2000, myFixture.testRootDisposable)
+    RegistryManager.getInstance().get("typescript.service.completion.serviceItemsLimit").setValue(2000, astro.fixture.testRootDisposable)
   }
 
   @Test

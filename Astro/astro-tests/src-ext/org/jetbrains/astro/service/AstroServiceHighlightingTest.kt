@@ -6,17 +6,20 @@ import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroServiceHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting/service", useLsp = true) {
+class AstroServiceHighlightingTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/highlighting/service", useLsp = true)
 
   @BeforeEach
   fun allowDocumentChangesDuringHighlighting() {
-    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
+    (astro.fixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 
   @Test

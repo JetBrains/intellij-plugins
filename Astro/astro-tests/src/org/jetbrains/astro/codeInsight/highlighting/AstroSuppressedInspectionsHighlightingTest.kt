@@ -5,13 +5,16 @@ import org.junit.jupiter.api.Test
 
 
 @TestApplication
-class AstroSuppressedInspectionsHighlightingTest : AstroHighlightingTestBase("codeInsight/highlighting/suppressedInspections") {
+class AstroSuppressedInspectionsHighlightingTest {
+
+  private val astro: AstroHighlightingFixture by astroHighlightingFixture("codeInsight/highlighting/suppressedInspections")
+
   @Test
-  fun testUnusedImport() = doTest()
+  fun testUnusedImport() = astro.doTest()
   @Test
-  fun testUnknownAttribute() = doTest()
+  fun testUnknownAttribute() = astro.doTest()
   @Test
-  fun testValidateAttributeValueThroughPolySymbols() = doTest()
+  fun testValidateAttributeValueThroughPolySymbols() = astro.doTest()
   @Test
-  fun testNotBoundedNamespace() = doTest()
+  fun testNotBoundedNamespace() = astro.doTest()
 }

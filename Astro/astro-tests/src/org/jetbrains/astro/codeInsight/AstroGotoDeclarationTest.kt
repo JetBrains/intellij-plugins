@@ -1,12 +1,16 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.jetbrains.astro.AstroTestModule
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroGotoDeclarationTest : AstroCodeInsightTestCase("codeInsight/navigation/declaration", useLsp = true) {
+class AstroGotoDeclarationTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/navigation/declaration", useLsp = true)
+
   @Test
   fun testAstroComponentProp() =
     astro.doGotoDeclarationTest(declarationSignature = "<caret>title: string,", expectedFileName = "component.astro",

@@ -6,13 +6,16 @@ import com.intellij.lang.javascript.inspections.JSStringConcatenationToES6Templa
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroBundle
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.jetbrains.astro.inspections.AstroMissingComponentImportInspection
 import kotlin.reflect.KClass
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroInspectionsTest : AstroCodeInsightTestCase("codeInsight/inspections") {
+class AstroInspectionsTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/inspections")
 
   @Test
   fun testMissingComponentImport() = doTest(AstroMissingComponentImportInspection::class,

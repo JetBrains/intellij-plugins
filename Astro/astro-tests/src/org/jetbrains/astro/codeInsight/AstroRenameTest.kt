@@ -1,11 +1,15 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroRenameTest : AstroCodeInsightTestCase("codeInsight/refactoring/rename") {
+class AstroRenameTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/refactoring/rename")
+
   @Test
   fun testAstroComponentProp() = astro.doSymbolRenameTest("astroComponentProp.astro", "renamedProp")
 

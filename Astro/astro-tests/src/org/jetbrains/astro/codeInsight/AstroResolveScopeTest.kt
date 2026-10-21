@@ -7,19 +7,23 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.openapi.application.ReadAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroResolveScopeTest : AstroCodeInsightTestCase("codeInsight/resolveScope") {
+class AstroResolveScopeTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/resolveScope")
+
   @Test
   fun testBasic() {
-    TypeScriptTestUtil.setTsConfigOptions(project, astro.testRootDisposable, TypeScriptConfig.LanguageTarget.ES6)
-    val mainFile = myFixture.configureByFile("${astro.testName}.astro")
+    TypeScriptTestUtil.setTsConfigOptions(astro.project, astro.testRootDisposable, TypeScriptConfig.LanguageTarget.ES6)
+    val mainFile = astro.fixture.configureByFile("${astro.testName}.astro")
 
-    val bundledLibs = TypeScriptLibraryProvider.getService(project).allBundledLibraries
+    val bundledLibs = TypeScriptLibraryProvider.getService(astro.project).allBundledLibraries
 
     val olderLib = bundledLibs.single { it.name.contains("lib.es5.d.ts") }
     val newerLib = bundledLibs.single { it.name.contains("lib.es2017.d.ts") }

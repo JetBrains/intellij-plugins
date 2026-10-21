@@ -5,11 +5,14 @@ import com.intellij.polySymbols.testFramework.PolySymbolsFixture.CommentStyle.BL
 import com.intellij.polySymbols.testFramework.PolySymbolsFixture.CommentStyle.LINE
 import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.plugins.postcss.settings.PostCssCodeStyleSettings
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroCommenterTest : AstroCodeInsightTestCase("codeInsight/commenter") {
+class AstroCommenterTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/commenter")
 
   @Test
   fun testSimple() = doTest()
@@ -42,7 +45,7 @@ class AstroCommenterTest : AstroCodeInsightTestCase("codeInsight/commenter") {
   fun testFrontmatterBlockUncomment() = astro.doCommentTest(BLOCK)
 
   @Test
-  fun testCss() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(myFixture.project) {
+  fun testCss() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(astro.fixture.project) {
     val settings = it.getCustomSettings(PostCssCodeStyleSettings::class.java)
     val initialValue = settings.COMMENTS_INLINE_STYLE
     try {

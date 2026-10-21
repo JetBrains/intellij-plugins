@@ -1,11 +1,14 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroFormattingTest : AstroCodeInsightTestCase("codeInsight/formatting") {
+class AstroFormattingTest {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/formatting")
 
   @Test
   fun testBasic() = astro.doFormattingTest()
