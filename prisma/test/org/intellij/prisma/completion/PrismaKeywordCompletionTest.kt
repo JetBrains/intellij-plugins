@@ -6,10 +6,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keywords") {
+class PrismaKeywordCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/keywords")
+
   @Test
   fun testRootKeywords(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {}
                 <caret>
@@ -27,7 +29,7 @@ class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keyword
 
   @Test
   fun testFinishRootKeyword() {
-    completeBasic(
+    prisma.completeBasic(
       """
                 model M {}
                 ty<caret>
@@ -43,27 +45,27 @@ class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keyword
 
   @Test
   fun testKeywordInEmptyFile() {
-    completeBasic("mo<caret>", "model <caret>")
+    prisma.completeBasic("mo<caret>", "model <caret>")
   }
 
   @Test
   fun testNoKeywordsInDeclaration(): Unit = timeoutRunBlocking {
-    noCompletion("model <caret>")
+    prisma.noCompletion("model <caret>")
   }
 
   @Test
   fun testNoKeywordsInBlock(): Unit = timeoutRunBlocking {
-    noCompletion("model M { <caret> }")
+    prisma.noCompletion("model M { <caret> }")
   }
 
   @Test
   fun testTypeKeywordDoc(): Unit = timeoutRunBlocking {
-    checkLookupDocumentation(getLookupElements("<caret>").find("type"))
+    prisma.checkLookupDocumentation(prisma.getLookupElements("<caret>").find("type"))
   }
 
   @Test
   fun testNoEnumInSqlite(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
                 datasource db {
                   provider = "sqlite"
@@ -77,7 +79,7 @@ class PrismaKeywordCompletionTest : PrismaCompletionTestBase("completion/keyword
 
   @Test
   fun testNoKeywordsBetweenBrackets(): Unit = timeoutRunBlocking {
-    noCompletion(
+    prisma.noCompletion(
       """
             model M {
               names String[<caret>]

@@ -14,10 +14,12 @@ import com.intellij.openapi.util.text.StringUtil.wrapWithDoubleQuote as quoted
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values") {
+class PrismaValuesCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/values")
+
   @Test
   fun testDatasourceProvider(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource db {
             provider = <caret>
@@ -32,16 +34,16 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
     val element = readAction {
       PrismaSchemaProvider
-        .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(myFixture.file.findElementAt(myFixture.caretOffset)))
+        .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(prisma.fixture.file.findElementAt(prisma.fixture.caretOffset)))
         .getElement(PrismaSchemaKind.DATASOURCE_FIELD, PrismaConstants.DatasourceFields.PROVIDER)!!
     }
     assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(element.variants.map { quoted(it.label.orEmpty()) })
-    checkLookupDocumentation(lookupElements, "\"sqlserver\"")
+    prisma.checkLookupDocumentation(lookupElements, "\"sqlserver\"")
   }
 
   @Test
   fun testDatasourceProviderInLiteral(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           datasource db {
             provider = "sql<caret>"
@@ -58,7 +60,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
 
   @Test
   fun testDatasourceUrlFunction(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource db {
             provider = "postgresql"
@@ -75,12 +77,12 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     )
 
     assertThat(lookupElements.strings).containsExactlyInAnyOrder(Functions.ENV)
-    checkLookupDocumentation(lookupElements, Functions.ENV)
+    prisma.checkLookupDocumentation(lookupElements, Functions.ENV)
   }
 
   @Test
   fun testDatasourceUrlFunctionSkipInQuotes(): Unit = timeoutRunBlocking {
-    noCompletion(
+    prisma.noCompletion(
       """
           datasource db {
             url = "<caret>"
@@ -92,7 +94,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   @Test
   fun testDatasourceUrlFunctionArgs(): Unit = timeoutRunBlocking {
     val item = quoted("DATABASE_URL")
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource db {
             provider = "postgresql"
@@ -113,7 +115,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   @Test
   fun testDatasourceUrlFunctionArgsInQuoted(): Unit = timeoutRunBlocking {
     val item = "DATABASE_URL"
-    completeSelected(
+    prisma.completeSelected(
       """
           datasource db {
             provider = "postgresql"
@@ -132,7 +134,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
 
   @Test
   fun testDatasourceRelationMode(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           datasource db {
             provider = "postgresql"
@@ -153,7 +155,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   fun testGeneratorPreviewFeatures(): Unit = timeoutRunBlocking {
     val feature = PrismaPreviewFeature.RelationJoins.presentation
 
-    completeSelected(
+    prisma.completeSelected(
       """
           generator client {
             previewFeatures = [<caret>]
@@ -173,7 +175,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     val feature1 = PrismaPreviewFeature.ShardKeys.presentation
     val feature2 = PrismaPreviewFeature.RelationJoins.presentation
 
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           generator client {
             previewFeatures = ["$feature2", <caret>]
@@ -194,7 +196,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   fun testGeneratorPreviewFeaturesCompleteUnquoted(): Unit = timeoutRunBlocking {
     val feature = PrismaPreviewFeature.RelationJoins.presentation
 
-    completeSelected(
+    prisma.completeSelected(
       """
           generator client {
             previewFeatures = [relat<caret>]
@@ -211,7 +213,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
 
   @Test
   fun testGeneratorPreviewFeaturesOnlyInList(): Unit = timeoutRunBlocking {
-    noCompletion(
+    prisma.noCompletion(
       """
           generator client {
             previewFeatures = <caret>
@@ -225,7 +227,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
 
-    noCompletion(
+    prisma.noCompletion(
       """
           generator client {
             provider = "prisma-client-js"
@@ -242,7 +244,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
-    completeSelected(
+    prisma.completeSelected(
       """
           generator client {
             provider = "prisma-client-js"
@@ -267,7 +269,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           generator client {
             provider = "prisma-client-js"

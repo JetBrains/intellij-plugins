@@ -7,10 +7,12 @@ import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completion/defaultAttribute") {
+class PrismaDefaultAttributeCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/defaultAttribute")
+
   @Test
   fun testCockroach(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 datasource db {
                   provider = "cockroachdb"
@@ -34,7 +36,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testCockroachBigIntField(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 datasource db {
                   provider = "cockroachdb"
@@ -58,7 +60,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testSequence(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
                 datasource db {
                   provider = "cockroachdb"
@@ -81,7 +83,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testSequenceAfterVirtual(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 datasource db {
                   provider = "cockroachdb"
@@ -106,7 +108,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testSequenceNoVirtualAfterParam(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
                 datasource db {
                   provider = "cockroachdb"
@@ -123,7 +125,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testMySQL(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 datasource db {
                   provider = "mysql"
@@ -147,7 +149,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testAutoincrementOnlyOnNumeric(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
                 datasource db {
                   provider = "mysql"
@@ -162,7 +164,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testMongo(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 datasource db {
                   provider = "mongodb"
@@ -186,7 +188,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testNow(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   createdAt DateTime @default(<caret>)
@@ -200,12 +202,12 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
     )
     assertThat(lookupElements.strings).doesNotContain(Functions.SEQUENCE, Functions.CUID)
     assertThat(lookupElements.strings).contains(Functions.DBGENERATED)
-    checkLookupDocumentation(lookupElements, Functions.NOW)
+    prisma.checkLookupDocumentation(lookupElements, Functions.NOW)
   }
 
   @Test
   fun testCuid(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   name String @default(<caret>)
@@ -222,7 +224,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testCuidNullableType(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   name String? @default(<caret>)
@@ -239,7 +241,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testCuidVersions(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   name String @default(cuid(<caret>))
@@ -256,7 +258,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testForListType(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 datasource db {
                   provider = "mysql"
@@ -279,7 +281,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testForBoolean(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   active Boolean @default(<caret>)
@@ -296,7 +298,7 @@ class PrismaDefaultAttributeCompletionTest : PrismaCompletionTestBase("completio
 
   @Test
   fun testForBooleanNullable(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   active Boolean? @default(<caret>)

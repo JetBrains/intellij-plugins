@@ -7,10 +7,12 @@ import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion/fieldAttributes") {
+class PrismaFieldAttributesCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/fieldAttributes")
+
   @Test
   fun testFieldAttributes(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           model User {
           }
@@ -28,12 +30,12 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.SHARD_KEY)
 
-    checkLookupDocumentation(lookupElements, FieldAttributes.RELATION)
+    prisma.checkLookupDocumentation(lookupElements, FieldAttributes.RELATION)
   }
 
   @Test
   fun testFieldAttributeAfterAt(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           model M {
             id Int @<caret>
@@ -49,7 +51,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeWithBeforeNextField(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           model M {
             id Int @<caret>
@@ -67,7 +69,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeExistingAttribute(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           model M {
             id Int @un<caret>
@@ -83,7 +85,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeAfterAnother(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           model M {
             user User @unique <caret>
@@ -96,12 +98,12 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
       FieldAttributes.MAP
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.UNIQUE - FieldAttributes.SHARD_KEY)
-    checkLookupDocumentation(lookupElements, FieldAttributes.MAP)
+    prisma.checkLookupDocumentation(lookupElements, FieldAttributes.MAP)
   }
 
   @Test
   fun testFieldAttributeBeforeAnother(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           model M {
             user User <caret> @map("")
@@ -118,7 +120,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeForCompositeTypeField(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           type T {}
           model M {
@@ -132,7 +134,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeIdAllowedForEnum(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           enum Lang {}
           model M {
@@ -145,7 +147,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeIdAllowedForInt(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           model M {
             i Int <caret>
@@ -157,7 +159,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeIdAllowedForString(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           model M {
             s String <caret>
@@ -169,7 +171,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeNoIdForCompositeTypes(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           model M {
             m1 M1 <caret>
@@ -184,7 +186,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeUpdatedAtForDateTime(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           model M {
             updated DateTime <caret>
@@ -196,7 +198,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeNoIdIfBlockAttributeExists(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           model M {
             id Int <caret>
@@ -210,7 +212,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributesEnum(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           enum Role {
             ADMIN @map("admin")
@@ -224,7 +226,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributesEnumWithoutAt(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           enum Role {
             ADMIN @map("admin")
@@ -238,7 +240,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributesCompositeType(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           type Comp {
             id Int @<caret>
@@ -252,7 +254,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeShardKey(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements("""
+    val lookupElements = prisma.getLookupElements("""
       generator client {
         provider        = "prisma-client-js"
         previewFeatures = ["shardKeys"]
@@ -274,7 +276,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeShardKeySkipRelations(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements("""
+    val lookupElements = prisma.getLookupElements("""
       generator client {
         provider        = "prisma-client-js"
         previewFeatures = ["shardKeys"]
@@ -309,7 +311,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeShardKeySkipOptional(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements("""
+    val lookupElements = prisma.getLookupElements("""
       generator client {
         provider        = "prisma-client-js"
         previewFeatures = ["shardKeys"]
@@ -331,7 +333,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
 
   @Test
   fun testFieldAttributeShardKeyOnlyMysql(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements("""
+    val lookupElements = prisma.getLookupElements("""
       generator client {
         provider        = "prisma-client-js"
         previewFeatures = ["shardKeys"]

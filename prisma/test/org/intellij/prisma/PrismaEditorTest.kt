@@ -5,7 +5,9 @@ import org.intellij.prisma.lang.PrismaFileType
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaEditorTest : PrismaTestCase("") {
+class PrismaEditorTest {
+  private val prisma: PrismaFixture by prismaFixture("")
+
   @Test
   fun testEnterInFile() {
     doEnterTest(
@@ -45,8 +47,8 @@ class PrismaEditorTest : PrismaTestCase("") {
   }
 
   private fun doEnterTest(text: String, expected: String) {
-    myFixture.configureByText(PrismaFileType, text)
-    myFixture.type('\n')
-    myFixture.checkResult(expected)
+    prisma.fixture.configureByText(PrismaFileType, text)
+    prisma.fixture.type('\n')
+    prisma.fixture.checkResult(expected)
   }
 }

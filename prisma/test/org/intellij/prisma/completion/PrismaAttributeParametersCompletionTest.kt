@@ -14,10 +14,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("completion/attributeParameters") {
+class PrismaAttributeParametersCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/attributeParameters")
+
   @Test
   fun testBlockAttributeId(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
             model M {
               @@id(<caret>)
@@ -30,7 +32,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
       ParameterNames.FIELDS
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrder(ParameterNames.FIELDS, ParameterNames.MAP, ParameterNames.NAME, ParameterNames.CLUSTERED)
-    checkLookupDocumentation(lookupElements, ParameterNames.FIELDS)
+    prisma.checkLookupDocumentation(lookupElements, ParameterNames.FIELDS)
 
     val presentation = lookupElements.find(ParameterNames.FIELDS).presentation!!
     assertEquals("FieldReference[]", presentation.typeText)
@@ -38,7 +40,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdFiltered(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
             model M {
               @@id(fields: [], <caret>)
@@ -51,12 +53,12 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
       ParameterNames.MAP
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrder(ParameterNames.MAP, ParameterNames.NAME, ParameterNames.CLUSTERED)
-    checkLookupDocumentation(lookupElements, ParameterNames.MAP)
+    prisma.checkLookupDocumentation(lookupElements, ParameterNames.MAP)
   }
 
   @Test
   fun testBlockAttributeIdComplete() {
-    completeBasic(
+    prisma.completeBasic(
       """
             model M {
               @@id(fie<caret>)
@@ -72,7 +74,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdNoParamsInList(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             model M {
               @@id(fields: [<caret>])
@@ -85,7 +87,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdMySQL(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -100,7 +102,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdMySQLOnField(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -117,7 +119,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdMySQLNoLengthInArray(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -134,7 +136,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdSQLServer(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -149,7 +151,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIdSQLServerOnField(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -166,7 +168,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIndexPostgreSQL(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -181,7 +183,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIndexMySQL(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -196,7 +198,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIndexMySQLOnField(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -213,7 +215,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeIndexSQLServer(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -228,7 +230,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeUniqueSQLServer(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -243,7 +245,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testBlockAttributeUniqueMySQLOnField(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -260,7 +262,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testFieldAttributeRelation(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
             datasource db {
               provider = "mysql"
@@ -280,12 +282,12 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
     )
     val expectedParams = getFieldAttributeParams(FieldAttributes.RELATION)
     assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(expectedParams)
-    checkLookupDocumentation(lookupElements, ParameterNames.FIELDS)
+    prisma.checkLookupDocumentation(lookupElements, ParameterNames.FIELDS)
   }
 
   @Test
   fun testFieldAttributeRelationOnUpdate(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
             datasource db {
               provider = "mysql"
@@ -303,12 +305,12 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
         """.trimIndent(),
       ParameterNames.ON_UPDATE
     )
-    checkLookupDocumentation(lookupElements, ParameterNames.ON_UPDATE)
+    prisma.checkLookupDocumentation(lookupElements, ParameterNames.ON_UPDATE)
   }
 
   @Test
   fun testFieldAttributeRelationMongoDB(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mongodb"
@@ -323,7 +325,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testFieldAttributeIdMySQL(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -338,7 +340,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testFieldAttributeIdSQLServer(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -353,7 +355,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testFieldAttributeUniqueMySQL(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -368,7 +370,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testFieldAttributeUniqueSQLServer(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -383,7 +385,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   @Test
   fun testFieldAttributeDefaultMySQL(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -402,7 +404,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase("comple
 
   private suspend fun getAttributeParams(kind: PrismaSchemaKind, label: String) = readAction {
     PrismaSchemaProvider
-      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(myFixture.file.findElementAt(myFixture.caretOffset)))
+      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(prisma.fixture.file.findElementAt(prisma.fixture.caretOffset)))
       .getElement(kind, label)!!.params.map { it.label }
   }
 }

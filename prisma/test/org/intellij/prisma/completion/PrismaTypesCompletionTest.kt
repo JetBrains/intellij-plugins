@@ -7,10 +7,12 @@ import org.intellij.prisma.lang.PrismaConstants
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
+class PrismaTypesCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/types")
+
   @Test
   fun testPrimitiveTypes(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model Model {
                   id <caret>
@@ -24,12 +26,12 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
       "DateTime"
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrderElementsOf(PrismaConstants.PrimitiveTypes.ALL + "Model")
-    checkLookupDocumentation(lookupElements, "DateTime")
+    prisma.checkLookupDocumentation(lookupElements, "DateTime")
   }
 
   @Test
   fun testTypeDeclarations(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model User {}
                 enum Lang {}
@@ -53,7 +55,7 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
 
   @Test
   fun testNoDecimalInMongo(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
                 datasource db { 
                   provider = "mongodb" 
@@ -68,7 +70,7 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
 
   @Test
   fun testUnsupportedType(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
                 model M {
                   id Uns<caret>
@@ -81,21 +83,21 @@ class PrismaTypesCompletionTest : PrismaCompletionTestBase("completion/types") {
             """.trimIndent(),
       "Unsupported"
     )
-    checkLookupDocumentation(lookupElements, "Unsupported")
+    prisma.checkLookupDocumentation(lookupElements, "Unsupported")
   }
 
   @Test
   fun testGlobalTypes() {
-    checkLookupElementsInSplitSchema()
+    prisma.checkLookupElementsInSplitSchema()
   }
 
   @Test
   fun testGlobalTypesSchemaDir() {
-    checkLookupElementsInSplitSchema("prisma/schema")
+    prisma.checkLookupElementsInSplitSchema("prisma/schema")
   }
 
   @Test
   fun testTypesMonorepo() {
-    checkLookupElementsInSplitSchema("module1/schema/feature1")
+    prisma.checkLookupElementsInSplitSchema("module1/schema/feature1")
   }
 }

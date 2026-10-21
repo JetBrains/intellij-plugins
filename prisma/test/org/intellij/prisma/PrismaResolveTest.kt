@@ -17,7 +17,9 @@ private const val CARET = "<caret>"
 private const val TARGET = "<target>"
 
 @TestApplication
-class PrismaResolveTest : PrismaTestCase("resolve") {
+class PrismaResolveTest {
+  private val prisma: PrismaFixture by prismaFixture("resolve")
+
   @Test
   fun testTypeReference(): Unit = timeoutRunBlocking {
     checkLocalResolve(
@@ -168,12 +170,12 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
 
   @Test
   fun testLocalResolveHasPriority() {
-    web.doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = getTestFileName())
+    prisma.doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = prisma.getTestFileName())
   }
 
   @Test
   fun testGlobalModelResolve() {
-    web.doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = "address.prisma")
+    prisma.doGotoDeclarationTest("model <caret>Address", dir = true, expectedFileName = "address.prisma")
   }
 
   @Test
@@ -209,18 +211,18 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
   }
 
   private suspend fun checkGotoDeclarationFromText(source: String, fromSignature: String, declarationSignature: String) {
-    myFixture.configureByText("schema.prisma", source)
+    prisma.fixture.configureByText("schema.prisma", source)
     withContext(Dispatchers.EDT) {
-      myFixture.checkGotoDeclaration(fromSignature, declarationSignature)
+      prisma.fixture.checkGotoDeclaration(fromSignature, declarationSignature)
     }
   }
 
   private suspend fun checkLocalResolve(source: String): PrismaNamedElement {
     val targetOffset = findExpectedTargetOffset(source)
     val text = source.replace(TARGET, "")
-    val file = myFixture.configureByText("schema.prisma", text)
+    val file = prisma.fixture.configureByText("schema.prisma", text)
     val (resolve, expectedTarget) = readAction {
-      val reference = file.findReferenceAt(myFixture.caretOffset)
+      val reference = file.findReferenceAt(prisma.fixture.caretOffset)
       reference?.resolve() to PsiTreeUtil.getParentOfType(file.findElementAt(targetOffset), PrismaNamedElement::class.java)
     }
     assertNotNull(resolve)

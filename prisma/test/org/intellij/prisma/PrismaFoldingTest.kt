@@ -5,13 +5,15 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaFoldingTest : PrismaTestCase("folding") {
+class PrismaFoldingTest {
+  private val prisma: PrismaFixture by prismaFixture("folding")
+
   @Test
   fun testComments() {
     doTest()
   }
 
   private fun doTest() {
-    myFixture.testFolding("$testDataPath/${getTestFileName()}")
+    prisma.fixture.testFolding("${prisma.testDataPath}/${prisma.getTestFileName()}")
   }
 }

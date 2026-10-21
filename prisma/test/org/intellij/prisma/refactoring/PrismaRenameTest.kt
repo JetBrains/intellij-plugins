@@ -5,20 +5,23 @@ import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.intellij.prisma.PrismaTestCase
+import org.intellij.prisma.PrismaFixture
+import org.intellij.prisma.prismaFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaRenameTest : PrismaTestCase("rename") {
+class PrismaRenameTest {
+  private val prisma: PrismaFixture by prismaFixture("rename")
+
   @Test
   fun testModel(): Unit = timeoutRunBlocking {
     withContext(Dispatchers.EDT) {
-      myFixture.testRename("model.prisma", "model_after.prisma", "SuperUser")
+      prisma.fixture.testRename("model.prisma", "model_after.prisma", "SuperUser")
     }
   }
 
   @Test
   fun testModelGlobal() {
-    web.doSymbolRenameTest("user.prisma", "NewUser")
+    prisma.doSymbolRenameTest("user.prisma", "NewUser")
   }
 }

@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaJSCompletionTest : PrismaCompletionTestBase("completion/js") {
+class PrismaJSCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/js")
+
   @Test
   fun testApiClientField() {
     val lookupElements = doDirTest()
@@ -20,9 +22,9 @@ class PrismaJSCompletionTest : PrismaCompletionTestBase("completion/js") {
   }
 
   private fun doDirTest(ext: String = "js"): Array<LookupElement> {
-    val dir = myFixture.copyDirectoryToProject(web.getTestName(true), ".")
-    val filename = "${web.getTestName(true)}.$ext"
-    myFixture.configureFromExistingVirtualFile(dir.findChild(filename)!!)
-    return myFixture.completeBasic() ?: emptyArray()
+    val dir = prisma.fixture.copyDirectoryToProject(prisma.getTestName(true), ".")
+    val filename = "${prisma.getTestName(true)}.$ext"
+    prisma.fixture.configureFromExistingVirtualFile(dir.findChild(filename)!!)
+    return prisma.fixture.completeBasic() ?: emptyArray()
   }
 }

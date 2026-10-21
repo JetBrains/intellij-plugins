@@ -11,10 +11,12 @@ import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase("") {
+class PrismaAttributeParameterValuesCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("")
+
   @Test
   fun testBlockAttributeIndexPostgreSQLType(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -29,7 +31,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexMySQLOnFieldSort(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -46,7 +48,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexSQLServerClustered(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
             datasource db {
               provider = "sqlserver"
@@ -70,7 +72,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeIdSQLServerClustered(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -85,7 +87,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeRelationSQLServerOnDelete(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "sqlserver"
@@ -109,7 +111,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeRelationMySQLOnDelete(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mysql"
@@ -133,7 +135,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexOpsNativeType(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -150,7 +152,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexOpsFieldType(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -167,7 +169,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexOpsFieldTypeOptional(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -184,7 +186,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexOpsFieldTypeList(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -201,7 +203,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeIndexFields(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -221,7 +223,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeRelationReferences(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             model Post {
               id       Int    @id @default(autoincrement())
@@ -243,7 +245,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeRelationReferencesNoEnumValues(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             model Post {
               id       Int    @id @default(autoincrement())
@@ -263,7 +265,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeDefaultEnumValues(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -283,7 +285,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testFieldAttributeDefaultNoModelValues(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -303,7 +305,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeNoFieldsInFieldExpression(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "postgresql"
@@ -323,7 +325,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeUniqueCompositeType(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
             datasource db {
               provider = "mongodb"
@@ -353,7 +355,7 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
 
   @Test
   fun testBlockAttributeShardKeys(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements("""
+    val lookupElements = prisma.getLookupElements("""
       generator client {
         provider        = "prisma-client-js"
         previewFeatures = ["shardKeys"]

@@ -12,13 +12,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaDocumentationTest : PrismaTestCase("documentation") {
+class PrismaDocumentationTest {
+  private val prisma: PrismaFixture by prismaFixture("documentation")
+
   @BeforeEach
   fun setUpColorScheme() {
     val colorsManager = EditorColorsManager.getInstance()
     val schemeBefore = colorsManager.globalScheme
     colorsManager.setGlobalScheme(colorsManager.getScheme("Darcula"))
-    Disposer.register(web.testRootDisposable) {
+    Disposer.register(prisma.testRootDisposable) {
       colorsManager.setGlobalScheme(schemeBefore)
     }
   }
@@ -164,15 +166,15 @@ class PrismaDocumentationTest : PrismaTestCase("documentation") {
   }
 
   private suspend fun doTest() {
-    val file = myFixture.configureByFile(getTestFileName())
+    val file = prisma.fixture.configureByFile(prisma.getTestFileName())
     val generated = readAction {
-      val originalElement = file.findElementAt(myFixture.caretOffset)
-      val element = DocumentationManager.getInstance(myFixture.project)
-        .findTargetElement(myFixture.editor, file, originalElement)
+      val originalElement = file.findElementAt(prisma.fixture.caretOffset)
+      val element = DocumentationManager.getInstance(prisma.fixture.project)
+        .findTargetElement(prisma.fixture.editor, file, originalElement)
       val provider = DocumentationManager.getProviderFromElement(element, originalElement)
       provider.generateDoc(element, originalElement)
     }
-    val doc = generated?.let { reformatDocumentation(project, it) } ?: "<empty>"
-    PlatformTestUtil.assertSameLinesWithFile("${testDataPath}/${getTestFileName("html")}", doc)
+    val doc = generated?.let { reformatDocumentation(prisma.project, it) } ?: "<empty>"
+    PlatformTestUtil.assertSameLinesWithFile("${prisma.testDataPath}/${prisma.getTestFileName("html")}", doc)
   }
 }

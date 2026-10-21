@@ -7,10 +7,12 @@ import org.intellij.prisma.ide.schema.types.PrismaNativeType
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nativeTypes") {
+class PrismaNativeTypesCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/nativeTypes")
+
   @Test
   fun testNativeTypeDatasource(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource pg {
             provider = "postgresql"
@@ -29,12 +31,12 @@ class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nat
       "@pg"
     )
 
-    checkLookupDocumentation(lookupElements, "@pg")
+    prisma.checkLookupDocumentation(lookupElements, "@pg")
   }
 
   @Test
   fun testNativeTypeDatasourceAfterAt(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           datasource pg {
             provider = "postgresql"
@@ -56,7 +58,7 @@ class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nat
 
   @Test
   fun testNativeTypeDatasourceSplitSchema(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           model M {
             id Int <caret>
@@ -78,7 +80,7 @@ class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nat
   @Test
   fun testNativeTypeMultipleDatasource(): Unit = timeoutRunBlocking {
     // it works in the plugin, though it's not supported yet in Prisma, and multiple generator declarations will be marked as error.
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource local {
             provider = "sqlserver"
@@ -113,7 +115,7 @@ class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nat
 
   @Test
   fun testNativeType(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource pg {
             provider = "postgresql"
@@ -137,12 +139,12 @@ class PrismaNativeTypesCompletionTest : PrismaCompletionTestBase("completion/nat
 
   @Test
   fun testNativeTypeSplitSchema() {
-    checkLookupElementsInSplitSchema()
+    prisma.checkLookupElementsInSplitSchema()
   }
 
   @Test
   fun testNativeTypeWithArgs(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           datasource db {
             provider = "postgresql"

@@ -6,10 +6,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyValue") {
+class PrismaKeyValueCompletionTest {
+  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("completion/keyValue")
+
   @Test
   fun testDatasourceField(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           datasource db {
             <caret>
@@ -22,12 +24,12 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       "url"
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrder("directUrl", "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions", "schemas")
-    checkLookupDocumentation(lookupElements, "url")
+    prisma.checkLookupDocumentation(lookupElements, "url")
   }
 
   @Test
   fun testDatasourceNoRelationModeForMongo(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           datasource db {
             provider = "mongodb"
@@ -40,7 +42,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
 
   @Test
   fun testDatasourceExtensions(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           datasource db {
             provider   = "postgresql"
@@ -60,7 +62,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
 
   @Test
   fun testGeneratorField(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           generator client {
             <caret>
@@ -73,12 +75,12 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       "provider"
     )
     assertThat(lookupElements.strings).containsExactlyInAnyOrder("provider", "output", "binaryTargets", "previewFeatures", "engineType")
-    checkLookupDocumentation(lookupElements, "provider")
+    prisma.checkLookupDocumentation(lookupElements, "provider")
   }
 
   @Test
   fun testGeneratorPreviewFeatures(): Unit = timeoutRunBlocking {
-    val lookupElements = completeSelected(
+    val lookupElements = prisma.completeSelected(
       """
           generator client {
             provider = "prisma-client-js"
@@ -99,7 +101,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
 
   @Test
   fun testGeneratorBinaryTargets(): Unit = timeoutRunBlocking {
-    completeSelected(
+    prisma.completeSelected(
       """
           generator client {
             <caret>
@@ -115,7 +117,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
 
   @Test
   fun testGeneratorWithPrismaClientProvider(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           generator client {
             provider = "prisma-client"
@@ -128,7 +130,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
 
   @Test
   fun testGeneratorWithDefaultProvider(): Unit = timeoutRunBlocking {
-    val lookupElements = getLookupElements(
+    val lookupElements = prisma.getLookupElements(
       """
           generator client {
             provider = "prisma-client-js"

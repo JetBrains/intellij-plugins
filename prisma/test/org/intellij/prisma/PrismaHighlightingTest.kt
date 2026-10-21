@@ -4,14 +4,16 @@ import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaHighlightingTest : PrismaTestCase("highlighting") {
+class PrismaHighlightingTest {
+  private val prisma: PrismaFixture by prismaFixture("highlighting")
+
   @Test
   fun testSemanticHighlighting() {
     doTest()
   }
 
   private fun doTest() {
-    myFixture.configureByFile(getTestFileName())
-    myFixture.checkHighlighting(false, true, false)
+    prisma.fixture.configureByFile(prisma.getTestFileName())
+    prisma.fixture.checkHighlighting(false, true, false)
   }
 }

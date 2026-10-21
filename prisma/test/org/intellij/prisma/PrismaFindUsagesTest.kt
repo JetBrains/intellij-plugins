@@ -6,7 +6,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class PrismaFindUsagesTest : PrismaTestCase("findUsages") {
+class PrismaFindUsagesTest {
+  private val prisma: PrismaFixture by prismaFixture("findUsages")
+
   @Test
   fun testTypeUsages() {
     doTest(
@@ -24,7 +26,7 @@ class PrismaFindUsagesTest : PrismaTestCase("findUsages") {
   }
 
   private fun doTest(vararg expectedUsages: String) {
-    val usages = myFixture.testFindUsagesUsingAction(getTestFileName())
+    val usages = prisma.fixture.testFindUsagesUsingAction(prisma.getTestFileName())
     assertThat(usages.map { it.toString() }).containsExactlyInAnyOrderElementsOf(expectedUsages.toSet())
   }
 }
