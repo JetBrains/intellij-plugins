@@ -12,12 +12,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.intellij.testFramework.junit5.fixture.pathInProjectFixture
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.testFramework.junit5.fixture.testFixture
 import com.intellij.testFramework.junit5.fixture.testNameFixture
+import com.intellij.util.asSafely
 import kotlinx.coroutines.CoroutineScope
 import org.junit.jupiter.api.fail
 import java.nio.file.Files
@@ -54,6 +56,8 @@ fun dtsFixture(
   projectFixture.moduleFixture(projectRoot, addPathToSourceRoot = true).init()
 
   val codeInsight = codeInsightFixture(projectFixture, projectRoot).init()
+  codeInsight.asSafely<CodeInsightTestFixtureImpl>()?.canChangeDocumentDuringHighlighting(true)
+
   val methodName = testNameFixture(lowerCaseFirstLetter = false).init()
 
   val settings = CodeStyle.getSettings(codeInsight.project).getIndentOptions(DtsFileType)
