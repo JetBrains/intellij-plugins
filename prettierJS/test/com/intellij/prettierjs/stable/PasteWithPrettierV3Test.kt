@@ -47,6 +47,15 @@ class PasteWithPrettierV3Test : PrettierPackageLockTest() {
     }
   }
 
+  fun testRunPrettierOnPasteInsidePrettierIgnoredClass() = withInstallation {
+    configureRunOnPaste({
+                          val configuration = PrettierConfiguration.getInstance(project)
+                          configuration.state.configurationMode = ConfigurationMode.AUTOMATIC
+                        }) {
+      doTestPasteAction("    /** AAA_003 */   bbb_002  =  String(Index({ unique: true, isUUID:true }))\n")
+    }
+  }
+
   private fun configureRunOnPaste(configure: Runnable, runnable: Runnable) {
     val configuration = PrettierConfiguration.getInstance(project)
     val runOnPaste = configuration.state.runOnPaste

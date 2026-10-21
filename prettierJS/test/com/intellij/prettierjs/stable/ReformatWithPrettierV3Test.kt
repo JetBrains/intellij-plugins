@@ -30,6 +30,22 @@ class ReformatWithPrettierV3Test : ReformatWithPrettierGenericTest() {
     doReformatFile("js")
   }
 
+  fun testJsFileWithSelectionInsidePrettierIgnoredClass() = withInstallation {
+    doReformatFile("js")
+  }
+
+  fun testJsFileWithSelectionInsidePrettierIgnoredClassCrlf() = withInstallation {
+    doReformatFile<Throwable>("toReformat", "js") {
+      JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
+    }
+    FileDocumentManager.getInstance().saveAllDocuments()
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().virtualFile)))
+  }
+
+  fun testRunPrettierOnCodeReformatSelectionInsidePrettierIgnoredClass() = withInstallation {
+    configureRunOnReformat { doTestEditorReformat("") }
+  }
+
   // Additional File Detection Tests
 
   fun testJsonFileDetectedByName() = withInstallation {

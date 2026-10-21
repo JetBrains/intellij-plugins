@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.prettierjs.PrettierLanguageService.Companion.getInstance
 import com.intellij.prettierjs.formatting.PrettierFormattingApplier.Companion.from
+import com.intellij.prettierjs.formatting.isInsidePrettierIgnoredElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -72,6 +73,8 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
     }
     val editor = e.getData(CommonDataKeys.EDITOR)
     if (editor != null) {
+      // The range check below reads the PSI, so the PSI must match the document.
+      PsiDocumentManager.getInstance(project).commitDocument(editor.document)
       processFileInEditor(project, editor, null)
     }
     else {
@@ -323,6 +326,7 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
       val filePath = Ref.create<String?>()
       val ignoreFilePath = Ref.create<String?>()
       val rangeForRequest = Ref.create<TextRange?>(range)
+      val unchangedText = Ref.create<String?>()
 
       ReadAction.run<RuntimeException>(ThrowableRunnable {
         if (!currentFile.isValid()) return@ThrowableRunnable
@@ -345,6 +349,10 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
           // It's safer not pass a range when there's no need to.
           rangeForRequest.set(null)
         }
+        else if (range != null && isInsidePrettierIgnoredElement(currentFile, range)) {
+          // Keep the text before the line separator conversion: the caller maps its offsets to this text.
+          unchangedText.set(content.toString())
+        }
 
         var offsetsToKeep: IntArray? = null
 
@@ -363,6 +371,13 @@ class ReformatWithPrettierAction : AnAction(), DumbAware {
 
       if (text.isNull) {
         return CompletableFuture.completedFuture<PrettierLanguageService.FormatResult?>(PrettierLanguageService.FormatResult.UNSUPPORTED)
+      }
+
+      val unchanged = unchangedText.get()
+      if (unchanged != null) {
+        // Prettier would format the ignored element, because its range formatting does not see the `prettier-ignore` comment.
+        // Report the input as the result. A format of the whole file keeps the element as is.
+        return CompletableFuture.completedFuture(PrettierLanguageService.FormatResult.formatted(unchanged, -1))
       }
 
       val nodePackage = PrettierConfiguration.getInstance(project).getPackage(currentFile)
