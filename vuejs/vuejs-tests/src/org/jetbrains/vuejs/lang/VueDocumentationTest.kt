@@ -8,8 +8,9 @@ import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Disabled
@@ -48,7 +49,9 @@ abstract class VueDocumentationWithPluginTestBase(
 
 abstract class VueDocumentationTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("documentation", testMode = testMode) {
+) {
+
+  protected val vue: VueFixture by vueFixture("documentation", testMode = testMode)
 
   private val defaultTestFileName: String
     get() = "${vue.getTestName(false)}.vue"
@@ -69,7 +72,7 @@ abstract class VueDocumentationTestBase(
       documentationProvider as ExternalDocumentationProvider
       val urls = documentationProvider.getUrlFor(elementAtCaret, element)
       assertNotNull(urls)
-      assertNull(documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false), "$urls")
+      assertNull(documentationProvider.fetchExternalDocumentation(vue.project, elementAtCaret, urls, false), "$urls")
     }
   }
 

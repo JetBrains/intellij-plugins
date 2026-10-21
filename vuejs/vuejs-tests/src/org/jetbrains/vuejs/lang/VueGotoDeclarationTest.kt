@@ -20,7 +20,6 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
-import com.intellij.polySymbols.testFramework.disableAstLoadingFilter
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.multiResolveSymbolReference
 import com.intellij.polySymbols.testFramework.renderLookupItems
@@ -37,7 +36,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.asSafely
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
@@ -48,6 +47,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueSymbol
+import org.jetbrains.vuejs.vueFixture
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
@@ -84,7 +84,9 @@ abstract class VueGotoDeclarationWithPluginTestBase(
 
 abstract class VueGotoDeclarationTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("gotoDeclaration", testMode = testMode) {
+) {
+
+  protected val vue: VueFixture by vueFixture("gotoDeclaration", testMode = testMode)
 
   private fun doGotoDeclarationInternalTest(
     fromSignature: String,
@@ -1912,7 +1914,7 @@ components.install = (Vue, options = {}) => {
     vue.doConfiguredTest(
       configureFile = false,
     ) {
-      createTwoClassComponents(myFixture)
+      createTwoClassComponents(vue.fixture)
       configureByText("ResolveWithClassComponent.vue",
                       """
 <template>
@@ -1948,7 +1950,7 @@ export default class UsageComponent extends Vue {
     vue.doConfiguredTest(
       configureFile = false,
     ) {
-      createTwoClassComponents(myFixture, true)
+      createTwoClassComponents(vue.fixture, true)
       configureByText("ResolveWithClassComponentTs.vue",
                       """
 <template>
@@ -1986,7 +1988,7 @@ export default class UsageComponent extends Vue {
     vue.doConfiguredTest(
       configureFile = false,
     ) {
-      createLocalComponentsExtendsData(myFixture, false)
+      createLocalComponentsExtendsData(vue.fixture, false)
       type("prop-from-a=\"\"")
       editor.caretModel.moveToOffset(editor.caretModel.offset - 5)
       doTestResolveIntoProperty("propFromA")
@@ -2005,7 +2007,7 @@ export default class UsageComponent extends Vue {
     vue.doConfiguredTest(
       configureFile = false,
     ) {
-      defineRecursiveMixedMixins(myFixture)
+      defineRecursiveMixedMixins(vue.fixture)
       configureByText("ResolveWithRecursiveMixins.vue", """
         <template>
           <<caret>HiddenComponent/>
@@ -2468,7 +2470,7 @@ export default class UsageComponent extends Vue {
     ) {
       val dir = copyDirectoryToProject("../sameMixinsViaStubsAndViaPsi", ".")
       val mixinJsFile = dir.findChild("mixin.spec.js")
-      val mixinJsPsiFile = mixinJsFile?.let { PsiManager.getInstance(project).findFile(mixinJsFile) }
+      val mixinJsPsiFile = mixinJsFile?.let { PsiManager.getInstance(vue.project).findFile(mixinJsFile) }
       if (mixinJsPsiFile == null) {
         fail<Unit>("broken test data")
         return@doConfiguredTest
@@ -2477,7 +2479,7 @@ export default class UsageComponent extends Vue {
       assertNull((mixinJsPsiFile as PsiFileImpl).treeElement)
       val mixinsViaStubs = VueModelManager.getGlobal(mixinJsPsiFile).mixins
       assertNull(mixinJsPsiFile.treeElement)
-      PsiManager.getInstance(project).dropPsiCaches()
+      PsiManager.getInstance(vue.project).dropPsiCaches()
 
       openFileInEditor(mixinJsFile)
       assertNotNull(mixinJsPsiFile.calcTreeElement())
@@ -2873,7 +2875,7 @@ export default class UsageComponent extends Vue {
       configureFileName = "${vue.getTestName(false)}.vue",
       dir = true,
     ) {
-      val declarations = myFixture
+      val declarations = vue.fixture
         .multiResolveSymbolReference("v-bind:input<caret>Prop")
         .asSequence()
         .filterIsInstance<VueBindingShorthandSymbol>()

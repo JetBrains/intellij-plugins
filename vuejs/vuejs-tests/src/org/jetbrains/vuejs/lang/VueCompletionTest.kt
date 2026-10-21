@@ -15,10 +15,10 @@ import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.VueFixture
-import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -87,7 +87,9 @@ abstract class VueCompletionWithPluginTestBase(
 abstract class VueCompletionTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
   getCodeCompletionExpectedItemsLocation: VueFixture.(dir: Boolean, location: String) -> String = { _, location -> location },
-) : VueTestCase(testMode, { VueCompletionFixture(it, testMode, getCodeCompletionExpectedItemsLocation) }) {
+) {
+
+  protected val vue: VueFixture by vueFixture(testMode) { VueCompletionFixture(it, testMode, getCodeCompletionExpectedItemsLocation) }
 
   @Test
   fun testCompleteCssClasses() =
@@ -233,13 +235,13 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testNoCompletionInVueAttributes() =
-    JSTestUtils.withNoLibraries(project) {
+    JSTestUtils.withNoLibraries(vue.project) {
       vue.doLookupTest()
     }
 
   @Test
   fun testTypeScriptCompletionFromPredefined() =
-    JSTestUtils.withNoLibraries(project) {
+    JSTestUtils.withNoLibraries(vue.project) {
       vue.doLookupTest()
     }
 
@@ -706,7 +708,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testWebTypesComplexSetup() {
-    myFixture.copyDirectoryToProject("web-types", ".")
+    vue.fixture.copyDirectoryToProject("web-types", ".")
     listOf(Triple("root.vue",
                   listOf("root", "sub1", "root-sibling", "root-pkg", "foo1-pkg", "foo1Pkg"),
                   listOf("foo2-pkg", "foo2Pkg", "Foo1Pkg")),
@@ -719,10 +721,10 @@ abstract class VueCompletionTestBase(
                   listOf("sub2", "sub2-pkg", "foo1-pkg", "bar1-pkg"),
                   listOf("root", "root-pkg", "root-sibling", "sub1", "foo2-pkg")))
       .forEach { (fileName, expected, notExpected) ->
-        myFixture.configureFromTempProjectFile(fileName)
-        myFixture.completeBasic()
-        assertThat(myFixture.lookupElementStrings!!).containsAll(expected)
-        assertThat(myFixture.lookupElementStrings!!).doesNotContainAnyElementsOf(notExpected)
+        vue.fixture.configureFromTempProjectFile(fileName)
+        vue.fixture.completeBasic()
+        assertThat(vue.fixture.lookupElementStrings!!).containsAll(expected)
+        assertThat(vue.fixture.lookupElementStrings!!).doesNotContainAnyElementsOf(notExpected)
       }
   }
 
@@ -948,7 +950,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testSassGlobalFunctions() =
-    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(vue.project) {
       vue.doLookupTest(renderTypeText = false)
     }
 
@@ -1098,13 +1100,13 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testStyleVBindScriptSetupScss() =
-    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(vue.project) {
       vue.doLookupTest(renderPriority = false)
     }
 
   @Test
   fun testStyleVBindScriptSetupSass() =
-    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(vue.project) {
       vue.doLookupTest(renderPriority = false)
     }
 

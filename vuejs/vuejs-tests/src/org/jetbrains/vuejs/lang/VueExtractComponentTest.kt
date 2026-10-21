@@ -3,10 +3,11 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.typescript.compiler.preventTypeScriptServiceRestartOnContextChange
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 import org.jetbrains.vuejs.intentions.extractComponent.getContextForExtractComponentIntention
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Disabled
@@ -27,7 +28,9 @@ class VueExtractComponentTest :
 
 abstract class VueExtractComponentTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("extract_component", testMode = testMode) {
+) {
+
+  protected val vue: VueFixture by vueFixture("extract_component", testMode = testMode)
 
   @Test
   fun testExtractSingleTag__options() {
@@ -316,7 +319,7 @@ abstract class VueExtractComponentTestBase(
         assertEquals(numTags, context!!.size)
 
         val refactoring = VueExtractComponentRefactoring(
-          project = project,
+          project = vue.project,
           list = context,
           editor = editor,
         )

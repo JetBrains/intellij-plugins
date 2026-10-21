@@ -27,8 +27,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
@@ -46,7 +47,9 @@ class VueRenameTest :
 
 abstract class VueRenameTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("rename", testMode = testMode, dirModeByDefault = true) {
+) {
+
+  protected val vue: VueFixture by vueFixture("rename", testMode = testMode, dirModeByDefault = true)
 
   @Test
   fun testComponentFieldFromTemplate() =

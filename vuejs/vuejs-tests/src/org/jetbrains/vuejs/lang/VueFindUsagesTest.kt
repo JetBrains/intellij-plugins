@@ -4,10 +4,11 @@ package org.jetbrains.vuejs.lang
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -27,7 +28,9 @@ class VueFindUsagesTest :
 
 abstract class VueFindUsagesTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("findUsages", testMode = testMode, dirModeByDefault = true) {
+) {
+
+  protected val vue: VueFixture by vueFixture("findUsages", testMode = testMode, dirModeByDefault = true)
 
   private fun CodeInsightTestFixture.useSeparateTestDataPath() {
     testDataPath += "/${vue.defaultDirName}"
@@ -105,7 +108,7 @@ abstract class VueFindUsagesTestBase(
       vue.checkUsages(
         "declare const _defa<caret>ult:",
         "usages.naive-ui",
-        scope = GlobalSearchScopesCore.directoryScope(project, tempDirFixture.findOrCreateDir("."), true),
+        scope = GlobalSearchScopesCore.directoryScope(vue.project, tempDirFixture.findOrCreateDir("."), true),
       )
     }
   }

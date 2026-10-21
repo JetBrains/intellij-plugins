@@ -2,8 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
@@ -21,7 +22,9 @@ class VueAutoPopupTest :
 
 abstract class VueAutoPopupTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase("autoPopup", testMode = testMode) {
+) {
+
+  protected val vue: VueFixture by vueFixture("autoPopup", testMode = testMode)
 
   @Test
   fun testEventsAfterAt() =

@@ -6,9 +6,10 @@ import com.intellij.javascript.testFramework.web.moveFiles
 import com.intellij.javascript.testFramework.web.renameFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.TestApplication
-import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Test
 
 /**
@@ -16,11 +17,14 @@ import org.junit.jupiter.api.Test
  * Each test then checks the module name and the resolved file of each import in the page.
  * The `relativeImport` project has relative imports.
  * The `pathAlias` project adds the `@components` path alias and imports through it.
- * Each project has its own `tsconfig.json`, so the default one of [VueTestCase] is disabled.
+ * Each project has its own `tsconfig.json`, so the default one of [VueFixture] is disabled.
  * The `tsconfig.json` sets `allowJs`, as the Astro base config does, so the three framework tests check the same case.
  */
 @TestApplication
-class VueFileRefactoringTest : VueTestCase("refactoring/file", testMode = VueTestMode.NO_PLUGIN) {
+class VueFileRefactoringTest {
+
+  private val vue: VueFixture by vueFixture("refactoring/file", testMode = VueTestMode.NO_PLUGIN)
+
   @Test
   fun testMoveComponentRelativeImport() =
     doMoveComponentsTest("relativeImport",

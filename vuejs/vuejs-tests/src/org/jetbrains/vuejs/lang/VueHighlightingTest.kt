@@ -28,11 +28,11 @@ import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspecti
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueLspConfigurator
-import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -143,7 +143,9 @@ abstract class VueHighlightingWithPluginTestBase(
 abstract class VueHighlightingTestBase protected constructor(
   testMode: VueTestMode,
   createFixture: (context: HybridFixtureContext) -> VueHighlightingFixture,
-) : VueTestCase(testMode, createFixture) {
+) {
+
+  protected val vue: VueHighlightingFixture by vueFixture(testMode, createFixture)
 
   constructor(
     testMode: VueTestMode = VueTestMode.DEFAULT,
@@ -393,21 +395,21 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testNoSplitTagInsideInjection() {
-    myFixture.configureByText("NoSplitTagInsideInjection.vue", """
+    vue.fixture.configureByText("NoSplitTagInsideInjection.vue", """
 <template>
 {{ <caret>injection }}
 </template>
 """)
-    var intentions = myFixture.filterAvailableIntentions("Split current tag")
+    var intentions = vue.fixture.filterAvailableIntentions("Split current tag")
     assertThat(intentions).isEmpty()
 
     //but near
-    myFixture.configureByText("NoSplitTagInsideInjection2.vue", """
+    vue.fixture.configureByText("NoSplitTagInsideInjection2.vue", """
 <template>
 {{ injection }} here <caret>we can split
 </template>
 """)
-    intentions = myFixture.filterAvailableIntentions("Split current tag")
+    intentions = vue.fixture.filterAvailableIntentions("Split current tag")
     assertThat(intentions).isNotEmpty()
   }
 
@@ -449,24 +451,24 @@ abstract class VueHighlightingTestBase protected constructor(
   @Test
   open /* temp */
   fun testClassComponentAnnotationWithLocalComponent() {
-    myFixture.configureVueDependencies()
-    createTwoClassComponents(myFixture)
+    vue.fixture.configureVueDependencies()
+    createTwoClassComponents(vue.fixture)
     vue.doHighlightingTest()
   }
 
   @Test
   open /* temp */
   fun testClassComponentAnnotationWithLocalComponentTs() {
-    myFixture.configureVueDependencies()
-    myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
-    createTwoClassComponents(myFixture, true)
+    vue.fixture.configureVueDependencies()
+    vue.fixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
+    createTwoClassComponents(vue.fixture, true)
     vue.doHighlightingTest()
   }
 
   @Test
   fun testLocalComponentExtends() {
-    createLocalComponentsExtendsData(myFixture)
-    myFixture.checkHighlighting()
+    createLocalComponentsExtendsData(vue.fixture)
+    vue.fixture.checkHighlighting()
   }
 
   @Test
@@ -496,14 +498,14 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testRecursiveMixedMixins() {
-    defineRecursiveMixedMixins(myFixture)
-    myFixture.configureByText("RecursiveMixedMixins.vue", """
+    defineRecursiveMixedMixins(vue.fixture)
+    vue.fixture.configureByText("RecursiveMixedMixins.vue", """
         <template>
           <<warning descr="Element HiddenComponent doesn't have required attribute from-d"><warning descr="Element HiddenComponent doesn't have required attribute from-hidden">HiddenComponent</warning></warning>/>
           <<warning descr="Element OneMoreComponent doesn't have required attribute from-d"><warning descr="Element OneMoreComponent doesn't have required attribute from-one-m-ore">OneMoreComponent</warning></warning>/>
         </template>
       """)
-    myFixture.checkHighlighting()
+    vue.fixture.checkHighlighting()
   }
 
   @Test
@@ -523,9 +525,9 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testNoVueTagErrorsInPlainXml() {
-    myFixture.addFileToProject("any.vue", "") // to make sure that Vue support works for the project
-    myFixture.configureByText("foo.xml", "<component><foo/></component>".trimMargin())
-    myFixture.checkHighlighting()
+    vue.fixture.addFileToProject("any.vue", "") // to make sure that Vue support works for the project
+    vue.fixture.configureByText("foo.xml", "<component><foo/></component>".trimMargin())
+    vue.fixture.checkHighlighting()
   }
 
   @Test
@@ -678,8 +680,8 @@ abstract class VueHighlightingTestBase protected constructor(
     vue.disableAstLoadingFilter()
 
     for (suffix in listOf("cdn", "cdn2", "cdn3", "cdn.js", "cdn@", "js", "deep")) {
-      myFixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
-      myFixture.checkHighlighting(true, false, true)
+      vue.fixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
+      vue.fixture.checkHighlighting(true, false, true)
     }
   }
 
@@ -716,7 +718,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testScssBuiltInModules() {
-    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(vue.project) {
       vue.doHighlightingTest(
         inspections = listOf(
           CssInvalidFunctionInspection::class.java,
@@ -733,7 +735,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testSassBuiltInModules() {
-    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
+    WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(vue.project) {
       vue.doHighlightingTest(
         inspections = listOf(
           CssInvalidFunctionInspection::class.java,

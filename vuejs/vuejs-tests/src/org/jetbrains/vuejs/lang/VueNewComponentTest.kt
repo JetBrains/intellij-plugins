@@ -18,9 +18,9 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueCreateFromTemplateHandler.Companion.VUE_COMPOSITION_API_TEMPLATE_NAME
 import org.jetbrains.vuejs.VueFixture
-import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.VueTsConfigFile
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
@@ -38,7 +38,9 @@ class VueNewComponentTest :
 
 abstract class VueNewComponentTestBase(
   testMode: VueTestMode = VueTestMode.DEFAULT,
-) : VueTestCase(testMode, { VueNewComponentFixture(it, testMode) }) {
+) {
+
+  protected val vue: VueFixture by vueFixture(testMode) { VueNewComponentFixture(it, testMode) }
 
   @Test
   fun testCompositionComponentWithJsLang() {
@@ -104,7 +106,7 @@ abstract class VueNewComponentTestBase(
     directory: PsiDirectory,
   ): DataContext {
     return SimpleDataContext.builder()
-      .add(CommonDataKeys.PROJECT, project)
+      .add(CommonDataKeys.PROJECT, vue.project)
       .add(TestAnswers.KEY, TestAnswers(name, VUE_COMPOSITION_API_TEMPLATE_NAME))
       .add(LangDataKeys.IDE_VIEW, object : IdeView {
         override fun getDirectories(): Array<out PsiDirectory> =

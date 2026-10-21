@@ -4,25 +4,24 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.application.ReadResult
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import com.intellij.polySymbols.testFramework.HybridFixtureContext
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.plugins.stylus.StylusLanguage
 import org.jetbrains.vuejs.VueFixture
-import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
+import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class VueTypingTest : VueTestCase(VueTestMode.DEFAULT, { VueTypingFixture(it) }) {
+class VueTypingTest {
+
+  private val vue: VueTypingFixture by vueFixture(VueTestMode.DEFAULT) { VueTypingFixture(it) }
 
   @Test
   fun testStylusEnterEnd() =

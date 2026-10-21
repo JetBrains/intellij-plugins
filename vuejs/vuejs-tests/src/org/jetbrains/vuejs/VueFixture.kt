@@ -9,7 +9,6 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.platform.lsp.testFramework.waitForDiagnosticsFromLspServer
 import com.intellij.polySymbols.testFramework.HybridFixtureContext
@@ -20,7 +19,9 @@ import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.runInEdtAndWait
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.VueLspUtils.waitTypeScriptGoLspServerInit
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -28,7 +29,6 @@ import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
-import org.junit.ComparisonFailure
 
 enum class VueTestMode {
   DEFAULT,
@@ -39,32 +39,32 @@ enum class VueTestMode {
 }
 
 /**
- * The base of the Vue code insight tests. The fixture [vue] is a [VueFixture].
+ * Creates a [VueFixture] for the Vue code insight tests. Declare the result as an instance property.
  * Each test gets a new project. Without [VueTestMode.NO_PLUGIN], the project is a heavy project with the TypeScript service.
- * A sub-base passes [createFixture] to replace the hooks of [VueFixture] with a sub-fixture.
  */
-abstract class VueTestCase protected constructor(
-  testMode: VueTestMode,
-  createFixture: (context: HybridFixtureContext) -> VueFixture,
-) {
-
-  constructor(
-    testCasePath: String,
-    testMode: VueTestMode = VueTestMode.DEFAULT,
-    dirModeByDefault: Boolean = false,
-  ) : this(testMode, { VueFixture(it, testCasePath, testMode, dirModeByDefault) })
-
-  protected val vue: VueFixture by hybridFixture(
-    { if (testMode != VueTestMode.NO_PLUGIN) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform },
-  ) { createFixture(it) }
-
-  protected val myFixture: CodeInsightTestFixture get() = vue.fixture
-
-  protected val project: Project get() = vue.project
-}
+@TestOnly
+fun vueFixture(
+  testCasePath: String,
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+  dirModeByDefault: Boolean = false,
+): TestFixture<VueFixture> =
+  vueFixture(testMode) { VueFixture(it, testCasePath, testMode, dirModeByDefault) }
 
 /**
- * The state of [VueTestCase]: a [WebFrameworkFixture] with the Vue test data root and the `vue` extension.
+ * Creates a sub-fixture of [VueFixture] with [create]. [testMode] selects the project of the fixture.
+ */
+@TestOnly
+fun <T : VueFixture> vueFixture(
+  testMode: VueTestMode,
+  create: (context: HybridFixtureContext) -> T,
+): TestFixture<T> =
+  hybridFixture(
+    { if (testMode != VueTestMode.NO_PLUGIN) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform },
+    create,
+  )
+
+/**
+ * The fixture of the Vue code insight tests: a [WebFrameworkFixture] with the Vue test data root and the `vue` extension.
  * The fixture adds the [VueToolsConfigurator] and a [VueTsConfigFile], adds the Vue modules,
  * and starts the TypeScript service of [testMode] before each configured test.
  * Call a member from a background thread.
@@ -115,6 +115,15 @@ open class VueFixture(
 
       add(VueTestModule.VUE_TSCONFIG_0_9_1)
     }.toTypedArray()
+
+  override fun setUp() {
+    super.setUp()
+    if (testMode != VueTestMode.NO_PLUGIN) {
+      // The test runs off the EDT, so a roots change can look up the TypeScript service before its setup, or when the module is disposed.
+      // The test interpreter lives as long as the project, so the lookup does not find a global TypeScript package.
+      TypeScriptServiceTestMixin.configureNodeInterpreter(fixture, disposable = fixture.projectDisposable)
+    }
+  }
 
   /**
    * Applies the Vue settings of [testMode] before the configured file opens in the editor.
@@ -216,7 +225,7 @@ open class VueFixture(
    */
   override fun CodeInsightTestFixture.collectAndCheckExpectedHighlighting(data: ExpectedHighlightingData) {
     val maxAttempts = if (testMode == VueTestMode.NO_PLUGIN) 1 else 5
-    var lastFailure: ComparisonFailure? = null
+    var lastFailure: AssertionError? = null
     for (attempt in 1..maxAttempts) {
       if (attempt > 1) {
         try {
@@ -231,7 +240,8 @@ open class VueFixture(
         (this as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
         return
       }
-      catch (failure: ComparisonFailure) {
+      catch (failure: AssertionError) {
+        // A file with a test data path fails with FileComparisonFailedError, which is not a ComparisonFailure.
         lastFailure = failure
       }
     }
