@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class EslintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
   public EslintConfigFileChangeTracker(@NotNull Project project) {
-    super(project, file -> EslintUtil.isFlatOrLegacyConfigFile(file));
+    super(project, file -> EslintUtil.isFlatOrLegacyConfigFile(file) || EslintUtil.isSuppressionsFile(file));
   }
 
   public static EslintConfigFileChangeTracker getInstance(@NotNull Project project) {
@@ -25,6 +25,9 @@ public class EslintConfigFileChangeTracker extends JSLinterConfigChangeTracker {
     EslintState state = extendedState.getState();
     if (!extendedState.isEnabled()) {
       return false;
+    }
+    if (EslintUtil.isSuppressionsFile(changedFile)) {
+      return true;
     }
     if (state.isCustomConfigFileUsed()) {
       VirtualFile configVirtualFile = JSLinterConfigFileUtil.findLocalFileByPath(state.getCustomConfigFilePath());

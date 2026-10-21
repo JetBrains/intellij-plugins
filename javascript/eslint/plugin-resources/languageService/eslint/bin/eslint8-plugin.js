@@ -48,8 +48,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ESLint8Plugin = void 0;
+var fs = require("fs");
+var path = require("path");
 var eslint_api_1 = require("./eslint-api");
 var eslint_common_1 = require("./eslint-common");
+// https://eslint.org/docs/latest/use/suppressions
+var DEFAULT_SUPPRESSIONS_FILENAME = "eslint-suppressions.json";
 var ESLint8Plugin = /** @class */ (function () {
     function ESLint8Plugin(state) {
         this.includeSourceText = state.includeSourceText;
@@ -57,6 +61,8 @@ var ESLint8Plugin = /** @class */ (function () {
         this.libOptions = null;
         this.FlatESLint = null;
         this.LegacyESLint = null;
+        this.SuppressionsService = null;
+        this.supportsApplySuppressionsOption = isVersionAtLeast(state.linterPackageVersion, 10, 1);
         var isESLint8 = state.linterPackageVersion.substring(0, 2) == "8.";
         var eslintPackagePath = (0, eslint_common_1.normalizePath)(state.eslintPackagePath);
         var defaultESLint = (0, eslint_common_1.requireInContext)(eslintPackagePath, state.packageJsonPath).ESLint;
@@ -89,6 +95,12 @@ var ESLint8Plugin = /** @class */ (function () {
                 catch (e) {
                     this.LegacyESLint = null;
                 }
+            }
+            try {
+                this.SuppressionsService = (0, eslint_common_1.requireInContext)("../lib/services/suppressions-service", apiJsPath).SuppressionsService;
+            }
+            catch (e) {
+                this.SuppressionsService = null;
             }
         }
         catch (e) {
@@ -163,19 +175,33 @@ var ESLint8Plugin = /** @class */ (function () {
     };
     ESLint8Plugin.prototype.invokeESLint = function (requestArguments_1) {
         return __awaiter(this, arguments, void 0, function (requestArguments, additionalOptions) {
-            var usingFlatConfig, CLIOptions, parsedCommandLineOptions, options, eslint, config, plugins, hasHtmlPlugin;
+            var usingFlatConfig, CLIOptions, parsedCLIOptions, parsedCommandLineOptions, options, suppressionsFilePath, suppressionsService, eslint, config, plugins, hasHtmlPlugin, results, _a, _b, _c;
             if (additionalOptions === void 0) { additionalOptions = {}; }
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         usingFlatConfig = requestArguments.flatConfig && this.FlatESLint instanceof Function;
                         CLIOptions = this.libOptions instanceof Function
                             ? this.libOptions(usingFlatConfig) // eslint 8.23+
                             : this.libOptions;
-                        parsedCommandLineOptions = CLIOptions != null && CLIOptions.parse instanceof Function
-                            ? translateOptions(CLIOptions.parse(requestArguments.extraOptions || ""), usingFlatConfig ? "flat" : "eslintrc")
+                        parsedCLIOptions = CLIOptions != null && CLIOptions.parse instanceof Function
+                            ? CLIOptions.parse(requestArguments.extraOptions || "")
+                            : null;
+                        parsedCommandLineOptions = parsedCLIOptions != null
+                            ? translateOptions(parsedCLIOptions, usingFlatConfig ? "flat" : "eslintrc")
                             : {};
                         options = __assign(__assign({}, parsedCommandLineOptions), additionalOptions);
+                        suppressionsFilePath = findSuppressionsFile(parsedCLIOptions != null ? parsedCLIOptions.suppressionsLocation : undefined);
+                        suppressionsService = null;
+                        if (suppressionsFilePath != null) {
+                            if (usingFlatConfig && this.supportsApplySuppressionsOption) {
+                                options.applySuppressions = true;
+                                options.suppressionsLocation = suppressionsFilePath;
+                            }
+                            else if (this.SuppressionsService != null) {
+                                suppressionsService = new this.SuppressionsService({ filePath: suppressionsFilePath, cwd: process.cwd() });
+                            }
+                        }
                         if (!usingFlatConfig) {
                             options.ignorePath = requestArguments.ignoreFilePath;
                         }
@@ -194,7 +220,7 @@ var ESLint8Plugin = /** @class */ (function () {
                         if (!(requestArguments.fileKind === eslint_api_1.FileKind.html)) return [3 /*break*/, 2];
                         return [4 /*yield*/, eslint.calculateConfigForFile(requestArguments.fileName)];
                     case 1:
-                        config = _a.sent();
+                        config = _d.sent();
                         if (config == null) {
                             return [2 /*return*/, []];
                         }
@@ -209,13 +235,22 @@ var ESLint8Plugin = /** @class */ (function () {
                         if (!hasHtmlPlugin) {
                             return [2 /*return*/, []];
                         }
-                        _a.label = 2;
+                        _d.label = 2;
                     case 2: return [4 /*yield*/, eslint.isPathIgnored(requestArguments.fileName)];
                     case 3:
-                        if (_a.sent()) {
+                        if (_d.sent()) {
                             return [2 /*return*/, []];
                         }
-                        return [2 /*return*/, eslint.lintText(requestArguments.content, { filePath: requestArguments.fileName })];
+                        return [4 /*yield*/, eslint.lintText(requestArguments.content, { filePath: requestArguments.fileName })];
+                    case 4:
+                        results = _d.sent();
+                        if (suppressionsService == null) {
+                            return [2 /*return*/, results];
+                        }
+                        _b = (_a = suppressionsService).applySuppressions;
+                        _c = [results];
+                        return [4 /*yield*/, suppressionsService.load()];
+                    case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_d.sent()])).results];
                 }
             });
         });
@@ -223,6 +258,29 @@ var ESLint8Plugin = /** @class */ (function () {
     return ESLint8Plugin;
 }());
 exports.ESLint8Plugin = ESLint8Plugin;
+/**
+ * Finds the bulk suppressions file as the ESLint CLI does. The default is `eslint-suppressions.json` in the working directory.
+ * A `--suppressions-location` path is resolved against the working directory.
+ * @returns the absolute path of the file, or null when there is no such file
+ */
+function findSuppressionsFile(suppressionsLocation) {
+    var suppressionsFilePath = path.resolve(process.cwd(), suppressionsLocation || DEFAULT_SUPPRESSIONS_FILENAME);
+    try {
+        return fs.statSync(suppressionsFilePath).isFile() ? suppressionsFilePath : null;
+    }
+    catch (e) {
+        return null;
+    }
+}
+function isVersionAtLeast(version, major, minor) {
+    var match = /^(\d+)\.(\d+)/.exec(version);
+    if (match == null) {
+        return false;
+    }
+    var actualMajor = Number(match[1]);
+    var actualMinor = Number(match[2]);
+    return actualMajor > major || (actualMajor === major && actualMinor >= minor);
+}
 // See https://github.com/eslint/eslint/blob/0dd9704c4751e1cd02039f7d6485fee09bbccbf6/lib/cli.js#L69
 /**
  * Translates the CLI options into the options expected by the ESLint constructor.

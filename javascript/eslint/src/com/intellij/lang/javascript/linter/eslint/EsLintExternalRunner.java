@@ -34,6 +34,7 @@ import icons.JavaScriptLanguageIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -207,7 +208,7 @@ public abstract class EsLintExternalRunner<TResult> {
                                                                                                       myLanguageService.getWorkingDirectory());
       Collection<VirtualFile> possibleConfigs = determinePossibleConfigs(specifiedConfigFile, flatConfigData, eslintIgnoreFile, fileToLint);
 
-      if (myIsOnTheFly && !EslintUnsavedConfigManager.getInstance(project).requestSaveIfNeeded(possibleConfigs)) {
+      if (myIsOnTheFly && !EslintUnsavedConfigManager.getInstance(project).requestSaveIfNeeded(withSuppressionsFile(possibleConfigs))) {
         // unsaved configs will be saved automatically later and eslint will be restarted
         LOG.debug("ESLint postponed because of unsaved configs");
         return null;
@@ -222,6 +223,19 @@ public abstract class EsLintExternalRunner<TResult> {
                                    possibleConfigs, eslintIgnoreFile, flatConfigData.getFlatConfigMode());
     });
     return requestData == null ? null : eslint(input, requestData);
+  }
+
+  /**
+   * The service reads the suppressions file from disk, so an unsaved edit of it must be saved before linting, as for a config.
+   */
+  private @NotNull Collection<VirtualFile> withSuppressionsFile(@NotNull Collection<VirtualFile> configs) {
+    VirtualFile suppressionsFile = EslintUtil.findSuppressionsFile(myLanguageService.getWorkingDirectory());
+    if (suppressionsFile == null) {
+      return configs;
+    }
+    List<VirtualFile> files = new ArrayList<>(configs);
+    files.add(suppressionsFile);
+    return files;
   }
 
   private static Collection<VirtualFile> determinePossibleConfigs(@Nullable VirtualFile specifiedConfigFile,

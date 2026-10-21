@@ -33,6 +33,8 @@ import java.util.MissingResourceException;
 public final class EslintUtil {
 
   public static final String DEFAULT_IGNORE_FILENAME = ".eslintignore";
+  /** The bulk suppressions file, see <a href="https://eslint.org/docs/latest/use/suppressions">Bulk Suppressions</a>. */
+  public static final String SUPPRESSIONS_FILENAME = "eslint-suppressions.json";
   public static final String CONFIG_SECTION_NAME = "eslintConfig";
   public static final String ESLINTIGNORE_PACKAGE_SECTION_NAME = "eslintIgnore";
   public static final String PACKAGE_NAME = "eslint";
@@ -140,6 +142,21 @@ public final class EslintUtil {
     }
 
     return isFlatConfigFileName(file.getName()) || isLegacyConfigFileName(file.getName());
+  }
+
+  /**
+   * The language service applies the bulk suppressions file to the lint results, so a change to it changes the results.
+   * A deleted file also matches, because the results change when the file disappears.
+   */
+  public static boolean isSuppressionsFile(@NotNull VirtualFile file) {
+    return !file.isDirectory() && SUPPRESSIONS_FILENAME.equals(file.getName());
+  }
+
+  /**
+   * The ESLint service resolves the suppressions file against its working directory, as the ESLint CLI does.
+   */
+  public static @Nullable VirtualFile findSuppressionsFile(@NotNull VirtualFile workingDirectory) {
+    return workingDirectory.isValid() ? workingDirectory.findChild(SUPPRESSIONS_FILENAME) : null;
   }
 
   public static @NotNull List<VirtualFile> findAllConfigsWithPackageJsonUpFileSystem(@NotNull VirtualFile fileToLint) {

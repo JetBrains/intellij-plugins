@@ -1,6 +1,11 @@
 import {ESLint} from 'eslint'
+import * as fs from 'fs'
+import * as path from 'path'
 import {EslintPluginState, ESLintRequest, ESLintResponse, FileKind, FixErrors, GetErrors, RequestArguments} from "./eslint-api"
 import {containsString, normalizePath, requireInContext, requireResolveInContext} from "./eslint-common"
+
+// https://eslint.org/docs/latest/use/suppressions
+const DEFAULT_SUPPRESSIONS_FILENAME = "eslint-suppressions.json";
 
 export class ESLint8Plugin implements LanguagePlugin {
   private readonly includeSourceText: boolean | null;
@@ -8,6 +13,13 @@ export class ESLint8Plugin implements LanguagePlugin {
   private readonly LegacyESLint: any;
   private readonly FlatESLint: any;
   private readonly libOptions: any;
+  /**
+   * The internal ESLint service that applies the bulk suppressions file to lint results.
+   * ESLint 9.24+ has it, but only the CLI uses it. Null when the installed ESLint does not have it.
+   */
+  private readonly SuppressionsService: any;
+  /** ESLint 10.1+ applies the suppressions file itself with the `applySuppressions` constructor option. */
+  private readonly supportsApplySuppressionsOption: boolean;
 
   constructor(state: EslintPluginState) {
     this.includeSourceText = state.includeSourceText;
@@ -16,6 +28,8 @@ export class ESLint8Plugin implements LanguagePlugin {
     this.libOptions = null;
     this.FlatESLint = null;
     this.LegacyESLint = null;
+    this.SuppressionsService = null;
+    this.supportsApplySuppressionsOption = isVersionAtLeast(state.linterPackageVersion, 10, 1);
 
     let isESLint8 = state.linterPackageVersion.substring(0, 2) == "8."
     let eslintPackagePath = normalizePath(state.eslintPackagePath)!;
@@ -53,6 +67,13 @@ export class ESLint8Plugin implements LanguagePlugin {
         catch (e) {
           this.LegacyESLint = null;
         }
+      }
+
+      try {
+        this.SuppressionsService = requireInContext("../lib/services/suppressions-service", apiJsPath).SuppressionsService;
+      }
+      catch (e) {
+        this.SuppressionsService = null;
       }
     }
     catch (e) {
@@ -112,15 +133,36 @@ export class ESLint8Plugin implements LanguagePlugin {
         ? this.libOptions(usingFlatConfig) // eslint 8.23+
         : this.libOptions;
 
-    const parsedCommandLineOptions =
+    const parsedCLIOptions =
       CLIOptions != null && CLIOptions.parse instanceof Function
-        ? translateOptions(CLIOptions.parse(requestArguments.extraOptions || ""), usingFlatConfig ? "flat" : "eslintrc")
+        ? CLIOptions.parse(requestArguments.extraOptions || "")
+        : null;
+
+    const parsedCommandLineOptions =
+      parsedCLIOptions != null
+        ? translateOptions(parsedCLIOptions, usingFlatConfig ? "flat" : "eslintrc")
         : {};
 
     const options: ESLint.Options & {
       ignorePath?: ESLint.LegacyOptions["ignorePath"];
       rulePaths?: ESLint.LegacyOptions["rulePaths"];
+      applySuppressions?: boolean;
+      suppressionsLocation?: string;
     } = { ...parsedCommandLineOptions, ...additionalOptions };
+
+    // The ESLint CLI applies the bulk suppressions file after linting. The ESLint class does it only since 10.1,
+    // and only with the `applySuppressions` option. Older versions need the same post-processing as the CLI does.
+    const suppressionsFilePath = findSuppressionsFile(parsedCLIOptions != null ? parsedCLIOptions.suppressionsLocation : undefined);
+    let suppressionsService: any = null;
+    if (suppressionsFilePath != null) {
+      if (usingFlatConfig && this.supportsApplySuppressionsOption) {
+        options.applySuppressions = true;
+        options.suppressionsLocation = suppressionsFilePath;
+      }
+      else if (this.SuppressionsService != null) {
+        suppressionsService = new this.SuppressionsService({filePath: suppressionsFilePath, cwd: process.cwd()});
+      }
+    }
 
     if (!usingFlatConfig) {
       options.ignorePath = requestArguments.ignoreFilePath;
@@ -166,8 +208,37 @@ export class ESLint8Plugin implements LanguagePlugin {
       return [];
     }
 
-    return eslint.lintText(requestArguments.content, {filePath: requestArguments.fileName});
+    const results: ESLint.LintResult[] = await eslint.lintText(requestArguments.content, {filePath: requestArguments.fileName});
+    if (suppressionsService == null) {
+      return results;
+    }
+    return suppressionsService.applySuppressions(results, await suppressionsService.load()).results;
   }
+}
+
+/**
+ * Finds the bulk suppressions file as the ESLint CLI does. The default is `eslint-suppressions.json` in the working directory.
+ * A `--suppressions-location` path is resolved against the working directory.
+ * @returns the absolute path of the file, or null when there is no such file
+ */
+function findSuppressionsFile(suppressionsLocation: string | undefined): string | null {
+  const suppressionsFilePath = path.resolve(process.cwd(), suppressionsLocation || DEFAULT_SUPPRESSIONS_FILENAME);
+  try {
+    return fs.statSync(suppressionsFilePath).isFile() ? suppressionsFilePath : null;
+  }
+  catch (e) {
+    return null;
+  }
+}
+
+function isVersionAtLeast(version: string, major: number, minor: number): boolean {
+  const match = /^(\d+)\.(\d+)/.exec(version);
+  if (match == null) {
+    return false;
+  }
+  const actualMajor = Number(match[1]);
+  const actualMinor = Number(match[2]);
+  return actualMajor > major || (actualMajor === major && actualMinor >= minor);
 }
 
 
