@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss;
 
+import com.intellij.testFramework.TestFrameworkUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
@@ -36,7 +37,7 @@ public final class PostCssTestSuite {
   public static Test suite() {
     TestSuite testSuite = new TestSuite("All PostCSS");
     testSuite.addTest(WithoutPerformance.suite());
-    return testSuite;
+    return TestFrameworkUtil.flattenSuite(testSuite);
   }
 
   @Ignore("Manual only")
@@ -49,7 +50,7 @@ public final class PostCssTestSuite {
       suite.addTest(Resolving.suite());
       suite.addTest(Refactoring.suite());
       suite.addTest(Other.suite());
-      return suite;
+      return TestFrameworkUtil.flattenSuite(suite);
     }
   }
 
@@ -75,7 +76,7 @@ public final class PostCssTestSuite {
       suite.addTestSuite(PostCssCustomMediaQuickFixTest.class);
 
       suite.addTestSuite(PostCssHighlightingTest.class);
-      return suite;
+      return TestFrameworkUtil.flattenSuite(suite);
     }
   }
 
@@ -89,7 +90,7 @@ public final class PostCssTestSuite {
       suite.addTestSuite(PostCssCustomMediaCompletionTest.class);
       suite.addTestSuite(PostCssCustomPropertyCompletionTest.class);
       suite.addTestSuite(PostCssOtherCompletionTest.class);
-      return suite;
+      return TestFrameworkUtil.flattenSuite(suite);
     }
   }
 
@@ -101,7 +102,7 @@ public final class PostCssTestSuite {
       suite.addTestSuite(PostCssCustomMediaResolveTest.class);
       suite.addTestSuite(PostCssFindUsagesTest.class);
       suite.addTestSuite(PostCssSimpleVarsTest.class);
-      return suite;
+      return TestFrameworkUtil.flattenSuite(suite);
     }
   }
 
@@ -110,7 +111,7 @@ public final class PostCssTestSuite {
     public static Test suite() {
       TestSuite suite = new TestSuite("Refactoring PostCSS");
       suite.addTestSuite(PostCssRenameTest.class);
-      return suite;
+      return TestFrameworkUtil.flattenSuite(suite);
     }
   }
 
@@ -125,7 +126,7 @@ public final class PostCssTestSuite {
       suite.addTestSuite(PostCssGotoSymbolTest.class);
       suite.addTestSuite(PostCssCommenterTest.class);
       suite.addTestSuite(PostCssCopyrightTest.class);
-      return suite;
+      return TestFrameworkUtil.flattenSuite(suite);
     }
   }
 }

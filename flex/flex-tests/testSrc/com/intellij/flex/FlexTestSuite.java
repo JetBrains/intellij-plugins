@@ -48,6 +48,7 @@ import com.intellij.flex.refactoring.FlexInlineVariableTest;
 import com.intellij.flex.refactoring.FlexRenameTest;
 import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
+import com.intellij.testFramework.TestFrameworkUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.junit.Ignore;
@@ -137,6 +138,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(ActionScriptResolveTest.class);
     testSuite.addTestSuite(FlexCssNavigationTest.class);
 
-    return testSuite;
+    return TestFrameworkUtil.flattenSuite(testSuite);
   }
 }

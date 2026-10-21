@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.linter.eslint.stable.EslintHighlightingV8Leg
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSConfigParsingTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSFixTest;
 import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSHighlightingTest;
+import com.intellij.testFramework.TestFrameworkUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.junit.Ignore;
@@ -38,6 +39,6 @@ public final class EslintTestSuite {
     testSuite.addTestSuite(StandardJSFixTest.class);
     testSuite.addTestSuite(StandardJSConfigParsingTest.class);
     testSuite.addTestSuite(StandardJSHighlightingTest.class);
-    return testSuite;
+    return TestFrameworkUtil.flattenSuite(testSuite);
   }
 }
