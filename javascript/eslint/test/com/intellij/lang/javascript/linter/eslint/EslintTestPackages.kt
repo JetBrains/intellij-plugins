@@ -22,6 +22,12 @@ const val ESLINT_8_57_0_TEST_PACKAGE_SPEC: String = "eslint@8.57.0"
  */
 const val ESLINT_9_11_1_TEST_PACKAGE_SPEC: String = "eslint@9.11.1"
 
+/**
+ * eslint 9 with bulk suppressions (9.24+) but without the `applySuppressions` API option (10.1+): the plugin
+ * applies the suppressions file through ESLint's internal `SuppressionsService`. See EslintBulkSuppressionsV9Test.
+ */
+const val ESLINT_9_39_5_TEST_PACKAGE_SPEC: String = "eslint@9.39.5"
+
 // next versions
 const val ESLINT_LATEST_TEST_PACKAGE_SPEC: String = "eslint@latest"
 

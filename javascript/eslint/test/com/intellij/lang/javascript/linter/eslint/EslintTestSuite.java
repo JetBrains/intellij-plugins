@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.linter.eslint.unit.ESLintImportCodeStyleBasi
 import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigCompletionTest;
 import com.intellij.lang.javascript.linter.eslint.unit.EslintConfigHighlightingTest;
 import com.intellij.lang.javascript.linter.eslint.next.EslintHighlightingLatestTest;
+import com.intellij.lang.javascript.linter.eslint.stable.EslintBulkSuppressionsV9Test;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintFallbackToLegacyConfigV9Test;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintFixV10Test;
 import com.intellij.lang.javascript.linter.eslint.stable.EslintHighlightingV10Test;
@@ -24,6 +25,7 @@ public final class EslintTestSuite {
     testSuite.addTestSuite(EslintHighlightingV10Test.class);
     testSuite.addTestSuite(EslintHighlightingV8LegacyTest.class);
     testSuite.addTestSuite(EslintFallbackToLegacyConfigV9Test.class);
+    testSuite.addTestSuite(EslintBulkSuppressionsV9Test.class);
     testSuite.addTestSuite(EslintFixV10Test.class);
     // next — kept in the suite; a failure here is triaged by the next.* package name (an upstream
     // ESLint release changed something), not treated as a regression in the change under test.

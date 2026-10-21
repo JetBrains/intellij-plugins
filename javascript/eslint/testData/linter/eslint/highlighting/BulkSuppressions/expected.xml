@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <line>2</line>
+    <file>index.js</file>
+    <problem_class severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">ESLint</problem_class>
+    <description>ESLint: Strings must use singlequote. (quotes)</description>
+  </problem>
+</problems>

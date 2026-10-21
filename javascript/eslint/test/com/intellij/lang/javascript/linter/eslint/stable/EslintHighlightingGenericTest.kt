@@ -158,4 +158,18 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
     doHighlightingTestWithInstallation("testIgnored.js")
     doBatchInspectionTest()
   }
+
+  // Bulk suppressions (WEB-74146): a violation recorded in eslint-suppressions.json is not reported, the other one is.
+  fun testBulkSuppressions() {
+    doHighlightingTestWithInstallation("index.js")
+    doBatchInspectionTest()
+  }
+
+  // More violations of a rule than the suppressions file records: every violation of that rule is reported, as in the CLI.
+  fun testBulkSuppressionsCountExceeded() = doHighlightingTestWithInstallation("index.js")
+
+  // The suppressions file at the `--suppressions-location` path from the extra options is applied.
+  fun testBulkSuppressionsCustomLocation() = doHighlightingTestWithInstallation("index.js") {
+    updateConfiguration { it.setExtraOptions("--suppressions-location custom-suppressions.json") }
+  }
 }
