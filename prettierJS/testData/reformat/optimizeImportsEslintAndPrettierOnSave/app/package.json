@@ -1,0 +1,8 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "type": "module",
+  "devDependencies": {
+    "prettier": "$PRETTIER_VERSION$"
+  }
+}
