@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.JavaElementVisitor
@@ -461,14 +460,6 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         {
           "path" : "test-module/C.java",
           "added" : [ ],
-          "deleted" : [ {
-            "firstLine" : 1,
-            "count" : 1
-          } ]
-        },
-        {
-          "path" : "test-module/Removed.java",
-          "added" : [ ],
           "deleted" : [ ]
         } ]
       }
@@ -489,12 +480,8 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `testReverseScoped-script-new-stage removed files disabled`(): Unit = runBlocking {
-    val registryValue = Registry.get(REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY)
-    registryValue.setValue(false)
-    Disposer.register(testRootDisposable) {
-      registryValue.resetToDefault()
-    }
+  fun `testReverseScoped-script-new-stage-removed-files`(): Unit = runBlocking {
+    Registry.get(REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY).setValue(true, testRootDisposable)
     val scope = qodanaConfig.projectPath.resolve("scope")
 
     updateQodanaConfig {
@@ -536,7 +523,10 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
       runAnalysis()
       assertSarifResults()
-      assertEquals("""{"files":[{"path":"test-module/A.java","added":[],"deleted":[]}]}""", scopePath.readText())
+      assertEquals(
+        """{"files":[{"path":"test-module/A.java","added":[],"deleted":[]},{"path":"test-module/C.java","added":[],"deleted":[{"firstLine":1,"count":1}]},{"path":"test-module/Removed.java","added":[],"deleted":[]}]}""",
+        scopePath.readText(),
+      )
     } finally {
       System.clearProperty(REDUCED_SCOPE_PATH)
     }

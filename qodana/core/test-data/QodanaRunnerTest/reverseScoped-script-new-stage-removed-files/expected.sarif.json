@@ -41,15 +41,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testReverseScoped-script-new-stage removed files disabled",
+                  "fullyQualifiedName": "testReverseScoped-script-new-stage-removed-files",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "bb50506517775f74",
-            "equalIndicator/v1": "2d02edafa99e595b68b92f593bf9cd7072a63745043ea56ee7da7acd2deab733"
+            "equalIndicator/v2": "b426d96840d8a6f5",
+            "equalIndicator/v1": "6b323ab36096a2d28df2c3a0cdf4210c7371388d904f8abe35f390e94c59d926"
           },
           "properties": {
             "ideaSeverity": "WARNING",

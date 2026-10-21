@@ -34,7 +34,7 @@ object QodanaRegistry {
     get() = Registry.`is`(PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY, true)
 
   val isReducedScopeIncludeRemovedFilesEnabled: Boolean
-    get() = Registry.`is`(REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY, true)
+    get() = Registry.`is`(REDUCED_SCOPE_INCLUDE_REMOVED_FILES_ENABLE_KEY, false)
 
   val isInspectionVetoEnabled: Boolean
     get() = Registry.`is`(INSPECTION_VETO_ENABLE_KEY, false)

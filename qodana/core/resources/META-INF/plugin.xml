@@ -189,7 +189,7 @@
     <registryKey defaultValue="false" description="Force enabling of Qodana local run" key="qd.force.local.run.enabled"/>
     <registryKey defaultValue="false" description="Force enabling of Qodana Setup CI" key="qd.force.setup.ci.enabled"/>
     <registryKey defaultValue="false" description="Enable analysis scope extending" key="qd.scope.extending.enabled"/>
-    <registryKey defaultValue="true" description="Include removed files in reduced Qodana scope" key="qd.reduced.scope.include.removed.files.enabled"/>
+    <registryKey defaultValue="false" description="Include removed files in reduced Qodana scope" key="qd.reduced.scope.include.removed.files.enabled"/>
     <registryKey defaultValue="false" description="Enable incremental inspection vetoers" key="qd.inspection.veto.enabled"/>
     <registryKey defaultValue="false" description="Keep the unchanged results in the report of the reverse-scoped OLD stage and count only the new ones" key="qd.reverse.scoped.include.unchanged.enabled"/>
     <registryKey defaultValue="false" description="Open SARIF in editor" key="qd.open.sarif.in.editor"/>
