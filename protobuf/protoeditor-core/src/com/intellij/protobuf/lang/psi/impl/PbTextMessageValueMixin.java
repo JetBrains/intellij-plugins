@@ -45,10 +45,7 @@ abstract class PbTextMessageValueMixin extends PbTextElementBase implements PbTe
       return null;
     }
     PbNamedTypeElement namedType = parentField.getFieldName().getDeclaredNamedType();
-    if (!(namedType instanceof PbMessageType)) {
-      return null;
-    }
-    return (PbMessageType) namedType;
+    return namedType instanceof PbMessageType messageType ? messageType : null;
   }
 
   @Override
