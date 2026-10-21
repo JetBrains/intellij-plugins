@@ -12,7 +12,6 @@
     <module name="intellij.clion.testFramework.nolang"/>
     <module name="intellij.clion.testFramework.nolang.junit5.core"/>
     <module name="intellij.libraries.assertj.core"/>
-    <module name="intellij.libraries.junit4"/>
     <module name="intellij.libraries.junit6"/>
     <module name="intellij.libraries.junit6.params"/>
     <module name="intellij.platform.analysis"/>

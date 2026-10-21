@@ -4,18 +4,18 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.jetbrains.cidr.cpp.external.system.model.ExternalModule
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 
 internal object TestUtils {
   fun DataNode<ProjectData>.findExternalModule(): DataNode<ExternalModule> {
-    assertEquals("Project is expected in ProjectData", ProjectKeys.PROJECT, key)
-    assertEquals("Only one module is expected", 1, children.size)
+    assertEquals(ProjectKeys.PROJECT, key, "Project is expected in ProjectData")
+    assertEquals(1, children.size, "Only one module is expected")
     val moduleNode = children.first()
-    assertEquals("Module is expected in project", ProjectKeys.MODULE, moduleNode.key)
+    assertEquals(ProjectKeys.MODULE, moduleNode.key, "Module is expected in project")
     val externalModule = moduleNode.children
       .firstOrNull { it.data is ExternalModule }
-    assertNotNull("ExternalModule not found in module", externalModule)
+    assertNotNull(externalModule, "ExternalModule not found in module")
     @Suppress("UNCHECKED_CAST")
     return externalModule!! as DataNode<ExternalModule>
   }
