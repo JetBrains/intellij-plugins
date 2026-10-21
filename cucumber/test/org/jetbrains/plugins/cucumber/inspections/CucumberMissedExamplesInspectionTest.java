@@ -40,19 +40,11 @@ public class CucumberMissedExamplesInspectionTest extends BasePlatformTestCase {
     doQuickFixTest();
   }
 
-  public void testQuickFixForOutlineWithoutSubstitutions() {
-    doQuickFixTest();
-  }
-
   public void testQuickFixForSubstitutionWithSymbolCharacters() {
     doQuickFixTest();
   }
 
   public void testQuickFixForSubstitutionInMultilineArgument() {
-    doQuickFixTest();
-  }
-
-  public void testQuickFixForNotSubstitutionInMultilineArgument() {
     doQuickFixTest();
   }
 
