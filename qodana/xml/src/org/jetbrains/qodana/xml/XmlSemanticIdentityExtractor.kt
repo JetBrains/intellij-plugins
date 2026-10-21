@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.xml
 
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
@@ -30,6 +31,7 @@ internal object XmlSemanticIdentityExtractor {
   )
 
   fun extractIdentity(element: PsiElement): String? {
+    if (element.containingFile?.language != XMLLanguage.INSTANCE) return null
     val target = findTarget(element) ?: return null
     return "$VERSION|${target.identity()}"
   }

@@ -29,6 +29,7 @@ jvm_library(
         "@community//platform/core-api:core",
         "@community//platform/util",
         "@community//xml/xml-psi-api:psi",
+        "@community//xml/xml-parser:parser",
     ],
 )
 
@@ -48,6 +49,7 @@ jvm_library(
         "@community//platform/core-api:core_test_lib",
         "@community//platform/util:util_test_lib",
         "@community//xml/xml-psi-api:psi_test_lib",
+        "@community//xml/xml-parser:parser_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.xml` end

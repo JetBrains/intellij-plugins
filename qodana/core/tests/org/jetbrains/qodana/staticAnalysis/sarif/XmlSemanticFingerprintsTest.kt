@@ -1,8 +1,10 @@
 package org.jetbrains.qodana.staticAnalysis.sarif
 
+import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -158,6 +160,20 @@ class XmlSemanticFingerprintsTest : BasePlatformTestCase() {
     }
 
     assertDifferentFingerprints(alpha, beta)
+  }
+
+  fun testHtmlTagsHaveNoXmlSemanticIdentity() {
+    val psiFile = PsiFileFactory.getInstance(project).createFileFromText(
+      "index.html",
+      HTMLLanguage.INSTANCE,
+      "<body><div class=\"navigation-bar\"><style>padding-left: 10px</style></div></body>",
+    )
+    val styleTag = PsiTreeUtil.findChildrenOfType(psiFile, XmlTag::class.java).single { it.name == "style" }
+
+    val props = PropertyBag()
+    PsiFingerprintDataExtractor.extract(styleTag).storeIn(props)
+
+    assertNull(props.additionalFingerprintData().xmlSemanticIdentity)
   }
 
   private fun fingerprintState(

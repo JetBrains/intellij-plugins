@@ -3,6 +3,7 @@
   <dependencies>
     <plugin id="org.intellij.qodana"/>
     <module name="intellij.platform.core"/>
+    <module name="intellij.xml.parser"/>
     <module name="intellij.xml.psi"/>
   </dependencies>
   <!-- endregion -->
