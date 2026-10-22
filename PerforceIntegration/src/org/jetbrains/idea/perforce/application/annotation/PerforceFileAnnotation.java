@@ -48,13 +48,13 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PerforceFileAnnotation extends FileAnnotation {
   private final AnnotationInfo myAnnotationInfo;
 
-  private final P4Revision[] myRevisions;
   private final Map<Long, ChangeListData> myIntegratedChanges;
   private final VirtualFile myFile;
   private final long myRevision;
@@ -62,6 +62,9 @@ public class PerforceFileAnnotation extends FileAnnotation {
   private final Project myProject;
   private final P4Connection myConnection;
   private final List<VcsFileRevision> myPerforceRevisions;
+
+  private final Map<Long, P4Revision> myRevisionsByNumber = new HashMap<>();
+  private final Map<Long, LineChange> myChangesByNumber = new HashMap<>();
 
 
   public PerforceFileAnnotation(final AnnotationInfo annotationInfo,
@@ -71,7 +74,6 @@ public class PerforceFileAnnotation extends FileAnnotation {
                                 final Project project, final @NotNull P4Connection connection, long revision) {
     super(project);
     myAnnotationInfo = annotationInfo;
-    myRevisions = revisions;
     myIntegratedChanges = integratedChanges;
     myProject = project;
     myConnection = connection;
@@ -79,10 +81,24 @@ public class PerforceFileAnnotation extends FileAnnotation {
     myRevision = revision;
 
     myPerforceRevisions = new ArrayList<>();
-    for (P4Revision p4Revision : myRevisions) {
+    for (P4Revision p4Revision : revisions) {
       myPerforceRevisions.add(new PerforceFileRevision(p4Revision, connection, project));
     }
     myPerforceRevisions.sort((o1, o2) -> -1 * o1.getRevisionNumber().compareTo(o2.getRevisionNumber()));
+
+    for (P4Revision p4Revision : revisions) {
+      long number = myAnnotationInfo.isUseChangelistNumbers() ? p4Revision.getChangeNumber() : p4Revision.getRevisionNumber();
+      if (myRevisionsByNumber.putIfAbsent(number, p4Revision) == null) {
+        myChangesByNumber.put(number, new LineChange(p4Revision.getChangeNumber(), p4Revision.getUser(), p4Revision.getDate(),
+                                                     p4Revision.getSubmitMessage()));
+      }
+    }
+    if (myAnnotationInfo.isFollowIntegrations()) {
+      for (ChangeListData data : myIntegratedChanges.values()) {
+        myChangesByNumber.putIfAbsent(data.NUMBER, new LineChange(data.NUMBER, data.USER, ChangeListData.parseChangelistDate(data.DATE),
+                                                                  data.DESCRIPTION));
+      }
+    }
   }
 
   private final LineAnnotationAspect REVISION =
@@ -158,27 +174,11 @@ public class PerforceFileAnnotation extends FileAnnotation {
 
   @VisibleForTesting
   public @Nullable P4Revision findRevisionForLine(final int lineNumber) {
-    final long revision = myAnnotationInfo.getRevision(lineNumber);
-    if (revision == -1) return null;
-    for (P4Revision p4Revision : myRevisions) {
-      if (myAnnotationInfo.isUseChangelistNumbers()) {
-        if (p4Revision.getChangeNumber() == revision) return p4Revision;
-      }
-      else {
-        if (p4Revision.getRevisionNumber() == revision) return p4Revision;
-      }
-    }
-    return null;
+    return myRevisionsByNumber.get(myAnnotationInfo.getRevision(lineNumber));
   }
 
   private @Nullable LineChange findChangeForLine(int lineNumber) {
-    P4Revision p4Revision = findRevisionForLine(lineNumber);
-    if (p4Revision != null) {
-      return new LineChange(p4Revision.getChangeNumber(), p4Revision.getUser(), p4Revision.getDate(), p4Revision.getSubmitMessage());
-    }
-    ChangeListData data = findIntegratedChangeForLine(lineNumber);
-    if (data == null) return null;
-    return new LineChange(data.NUMBER, data.USER, ChangeListData.parseChangelistDate(data.DATE), data.DESCRIPTION);
+    return myChangesByNumber.get(myAnnotationInfo.getRevision(lineNumber));
   }
 
   private @Nullable ChangeListData findIntegratedChangeForLine(int lineNumber) {
