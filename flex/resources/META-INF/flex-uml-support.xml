@@ -1,4 +1,4 @@
-<idea-plugin package="com.intellij.lang.javascript.uml">
+<idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <diagram.Provider implementation="com.intellij.lang.javascript.uml.FlashUmlProvider"/>
     <diagram.changesProvider implementation="com.intellij.lang.javascript.uml.FlashUmlChangesProvider"/>
