@@ -1,0 +1,40 @@
+package demo
+
+import demo.proto.Role as ProtoRole
+import demo.proto.User as ProtoUser
+import demo.proto.user as protoUser
+
+// EXPECT-NEXT: user.proto / User
+fun javaApiAliasedMessageClass() {
+  val user = Proto<caret>User.newBuilder().build()
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiAliasedBuilderSetter() {
+  val user = ProtoUser.newBuilder()
+    .set<caret>Name("Alice")
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / Role
+fun javaApiAliasedEnumClass() {
+  val role = Proto<caret>Role.ADMIN
+}
+
+// EXPECT-NEXT: user.proto / ADMIN
+fun javaApiAliasedEnumValue() {
+  val role = ProtoRole.AD<caret>MIN
+}
+
+// EXPECT-NEXT: user.proto / User
+fun kotlinDslAliasedFactory() {
+  val user = proto<caret>User {
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslAliasedField() {
+  val user = protoUser {
+    na<caret>me = "Alice"
+  }
+}

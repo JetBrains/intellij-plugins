@@ -308,6 +308,7 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
             assertThat(refElement).isNotNull();
             PsiElement[] elements =
               GotoDeclarationAction.findAllTargetElements(project, editor, bumpedCaret);
+            assertThat(Arrays.asList(elements)).containsNoDuplicates();
             expectation.checkGotoTargets(refElement.getCanonicalText(), elements, lineNumber);
           });
     }

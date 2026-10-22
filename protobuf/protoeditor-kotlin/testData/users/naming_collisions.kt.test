@@ -1,0 +1,78 @@
+package demo
+
+import demo.naming.namingCollisionMessage
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage
+fun namingCollisionFactory() {
+  namingCollision<caret>Message {}
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.has_name
+fun helperPropertyCollision() {
+  namingCollisionMessage {
+    has<caret>Name = "property"
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.name
+fun helperFunctionCollision() {
+  namingCollisionMessage {
+    println(has<caret>Name())
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.clear_name
+fun clearHelperPropertyCollision() {
+  namingCollisionMessage {
+    clear<caret>Name = "property"
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.name
+fun clearHelperFunctionCollision() {
+  namingCollisionMessage {
+    clear<caret>Name()
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.aliases
+fun repeatedCollisionProperty() {
+  namingCollisionMessage {
+    aliases<caret>4 += "Ada"
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.aliases
+fun repeatedCollisionHelper() {
+  namingCollisionMessage {
+    aliases4.ad<caret>d("Ada")
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.aliases_count
+fun repeatedCountCollisionProperty() {
+  namingCollisionMessage {
+    aliasesCount<caret>5 = 1
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.aliases_list
+fun repeatedListCollisionProperty() {
+  namingCollisionMessage {
+    aliasesList<caret>6 = "Ada"
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.labels
+fun mapCollisionProperty() {
+  namingCollisionMessage {
+    labels<caret>7["score"] = 1
+  }
+}
+
+// EXPECT-NEXT: naming_collisions.proto / NamingCollisionMessage.labels_count
+fun mapCountCollisionProperty() {
+  namingCollisionMessage {
+    labelsCount<caret>8 = 1
+  }
+}
