@@ -6,7 +6,6 @@ import com.intellij.openapi.vcs.FileStatus
 import com.intellij.openapi.vcs.changes.HunkLines
 import com.intellij.openapi.vcs.changes.HunkName
 import com.intellij.openapi.vcs.changes.StructuralHunkNamer
-import com.intellij.openapi.vcs.changes.StructureChangeCollector
 import com.intellij.psi.PsiFileFactory
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
@@ -39,8 +38,8 @@ internal class MakefileStructuralHunkNamerTest {
 
   private suspend fun nameHunks(before: String, after: String, vararg hunks: HunkLines): List<HunkName> = smartReadAction(projectFixture.get()) {
     val original = PsiFileFactory.getInstance(projectFixture.get()).createFileFromText("Makefile", MakefileFileType, after, 0, true)
-    val beforeFile = requireNotNull(StructureChangeCollector.createSnapshot(original, before))
-    val afterFile = requireNotNull(StructureChangeCollector.createSnapshot(original, after))
+    val beforeFile = requireNotNull(StructuralHunkNamer.createSnapshot(original, before))
+    val afterFile = requireNotNull(StructuralHunkNamer.createSnapshot(original, after))
     StructuralHunkNamer.name(beforeFile, afterFile, hunks.asList())
   }
 }
