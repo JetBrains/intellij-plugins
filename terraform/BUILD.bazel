@@ -1,4 +1,6 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -20,7 +22,7 @@ dev_dist_plugin(
 ### auto-generated section `dev intellij.terraform` end
 
 ### auto-generated section `build intellij.terraform` start
-jvm_library(
+ij_plugin_module(
     name = "terraform",
     srcs = glob(
         [
@@ -33,6 +35,7 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.terraform",
+    packed_deps = ["@ultimate_lib//:terraform-terraform-metadata"],
     resource_strip_prefix = "res",
     resources = glob(
         ["res/**/*"],
@@ -97,6 +100,20 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.terraform` end
+
+### auto-generated section `plugin intellij.terraform` start
+ij_plugin(
+    name = "terraform_plugin",
+    descriptor_module = ":terraform_plugin_module",
+    content_modules = [
+        # do not sort,
+        "//contrib/terraform/watchers",
+        "//contrib/terraform/copyright",
+        "//contrib/terraform/terraform-template:template",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.terraform` end
 
 ### auto-generated section `iml intellij.terraform` start
 exports_files(

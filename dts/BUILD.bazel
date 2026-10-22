@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -35,6 +36,20 @@ jvm_library(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.dts` end
+
+### auto-generated section `plugin intellij.dts` start
+ij_plugin(
+    name = "dts_plugin",
+    descriptor_module = ":dts",
+    content_modules = [
+        # do not sort,
+        "//contrib/dts/cmake",
+        "//contrib/dts/core",
+        "//contrib/dts/pp",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.dts` end
 
 ### auto-generated section `iml intellij.dts` start
 exports_files(
