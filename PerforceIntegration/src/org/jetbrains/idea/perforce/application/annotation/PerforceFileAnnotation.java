@@ -19,6 +19,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vcs.VcsKey;
 import com.intellij.openapi.vcs.annotate.AnnotationTooltipBuilder;
@@ -29,6 +30,7 @@ import com.intellij.openapi.vcs.annotate.LineAnnotationAspectAdapter;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.ChangeListData;
@@ -39,6 +41,8 @@ import org.jetbrains.idea.perforce.application.PerforceOnlyRevisionNumber;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.application.PerforceVcsRevisionNumber;
 import org.jetbrains.idea.perforce.perforce.P4Revision;
+import org.jetbrains.idea.perforce.perforce.PerforceChangeCache;
+import org.jetbrains.idea.perforce.perforce.PerforceChangeList;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 
@@ -56,6 +60,7 @@ public class PerforceFileAnnotation extends FileAnnotation {
   private final long myRevision;
 
   private final Project myProject;
+  private final P4Connection myConnection;
   private final List<VcsFileRevision> myPerforceRevisions;
 
 
@@ -69,6 +74,7 @@ public class PerforceFileAnnotation extends FileAnnotation {
     myRevisions = revisions;
     myIntegratedChanges = integratedChanges;
     myProject = project;
+    myConnection = connection;
     myFile = file;
     myRevision = revision;
 
@@ -170,11 +176,14 @@ public class PerforceFileAnnotation extends FileAnnotation {
     if (p4Revision != null) {
       return new LineChange(p4Revision.getChangeNumber(), p4Revision.getUser(), p4Revision.getDate(), p4Revision.getSubmitMessage());
     }
-    if (!myAnnotationInfo.isFollowIntegrations()) return null;
-
-    ChangeListData data = myIntegratedChanges.get(myAnnotationInfo.getRevision(lineNumber));
+    ChangeListData data = findIntegratedChangeForLine(lineNumber);
     if (data == null) return null;
     return new LineChange(data.NUMBER, data.USER, ChangeListData.parseChangelistDate(data.DATE), data.DESCRIPTION);
+  }
+
+  private @Nullable ChangeListData findIntegratedChangeForLine(int lineNumber) {
+    if (!myAnnotationInfo.isFollowIntegrations()) return null;
+    return myIntegratedChanges.get(myAnnotationInfo.getRevision(lineNumber));
   }
 
   private record LineChange(long number, @NlsSafe String user, Date date, @NlsSafe String description) {
@@ -186,7 +195,8 @@ public class PerforceFileAnnotation extends FileAnnotation {
     if (p4Revision != null) {
       return new PerforceVcsRevisionNumber(p4Revision);
     }
-    return null;
+    ChangeListData data = findIntegratedChangeForLine(lineNumber);
+    return data == null ? null : new PerforceOnlyRevisionNumber(data.NUMBER);
   }
 
   @Override
@@ -208,6 +218,18 @@ public class PerforceFileAnnotation extends FileAnnotation {
   @Override
   public int getLineCount() {
     return myAnnotationInfo.getLineCount();
+  }
+
+  @Override
+  public @Nullable RevisionChangesProvider getRevisionsChangesProvider() {
+    RevisionChangesProvider defaultProvider = super.getRevisionsChangesProvider();
+    if (defaultProvider == null || myIntegratedChanges.isEmpty()) return defaultProvider;
+    return lineNumber -> {
+      ChangeListData data = findRevisionForLine(lineNumber) == null ? findIntegratedChangeForLine(lineNumber) : null;
+      if (data == null) return defaultProvider.getChangesIn(lineNumber);
+      PerforceChangeList changeList = new PerforceChangeList(data, myProject, myConnection, new PerforceChangeCache(myProject));
+      return Pair.create(changeList, VcsUtil.getFilePath(myFile));
+    };
   }
 
   private abstract class PerforceAnnotationAspect extends LineAnnotationAspectAdapter {
