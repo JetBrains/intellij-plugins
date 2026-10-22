@@ -1,4 +1,4 @@
-<idea-plugin package="org.intellij.terraform">
+<idea-plugin>
   <id>org.intellij.plugins.hcl</id>
   <name>Terraform and HCL</name>
   <vendor>JetBrains</vendor>
