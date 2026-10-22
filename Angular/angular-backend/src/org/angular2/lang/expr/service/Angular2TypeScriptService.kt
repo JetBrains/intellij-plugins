@@ -315,7 +315,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
     override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean =
-      !Registry.`is`("typescript.service.powered.type.engine.force.default.usage.context") || super.isEnabledInUsageContext(usageContext)
+      Registry.`is`("typescript.tskotlin.enabled")
+      || !Registry.`is`("typescript.service.powered.type.engine.force.default.usage.context")
+      || super.isEnabledInUsageContext(usageContext)
 
     override val supportsTypeScriptInInjections: Boolean
       get() = true
