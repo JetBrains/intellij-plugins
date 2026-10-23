@@ -29,6 +29,7 @@ import com.goide.psi.GoPointerType;
 import com.goide.psi.GoReferenceExpressionBase;
 import com.goide.psi.GoType;
 import com.goide.psi.GoTypeSpec;
+import com.goide.psi.impl.GoPsiBackendUtil;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
@@ -106,7 +107,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
    * #convertToProtoMessageOrServiceName(GoTypeSpec)}.
    */
   private static QualifiedName convertTypeSpec(GoTypeSpec type) {
-    List<GoNamedSignatureOwner> methods = type.getAllMethods();
+    List<GoNamedSignatureOwner> methods = GoPsiBackendUtil.getAllMethods(type);
     if (methods.size() == 1) {
       String methodName = methods.get(0).getName();
       if (methodName != null && methodName.startsWith("is")) {

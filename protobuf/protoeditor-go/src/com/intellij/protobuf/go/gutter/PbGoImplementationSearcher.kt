@@ -6,6 +6,7 @@ import com.goide.go.GoInheritorsSearch
 import com.goide.psi.GoMethodDeclaration
 import com.goide.psi.GoMethodSpec
 import com.goide.psi.GoTypeSpec
+import com.goide.psi.impl.getAllMethods
 import com.goide.stubs.index.GoTypesIndex
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressManager
@@ -51,7 +52,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
 
   private fun hasGrpcSpecificUnimplementedMethod(typeSpec: GoTypeSpec): Boolean {
     val specName = typeSpec.name ?: return false
-    return typeSpec.allMethods.any { it.name == "mustEmbedUnimplemented$specName" }
+    return typeSpec.getAllMethods().any { it.name == "mustEmbedUnimplemented$specName" }
   }
 
   private fun findGeneratedServices(serviceDefinition: PbServiceDefinition,
@@ -83,7 +84,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     val methodName = methodDefinition.name ?: return emptySequence()
     val generatedMethods = findGeneratedServices(serviceDefinition, converters)
       .filterIsInstance<GoTypeSpec>()
-      .flatMap { typeSpec -> typeSpec.allMethods.filter { method -> method.name == methodName } }
+      .flatMap { typeSpec -> typeSpec.getAllMethods().filter { method -> method.name == methodName } }
     return generatedMethods
       .flatMap { method ->
         findAllCancellable { processor ->
