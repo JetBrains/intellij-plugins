@@ -174,7 +174,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
             .filter(GoPointerType.class::isInstance)
             .map(GoPointerType.class::cast)
             .map(GoPointerType::getType)
-            .map(GoType::contextlessResolve)
+            .map(GoPsiBackendUtil::contextlessResolve)
             .filter(GoTypeSpec.class::isInstance)
             .map(GoTypeSpec.class::cast)
             .map(PbGolangGotoDeclarationHandler::convertToProtoMessageOrServiceName)
@@ -224,7 +224,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
     QualifiedName enumTypeName =
         Optional.ofNullable(PsiTreeUtil.getParentOfType(definition, GoConstSpec.class))
             .map(GoConstSpec::getType)
-            .map(GoType::contextlessResolve)
+            .map(GoPsiBackendUtil::contextlessResolve)
             .filter(GoTypeSpec.class::isInstance)
             .map(GoTypeSpec.class::cast)
             .map(PbGolangGotoDeclarationHandler::convertToProtoMessageOrServiceName)
