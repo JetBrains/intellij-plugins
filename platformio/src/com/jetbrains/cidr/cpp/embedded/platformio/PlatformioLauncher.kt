@@ -1,6 +1,5 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
-import com.intellij.clion.embedded.debugger.peripheralview.SvdPanel.Companion.registerPeripheralTab
 import com.intellij.clion.embedded.debugtargets.McuActionUtil
 import com.intellij.execution.CantRunException.CustomProcessedCantRunException
 import com.intellij.execution.ExecutionException
@@ -13,14 +12,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.execution.ui.ExecutionConsole
-import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.components.service
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.ui.content.Content
 import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.jetbrains.cidr.ArchitectureType
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.notifyUploadUnavailable
@@ -102,26 +97,9 @@ class PlatformioLauncher(
       })
     }
 
-    val defaultSvdLocation = project.service<PlatformioService>().svdPath
     return runOnEDT {
         object : CidrDebugProcess(parameters, session, state.consoleBuilder,
                                   consoleCopyFilter) {
-          override fun createTabLayouter(): XDebugTabLayouter {
-            val gdbDebugProcess: CidrDebugProcess = this
-            val innerLayouter = super.createTabLayouter()
-
-            return object : XDebugTabLayouter() {
-              override fun registerConsoleContent(ui: RunnerLayoutUi, console: ExecutionConsole): Content {
-                return innerLayouter.registerConsoleContent(ui, console)
-              }
-
-              override fun registerAdditionalContent(ui: RunnerLayoutUi) {
-                innerLayouter.registerAdditionalContent(ui)
-                registerPeripheralTab(gdbDebugProcess, ui, defaultSvdLocation)
-              }
-            }
-          }
-
           override fun createConsole(): ConsoleView = super.createConsole().apply {
             addMessageFilter(CidrPathWithOffsetConsoleFilter(project, null, Path(projectPath)))
           }
