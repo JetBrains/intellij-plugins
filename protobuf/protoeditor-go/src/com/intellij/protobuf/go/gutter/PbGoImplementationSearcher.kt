@@ -24,6 +24,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 import com.intellij.util.containers.sequenceOfNotNull
+import com.goide.psi.impl.getPackageName as packageName
 
 internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
   override fun findImplementationsForProtoElement(pbElement: PbElement,
@@ -124,7 +125,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     return GoTypesIndex.find(name, project, GlobalSearchScope.projectScope(project), null)
       .asSequence()
       .filter {
-        val packageName = it.containingFile.packageName
+        val packageName = it.containingFile.packageName()
         packageName.isNullOrBlank() || packageName == goPackageName
       }
   }
@@ -155,7 +156,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
 
   private fun findMessageDeclarations(typeSpec: GoTypeSpec): Sequence<PbElement> {
     val specName = typeSpec.name ?: return emptySequence()
-    val goPackage = typeSpec.containingFile.packageName
+    val goPackage = typeSpec.containingFile.packageName()
     val pbMessageFqn = if (goPackage.isNullOrBlank()) specName else "$goPackage.$specName"
     val messageDefinition = typeSpec.project.service<ProtoFileAccessor>().findMessageByFqn(pbMessageFqn)
     return sequenceOfNotNull(messageDefinition)
@@ -173,7 +174,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
 
   private fun assembleProtoFqnBySpec(typeSpec: GoTypeSpec): String? {
     val specName = typeSpec.name ?: return null
-    val goPackage = typeSpec.containingFile.packageName
+    val goPackage = typeSpec.containingFile.packageName()
     return if (goPackage.isNullOrBlank()) specName else "$goPackage.$specName"
   }
 }
