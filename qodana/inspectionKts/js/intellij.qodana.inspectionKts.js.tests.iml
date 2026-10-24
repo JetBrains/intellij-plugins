@@ -9,9 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.inspectionKts" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.dev.psiViewer" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
@@ -19,7 +17,6 @@
     <orderEntry type="module" module-name="intellij.qodana.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.dev" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.util.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.coroutines" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.ex" scope="TEST" />

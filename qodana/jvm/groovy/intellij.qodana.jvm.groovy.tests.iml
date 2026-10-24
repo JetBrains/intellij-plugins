@@ -10,10 +10,7 @@
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.psi" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.groovy.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.groovy" scope="TEST" />
     <orderEntry type="module" module-name="intellij.groovy.scripting" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.groovy.structuralSearch" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />

@@ -18,7 +18,6 @@
     <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.groovy" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.structuralSearch.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.structureView.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.todo.plugin" scope="TEST" />
@@ -48,7 +47,6 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.java.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.cucumber.core1" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.cucumber.java" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cucumber.groovy" scope="TEST" />
     <orderEntry type="module" module-name="intellij.groovy.tests" scope="TEST" />

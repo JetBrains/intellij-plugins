@@ -14,19 +14,13 @@
     <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.ide" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.qodana.coverage" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.coverage" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.uast" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.coverage.agent" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.statistics" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
