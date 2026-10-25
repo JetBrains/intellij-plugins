@@ -107,10 +107,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/open-rewrite/maven",
-        "//contrib/open-rewrite/maven:maven_test_lib",
-    ],
+    module_name = "intellij.openRewrite.maven.tests",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
@@ -143,6 +140,8 @@ jvm_library(
         "@community//platform/execution",
         "@community//platform/execution:execution_test_lib",
         "@community//platform/ide-core",
+        "//contrib/open-rewrite/maven",
+        "//contrib/open-rewrite/maven:maven_test_lib",
         "//contrib/open-rewrite:openRewrite-tests",
         "//contrib/open-rewrite:openRewrite-tests_test_lib",
         "@community//platform/testFramework/junit5",

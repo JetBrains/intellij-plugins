@@ -192,10 +192,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/jade",
-        "//contrib/jade:jade_test_lib",
-    ],
+    module_name = "intellij.jade.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -291,6 +288,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-common:javascript-common_test_lib",
         "//plugins/JavaScriptLanguage/javascript-codeinsight",
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
+        "//contrib/jade",
+        "//contrib/jade:jade_test_lib",
         "//plugins/fileWatcher:fileWatcher-tests",
         "//plugins/fileWatcher:fileWatcher-tests_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",

@@ -60,5 +60,4 @@
     <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.cfml" />
 </module>

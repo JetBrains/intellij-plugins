@@ -176,10 +176,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/cucumber-java",
-        "//contrib/cucumber-java:cucumber-java_test_lib",
-    ],
+    module_name = "intellij.cucumber.java.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -294,6 +291,8 @@ jvm_library(
         "@community//libraries/fastutil:fastutil_test_lib",
         "@community//platform/util/concurrency",
         "@community//platform/util/concurrency:concurrency_test_lib",
+        "//contrib/cucumber-java",
+        "//contrib/cucumber-java:cucumber-java_test_lib",
         "//contrib/cucumber:gherkin-tests",
         "//contrib/cucumber:gherkin-tests_test_lib",
         "@community//platform/smRunner:smRunner-tests",

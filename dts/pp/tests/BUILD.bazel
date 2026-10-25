@@ -25,10 +25,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/dts/pp",
-        "//contrib/dts/pp:pp_test_lib",
-    ],
+    module_name = "intellij.dts.pp.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -38,6 +35,8 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
+        "//contrib/dts/pp",
+        "//contrib/dts/pp:pp_test_lib",
         "@community//libraries/junit6",
         "@community//libraries/junit6:junit6_test_lib",
         "@community//platform/analysis-impl",

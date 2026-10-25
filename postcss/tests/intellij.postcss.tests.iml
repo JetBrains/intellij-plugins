@@ -54,5 +54,4 @@
     <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.postcss.plugin" />
 </module>

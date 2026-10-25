@@ -130,11 +130,8 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/qodana/rust",
-        "//contrib/qodana/rust:rust_test_lib",
-    ],
     kotlinc_opts = ":custom_rust-tests",
+    module_name = "intellij.qodana.rust.tests",
     resource_strip_prefix = "test-data",
     resources = glob(
         ["test-data/**/*"],
@@ -143,6 +140,8 @@ jvm_library(
     runtime_deps = [":rust-tests"],
     deps = [
         # do not sort,
+        "//contrib/qodana/rust",
+        "//contrib/qodana/rust:rust_test_lib",
         "@community//libraries/kodein-di-jvm",
         "@community//libraries/kodein-di-jvm:kodein-di-jvm_test_lib",
         "@community//libraries/qodana/sarif",

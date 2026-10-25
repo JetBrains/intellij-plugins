@@ -150,14 +150,13 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/Yeoman:yeoman",
-        "//contrib/Yeoman:yeoman_test_lib",
-    ],
+    module_name = "intellij.yeoman.tests",
     visibility = ["//visibility:public"],
     runtime_deps = [":yeoman-tests"],
     deps = [
         # do not sort,
+        "//contrib/Yeoman:yeoman",
+        "//contrib/Yeoman:yeoman_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//libraries/junit6",

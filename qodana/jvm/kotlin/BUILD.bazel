@@ -103,10 +103,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/qodana/jvm/kotlin",
-        "//contrib/qodana/jvm/kotlin:kotlin_test_lib",
-    ],
+    module_name = "intellij.qodana.jvm.kotlin.tests",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
@@ -147,6 +144,8 @@ jvm_library(
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
+        "//contrib/qodana/jvm/kotlin",
+        "//contrib/qodana/jvm/kotlin:kotlin_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/scratch/plugin",

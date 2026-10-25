@@ -21,5 +21,4 @@
     <orderEntry type="module" module-name="intellij.qodana.jvm.groovy" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.qodana.jvm.groovy" />
 </module>

@@ -117,10 +117,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/jhipster",
-        "//contrib/jhipster:jhipster_test_lib",
-    ],
+    module_name = "intellij.jhipster.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -153,6 +150,8 @@ jvm_library(
         "@community//platform/lang-impl:lang-impl_test_lib",
         "@community//platform/lang-api:lang",
         "@community//platform/lang-api:lang_test_lib",
+        "//contrib/jhipster",
+        "//contrib/jhipster:jhipster_test_lib",
         "@community//libraries/junit6",
         "@community//libraries/junit6:junit6_test_lib",
     ],

@@ -201,11 +201,8 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/prisma",
-        "//contrib/prisma:prisma_test_lib",
-    ],
     kotlinc_opts = ":custom_prisma-tests",
+    module_name = "intellij.prisma.tests",
     resource_strip_prefix = "testData",
     resources = glob(
         ["testData/**/*"],
@@ -274,6 +271,8 @@ jvm_library(
         "@community//platform/polySymbols/backend:backend_test_lib",
         "@community//platform/polySymbols/testFramework",
         "@community//platform/polySymbols/testFramework:testFramework_test_lib",
+        "//contrib/prisma",
+        "//contrib/prisma:prisma_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
         "@community//platform/smRunner",

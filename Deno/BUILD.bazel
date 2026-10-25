@@ -204,10 +204,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/Deno:deno",
-        "//contrib/Deno:deno_test_lib",
-    ],
+    module_name = "intellij.deno.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -257,6 +254,8 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
         "@community//platform/util:util-ui",
         "@community//platform/util:util-ui_test_lib",
+        "//contrib/Deno:deno",
+        "//contrib/Deno:deno_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/scratch/plugin",

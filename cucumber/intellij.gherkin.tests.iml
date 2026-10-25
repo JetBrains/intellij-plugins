@@ -39,5 +39,4 @@
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.plugin" scope="RUNTIME" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.gherkin" />
 </module>

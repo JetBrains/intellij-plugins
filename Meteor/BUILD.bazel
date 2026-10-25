@@ -177,10 +177,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/Meteor:meteor",
-        "//contrib/Meteor:meteor_test_lib",
-    ],
+    module_name = "intellij.meteor.tests",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
@@ -240,6 +237,8 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
         "@community//platform/util/concurrency",
         "@community//platform/util/concurrency:concurrency_test_lib",
+        "//contrib/Meteor:meteor",
+        "//contrib/Meteor:meteor_test_lib",
         "//contrib/handlebars:handlebars-tests",
         "//contrib/handlebars:handlebars-tests_test_lib",
         "//plugins/LiveEdit:js-liveEdit-tests",

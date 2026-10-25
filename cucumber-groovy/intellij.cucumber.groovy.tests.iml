@@ -56,5 +56,4 @@
     <orderEntry type="module" module-name="intellij.platform.vcs.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.cucumber.groovy" />
 </module>

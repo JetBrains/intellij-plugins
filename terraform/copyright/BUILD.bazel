@@ -92,10 +92,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/terraform/copyright",
-        "//contrib/terraform/copyright:copyright_test_lib",
-    ],
+    module_name = "intellij.terraform.copyright.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -118,6 +115,8 @@ jvm_library(
         "//contrib/terraform:terraform_test_lib",
         "@community//plugins/copyright",
         "@community//plugins/copyright:copyright_test_lib",
+        "//contrib/terraform/copyright",
+        "//contrib/terraform/copyright:copyright_test_lib",
         "@lib//:kotlin-stdlib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",

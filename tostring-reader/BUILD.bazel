@@ -102,10 +102,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/tostring-reader:tsr",
-        "//contrib/tostring-reader:tsr_test_lib",
-    ],
+    module_name = "intellij.tsr.tests",
     resource_strip_prefix = "test-resources",
     resources = glob(
         ["test-resources/**/*"],
@@ -114,6 +111,8 @@ jvm_library(
     runtime_deps = [":tsr-tests"],
     deps = [
         # do not sort,
+        "//contrib/tostring-reader:tsr",
+        "//contrib/tostring-reader:tsr_test_lib",
         "@community//libraries/junit6",
         "@community//libraries/junit6:junit6_test_lib",
     ],

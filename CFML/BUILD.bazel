@@ -188,10 +188,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/CFML:cfml",
-        "//contrib/CFML:cfml_test_lib",
-    ],
+    module_name = "intellij.cfml.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -289,6 +286,8 @@ jvm_library(
         "//dbe/database/testFramework:testFramework_test_lib",
         "@community//platform/util/concurrency",
         "@community//platform/util/concurrency:concurrency_test_lib",
+        "//contrib/CFML:cfml",
+        "//contrib/CFML:cfml_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//platform/testFramework/junit5/codeInsight",

@@ -189,10 +189,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/gauge",
-        "//contrib/gauge:gauge_test_lib",
-    ],
+    module_name = "intellij.gauge.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -239,6 +236,8 @@ jvm_library(
         "@community//plugins/gradle:gradle-common_test_lib",
         "@community//plugins/maven",
         "@community//plugins/maven:maven_test_lib",
+        "//contrib/gauge",
+        "//contrib/gauge:gauge_test_lib",
         "@community//platform/core-impl",
         "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/testFramework/junit5",

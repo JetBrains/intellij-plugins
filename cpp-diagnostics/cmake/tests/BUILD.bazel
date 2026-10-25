@@ -30,10 +30,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/cpp-diagnostics/cmake",
-        "//contrib/cpp-diagnostics/cmake:cmake_test_lib",
-    ],
+    module_name = "intellij.clion.diagnostics.cmake.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -45,6 +42,8 @@ jvm_library(
         "@lib//:kotlin-stdlib",
         "//CIDR/cidr-common-testFramework/nolang",
         "//CIDR/cidr-common-testFramework/nolang:nolang_test_lib",
+        "//contrib/cpp-diagnostics/cmake",
+        "//contrib/cpp-diagnostics/cmake:cmake_test_lib",
         "//contrib/cpp-diagnostics/core",
         "//contrib/cpp-diagnostics/core:core_test_lib",
         "//CIDR/clion-testFramework-nolang",

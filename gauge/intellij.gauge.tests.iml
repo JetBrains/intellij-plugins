@@ -88,5 +88,4 @@
     <orderEntry type="module" module-name="intellij.xml.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.gauge" />
 </module>

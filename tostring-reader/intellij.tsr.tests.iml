@@ -13,5 +13,4 @@
     <orderEntry type="module" module-name="intellij.tsr" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.tsr" />
 </module>

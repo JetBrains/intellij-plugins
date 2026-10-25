@@ -22,5 +22,4 @@
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.dts.pp" />
 </module>

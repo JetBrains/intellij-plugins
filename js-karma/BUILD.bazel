@@ -188,10 +188,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/js-karma:karma",
-        "//contrib/js-karma:karma_test_lib",
-    ],
+    module_name = "intellij.karma.tests",
     resource_strip_prefix = "testData",
     resources = glob(
         ["testData/**/*"],
@@ -261,6 +258,8 @@ jvm_library(
         "@community//platform/lang-api:lang_test_lib",
         "@community//platform/testRunner",
         "@community//platform/testRunner:testRunner_test_lib",
+        "//contrib/js-karma:karma",
+        "//contrib/js-karma:karma_test_lib",
         "@community//platform/scratch/plugin",
         "@community//platform/scratch/plugin:plugin_test_lib",
     ],

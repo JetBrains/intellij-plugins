@@ -45,5 +45,4 @@
     <orderEntry type="module" module-name="intellij.platform.problemView.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.handlebars" />
 </module>

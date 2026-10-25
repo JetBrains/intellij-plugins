@@ -110,10 +110,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/CloudFormation:cloudFormation",
-        "//contrib/CloudFormation:cloudFormation_test_lib",
-    ],
+    module_name = "intellij.cloudFormation.tests",
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -162,6 +159,8 @@ jvm_library(
         "@community//libraries/commons/lang3:lang3_test_lib",
         "@community//java/java-runtime:rt",
         "@community//java/java-runtime:rt_test_lib",
+        "//contrib/CloudFormation:cloudFormation",
+        "//contrib/CloudFormation:cloudFormation_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "@community//libraries/junit6",

@@ -36,5 +36,4 @@
     <orderEntry type="module" module-name="intellij.restClient.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
   </component>
-  <component name="TestModuleProperties" production-module="intellij.protoeditor.go" />
 </module>

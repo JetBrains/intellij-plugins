@@ -144,10 +144,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/nextjs",
-        "//contrib/nextjs:nextjs_test_lib",
-    ],
+    module_name = "intellij.nextjs.tests",
     resource_strip_prefix = "testData",
     resources = glob(
         ["testData/**/*"],
@@ -194,6 +191,8 @@ jvm_library(
         "@community//platform/polySymbols/testFramework:testFramework_test_lib",
         "//plugins/JavaScriptLanguage/web-platform:javascript-web",
         "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
+        "//contrib/nextjs",
+        "//contrib/nextjs:nextjs_test_lib",
         "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//libraries/junit4",

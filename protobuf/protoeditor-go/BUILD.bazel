@@ -118,10 +118,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/protobuf/protoeditor-go",
-        "//contrib/protobuf/protoeditor-go:protoeditor-go_test_lib",
-    ],
+    module_name = "intellij.protoeditor.go.tests",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
@@ -165,6 +162,8 @@ jvm_library(
         "//goland/intellij-go/testFramework:testFramework_test_lib",
         "//goland/intellij-go/plugin",
         "//goland/intellij-go/plugin:plugin_test_lib",
+        "//contrib/protobuf/protoeditor-go",
+        "//contrib/protobuf/protoeditor-go:protoeditor-go_test_lib",
         "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
         "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
         "@community//libraries/junit4",

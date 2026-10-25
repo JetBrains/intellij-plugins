@@ -96,10 +96,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/qodana/jvm/groovy",
-        "//contrib/qodana/jvm/groovy:groovy_test_lib",
-    ],
+    module_name = "intellij.qodana.jvm.groovy.tests",
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
@@ -126,6 +123,8 @@ jvm_library(
         "@community//platform/testFramework/extensions:testExtensions_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
+        "//contrib/qodana/jvm/groovy",
+        "//contrib/qodana/jvm/groovy:groovy_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
     ],
