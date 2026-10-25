@@ -28,7 +28,12 @@ import java.util.zip.GZIPInputStream
 import kotlin.io.path.deleteIfExists
 
 private val LOG = Logger.getInstance("org.jetbrains.qodana.staticAnalysis.inspections.runner.CloudBaselineService")
-private val DOWNLOAD_TIMEOUT: Duration = Duration.ofMinutes(1)
+/**
+ * The time limit for the download of the cloud baseline. The default is 60 seconds.
+ * Set `-Dqodana.cloud.baseline.download.timeout=<seconds>` for a large baseline or a slow network.
+ */
+private val DOWNLOAD_TIMEOUT: Duration =
+  Duration.ofSeconds(java.lang.Long.getLong("qodana.cloud.baseline.download.timeout", 60).takeIf { it > 0 } ?: 60)
 
 /** Writes the baseline of `toolName` to a temporary file. Gives null when Qodana Cloud keeps none. */
 internal typealias QodanaCloudBaselineSource = (toolName: String) -> Path?
