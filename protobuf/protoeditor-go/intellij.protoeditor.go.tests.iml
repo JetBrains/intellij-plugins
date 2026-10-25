@@ -20,7 +20,7 @@
     <orderEntry type="library" scope="TEST" name="truth" level="project" />
     <orderEntry type="module" module-name="intellij.go.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.go.plugin" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.protoeditor.go" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.protoeditor.go" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.protoeditor.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.protoeditor" scope="RUNTIME" />

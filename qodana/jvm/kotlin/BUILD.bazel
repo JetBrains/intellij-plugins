@@ -88,6 +88,7 @@ jvm_library(
         # do not sort,
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
         "@community//plugins/kotlin:kotlin-plugin-community-main",
+        "//contrib/qodana/jvm/kotlin",
         "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework",
     ],
 )
@@ -110,6 +111,7 @@ jvm_library(
         ":qodana-jvm-kotlin-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
+        "//contrib/qodana/jvm/kotlin:kotlin_test_lib",
         "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework_test_lib",
     ],
     deps = [
@@ -144,8 +146,6 @@ jvm_library(
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
-        "//contrib/qodana/jvm/kotlin",
-        "//contrib/qodana/jvm/kotlin:kotlin_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/scratch/plugin",

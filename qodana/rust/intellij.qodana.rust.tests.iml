@@ -26,7 +26,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.qodana.rust" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.rust" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.kodein.di.jvm" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.qodana.sarif" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />

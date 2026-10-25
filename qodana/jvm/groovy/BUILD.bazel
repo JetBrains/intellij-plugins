@@ -82,6 +82,7 @@ jvm_library(
         # do not sort,
         "@community//plugins/groovy-scripting",
         "@community//plugins/groovy/structuralsearch-groovy:structuralSearch",
+        "//contrib/qodana/jvm/groovy",
     ],
 )
 
@@ -103,6 +104,7 @@ jvm_library(
         ":qodana-jvm-groovy-tests",
         "@community//plugins/groovy-scripting:groovy-scripting_test_lib",
         "@community//plugins/groovy/structuralsearch-groovy:structuralSearch_test_lib",
+        "//contrib/qodana/jvm/groovy:groovy_test_lib",
     ],
     deps = [
         # do not sort,
@@ -123,8 +125,6 @@ jvm_library(
         "@community//platform/testFramework/extensions:testExtensions_test_lib",
         "//contrib/qodana:qodana-core-tests",
         "//contrib/qodana:qodana-core-tests_test_lib",
-        "//contrib/qodana/jvm/groovy",
-        "//contrib/qodana/jvm/groovy:groovy_test_lib",
         "@community//libraries/junit4",
         "@community//libraries/junit4:junit4_test_lib",
     ],

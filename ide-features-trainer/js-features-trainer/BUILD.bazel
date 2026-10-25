@@ -105,6 +105,7 @@ jvm_library(
     ),
     module_name = "intellij.javascript.featuresTrainer.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["//contrib/ide-features-trainer/js-features-trainer:javascript-featuresTrainer"],
 )
 
 jvm_library(
@@ -120,7 +121,11 @@ jvm_library(
     ),
     module_name = "intellij.javascript.featuresTrainer.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [":javascript-featuresTrainer-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":javascript-featuresTrainer-tests",
+        "//contrib/ide-features-trainer/js-features-trainer:javascript-featuresTrainer_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -134,8 +139,6 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
-        "//contrib/ide-features-trainer/js-features-trainer:javascript-featuresTrainer",
-        "//contrib/ide-features-trainer/js-features-trainer:javascript-featuresTrainer_test_lib",
         "@community//plugins/ide-features-trainer:featuresTrainer-tests",
         "@community//plugins/ide-features-trainer:featuresTrainer-tests_test_lib",
         "@community//libraries/junit4",

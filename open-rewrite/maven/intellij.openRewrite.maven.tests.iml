@@ -16,7 +16,7 @@
     <orderEntry type="module" module-name="intellij.maven.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.openRewrite.maven" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.openRewrite.maven" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.openRewrite.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />

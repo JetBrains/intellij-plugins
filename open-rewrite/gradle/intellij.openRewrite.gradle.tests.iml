@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.gradle.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.execution" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.openRewrite.gradle" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.openRewrite.gradle" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.openRewrite.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.microservices.jvm" scope="RUNTIME" />

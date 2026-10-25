@@ -24,7 +24,7 @@
     <orderEntry type="module" module-name="intellij.libraries.kotlinc.kotlin.compiler.common" />
     <orderEntry type="module" module-name="intellij.kotlin.plugin.community.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.qodana.jvm.kotlin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.qodana.jvm.kotlin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.kotlin.base.plugin.testFramework" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />

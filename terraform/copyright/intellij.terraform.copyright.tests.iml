@@ -14,7 +14,7 @@
     <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
     <orderEntry type="module" module-name="intellij.terraform" scope="TEST" />
     <orderEntry type="module" module-name="intellij.copyright" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.terraform.copyright" />
+    <orderEntry type="module" module-name="intellij.terraform.copyright" scope="RUNTIME" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
