@@ -78,6 +78,8 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/vcs/plugin",
         "@community//xml/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
     ],
 )
 
@@ -105,6 +107,8 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
         "@community//xml/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+        "@community//community-resources:customization_test_lib",
     ],
     deps = [
         # do not sort,

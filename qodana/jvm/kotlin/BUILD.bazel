@@ -90,6 +90,7 @@ jvm_library(
         "@community//plugins/kotlin:kotlin-plugin-community-main",
         "//contrib/qodana/jvm/kotlin",
         "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -113,6 +114,7 @@ jvm_library(
         "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
         "//contrib/qodana/jvm/kotlin:kotlin_test_lib",
         "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

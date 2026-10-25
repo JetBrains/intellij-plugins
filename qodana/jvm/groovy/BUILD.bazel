@@ -83,6 +83,7 @@ jvm_library(
         "@community//plugins/groovy-scripting",
         "@community//plugins/groovy/structuralsearch-groovy:structuralSearch",
         "//contrib/qodana/jvm/groovy",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -105,6 +106,7 @@ jvm_library(
         "@community//plugins/groovy-scripting:groovy-scripting_test_lib",
         "@community//plugins/groovy/structuralsearch-groovy:structuralSearch_test_lib",
         "//contrib/qodana/jvm/groovy:groovy_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

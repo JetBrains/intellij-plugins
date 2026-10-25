@@ -94,6 +94,7 @@ jvm_library(
         "@community//platform/testRunner/plugin",
         "@community//platform/vcs/plugin",
         "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -123,6 +124,7 @@ jvm_library(
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

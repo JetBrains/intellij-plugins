@@ -102,6 +102,7 @@ jvm_library(
         # do not sort,
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//contrib/protobuf:protoeditor",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -126,6 +127,7 @@ jvm_library(
         ":protoeditor-python-tests",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "//contrib/protobuf:protoeditor_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

@@ -122,6 +122,7 @@ jvm_library(
         "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
         "@community//plugins/kotlin:kotlin-plugin-community-main",
         "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -147,6 +148,7 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//plugins/kotlin:kotlin-plugin-community-main_test_lib",
         "@community//plugins/kotlin/base/pluginTestFramework:kotlin-base-plugin-testFramework_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

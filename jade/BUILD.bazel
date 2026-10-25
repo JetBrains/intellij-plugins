@@ -178,6 +178,7 @@ jvm_library(
         "//plugins/css/codeinsight/actions",
         "//plugins/ultimate-plugin",
         "//plugins/JavaScriptLanguage/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -208,6 +209,7 @@ jvm_library(
         "//plugins/css/codeinsight/actions:actions_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
         "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

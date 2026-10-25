@@ -27,6 +27,7 @@ jvm_library(
         "@community//platform/smRunner",
         "@community//platform/core-ui",
         "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -52,6 +53,7 @@ jvm_library(
         ":tests",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

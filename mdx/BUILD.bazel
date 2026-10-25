@@ -75,6 +75,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",
         "@community//platform/vcs/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//xml/plugin",
     ],
 )
@@ -109,6 +110,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
         "@community//platform/vcs/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
         "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [

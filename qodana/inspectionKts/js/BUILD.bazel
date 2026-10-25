@@ -78,7 +78,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.inspectionKts.js.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/ultimate-plugin"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+    ],
 )
 
 jvm_library(
@@ -101,6 +105,7 @@ jvm_library(
         # do not sort,
         ":qodana-inspectionKts-js-tests",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

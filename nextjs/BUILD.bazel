@@ -131,6 +131,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin",
         "//plugins/ultimate-plugin",
         "@community//plugins/htmltools:html-tools",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -166,6 +167,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
         "@community//plugins/htmltools:html-tools_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

@@ -110,6 +110,7 @@ jvm_library(
         # do not sort,
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "//phpstorm/php:php-impl",
     ],
 )
@@ -136,6 +137,7 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
         "//phpstorm/php:php-impl_test_lib",
     ],
     deps = [

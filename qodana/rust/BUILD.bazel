@@ -117,7 +117,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.rust.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//contrib/qodana/rust"],
+    runtime_deps = [
+        # do not sort,
+        "//contrib/qodana/rust",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+    ],
 )
 
 jvm_library(
@@ -142,6 +146,7 @@ jvm_library(
         # do not sort,
         ":rust-tests",
         "//contrib/qodana/rust:rust_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

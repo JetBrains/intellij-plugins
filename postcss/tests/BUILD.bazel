@@ -28,6 +28,7 @@ jvm_library(
         "@community//java/plugin",
         "@community//java/java-backend:backend",
         "@community//aether-dependency-resolver/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -72,6 +73,7 @@ jvm_library(
         "@community//java/plugin:plugin_test_lib",
         "@community//java/java-backend:backend_test_lib",
         "@community//aether-dependency-resolver/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

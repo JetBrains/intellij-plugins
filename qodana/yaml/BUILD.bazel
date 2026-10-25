@@ -112,6 +112,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.yaml.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/main/intellij.platform.monolith.main:monolith-main"],
 )
 
 jvm_library(
@@ -133,6 +134,7 @@ jvm_library(
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/ide-core-impl:ide-core-impl_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

@@ -163,6 +163,11 @@ jvm_library(
     ),
     module_name = "intellij.cucumber.java.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
+    ],
 )
 
 jvm_library(
@@ -189,6 +194,8 @@ jvm_library(
         "@community//platform/ide-core:ide-core_test_lib",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+        "@community//community-resources:customization_test_lib",
     ],
     deps = [
         # do not sort,

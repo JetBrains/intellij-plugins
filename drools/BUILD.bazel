@@ -125,6 +125,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/testRunner/plugin",
         "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -151,6 +152,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
         "@community//platform/testRunner/plugin:plugin_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

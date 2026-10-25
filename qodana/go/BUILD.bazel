@@ -90,7 +90,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.go.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/ultimate-plugin"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+    ],
 )
 
 jvm_library(
@@ -114,6 +118,7 @@ jvm_library(
         ":go-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
     ],
     deps = [

@@ -103,7 +103,12 @@ jvm_library(
     ),
     module_name = "intellij.jhipster.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/structure-view-impl/plugin"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/structure-view-impl/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
+    ],
 )
 
 jvm_library(
@@ -128,6 +133,8 @@ jvm_library(
         ":jhipster-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+        "@community//community-resources:customization_test_lib",
     ],
     deps = [
         # do not sort,

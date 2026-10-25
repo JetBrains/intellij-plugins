@@ -76,6 +76,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.poly.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
+    ],
 )
 
 jvm_library(
@@ -98,7 +103,12 @@ jvm_library(
         ["test-data/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [":poly-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":poly-tests",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+        "@community//community-resources:customization_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

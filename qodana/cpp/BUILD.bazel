@@ -152,6 +152,7 @@ jvm_library(
     ),
     module_name = "intellij.qodana.cpp.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/main/intellij.platform.monolith.main:monolith-main"],
 )
 
 jvm_library(
@@ -175,7 +176,11 @@ jvm_library(
         ["test-data/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [":cpp-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":cpp-tests",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

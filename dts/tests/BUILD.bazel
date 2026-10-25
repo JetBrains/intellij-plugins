@@ -10,6 +10,11 @@ jvm_library(
     ),
     module_name = "intellij.dts.tests",
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//community-resources:customization",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+    ],
 )
 
 jvm_library(
@@ -32,7 +37,12 @@ jvm_library(
         ["testResources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [":tests"],
+    runtime_deps = [
+        # do not sort,
+        ":tests",
+        "@community//community-resources:customization_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

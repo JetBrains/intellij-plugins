@@ -149,7 +149,12 @@ jvm_library(
     ),
     module_name = "intellij.gherkin.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//xml/plugin"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
+        "@community//xml/plugin",
+    ],
 )
 
 jvm_library(
@@ -173,6 +178,8 @@ jvm_library(
         # do not sort,
         ":gherkin-tests",
         "@community//platform/platform-impl:ide-impl_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+        "@community//community-resources:customization_test_lib",
         "@community//xml/plugin:plugin_test_lib",
     ],
     deps = [

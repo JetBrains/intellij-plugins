@@ -96,6 +96,7 @@ jvm_library(
         # do not sort,
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/structure-view-impl/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -123,6 +124,7 @@ jvm_library(
         "@community//platform/ide-core:ide-core_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "@community//platform/structure-view-impl/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

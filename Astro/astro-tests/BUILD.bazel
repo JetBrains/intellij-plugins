@@ -14,6 +14,7 @@ jvm_library(
         # do not sort,
         "//plugins/JavaScriptLanguage/javascript-parser",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -33,7 +34,11 @@ jvm_library(
     ),
     module_name = "intellij.astro.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [":astro-tests"],
+    runtime_deps = [
+        # do not sort,
+        ":astro-tests",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",

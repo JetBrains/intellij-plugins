@@ -146,6 +146,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/problemsView/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -171,6 +172,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
         "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
         "@community//platform/problemsView/plugin:plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,

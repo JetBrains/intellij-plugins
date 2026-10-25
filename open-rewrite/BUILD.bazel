@@ -183,6 +183,7 @@ jvm_library(
         "@community//platform/vcs/plugin",
         "@community//plugins/properties/properties-common:properties",
         "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
 )
 
@@ -217,6 +218,7 @@ jvm_library(
         "@community//platform/vcs/plugin:plugin_test_lib",
         "@community//plugins/properties/properties-common:properties_test_lib",
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
     ],
     deps = [
         # do not sort,
