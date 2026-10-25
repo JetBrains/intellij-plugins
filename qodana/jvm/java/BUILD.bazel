@@ -116,6 +116,7 @@ jvm_library(
         "@community//libraries/junit4",
         "@community//libraries/junit6",
         "@community//platform/testFramework/junit5",
+        "@community//java/java-impl-refactorings:impl-refactorings",
         "@community//platform/testFramework/junit5/codeInsight",
     ],
 )
