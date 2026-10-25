@@ -1,52 +1,12 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.qodana.python.coverage` start
 content_module_jar(module = ":coverage")
 ### auto-generated section `dev intellij.qodana.python.coverage` end
 
 ### auto-generated section `build intellij.qodana.python.coverage` start
-jvm_provided_library(
-    name = "contrib_qodana_provided",
-    lib = "//contrib/qodana",
-)
-
-jvm_provided_library(
-    name = "community_platform_analysis_provided",
-    lib = "@community//platform/analysis-api:analysis",
-)
-
-jvm_provided_library(
-    name = "community_platform_core_provided",
-    lib = "@community//platform/core-api:core",
-)
-
-jvm_provided_library(
-    name = "community_platform_lang-impl_provided",
-    lib = "@community//platform/lang-impl",
-)
-
-jvm_provided_library(
-    name = "python_provided",
-    lib = "//python",
-)
-
-jvm_provided_library(
-    name = "python_coverage_provided",
-    lib = "//python/coverage",
-)
-
-jvm_provided_library(
-    name = "community_plugins_coverage_provided",
-    lib = "@community//plugins/coverage-common:coverage",
-)
-
-jvm_provided_library(
-    name = "community_plugins_coverage-common_coverage-agent_provided",
-    lib = "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
-)
-
 jvm_library(
     name = "coverage",
     srcs = glob(
@@ -66,15 +26,15 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
+        "//contrib/qodana",
         "//contrib/qodana/coverage",
-        ":contrib_qodana_provided",
-        ":community_platform_analysis_provided",
-        ":community_platform_core_provided",
-        ":community_platform_lang-impl_provided",
-        ":python_provided",
-        ":python_coverage_provided",
-        ":community_plugins_coverage_provided",
-        ":community_plugins_coverage-common_coverage-agent_provided",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/core-api:core",
+        "@community//platform/lang-impl",
+        "//python",
+        "//python/coverage",
+        "@community//plugins/coverage-common:coverage",
+        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     ],
 )
 
@@ -90,22 +50,14 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         ":coverage",
-        "//contrib/qodana",
         "//contrib/qodana:qodana_test_lib",
         "//contrib/qodana/coverage:coverage_test_lib",
-        "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/core-api:core",
         "@community//platform/core-api:core_test_lib",
-        "@community//platform/lang-impl",
         "@community//platform/lang-impl:lang-impl_test_lib",
-        "//python",
         "//python:python_test_lib",
-        "//python/coverage",
         "//python/coverage:coverage_test_lib",
-        "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common:coverage_test_lib",
-        "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent_test_lib",
     ],
 )
