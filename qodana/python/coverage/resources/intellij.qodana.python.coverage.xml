@@ -5,6 +5,12 @@
     <plugin id="Pythonid"/>
     <module name="intellij.python"/>
     <module name="intellij.python.coverage"/>
+    <plugin id="org.intellij.qodana"/>
+    <module name="intellij.platform.analysis"/>
+    <module name="intellij.platform.core"/>
+    <module name="intellij.platform.coverage"/>
+    <module name="intellij.platform.coverage.agent"/>
+    <module name="intellij.platform.lang.impl"/>
     <module name="intellij.qodana.coverage"/>
   </dependencies>
   <!-- endregion -->

@@ -5,9 +5,15 @@
     <module name="intellij.go.coverage"/>
     <module name="intellij.go.impl"/>
     <module name="intellij.platform.collaborationTools"/>
+    <plugin id="org.intellij.qodana"/>
     <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.core"/>
+    <module name="intellij.platform.core.impl"/>
+    <module name="intellij.platform.coverage"/>
+    <module name="intellij.platform.coverage.agent"/>
+    <module name="intellij.platform.ide"/>
     <module name="intellij.platform.ide.core"/>
+    <module name="intellij.platform.lang.impl"/>
     <module name="intellij.platform.projectModel"/>
     <module name="intellij.qodana.coverage"/>
   </dependencies>
