@@ -29,6 +29,7 @@
     <orderEntry type="module" module-name="intellij.qodana.coverage.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.core.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.python.community.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.python.community.aliasProvider" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.python.coverage" />

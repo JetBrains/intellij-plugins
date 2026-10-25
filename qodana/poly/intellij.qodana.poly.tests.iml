@@ -22,6 +22,8 @@
     <orderEntry type="module" module-name="intellij.ide.starter.extended.allure" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.testsFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.ide.starter.extended" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.idea.community.customization" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.qodana.poly" />
