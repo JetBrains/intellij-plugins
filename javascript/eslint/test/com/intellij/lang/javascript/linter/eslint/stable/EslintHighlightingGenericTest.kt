@@ -4,6 +4,7 @@ package com.intellij.lang.javascript.linter.eslint.stable
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.inspections.JSInspection
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.eslint.EslintBundle
@@ -13,6 +14,7 @@ import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
 import com.intellij.lang.javascript.linter.eslint.EslintUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.TrustedProjectsTestUtil
@@ -166,10 +168,42 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
 
   // A rule that ends the service process, as a crash of the runtime does (WEB-78300): the request fails at once with
   // the exit code instead of a wait for the timeout, and the file-level error is set before the service restarts.
+  // The last stderr lines, where a runtime prints its crash report, are part of the error without color codes.
   fun testServiceProcessExitReported() {
     val message = EslintBundle.message("eslint.service.process.exited", 3, "").trimEnd()
     myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: $message", true, false)
     doHighlightingTestWithInstallation("test.js")
+    val text = getAnnotationText()!!
+    Assert.assertTrue(text, text.contains("panic: the runtime failed"))
+    Assert.assertFalse(text, text.contains("\u001B"))
+  }
+
+  // A process that exits before it is ready is a start failure, not an unexpected exit: the start error stays.
+  fun testServiceStartFailureKeepsItsError() {
+    Registry.get("eslint.service.node.arguments").setValue("--not-an-option", testRootDisposable)
+    val message = JavaScriptBundle.message("javascript.language.service.cannot.start")
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: $message", true, false)
+    doHighlightingTestWithInstallation("test.js")
+  }
+
+  // A rule that logs a warning without a stack, as eslint-plugin-react does for a missing React version: no error mark,
+  // and the problems that the other rules report stay.
+  fun testStderrWarningNotReported() = doHighlightingTestWithInstallation("test.js")
+
+  // A rule that prints a deprecation the way Node.js does under --trace-deprecation, with a stack: a process warning of
+  // the runtime is not a failure of a rule, so no error mark.
+  fun testStderrRuntimeWarningNotReported() = doHighlightingTestWithInstallation("test.js")
+
+  // A rule that logs an exception and then 70000 characters: the capture keeps the first 64 KiB, and the error ends
+  // with the note about the cap.
+  fun testStderrOutputTruncated() {
+    val note = EslintBundle.message("eslint.service.stderr.truncated")
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation(note, false, true)
+    doHighlightingTestWithInstallation("test.js")
+    val text = getAnnotationText()!!
+    val header = EslintBundle.message("eslint.inspections.error.logged.error", "")
+    Assert.assertTrue(text.take(200), text.startsWith("ESLint: $header"))
+    Assert.assertTrue(text.length.toString(), text.length < 70_000)
   }
 
   // A file matched by flat-config `ignores` is skipped (isPathIgnored), so no problems are reported.

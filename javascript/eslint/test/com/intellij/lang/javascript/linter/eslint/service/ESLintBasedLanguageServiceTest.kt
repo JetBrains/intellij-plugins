@@ -68,6 +68,17 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertNull(service.processIfCreated)
   }
 
+  fun testFixFileSuspendingStopsTheServiceAfterRepeatedUnexpectedExits() = timeoutRunBlocking {
+    val service = createService()
+    repeat(ESLintBasedLanguageService.MAX_UNEXPECTED_EXITS) { service.registerUnexpectedExitForTest() }
+
+    val response = service.fixFileSuspending(createRequestData(createLocalFile(), "const value = 1", createConfigFile()), null)
+
+    val expected = EslintBundle.message("eslint.service.process.exit.limit", ESLintBasedLanguageService.MAX_UNEXPECTED_EXITS)
+    assertEquals(expected, response!!.globalError)
+    assertNull(service.processIfCreated)
+  }
+
   fun testFixFileSuspendingExecutesCommandAndProcessesResponse() = timeoutRunBlocking {
     val service = createService(createQueue(fixFileResponse()))
     val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())

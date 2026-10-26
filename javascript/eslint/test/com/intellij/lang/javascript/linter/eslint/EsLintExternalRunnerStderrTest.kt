@@ -37,6 +37,14 @@ class EsLintExternalRunnerStderrTest {
   }
 
   @Test
+  fun testWindowsPathStackFrame() {
+    assertTrue(EsLintExternalRunner.containsStackTrace(
+      "Error: boom\n" +
+      "    at Program (C:\\Users\\dev\\project\\eslint.config.mjs:7:23)\n" +
+      "    at C:\\Users\\dev\\project\\node_modules\\eslint\\lib\\linter\\linter.js:719:12"))
+  }
+
+  @Test
   fun testPlainWarningHasNoStackFrame() {
     assertFalse(EsLintExternalRunner.containsStackTrace(
       "Warning: React version not specified in eslint-plugin-react settings. " +
