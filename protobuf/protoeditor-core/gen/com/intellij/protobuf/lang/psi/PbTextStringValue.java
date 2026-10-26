@@ -4,8 +4,9 @@ package com.intellij.protobuf.lang.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
 
-public interface PbTextStringValue extends PbTextLiteral, PbTextElement, ProtoStringValue {
+public interface PbTextStringValue extends PbTextLiteral, PbTextElement, ProtoStringValue, PsiLanguageInjectionHost {
 
   @NotNull
   List<PbTextStringPart> getStringParts();

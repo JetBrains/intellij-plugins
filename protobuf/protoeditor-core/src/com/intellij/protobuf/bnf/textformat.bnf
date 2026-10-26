@@ -121,7 +121,9 @@ StringValue ::= StringPart+ {
     'com.intellij.protobuf.lang.psi.PbTextLiteral'
     'com.intellij.protobuf.lang.psi.PbTextElement'
     'com.intellij.protobuf.lang.psi.ProtoStringValue'
+    'com.intellij.psi.PsiLanguageInjectionHost'
   ]
+  mixin = 'com.intellij.protobuf.lang.psi.impl.PbTextStringValueMixin'
   methods = [
     stringParts = 'StringPart'
   ]
