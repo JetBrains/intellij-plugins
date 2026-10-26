@@ -1,6 +1,11 @@
 package com.intellij.lang.javascript.linter.eslint.service
 
+import com.google.gson.JsonObject
+import com.intellij.codeInspection.util.InspectionMessage
+import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessListener
+import com.intellij.execution.process.ProcessOutputType
 import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.execution.NodeTargetRun.Companion.shouldEnableRemoteDevelopmentUsingTargetsApi
@@ -33,6 +38,7 @@ import com.intellij.lang.javascript.service.protocol.LocalFilePath.Companion.get
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
@@ -40,6 +46,7 @@ import com.intellij.openapi.util.registry.Registry.Companion.stringValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.AnsiCsiUtil
 import com.intellij.util.PathUtil
 import com.intellij.webcore.util.JsonUtil
 import kotlinx.coroutines.async
@@ -47,11 +54,16 @@ import kotlinx.coroutines.future.asCompletableFuture
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.absolutePathString
 
 abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStoredState>>
   (project: Project, private val myNodePackage: NodePackage, private val myWorkingDirectory: VirtualFile) : JSLanguageServiceBase(
   project), EslintLanguageServiceClient {
+
+  /** The exits of the service process that the IDE did not request, in the life of this service instance. */
+  private val unexpectedExits = AtomicInteger()
+
   override fun getNodePackage(): NodePackage {
     return myNodePackage
   }
@@ -79,13 +91,15 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
   }
 
   private suspend fun highlightSuspending(command: GetErrorsCommand): EslintLanguageServiceClient.Response<List<EslintError>>? {
+    exitLimitError()?.let { return EslintLanguageServiceClient.Response.error(it, false) }
     val process = getProcess()
     if (process == null) {
       val error = JSLanguageServiceUtil.getLanguageServiceCreationError(this)
       return EslintLanguageServiceClient.Response.error(error, false)
     }
 
-    val answer = process.execute(command)?.answer ?: return null
+    val answer = process.execute(command)?.answer
+                 ?: return processExitError(process)?.let { EslintLanguageServiceClient.Response.error(it, false) }
     val languageServiceError: @NlsSafe String? = JsonUtil.getChildAsString(answer.element, "error")
     if (languageServiceError != null) {
       val isNoConfigFile = JsonUtil.getChildAsBoolean(answer.element, "isNoConfigFile", false)
@@ -143,13 +157,42 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
   }
 
   private suspend fun fixFileSuspending(command: FixErrorsCommand): EslintLanguageServiceClient.Response<String?>? {
+    exitLimitError()?.let { return EslintLanguageServiceClient.Response.error(it, false) }
     val process = getProcess()
     if (process == null) {
       return EslintLanguageServiceClient.Response.error<String?>(JSLanguageServiceUtil.getLanguageServiceCreationError(this), false)
     }
 
-    val answer = process.execute(command)?.answer ?: return null
+    val answer = process.execute(command)?.answer
+                 ?: return processExitError(process)?.let { EslintLanguageServiceClient.Response.error(it, false) }
     return processFixFileResponse(answer)
+  }
+
+  /** Counts an exit of the service process that the IDE did not request. */
+  protected fun registerUnexpectedExit() {
+    unexpectedExits.incrementAndGet()
+  }
+
+  /**
+   * After [MAX_UNEXPECTED_EXITS], the service stays stopped until the user restarts it. Without the limit, each exit
+   * restarts the highlighting, which starts the process again, and a runtime that crashes on a file loops forever.
+   */
+  private fun exitLimitError(): @InspectionMessage String? {
+    val exits = unexpectedExits.get()
+    if (exits < MAX_UNEXPECTED_EXITS) return null
+    return EslintBundle.message("eslint.service.process.exit.limit", exits)
+  }
+
+  /**
+   * The error for a request without an answer, because the process exited while it handled the request.
+   * A start failure is not such an exit: [com.intellij.lang.javascript.linter.eslint.EsLintExternalRunner] reports it
+   * from [getServiceCreationError].
+   */
+  private fun processExitError(process: JSLanguageServiceQueue): @InspectionMessage String? {
+    if (process.startErrorMessage != null) return null
+    val protocol = (process as? JSLanguageServiceQueueImpl)?.protocol as? ESLintBasedLanguageService<*>.Protocol ?: return null
+    val exit = protocol.unexpectedExit ?: return null
+    return EslintBundle.message("eslint.service.process.exited", exit.exitCode, exit.stderrTail)
   }
 
   private fun createFixErrorsCommand(requestData: EslintRequestData, extraOptions: String?): FixErrorsCommand? {
@@ -274,6 +317,71 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
   inner class Protocol(serviceName: String, project: Project)
     : JSLanguageServiceNodeStdProtocolBase(serviceName, project) {
 
+    /** The last lines that the process wrote to stderr. A crash report of the runtime, such as a Bun panic, ends here. */
+    private val stderrTail = ArrayDeque<String>()
+
+    @Volatile
+    private var ready = false
+
+    @Volatile
+    private var disposed = false
+
+    /** Set when the process exits after it got ready and before the IDE disposes the protocol. */
+    @Volatile
+    internal var unexpectedExit: ServiceProcessExit? = null
+      private set
+
+    override fun connect(): ProcessHandler {
+      val processHandler = super.connect()
+      processHandler.addProcessListener(object : ProcessListener {
+        override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+          if (ProcessOutputType.isStderr(outputType)) {
+            rememberStderr(event.text)
+          }
+        }
+
+        override fun processTerminated(event: ProcessEvent) {
+          if (!ready || disposed) return
+          unexpectedExit = ServiceProcessExit(event.exitCode, stderrTailText())
+          registerUnexpectedExit()
+          failPendingCommands()
+        }
+      })
+      return processHandler
+    }
+
+    override suspend fun awaitReadyNotification(processHandler: ProcessHandler): JsonObject? {
+      val readyNotification = super.awaitReadyNotification(processHandler)
+      if (readyNotification != null) {
+        ready = true
+      }
+      return readyNotification
+    }
+
+    override fun dispose() {
+      disposed = true
+      super.dispose()
+    }
+
+    /** Answers each pending command with null, so a request does not wait for its timeout or for the alive checker. */
+    private fun failPendingCommands() {
+      for (id in myCallbacks.keys.toList()) {
+        myCallbacks.remove(id)?.consume(null)
+      }
+    }
+
+    @Synchronized
+    private fun rememberStderr(line: String) {
+      // The IDE starts Node.js with FORCE_COLOR, so a crash report comes with color codes.
+      stderrTail.addLast(AnsiCsiUtil.stripAnsi(line))
+      if (stderrTail.size > STDERR_TAIL_LINES) {
+        stderrTail.removeFirst()
+      }
+    }
+
+    @Synchronized
+    private fun stderrTailText(): @NlsSafe String = stderrTail.joinToString("\n").trim()
+
     override val workingDirectory: String?
       get() = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(this@ESLintBasedLanguageService.myWorkingDirectory)
 
@@ -345,6 +453,11 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
   }
 
   companion object {
+    /** After this many exits that the IDE did not request, the service stays stopped until the user restarts it. */
+    const val MAX_UNEXPECTED_EXITS: Int = 5
+
+    /** The number of stderr lines of the process that an exit report keeps. */
+    private const val STDERR_TAIL_LINES = 20
 
     private fun processFixFileResponse(answer: JSLanguageServiceAnswer): EslintLanguageServiceClient.Response<String?> {
       val responseObject = answer.element
@@ -369,3 +482,6 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
     }
   }
 }
+
+/** An exit of the service process that the IDE did not request, with the last lines that the process wrote to stderr. */
+internal class ServiceProcessExit(val exitCode: Int, val stderrTail: @NlsSafe String)

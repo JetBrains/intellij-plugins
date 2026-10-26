@@ -164,6 +164,14 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
     doHighlightingTestWithInstallation("test.js")
   }
 
+  // A rule that ends the service process, as a crash of the runtime does (WEB-78300): the request fails at once with
+  // the exit code instead of a wait for the timeout, and the file-level error is set before the service restarts.
+  fun testServiceProcessExitReported() {
+    val message = EslintBundle.message("eslint.service.process.exited", 3, "").trimEnd()
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: $message", true, false)
+    doHighlightingTestWithInstallation("test.js")
+  }
+
   // A file matched by flat-config `ignores` is skipped (isPathIgnored), so no problems are reported.
   fun testFileIgnored() {
     doHighlightingTestWithInstallation("testIgnored.js")

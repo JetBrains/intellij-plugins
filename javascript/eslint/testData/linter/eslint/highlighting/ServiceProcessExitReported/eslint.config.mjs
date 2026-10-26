@@ -1,0 +1,20 @@
+// A rule that ends the service process, as a crash of the runtime does (WEB-78300).
+const exitingRule = {
+  create() {
+    return {
+      Program() {
+        process.exit(3);
+      },
+    };
+  },
+};
+
+export default [
+  { ignores: ["**/eslint.config.mjs"] },
+  {
+    plugins: { local: { rules: { exiting: exitingRule } } },
+    rules: {
+      "local/exiting": "error",
+    },
+  },
+];

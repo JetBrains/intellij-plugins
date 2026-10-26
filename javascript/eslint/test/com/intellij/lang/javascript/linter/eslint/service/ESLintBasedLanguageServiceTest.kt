@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.eslint.service
 
 import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintConfiguration
 import com.intellij.lang.javascript.linter.eslint.EslintRequestData
 import com.intellij.lang.javascript.linter.eslint.EslintState
@@ -54,6 +55,17 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertNull(response!!.globalError)
     assertEquals("Could not read file [object Object]", response.stderr)
     assertEquals(1, response.value.size)
+  }
+
+  fun testHighlightSuspendingStopsTheServiceAfterRepeatedUnexpectedExits() = timeoutRunBlocking {
+    val service = createService()
+    repeat(ESLintBasedLanguageService.MAX_UNEXPECTED_EXITS) { service.registerUnexpectedExitForTest() }
+
+    val response = service.highlightSuspending(createRequestData(createLocalFile(), "const value = 1", createConfigFile()), null)
+
+    val expected = EslintBundle.message("eslint.service.process.exit.limit", ESLintBasedLanguageService.MAX_UNEXPECTED_EXITS)
+    assertEquals(expected, response!!.globalError)
+    assertNull(service.processIfCreated)
   }
 
   fun testFixFileSuspendingExecutesCommandAndProcessesResponse() = timeoutRunBlocking {
@@ -180,6 +192,8 @@ private class TestESLintBasedLanguageService(
   override fun getConfigurationClass(): Class<EslintConfiguration> = EslintConfiguration::class.java
 
   override suspend fun createLanguageServiceQueue(): JSLanguageServiceQueue? = queue
+
+  fun registerUnexpectedExitForTest(): Unit = registerUnexpectedExit()
 }
 
 private class TestQueue(private val answer: JSLanguageServiceAnswer) : JSLanguageServiceQueue {
