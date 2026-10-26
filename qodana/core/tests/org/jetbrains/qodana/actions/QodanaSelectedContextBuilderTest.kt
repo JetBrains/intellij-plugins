@@ -1,9 +1,11 @@
 package org.jetbrains.qodana.actions
 
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.qodana.sarif.model.Result.BaselineState
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.problem.SarifProblem
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.runDispatchingOnUi
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.ui.QodanaTreeTestUtil
@@ -16,23 +18,31 @@ import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemNode
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeRoot
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeSeverityNode
 import org.jetbrains.qodana.ui.problemsView.viewModel.impl.QodanaTreeBuildConfiguration
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
 
 private const val PROJECT_PATH = "QodanaSelectedContextBuilderTest/project"
 
-class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
-  private val testDir by lazy { Path(myFixture.testDataPath, "QodanaSelectedContextBuilderTest") }
-  private val reportPath by lazy { testDir.resolve("report.sarif.json") }
-  private val treeTestUtil by lazy { QodanaTreeTestUtil(project, testDir.resolve("project")) }
-
-  override fun runInDispatchThread() = false
-
-  override fun setUp() {
-    super.setUp()
-    myFixture.copyDirectoryToProject(PROJECT_PATH, ".")
+@TestApplication
+class QodanaSelectedContextBuilderTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
   }
 
-  fun `test root selected returns all problems`() = runDispatchingOnUi {
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  private val testDir by lazy { Path(qodanaFixture.fixture.testDataPath, "QodanaSelectedContextBuilderTest") }
+  private val reportPath by lazy { testDir.resolve("report.sarif.json") }
+  private val treeTestUtil by lazy { QodanaTreeTestUtil(qodanaFixture.project, testDir.resolve("project")) }
+
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.fixture.copyDirectoryToProject(PROJECT_PATH, ".")
+  }
+
+  @Test
+  fun `test root selected returns all problems`(): Unit = runDispatchingOnUi {
     val root = loadTree()
     val allProblems = root.collectAllProblems()
 
@@ -42,7 +52,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(result).containsExactlyInAnyOrderElementsOf(allProblems)
   }
 
-  fun `test single problem node selected`() = runDispatchingOnUi {
+  @Test
+  fun `test single problem node selected`(): Unit = runDispatchingOnUi {
     val root = loadTree()
     val allProblems = root.collectAllProblems()
 
@@ -54,7 +65,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(result).containsExactly(expectedProblem)
   }
 
-  fun `test file node selected returns file problems`() = runDispatchingOnUi {
+  @Test
+  fun `test file node selected returns file problems`(): Unit = runDispatchingOnUi {
     // Use flat tree (no severity/inspection grouping) so the file selector is not diluted by ancestors
     val root = loadTree(groupBySeverity = false, groupByInspection = false)
     val allProblems = root.collectAllProblems()
@@ -75,7 +87,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     }
   }
 
-  fun `test inspection node selected returns inspection problems`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection node selected returns inspection problems`(): Unit = runDispatchingOnUi {
     // Use tree without severity grouping so inspection selector is not diluted by severity ancestor
     val root = loadTree(groupBySeverity = false)
     val allProblems = root.collectAllProblems()
@@ -95,7 +108,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(result).doesNotContainAnyElementsOf(inspection2Problems)
   }
 
-  fun `test severity node selected returns all problems of that severity`() = runDispatchingOnUi {
+  @Test
+  fun `test severity node selected returns all problems of that severity`(): Unit = runDispatchingOnUi {
     val root = loadTree()
     val allProblems = root.collectAllProblems()
 
@@ -110,7 +124,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     }
   }
 
-  fun `test directory node selected returns directory problems`() = runDispatchingOnUi {
+  @Test
+  fun `test directory node selected returns directory problems`(): Unit = runDispatchingOnUi {
     // Use flat tree (no severity/inspection grouping) so the directory selector is not diluted by ancestors
     val root = loadTree(groupBySeverity = false, groupByInspection = false)
     val allProblems = root.collectAllProblems()
@@ -128,7 +143,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     }
   }
 
-  fun `test nested selection dedup keeps only parent`() = runDispatchingOnUi {
+  @Test
+  fun `test nested selection dedup keeps only parent`(): Unit = runDispatchingOnUi {
     val root = loadTree()
     val allProblems = root.collectAllProblems()
 
@@ -156,7 +172,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     }
   }
 
-  fun `test multiple disjoint category nodes selected returns union`() = runDispatchingOnUi {
+  @Test
+  fun `test multiple disjoint category nodes selected returns union`(): Unit = runDispatchingOnUi {
     // Use tree without severity grouping so individual inspection selectors are distinct
     val root = loadTree(groupBySeverity = false)
     val allProblems = root.collectAllProblems()
@@ -174,7 +191,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(resultCombined).containsExactlyInAnyOrderElementsOf((result1 + result2).distinct())
   }
 
-  fun `test mixed category and problem nodes`() = runDispatchingOnUi {
+  @Test
+  fun `test mixed category and problem nodes`(): Unit = runDispatchingOnUi {
     val root = loadTree()
     val allProblems = root.collectAllProblems()
 
@@ -198,7 +216,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(result).containsAll(inspection2Problems)
   }
 
-  fun `test inspection category node selected returns category problems`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection category node selected returns category problems`(): Unit = runDispatchingOnUi {
     // Use tree without severity grouping so category selector is not diluted by severity ancestor
     val root = loadTree(groupBySeverity = false)
     val allProblems = root.collectAllProblems()
@@ -219,6 +238,7 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(result).doesNotContainAnyElementsOf(categoryBProblems)
   }
 
+  @Test
   fun `test empty chains returns empty`() {
     val allProblems = setOf(createTestSarifProblem("test.java", "TestInspection"))
 
@@ -227,7 +247,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(result).isEmpty()
   }
 
-  fun `test selector from file chain matches only file problems`() = runDispatchingOnUi {
+  @Test
+  fun `test selector from file chain matches only file problems`(): Unit = runDispatchingOnUi {
     // Use flat tree so the file chain has no severity/inspection ancestors
     val root = loadTree(groupBySeverity = false, groupByInspection = false)
     val allProblems = root.collectAllProblems()
@@ -243,7 +264,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(matched).allSatisfy { assertThat(it.relativePathToFile).isEqualTo("Main.java") }
   }
 
-  fun `test selector from inspection chain matches only inspection problems`() = runDispatchingOnUi {
+  @Test
+  fun `test selector from inspection chain matches only inspection problems`(): Unit = runDispatchingOnUi {
     // Use tree without severity grouping so the inspection chain only includes inspection ancestor
     val root = loadTree(groupBySeverity = false)
     val allProblems = root.collectAllProblems()
@@ -259,7 +281,8 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(matched).allSatisfy { assertThat(it.inspectionId).isEqualTo("INSPECTION_ID2") }
   }
 
-  fun `test selector from category chain matches only category problems`() = runDispatchingOnUi {
+  @Test
+  fun `test selector from category chain matches only category problems`(): Unit = runDispatchingOnUi {
     // Use tree without severity grouping so category chain only has category ancestor
     val root = loadTree(groupBySeverity = false)
     val allProblems = root.collectAllProblems()
@@ -276,6 +299,7 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(matched).allSatisfy { assertThat(it.inspectionId).isEqualTo("INSPECTION_ID2") }
   }
 
+  @Test
   fun `test toContextProblem maps all fields correctly`() {
     val problem = createTestSarifProblem("src/Main.java", "NullCheck")
 
@@ -290,6 +314,7 @@ class QodanaSelectedContextBuilderTest : QodanaPluginLightTestBase() {
     assertThat(contextProblem.baselineState).isEqualTo(problem.baselineState)
   }
 
+  @Test
   fun `test toContextProblem empty traces become null`() {
     val problem = createTestSarifProblem("test.java", "TestInspection", traces = emptyList())
 

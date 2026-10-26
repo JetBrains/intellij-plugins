@@ -1,13 +1,24 @@
 package org.jetbrains.qodana.report
 
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.qodana.sarif.SarifUtil
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.problem.revisionId
+import org.jetbrains.qodana.qodanaPluginLightFixture
+import org.junit.jupiter.api.Test
 
-class ReportValidatorTest : QodanaPluginLightTestBase() {
+@TestApplication
+class ReportValidatorTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  @Test
   fun `test valid report`() {
-    val report = SarifUtil.readReport(sarifTestReports.valid1)
+    val report = SarifUtil.readReport(qodanaFixture.sarifTestReports.valid1)
 
     val validatorResult = ReportValidator.validateReport(report)
 
@@ -20,32 +31,36 @@ class ReportValidatorTest : QodanaPluginLightTestBase() {
     assertThat(validatedSarif.tools).isNotNull
   }
 
+  @Test
   fun `test report without runs`() {
-    val report = SarifUtil.readReport(sarifTestReports.noRuns)
+    val report = SarifUtil.readReport(qodanaFixture.sarifTestReports.noRuns)
 
     val validatorResult = ReportValidator.validateReport(report)
 
     assertThat((validatorResult as ReportResult.Fail).error).isEqualTo(ReportValidator.NoRuns)
   }
 
+  @Test
   fun `test report empty runs`() {
-    val report = SarifUtil.readReport(sarifTestReports.emptyRuns)
+    val report = SarifUtil.readReport(qodanaFixture.sarifTestReports.emptyRuns)
 
     val validatorResult = ReportValidator.validateReport(report)
 
     assertThat((validatorResult as ReportResult.Fail).error).isEqualTo(ReportValidator.EmptyRuns)
   }
 
+  @Test
   fun `test report no results`() {
-    val report = SarifUtil.readReport(sarifTestReports.noResults)
+    val report = SarifUtil.readReport(qodanaFixture.sarifTestReports.noResults)
 
     val validatorResult = ReportValidator.validateReport(report)
 
     assertThat((validatorResult as ReportResult.Fail).error).isEqualTo(ReportValidator.NoResults)
   }
 
+  @Test
   fun `test report no tool`() {
-    val report = SarifUtil.readReport(sarifTestReports.noTool)
+    val report = SarifUtil.readReport(qodanaFixture.sarifTestReports.noTool)
 
     val validatorResult = ReportValidator.validateReport(report)
 

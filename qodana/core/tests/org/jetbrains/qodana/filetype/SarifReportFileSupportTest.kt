@@ -1,10 +1,13 @@
 package org.jetbrains.qodana.filetype
 
+import com.intellij.testFramework.junit5.TestApplication
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.filetype.QodanaSarifFileMatcher.Companion.isSarifReportFilename
+import org.junit.jupiter.api.Test
 
-class SarifReportFileSupportTest : QodanaPluginLightTestBase() {
+@TestApplication
+class SarifReportFileSupportTest {
+  @Test
   fun `test sarif filename detection supports sarif patterns`() {
     assertThat(isSarifReportFilename("report.sarif")).isTrue()
     assertThat(isSarifReportFilename("report.sarif.json")).isTrue()
@@ -12,6 +15,7 @@ class SarifReportFileSupportTest : QodanaPluginLightTestBase() {
     assertThat(isSarifReportFilename("REPORT.SARIF.JSON")).isTrue()
   }
 
+  @Test
   fun `test sarif filename detection rejects non sarif json`() {
     assertThat(isSarifReportFilename("report.json")).isFalse()
     assertThat(isSarifReportFilename("sarif-report.json")).isFalse()

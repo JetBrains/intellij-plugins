@@ -3,11 +3,12 @@ package org.jetbrains.qodana.cloud
 import com.intellij.collaboration.auth.services.OAuthRequest
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.util.application
 import kotlinx.coroutines.delay
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.allowExceptions
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
@@ -24,31 +25,42 @@ import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.cloudclient.v1.QDCloudSchema
 import org.jetbrains.qodana.dispatchAllTasksOnUi
 import org.jetbrains.qodana.notImplemented
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.runDispatchingOnUi
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
 import kotlin.time.Duration.Companion.seconds
 
-class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
+@TestApplication
+class QodanaCloudStateServiceTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private lateinit var oAuthServiceMock: QodanaCloudOAuthServiceMock
 
   private val cloudStateService get() = QodanaCloudStateService.getInstance()
   private val userStateValue: UserState get() = cloudStateService.userState.value
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     runDispatchingOnUi {
       val registryValue = Registry.get(QodanaRegistry.CLOUD_INTEGRATION_ENABLE_KEY)
       registryValue.setValue(true)
-      Disposer.register(testRootDisposable) {
+      Disposer.register(qodanaFixture.testRootDisposable) {
         registryValue.resetToDefault()
       }
 
       oAuthServiceMock = QodanaCloudOAuthServiceMock()
-      reinstansiateService<QodanaCloudOAuthService>(application, oAuthServiceMock)
-      reinstansiateService(application, QodanaCloudStateService(scope))
+      qodanaFixture.reinstansiateService<QodanaCloudOAuthService>(application, oAuthServiceMock)
+      qodanaFixture.reinstansiateService(application, QodanaCloudStateService(qodanaFixture.scope))
       cloudStateService.authorizationExpirationTimeout = 2.seconds
       mockQDCloudHttpClient.apply {
         respond("users/me") {
@@ -80,8 +92,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     }
   }
 
-  override fun runInDispatchThread(): Boolean = false
-
+  @Test
   fun `test 1 auth attempt success initially not accepted license then accept`(): Unit = runDispatchingOnUi {
     val userId = "id"
     mockLicenses(isAccepted = false)
@@ -103,6 +114,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
+  @Test
   fun `test 1 auth attempt success initially not accepted license then decline by handler`(): Unit = runDispatchingOnUi {
     val userId = "id"
     mockLicenses(isAccepted = false)
@@ -124,6 +136,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
+  @Test
   fun `test 1 auth attempt success initially not accepted license then accept by handler`(): Unit = runDispatchingOnUi {
     val userId = "id"
     mockLicenses(isAccepted = false)
@@ -146,6 +159,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
+  @Test
   fun `test 1 auth attempt success initially not accepted license then accept after manual check`(): Unit = runDispatchingOnUi {
     val userId = "id"
     mockLicenses(isAccepted = false)
@@ -168,6 +182,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
+  @Test
   fun `test 1 auth attempt success initially not accepted license then decline`(): Unit = runDispatchingOnUi {
     val userId = "id"
     mockLicenses(isAccepted = false)
@@ -187,6 +202,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
+  @Test
   fun `test 1 auth attempt success initially not accepted license then accept for different user`(): Unit = runDispatchingOnUi {
     val userId = "id"
     mockLicenses(isAccepted = false)
@@ -207,6 +223,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertTrue(userStateValue is UserState.Authorizing)
   }
 
+  @Test
   fun `test 1 auth attempt success initially accepted`(): Unit = runDispatchingOnUi {
     mockLicenses(isAccepted = true)
 
@@ -225,7 +242,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
-  fun `test 2 auth attempts success 1 call to oauth service`() = runDispatchingOnUi {
+  @Test
+  fun `test 2 auth attempts success 1 call to oauth service`(): Unit = runDispatchingOnUi {
     mockLicenses(isAccepted = true)
 
     val credentialsFromOAuth = oAuthServiceMock.mockAuthorizeFuture()
@@ -244,7 +262,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
-  fun `test 1 auth attempt fail`() = runDispatchingOnUi{
+  @Test
+  fun `test 1 auth attempt fail`(): Unit = runDispatchingOnUi{
     val credentialsFromOAuth = oAuthServiceMock.mockAuthorizeFuture()
     val notAuthorized = userStateValue as UserState.NotAuthorized
 
@@ -253,7 +272,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
 
     assertTrue(userStateValue is UserState.Authorizing)
 
-    val handledExceptions = allowExceptions {
+    val handledExceptions = qodanaFixture.allowExceptions {
       credentialsFromOAuth.completeExceptionally(Exception("Expected exception for fail of auth in tests"))
       dispatchAllTasksOnUi()
     }
@@ -265,7 +284,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
-  fun `test 2 auth attempts fail 1 call to oauth service`() = runDispatchingOnUi{
+  @Test
+  fun `test 2 auth attempts fail 1 call to oauth service`(): Unit = runDispatchingOnUi{
     val credentialsFromOAuth = oAuthServiceMock.mockAuthorizeFuture()
     val notAuthorized = userStateValue as UserState.NotAuthorized
 
@@ -276,7 +296,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
 
     assertTrue(userStateValue is UserState.Authorizing)
 
-    val handledExceptions = allowExceptions {
+    val handledExceptions = qodanaFixture.allowExceptions {
       credentialsFromOAuth.completeExceptionally(Exception("Expected exception for fail of auth in tests"))
       dispatchAllTasksOnUi()
     }
@@ -289,7 +309,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
-  fun `test first auth attempt fail second success`() = runDispatchingOnUi{
+  @Test
+  fun `test first auth attempt fail second success`(): Unit = runDispatchingOnUi{
     mockLicenses(isAccepted = true)
 
     val credentialsFromOAuth = oAuthServiceMock.mockAuthorizeFuture()
@@ -300,7 +321,7 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
 
     assertTrue(userStateValue is UserState.Authorizing)
 
-    val handledExceptions = allowExceptions {
+    val handledExceptions = qodanaFixture.allowExceptions {
       credentialsFromOAuth.completeExceptionally(Exception("Expected exception for fail of auth in tests"))
       dispatchAllTasksOnUi()
     }
@@ -325,7 +346,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isEqualTo(2)
   }
 
-  fun `test 1 auth attempt cancelled`() = runDispatchingOnUi{
+  @Test
+  fun `test 1 auth attempt cancelled`(): Unit = runDispatchingOnUi{
     oAuthServiceMock.mockAuthorizeFuture()
     val notAuthorized = userStateValue as UserState.NotAuthorized
 
@@ -340,7 +362,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(oAuthServiceMock.timesAuthorizeWasCalled).isOne
   }
 
-  fun `test acquire access token success`() = runDispatchingOnUi {
+  @Test
+  fun `test acquire access token success`(): Unit = runDispatchingOnUi {
     val refreshMock = QodanaCloudRefreshApiMock {
       CredentialsData(
         "access",
@@ -358,7 +381,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(refreshMock.timesRefreshWasCalled).isZero
   }
 
-  fun `test authorize without access token do success refresh`() = runDispatchingOnUi {
+  @Test
+  fun `test authorize without access token do success refresh`(): Unit = runDispatchingOnUi {
     val accessTokenFromRefresh = "REFRESHED"
     val refreshMock = QodanaCloudRefreshApiMock {
       CredentialsData(
@@ -378,7 +402,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(refreshMock.timesRefreshWasCalled).isOne
   }
 
-  fun `test first refresh token is expired next is not stay authorized`() = runDispatchingOnUi {
+  @Test
+  fun `test first refresh token is expired next is not stay authorized`(): Unit = runDispatchingOnUi {
     var accessTokenCount = -1
     val refreshMock = QodanaCloudRefreshApiMock {
       accessTokenCount++
@@ -400,7 +425,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(refreshMock.timesRefreshWasCalled).isEqualTo(2)
   }
 
-  fun `test refresh user info on authorization`() = runDispatchingOnUi{
+  @Test
+  fun `test refresh user info on authorization`(): Unit = runDispatchingOnUi{
     val userInfo = QDCloudSchema.UserInfo("id", "user_in_tests", null)
     mockUserInfo("id", "user_in_tests")
     val authorized = doInitialTransitionToAuthorized(QodanaCloudCredentialsMock)
@@ -409,7 +435,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
       .isEqualTo(RefreshableProperty.PropertyState(QDCloudResponse.Success(userInfo), isRefreshing = false))
   }
 
-  fun `test fail refresh token because of response error transition to unauthorized state`() = runDispatchingOnUi {
+  @Test
+  fun `test fail refresh token because of response error transition to unauthorized state`(): Unit = runDispatchingOnUi {
     val refreshMock = QodanaCloudRefreshApiMock {
       throw QDCloudException.Error("failed refresh", 404)
     }
@@ -429,7 +456,8 @@ class QodanaCloudStateServiceTest : QodanaPluginLightTestBase() {
     assertThat(refreshMock.timesRefreshWasCalled).isOne()
   }
 
-  fun `test log out from authorized`() = runDispatchingOnUi {
+  @Test
+  fun `test log out from authorized`(): Unit = runDispatchingOnUi {
     val authorized = doInitialTransitionToAuthorized(QodanaCloudCredentialsMock)
     authorized.logOut()
 

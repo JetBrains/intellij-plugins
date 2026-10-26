@@ -1,6 +1,8 @@
 package org.jetbrains.qodana.highlight
 
 import com.intellij.openapi.project.Project
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.CompletableDeferred
@@ -10,11 +12,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.allowExceptions
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.dispatchAllTasksOnUi
 import org.jetbrains.qodana.problem.SarifProblem
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.report.AggregatedReportMetadata
 import org.jetbrains.qodana.report.BannerContentProvider
@@ -25,26 +27,35 @@ import org.jetbrains.qodana.report.NotificationCallback
 import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.runDispatchingOnUi
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 
-class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
-  private val report1 by lazy { reportTestControllerFromSarifFile(sarifTestReports.valid1) }
-  private val report2 by lazy { reportTestControllerFromSarifFile(sarifTestReports.valid2) }
+@TestApplication
+class QodanaHighlightedReportServiceTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  private val report1 by lazy { reportTestControllerFromSarifFile(qodanaFixture.sarifTestReports.valid1) }
+  private val report2 by lazy { reportTestControllerFromSarifFile(qodanaFixture.sarifTestReports.valid2) }
 
   private val reportFailedLoading by lazy {
     ReportTestController(ReportDescriptorMock("failed"), sarifReportToLoad = null, sarifProblems = emptySet())
   }
 
-  private val highlightedReportService get() = QodanaHighlightedReportService.getInstance(project)
+  private val highlightedReportService get() = QodanaHighlightedReportService.getInstance(qodanaFixture.project)
 
-  override fun setUp() {
-    super.setUp()
-    reinstansiateService(project, QodanaHighlightedReportService(project, scope))
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaHighlightedReportService(qodanaFixture.project, qodanaFixture.scope))
   }
 
-  override fun runInDispatchThread(): Boolean = false
-
-  fun `test highlight report`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report`(): Unit = runDispatchingOnUi {
     assertNoReportHighlighted()
 
     report1.submitHighlightLoading()
@@ -59,7 +70,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test highlight report start loading unhighlight while loading`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report start loading unhighlight while loading`(): Unit = runDispatchingOnUi {
     report1.submitHighlightLoading()
 
     report1.assertIsLoading()
@@ -70,7 +82,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test highlight and unhighlight report`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight and unhighlight report`(): Unit = runDispatchingOnUi {
     report1.completeAndSubmitHighlight()
 
     report1.assertIsHighlighted()
@@ -81,7 +94,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test highlight not available report`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight not available report`(): Unit = runDispatchingOnUi {
     report1.isAvailable = false
     report1.completeAndSubmitHighlight()
 
@@ -89,7 +103,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 1)
   }
 
-  fun `test highlight then make not available`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight then make not available`(): Unit = runDispatchingOnUi {
     report1.completeAndSubmitHighlight()
 
     report1.assertIsHighlighted()
@@ -100,7 +115,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 1)
   }
 
-  fun `test highlight report fail loading`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report fail loading`(): Unit = runDispatchingOnUi {
     reportFailedLoading.submitHighlightLoading()
 
     reportFailedLoading.assertIsLoading()
@@ -111,7 +127,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     reportFailedLoading.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test highlight report highlight it again`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report highlight it again`(): Unit = runDispatchingOnUi {
     report1.completeAndSubmitHighlight()
 
     report1.assertIsHighlighted()
@@ -122,7 +139,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertIsHighlighted()
   }
 
-  fun `test highlight report1 highlight report2`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report1 highlight report2`(): Unit = runDispatchingOnUi {
     report1.completeAndSubmitHighlight()
 
     report1.assertIsHighlighted()
@@ -138,7 +156,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test highlight report1 highlight report2 while loading report1`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report1 highlight report2 while loading report1`(): Unit = runDispatchingOnUi {
     report1.submitHighlightLoading()
 
     report1.assertIsLoading()
@@ -154,12 +173,13 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test try highlight report1 which throws exception on load then success highlight report2`() = runDispatchingOnUi {
+  @Test
+  fun `test try highlight report1 which throws exception on load then success highlight report2`(): Unit = runDispatchingOnUi {
     report1.submitHighlightLoading()
 
     report1.assertIsLoading()
 
-    val handledExceptions = allowExceptions {
+    val handledExceptions = qodanaFixture.allowExceptions {
       report1.submitCompleteLoadingExceptionally()
       assertNoReportHighlighted()
     }
@@ -176,7 +196,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertNotAvailableNotificationWasTriggered(times = 0)
   }
 
-  fun `test highlighted result`() = runDispatchingOnUi {
+  @Test
+  fun `test highlighted result`(): Unit = runDispatchingOnUi {
     val result = report1.submitHighlightLoading()
     report1.submitCompleteLoading()
 
@@ -186,10 +207,11 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(resultAwaited!!.highlightedReportData.sourceReportDescriptor == report1.reportDescriptor)
   }
 
-  fun `test highlighted result after error`() = runDispatchingOnUi {
+  @Test
+  fun `test highlighted result after error`(): Unit = runDispatchingOnUi {
     val result = report1.submitHighlightLoading()
 
-    val handledExceptions = allowExceptions {
+    val handledExceptions = qodanaFixture.allowExceptions {
       report1.submitCompleteLoadingExceptionally()
       assertNoReportHighlighted()
     }
@@ -200,7 +222,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(resultAwaited).isNull()
   }
 
-  fun `test highlighted result two reports`() = runDispatchingOnUi {
+  @Test
+  fun `test highlighted result two reports`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     report1.submitCompleteLoading()
     dispatchAllTasksOnUi()
@@ -218,7 +241,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(resultAwaited2?.highlightedReportData?.sourceReportDescriptor).isEqualTo(report2.reportDescriptor)
   }
 
-  fun `test highlighted result already highlighted`() = runDispatchingOnUi {
+  @Test
+  fun `test highlighted result already highlighted`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     report1.submitCompleteLoading()
     dispatchAllTasksOnUi()
@@ -235,7 +259,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(resultAwaited2?.highlightedReportData?.sourceReportDescriptor).isEqualTo(report1.reportDescriptor)
   }
 
-  fun `test highlighted result report2 right after report1`() = runDispatchingOnUi {
+  @Test
+  fun `test highlighted result report2 right after report1`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
 
     val result2 = report2.submitHighlightLoading()
@@ -250,7 +275,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(resultAwaited2?.highlightedReportData?.sourceReportDescriptor).isEqualTo(report2.reportDescriptor)
   }
 
-  fun `test highlighted result after unhighlight`() = runDispatchingOnUi {
+  @Test
+  fun `test highlighted result after unhighlight`(): Unit = runDispatchingOnUi {
     report1.submitHighlightLoading()
     report1.submitCompleteLoading()
 
@@ -258,7 +284,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(result.await()).isNull()
   }
 
-  fun `test highlight requests processed`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight requests processed`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     val result2 = report1.submitHighlightLoading()
     val result3 = report1.submitHighlightLoading()
@@ -269,7 +296,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(result3.await()).isNotNull
   }
 
-  fun `test highlight requests processed different reports`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight requests processed different reports`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     val result2 = report2.submitHighlightLoading()
     val result3 = report1.submitHighlightLoading()
@@ -280,7 +308,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(result3.await()).isNotNull
   }
 
-  fun `test highlight requests processed different reports second loaded`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight requests processed different reports second loaded`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     val result2 = report2.submitHighlightLoading()
     report2.submitCompleteLoading()
@@ -295,7 +324,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     report1.assertIsHighlighted()
   }
 
-  fun `test highlight requests processed several reports all cancelled`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight requests processed several reports all cancelled`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     val result2 = report2.submitHighlightLoading()
     val result3 = report1.submitHighlightLoading()
@@ -307,7 +337,8 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     assertThat(result4.await()).isNull()
   }
 
-  fun `test highlight requests processed several reports cancelled first`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight requests processed several reports cancelled first`(): Unit = runDispatchingOnUi {
     val result1 = report1.submitHighlightLoading()
     val result2 = report2.submitHighlightLoading()
     val result3 = submitUnhighlightReport()
@@ -324,7 +355,7 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
     val sarif = SarifUtil.readReport(path)
 
     // TODO – switch to manual construction of SarifProblems here
-    val problems = SarifProblem.fromReport(project, ValidatedSarif(sarif))
+    val problems = SarifProblem.fromReport(qodanaFixture.project, ValidatedSarif(sarif))
 
     val reportDescriptor = ReportDescriptorMock(path.fileName.toString())
     return ReportTestController(reportDescriptor, sarif, problems.toSet())
@@ -337,7 +368,7 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
   ) {
     fun submitHighlightLoading(): Deferred<HighlightedReportState.Selected?> {
       val result = CompletableDeferred<HighlightedReportState.Selected?>()
-      scope.launch(QodanaDispatchers.Default) {
+      qodanaFixture.scope.launch(QodanaDispatchers.Default) {
         result.complete(highlightedReportService.highlightReport(reportDescriptor))
       }
       return result
@@ -379,7 +410,7 @@ class QodanaHighlightedReportServiceTest : QodanaPluginLightTestBase() {
 
   private suspend fun submitUnhighlightReport(): Deferred<HighlightedReportState.Selected?> {
     val result = CompletableDeferred<HighlightedReportState.Selected?>()
-    scope.launch(QodanaDispatchers.Default) {
+    qodanaFixture.scope.launch(QodanaDispatchers.Default) {
       result.complete(highlightedReportService.highlightReport(null))
     }
     return result

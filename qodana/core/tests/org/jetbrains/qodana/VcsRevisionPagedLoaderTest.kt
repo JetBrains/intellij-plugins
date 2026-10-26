@@ -2,6 +2,8 @@ package org.jetbrains.qodana
 
 import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.project.Project
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -16,14 +18,20 @@ import org.jetbrains.qodana.vcs.RevisionPage
 import org.jetbrains.qodana.vcs.VcsRevision
 import org.jetbrains.qodana.vcs.VcsRevisionPagedLoader
 import org.jetbrains.qodana.vcs.VcsRevisionProvider
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.seconds
 
 private const val PAGE_SIZE = 5
 
-class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
-  override fun runInDispatchThread(): Boolean = false
+@TestApplication
+class VcsRevisionPagedLoaderTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
 
   private val revisionPage1 = revisionPage(from = 1, PAGE_SIZE)
 
@@ -39,6 +47,7 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     )
   }
 
+  @Test
   fun `test vcs revision loader no loading without request`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     @Suppress("UNUSED_VARIABLE") val loader = vcsRevisionPagedLoader(revisionProvider)
@@ -48,7 +57,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isZero()
   }
 
-  fun `test vcs revision loader load 1 page only`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader load 1 page only`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -63,7 +73,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isOne()
   }
 
-  fun `test vcs revision loader load 2 pages only`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader load 2 pages only`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -79,7 +90,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isEqualTo(2)
   }
 
-  fun `test vcs revision loader load all pages`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader load all pages`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -94,7 +106,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isEqualTo(3)
   }
 
-  fun `test vcs revision loader request one page twice, load only once`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader request one page twice, load only once`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -117,7 +130,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isOne()
   }
 
-  fun `test vcs revision loader request to all pages, request one, compute each page once`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader request to all pages, request one, compute each page once`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -140,7 +154,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isEqualTo(3)
   }
 
-  fun `test vcs revision loader request one page, request two pages, compute each page once`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader request one page, request two pages, compute each page once`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -165,7 +180,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isEqualTo(2)
   }
 
-  fun `test vcs revision loader with limit on max 2 pages`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader with limit on max 2 pages`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider, maxPages = 2)
 
@@ -180,7 +196,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isEqualTo(2)
   }
 
-  fun `test vcs revision loader with limit on max 2 pages request pages twice`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader with limit on max 2 pages request pages twice`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider, maxPages = 2)
 
@@ -203,7 +220,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
     assertThat(revisionProvider.timesFetchWasCalled).isEqualTo(2)
   }
 
-  fun `test vcs revision loader two concurrent requests to load pages`() = runDispatchingOnUi {
+  @Test
+  fun `test vcs revision loader two concurrent requests to load pages`(): Unit = runDispatchingOnUi {
     val revisionProvider = VcsRevisionTestProvider(listOf(revisionPage1, revisionPage2, lastRevisionPage3))
     val loader = vcsRevisionPagedLoader(revisionProvider)
 
@@ -252,8 +270,8 @@ class VcsRevisionPagedLoaderTest : QodanaPluginLightTestBase() {
 
   private fun vcsRevisionPagedLoader(revisionProvider: VcsRevisionTestProvider, maxPages: Int = 5): VcsRevisionPagedLoader {
     return VcsRevisionPagedLoader(
-      scope,
-      project,
+      qodanaFixture.scope,
+      qodanaFixture.project,
       revisionProvider,
       pageSize = PAGE_SIZE,
       maxPages = maxPages,

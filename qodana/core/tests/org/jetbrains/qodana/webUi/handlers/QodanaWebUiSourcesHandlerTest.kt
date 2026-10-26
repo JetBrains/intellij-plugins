@@ -1,17 +1,21 @@
 package org.jetbrains.qodana.webUi.handlers
 
 import com.intellij.ide.browsers.BrowserLauncher
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.util.application
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.ide.BuiltInServerManager
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.run.QodanaConverterInput
 import org.jetbrains.qodana.webUi.ActiveWebUi
 import org.jetbrains.qodana.webUi.QodanaWebUiService
 import org.jetbrains.qodana.webUi.TestBrowserLauncher
 import org.jetbrains.qodana.webUi.withUnlimitedRestApiRequests
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.InputStream
 import java.net.URI
 import java.net.http.HttpClient
@@ -19,35 +23,40 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.UUID
 
-class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
+@TestApplication
+class QodanaWebUiSourcesHandlerTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private val activeWebUi: ActiveWebUi by lazy {
     runBlocking {
-      QodanaWebUiService.getInstance(project).requestOpenBrowserWebUi(
+      QodanaWebUiService.getInstance(qodanaFixture.project).requestOpenBrowserWebUi(
         id = "1",
-        converterInput = QodanaConverterInput.SarifFileOnly(sarifTestReports.validForConverter)
+        converterInput = QodanaConverterInput.SarifFileOnly(qodanaFixture.sarifTestReports.validForConverter)
       )!!
     }
   }
 
-  override fun runInDispatchThread(): Boolean = false
-
-  override fun setUp() {
-    super.setUp()
-    invokeAndWaitIfNeeded {
-      reinstansiateService(application, BrowserLauncher::class.java, TestBrowserLauncher())
-    }
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.reinstansiateService(application, BrowserLauncher::class.java, TestBrowserLauncher())
     BuiltInServerManager.getInstance().waitForStart()
     activeWebUi
   }
 
-  fun `test 200 with token in url`(): Unit = runBlocking {
+  @Test
+  fun `test 200 with token in url`(): Unit = timeoutRunBlocking {
     doRequest200NotEmptyBody(
       "/qodana.ide/index.html?_qdt=${activeWebUi.token}",
       emptyMap()
     )
   }
 
-  fun `test 200 with token in referer`(): Unit = runBlocking {
+  @Test
+  fun `test 200 with token in referer`(): Unit = timeoutRunBlocking {
     doRequest200NotEmptyBody(
       "/qodana.ide/index.html",
       mapOf(
@@ -56,14 +65,16 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 without token`(): Unit = runBlocking {
+  @Test
+  fun `test 404 without token`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html",
       emptyMap()
     )
   }
 
-  fun `test 404 with token in url not local origin`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token in url not local origin`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html?_qdt=${activeWebUi.token}",
       mapOf(
@@ -72,7 +83,8 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in url not local referer`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token in url not local referer`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html?_qdt=${activeWebUi.token}",
       mapOf(
@@ -81,7 +93,8 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer not local referer`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token in referer not local referer`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html",
       mapOf(
@@ -90,7 +103,8 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer not local origin`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token in referer not local origin`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html",
       mapOf(
@@ -100,14 +114,16 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with not valid token in url`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with not valid token in url`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html?_qdt=${UUID.randomUUID()}",
       emptyMap()
     )
   }
 
-  fun `test 404 with not valid token in referer`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with not valid token in referer`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/qodana.ide/index.html",
       mapOf(
@@ -116,7 +132,8 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token of closed web ui in url`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token of closed web ui in url`(): Unit = timeoutRunBlocking {
     activeWebUi.close()
     doRequest404(
       "/qodana.ide/index.html?_qdt=${activeWebUi.token}",
@@ -124,7 +141,8 @@ class QodanaWebUiSourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token of closed web ui in referer`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token of closed web ui in referer`(): Unit = timeoutRunBlocking {
     activeWebUi.close()
     doRequest404(
       "/qodana.ide/index.html",

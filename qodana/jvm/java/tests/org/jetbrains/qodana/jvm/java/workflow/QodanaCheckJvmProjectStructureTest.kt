@@ -1,42 +1,51 @@
 package org.jetbrains.qodana.jvm.java.workflow
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.backgroundWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
-import kotlinx.coroutines.runBlocking
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 
-class QodanaCheckJvmProjectStructureTest : QodanaPluginLightTestBase() {
-
-  override fun runInDispatchThread() = false
-
-  private fun config() = QodanaConfig.fromYaml(Path.of(project.basePath ?: ""), Path.of("unused"))
-
-  override fun setUp() {
-    super.setUp()
-    project.service<RuntimeNotificationCollector>().initializeForRun(config())
+@TestApplication
+class QodanaCheckJvmProjectStructureTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
   }
 
-  fun `test afterConfiguration adds notification for module with unresolved library`(): Unit = runBlocking {
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  private fun config() = QodanaConfig.fromYaml(Path.of(qodanaFixture.project.basePath ?: ""), Path.of("unused"))
+
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.project.service<RuntimeNotificationCollector>().initializeForRun(config())
+  }
+
+  @Test
+  fun `test afterConfiguration adds notification for module with unresolved library`(): Unit = timeoutRunBlocking {
     val libName = "missing-lib-${System.nanoTime()}"
-    ApplicationManager.getApplication().runWriteAction {
-      val model = ModuleRootManager.getInstance(myFixture.module).modifiableModel
+    backgroundWriteAction {
+      val model = ModuleRootManager.getInstance(qodanaFixture.module).modifiableModel
       model.addInvalidLibrary(libName, LibraryTablesRegistrar.APPLICATION_LEVEL)
       model.commit()
     }
     try {
-      val collector = project.service<RuntimeNotificationCollector>()
-      QodanaCheckJvmProjectStructure().afterConfiguration(config(), project)
+      val collector = qodanaFixture.project.service<RuntimeNotificationCollector>()
+      QodanaCheckJvmProjectStructure().afterConfiguration(config(), qodanaFixture.project)
       assertThat(collector.notifications).isNotEmpty()
     }
     finally {
-      ApplicationManager.getApplication().runWriteAction {
-        val model = ModuleRootManager.getInstance(myFixture.module).modifiableModel
+      backgroundWriteAction {
+        val model = ModuleRootManager.getInstance(qodanaFixture.module).modifiableModel
         model.orderEntries
           .filter { it.presentableName == libName }
           .forEach { model.removeOrderEntry(it) }
@@ -45,9 +54,10 @@ class QodanaCheckJvmProjectStructureTest : QodanaPluginLightTestBase() {
     }
   }
 
-  fun `test afterConfiguration adds no notification when module has no unresolved dependencies`(): Unit = runBlocking {
-    val collector = project.service<RuntimeNotificationCollector>()
-    QodanaCheckJvmProjectStructure().afterConfiguration(config(), project)
+  @Test
+  fun `test afterConfiguration adds no notification when module has no unresolved dependencies`(): Unit = timeoutRunBlocking {
+    val collector = qodanaFixture.project.service<RuntimeNotificationCollector>()
+    QodanaCheckJvmProjectStructure().afterConfiguration(config(), qodanaFixture.project)
     val libraryNotifications = collector.notifications.filter { n ->
       n.message?.text?.contains("library") == true || n.message?.text?.contains("was not resolved") == true
     }

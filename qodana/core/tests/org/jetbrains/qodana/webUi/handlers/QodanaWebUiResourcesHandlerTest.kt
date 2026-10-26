@@ -1,17 +1,21 @@
 package org.jetbrains.qodana.webUi.handlers
 
 import com.intellij.ide.browsers.BrowserLauncher
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.util.application
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
 import org.jetbrains.ide.BuiltInServerManager
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.run.QodanaConverterInput
 import org.jetbrains.qodana.webUi.ActiveWebUi
 import org.jetbrains.qodana.webUi.QodanaWebUiService
 import org.jetbrains.qodana.webUi.TestBrowserLauncher
 import org.jetbrains.qodana.webUi.withUnlimitedRestApiRequests
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.InputStream
 import java.net.URI
 import java.net.http.HttpClient
@@ -22,29 +26,33 @@ import java.util.UUID
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 
-class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
+@TestApplication
+class QodanaWebUiResourcesHandlerTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private val activeWebUi: ActiveWebUi by lazy {
     runBlocking {
-      QodanaWebUiService.getInstance(project).requestOpenBrowserWebUi(
+      QodanaWebUiService.getInstance(qodanaFixture.project).requestOpenBrowserWebUi(
         id = "1",
-        converterInput = QodanaConverterInput.SarifFileOnly(sarifTestReports.validForConverter)
+        converterInput = QodanaConverterInput.SarifFileOnly(qodanaFixture.sarifTestReports.validForConverter)
       )!!
     }
   }
 
-  override fun runInDispatchThread(): Boolean = false
-
-  override fun setUp() {
-    super.setUp()
-    invokeAndWaitIfNeeded {
-      reinstansiateService(project, QodanaWebUiService::class.java, QodanaWebUiService(project, scope))
-      reinstansiateService(application, BrowserLauncher::class.java, TestBrowserLauncher())
-    }
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaWebUiService::class.java, QodanaWebUiService(qodanaFixture.project, qodanaFixture.scope))
+    qodanaFixture.reinstansiateService(application, BrowserLauncher::class.java, TestBrowserLauncher())
     BuiltInServerManager.getInstance().waitForStart()
     activeWebUi
   }
 
-  fun `test 200 with token in url`() = runBlocking {
+  @Test
+  fun `test 200 with token in url`(): Unit = timeoutRunBlocking {
     doRequest200NotEmptyBody(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${activeWebUi.token}",
       mapOf(
@@ -53,7 +61,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 200 with token in referer`() = runBlocking {
+  @Test
+  fun `test 200 with token in referer`(): Unit = timeoutRunBlocking {
     doRequest200NotEmptyBody(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -63,7 +72,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 without token`() = runBlocking {
+  @Test
+  fun `test 404 without token`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -72,7 +82,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 invalid token in url`() = runBlocking {
+  @Test
+  fun `test 404 invalid token in url`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${UUID.randomUUID()}",
       mapOf(
@@ -81,7 +92,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 invalid token in referer`() = runBlocking {
+  @Test
+  fun `test 404 invalid token in referer`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -91,7 +103,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 not present file`() = runBlocking {
+  @Test
+  fun `test 404 not present file`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=not.present.sarif.json&_qdt=${activeWebUi.token}",
       mapOf(
@@ -100,7 +113,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in url not local origin`() = runBlocking {
+  @Test
+  fun `test 404 with token in url not local origin`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${activeWebUi.token}",
       mapOf(
@@ -110,7 +124,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in url not local referer`() = runBlocking {
+  @Test
+  fun `test 404 with token in url not local referer`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${activeWebUi.token}",
       mapOf(
@@ -120,14 +135,16 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in url no sec fetch site`() = runBlocking {
+  @Test
+  fun `test 404 with token in url no sec fetch site`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${activeWebUi.token}",
       emptyMap()
     )
   }
 
-  fun `test 404 with token in url not same origin`() = runBlocking {
+  @Test
+  fun `test 404 with token in url not same origin`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${activeWebUi.token}",
       mapOf(
@@ -137,7 +154,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in url web ui closed`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token in url web ui closed`(): Unit = timeoutRunBlocking {
     activeWebUi.close()
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json&_qdt=${activeWebUi.token}",
@@ -148,7 +166,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer not local origin`() = runBlocking {
+  @Test
+  fun `test 404 with token in referer not local origin`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -159,7 +178,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer not local referer`() = runBlocking {
+  @Test
+  fun `test 404 with token in referer not local referer`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -169,7 +189,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer no sec fetch site`() = runBlocking {
+  @Test
+  fun `test 404 with token in referer no sec fetch site`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -178,7 +199,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer not same origin`() = runBlocking {
+  @Test
+  fun `test 404 with token in referer not same origin`(): Unit = timeoutRunBlocking {
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
       mapOf(
@@ -188,7 +210,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 with token in referer web ui closed`(): Unit = runBlocking {
+  @Test
+  fun `test 404 with token in referer web ui closed`(): Unit = timeoutRunBlocking {
     activeWebUi.close()
     doRequest404(
       "/api/qodana/resources?file=qodana.sarif.json",
@@ -199,7 +222,8 @@ class QodanaWebUiResourcesHandlerTest : QodanaPluginLightTestBase() {
     )
   }
 
-  fun `test 404 file is outside results dir`() = runBlocking {
+  @Test
+  fun `test 404 file is outside results dir`(): Unit = timeoutRunBlocking {
     val fileOutsideResultsDir = Files.createTempFile("file-outside-results-dir", ".txt")
     Assertions.assertThat(fileOutsideResultsDir.exists()).isTrue()
 

@@ -1,11 +1,12 @@
 package org.jetbrains.qodana.cloud.project
 
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.assertNoNotifications
 import org.jetbrains.qodana.assertSingleNotificationWithMessage
 import org.jetbrains.qodana.cloud.RefreshableProperty
@@ -19,17 +20,26 @@ import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.dispatchAllTasksOnUi
 import org.jetbrains.qodana.highlight.QodanaHighlightedReportService
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.runDispatchingOnUi
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 
-class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
+@TestApplication
+class QodanaCloudProjectLinkServiceTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private lateinit var authorized: UserState.Authorized
 
-  override fun runInDispatchThread() = false
-
-  private val cloudProjectLinkService get() = QodanaCloudProjectLinkService.getInstance(project)
+  private val cloudProjectLinkService get() = QodanaCloudProjectLinkService.getInstance(qodanaFixture.project)
 
   private val linkStateValue get() = cloudProjectLinkService.linkState.value
 
@@ -40,13 +50,13 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
   private val emptyCloudProjectProperties = CloudProjectProperties(name = null)
 
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     runDispatchingOnUi {
-      reinstansiateService(project, QodanaCloudProjectLinkService(project, scope))
-      reinstansiateService(project, QodanaHighlightedReportService(project, scope))
+      qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaCloudProjectLinkService(qodanaFixture.project, qodanaFixture.scope))
+      qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaHighlightedReportService(qodanaFixture.project, qodanaFixture.scope))
       cloudProjectLinkService.refreshedReportTimeoutBeforeNotification = 1.seconds
-      authorized = doInitialTransitionToAuthorized(testRootDisposable)
+      authorized = qodanaFixture.doInitialTransitionToAuthorized(qodanaFixture.testRootDisposable)
       mockQDCloudHttpClient.apply {
         respond("projects/*") {
           @Language("JSON")
@@ -68,6 +78,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
     }
   }
 
+  @Test
   fun `test successfully link`(): Unit = runDispatchingOnUi {
     val notLinked = linkStateValue as LinkState.NotLinked
 
@@ -76,6 +87,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
     assertTrue(linkStateValue is LinkState.Linked)
   }
 
+  @Test
   fun `test successfully link and unlink`(): Unit = runDispatchingOnUi {
     val notLinked = linkStateValue as LinkState.NotLinked
     notLinked.linkWithQodanaCloudProject(authorized, CloudProjectData(cloudProjectPrimaryData, emptyCloudProjectProperties))
@@ -86,6 +98,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
     assertTrue(linkStateValue is LinkState.NotLinked)
   }
 
+  @Test
   fun `test start project info refresh when linked`(): Unit = runDispatchingOnUi {
     val cloudProjectInfoWithNameFromResponse = CloudProjectProperties("project_name")
 
@@ -120,6 +133,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
       .isEqualTo(RefreshableProperty.PropertyState(QDCloudResponse.Success(cloudProjectInfoWithNameFromResponse), isRefreshing = false))
   }
 
+  @Test
   fun `test unlink when logged out`(): Unit = runDispatchingOnUi {
     mockQDCloudHttpClient.apply {
       respond("projects/*") {
@@ -141,9 +155,10 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
     assertTrue(linkStateValue is LinkState.NotLinked)
   }
 
+  @Test
   fun `test no new report notification when linked because of auto loading cloud report`(): Unit = runDispatchingOnUi {
     mockQDCloudHttpClient.apply {
-      respondQodanaSarifJson(sarifTestReports.valid1)
+      respondQodanaSarifJson(qodanaFixture.sarifTestReports.valid1)
       respondTimeline {
         "report_1"
       }
@@ -154,16 +169,17 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
 
     val linked = linkStateValue as LinkState.Linked
 
-    assertNoNotifications {
+    qodanaFixture.assertNoNotifications {
       dispatchAllTasksOnUi()
 
-      linked.cloudReportDescriptorBuilder.createReportDescriptor().loadSarifReport(project)
+      linked.cloudReportDescriptorBuilder.createReportDescriptor().loadSarifReport(qodanaFixture.project)
       dispatchAllTasksOnUi()
       delay(cloudProjectLinkService.refreshedReportTimeoutBeforeNotification)
       dispatchAllTasksOnUi()
     }
   }
 
+  @Test
   fun `test new report notification when later new report arrived`(): Unit = runDispatchingOnUi {
     mockQDCloudHttpClient.apply {
       respond("projects/*") {
@@ -172,7 +188,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
       respondTimeline {
         "report_1"
       }
-      respondQodanaSarifJson(sarifTestReports.valid1)
+      respondQodanaSarifJson(qodanaFixture.sarifTestReports.valid1)
     }
 
     val notLinked = linkStateValue as LinkState.NotLinked
@@ -180,7 +196,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
 
     val linked = linkStateValue as LinkState.Linked
 
-    assertNoNotifications {
+    qodanaFixture.assertNoNotifications {
       dispatchAllTasksOnUi()
     }
 
@@ -190,12 +206,13 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
 
     linked.projectDataProvider.refreshLatestReportIdWithNotification()
     dispatchAllTasksOnUi()
-    assertSingleNotificationWithMessage(QodanaBundle.message("qodana.cloud.available.report.text")) {
+    qodanaFixture.assertSingleNotificationWithMessage(QodanaBundle.message("qodana.cloud.available.report.text")) {
       delay(cloudProjectLinkService.refreshedReportTimeoutBeforeNotification)
       dispatchAllTasksOnUi()
     }
   }
 
+  @Test
   fun `test no new report notification because when later new report arrived report managed to load in time`(): Unit = runDispatchingOnUi {
     mockQDCloudHttpClient.apply {
       respond("projects/*") {
@@ -214,7 +231,7 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
 
     val linked = linkStateValue as LinkState.Linked
 
-    assertNoNotifications {
+    qodanaFixture.assertNoNotifications {
       dispatchAllTasksOnUi()
     }
 
@@ -224,10 +241,10 @@ class QodanaCloudProjectLinkServiceTest : QodanaPluginLightTestBase() {
 
     linked.projectDataProvider.refreshLatestReportIdWithNotification()
     dispatchAllTasksOnUi()
-    assertNoNotifications {
+    qodanaFixture.assertNoNotifications {
       delay(cloudProjectLinkService.refreshedReportTimeoutBeforeNotification / 2)
       dispatchAllTasksOnUi()
-      runCatching { linked.cloudReportDescriptorBuilder.createReportDescriptor().loadSarifReport(project) }
+      runCatching { linked.cloudReportDescriptorBuilder.createReportDescriptor().loadSarifReport(qodanaFixture.project) }
       dispatchAllTasksOnUi()
       delay(cloudProjectLinkService.refreshedReportTimeoutBeforeNotification)
       dispatchAllTasksOnUi()

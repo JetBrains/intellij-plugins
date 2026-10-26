@@ -4,17 +4,26 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.ExtensionTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import kotlin.reflect.jvm.javaMethod
 
-class QodanaWorkflowExtensionDependenciesTest : QodanaPluginLightTestBase() {
-  override fun runInDispatchThread() = false
+@TestApplication
+class QodanaWorkflowExtensionDependenciesTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
 
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  @Test
   fun testImplementsMethodOnlyForEffectiveCallbackOverrides() {
     val afterConfiguration = QodanaWorkflowExtension::afterConfiguration.javaMethod!!
     val beforeProjectOpened = QodanaWorkflowExtension::beforeProjectOpened.javaMethod!!
@@ -25,8 +34,9 @@ class QodanaWorkflowExtensionDependenciesTest : QodanaPluginLightTestBase() {
     assertThat(InheritedAfterConfigurationWorkflowExtension().implementsMethod(afterConfiguration)).isTrue()
   }
 
+  @Test
   fun testBeforeProjectOpenedSchedulingIgnoresCyclesFromOtherPhases() {
-    runBlocking {
+    timeoutRunBlocking {
       val executed = ArrayList<String>()
       val capabilityA = QodanaWorkflowCapability("test.after.phase.a")
       val capabilityB = QodanaWorkflowCapability("test.after.phase.b")
@@ -43,8 +53,9 @@ class QodanaWorkflowExtensionDependenciesTest : QodanaPluginLightTestBase() {
     }
   }
 
+  @Test
   fun testBeforeProjectOpenedDependenciesAreResolvedWithinTheSamePhase() {
-    runBlocking {
+    timeoutRunBlocking {
       val executed = ArrayList<String>()
       val capability = QodanaWorkflowCapability("test.before.phase")
 
@@ -59,12 +70,13 @@ class QodanaWorkflowExtensionDependenciesTest : QodanaPluginLightTestBase() {
     }
   }
 
+  @Test
   fun testBeforeProjectOpenedStillFailsOnSamePhaseDependencyCycle() {
     val capabilityA = QodanaWorkflowCapability("test.before.cycle.a")
     val capabilityB = QodanaWorkflowCapability("test.before.cycle.b")
 
     assertThatThrownBy {
-      runBlocking {
+      timeoutRunBlocking {
         withWorkflowExtensions(
           BeforeProjectOpenedExtensionWithDependencies(capabilityA, setOf(capabilityB)),
           BeforeProjectOpenedExtensionWithDependencies(capabilityB, setOf(capabilityA)),
@@ -83,7 +95,7 @@ class QodanaWorkflowExtensionDependenciesTest : QodanaPluginLightTestBase() {
     vararg extensions: QodanaWorkflowExtension,
     action: suspend () -> Unit,
   ) {
-    val disposable: Disposable = Disposer.newDisposable(testRootDisposable)
+    val disposable: Disposable = Disposer.newDisposable(qodanaFixture.testRootDisposable)
     try {
       ExtensionTestUtil.maskExtensions(QodanaWorkflowExtension.EP_NAME, extensions.toList(), disposable)
       action()

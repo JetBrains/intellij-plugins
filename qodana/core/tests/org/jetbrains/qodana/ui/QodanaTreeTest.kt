@@ -1,10 +1,12 @@
 package org.jetbrains.qodana.ui
 
 import com.intellij.openapi.vfs.refreshAndFindVirtualFile
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.problem.SarifProblemProperties
 import org.jetbrains.qodana.problem.SarifProblemWithPropertiesAndFile
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.runDispatchingOnUi
 import org.jetbrains.qodana.settings.ConfigExcludeItem
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
@@ -20,20 +22,28 @@ import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeProblemNode
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeRoot
 import org.jetbrains.qodana.ui.problemsView.tree.model.QodanaTreeSeverityNode
 import org.jetbrains.qodana.ui.problemsView.viewModel.impl.QodanaTreeBuildConfiguration
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-class QodanaTreeTest : QodanaPluginLightTestBase() {
-  private val testDir by lazy { Path(myFixture.testDataPath, "QodanaTreeTest") }
+@TestApplication
+class QodanaTreeTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  private val testDir by lazy { Path(qodanaFixture.fixture.testDataPath, "QodanaTreeTest") }
   private val reportPath by lazy { testDir.resolve("report.sarif.json") }
-  private val treeTestUtil by lazy { QodanaTreeTestUtil(project, testDir.resolve("project")) }
+  private val treeTestUtil by lazy { QodanaTreeTestUtil(qodanaFixture.project, testDir.resolve("project")) }
   private val separator = File.separator
 
-  override fun runInDispatchThread() = false
-
-  fun `test build tree`() = runDispatchingOnUi {
+  @Test
+  fun `test build tree`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -75,7 +85,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(nodes.filterIsInstance<QodanaTreeNodesWithoutModuleNode>().size).isEqualTo(2)
   }
 
-  fun `test build tree groupBySeverity disabled`() = runDispatchingOnUi {
+  @Test
+  fun `test build tree groupBySeverity disabled`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, false, true, true, true
     )
@@ -111,7 +122,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(nodes.filterIsInstance<QodanaTreeNodesWithoutModuleNode>().size).isEqualTo(2)
   }
 
-  fun `test build tree groupByInspection disabled`() = runDispatchingOnUi {
+  @Test
+  fun `test build tree groupByInspection disabled`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, false, true, true
     )
@@ -147,7 +159,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(b.size).isEqualTo(3)
   }
 
-  fun `test build tree groupByDirectory disabled`() = runDispatchingOnUi {
+  @Test
+  fun `test build tree groupByDirectory disabled`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, false
     )
@@ -180,7 +193,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(nodes.filterIsInstance<QodanaTreeNodesWithoutModuleNode>().size).isEqualTo(2)
   }
 
-  fun `test exclude path event`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude path event`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -188,7 +202,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertNotNull(root)
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
-        setOf(ConfigExcludeItem(null, "module")), project
+        setOf(ConfigExcludeItem(null, "module")), qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -204,7 +218,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes.filter { it.excluded }.size).isEqualTo(3)
   }
 
-  fun `test exclude all paths event`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude all paths event`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -212,7 +227,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertNotNull(root)
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
-        setOf(ConfigExcludeItem(null, "")), project
+        setOf(ConfigExcludeItem(null, "")), qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -228,7 +243,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes.filter { it.excluded }.size).isEqualTo(7)
   }
 
-  fun `test exclude inspection event`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude inspection event`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -237,7 +253,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
         setOf(ConfigExcludeItem("INSPECTION_ID", null)),
-        project
+        qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -253,7 +269,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes.filter { it.excluded }.size).isEqualTo(5)
   }
 
-  fun `test exclude path for inspection event`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude path for inspection event`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -262,7 +279,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
         setOf(ConfigExcludeItem("INSPECTION_ID", "anotherModule")),
-        project
+        qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -280,7 +297,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     root = root.processTreeEvent(
       QodanaTreeExcludeEvent(
         setOf(ConfigExcludeItem("INSPECTION_ID", "anotherModule"), ConfigExcludeItem("INSPECTION_ID2", "anotherModule")),
-        project
+        qodanaFixture.project
       ),
       QodanaTreePath.Builder())
     val nodes2 = root.getTree()
@@ -295,7 +312,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes2.filter { it.excluded }.size).isEqualTo(2)
   }
 
-  fun `test exclude path for inspection event then exclude only for another inspection`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude path for inspection event then exclude only for another inspection`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -304,7 +322,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
         setOf(ConfigExcludeItem("INSPECTION_ID", "anotherModule")),
-        project
+        qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -324,7 +342,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     root = root.processTreeEvent(
       QodanaTreeExcludeEvent(
         setOf(ConfigExcludeItem("INSPECTION_ID2", "anotherModule")),
-        project
+        qodanaFixture.project
       ),
       QodanaTreePath.Builder())
     val nodes2 = root.getTree()
@@ -343,7 +361,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(excludedProblem1).isNotEqualTo(excludedProblem2)
   }
 
-  fun `test delete file then restore`() = runDispatchingOnUi {
+  @Test
+  fun `test delete file then restore`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -367,7 +386,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(false, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               null
             )
           }.toSet()),
@@ -391,7 +410,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/Main.java").refreshAndFindVirtualFile()
             )
           }.toSet()),
@@ -407,7 +426,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes2.size).isEqualTo(7)
   }
 
-  fun `test delete file in directory then restore`() = runDispatchingOnUi {
+  @Test
+  fun `test delete file in directory then restore`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -436,7 +456,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(false, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               null
             )
           }.toSet()),
@@ -465,7 +485,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/Main.java").refreshAndFindVirtualFile()
             )
           }.toSet()),
@@ -486,7 +506,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes2.size).isEqualTo(7)
   }
 
-  fun `test delete inspection then restore`() = runDispatchingOnUi {
+  @Test
+  fun `test delete inspection then restore`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -515,7 +536,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(false, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               null
             )
           }.toSet()),
@@ -546,7 +567,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/module/inner/Inner.java").refreshAndFindVirtualFile()
             )
           }.toSet()),
@@ -564,7 +585,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/anotherModule/AnotherLogic.java").refreshAndFindVirtualFile()
             )
           }.toSet()),
@@ -585,7 +606,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(problemNodes2.size).isEqualTo(7)
   }
 
-  fun `test exclude file then delete file then restore`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude file then delete file then restore`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -593,7 +615,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertNotNull(root)
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
-        setOf(ConfigExcludeItem(null, "Main.java")), project
+        setOf(ConfigExcludeItem(null, "Main.java")), qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -621,7 +643,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(false, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               null
             )
           }.toSet()),
@@ -649,7 +671,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/Main.java").refreshAndFindVirtualFile()
             )
           }.toSet()),
@@ -674,7 +696,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertThat(excludedFiles1).isEqualTo(excludedFiles2)
   }
 
-  fun `test exclude dir then delete file then restore`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude dir then delete file then restore`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -682,7 +705,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertNotNull(root)
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
-        setOf(ConfigExcludeItem(null, "module")), project
+        setOf(ConfigExcludeItem(null, "module")), qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -710,7 +733,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(false, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               null
             )
           }.toSet()),
@@ -738,7 +761,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/module/inner/Inner.java").refreshAndFindVirtualFile()
             )
           }.toSet()),
@@ -764,7 +787,8 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
   }
 
 
-  fun `test exclude inspection then delete file then restore`() = runDispatchingOnUi {
+  @Test
+  fun `test exclude inspection then delete file then restore`(): Unit = runDispatchingOnUi {
     val treeConfiguration = QodanaTreeBuildConfiguration(
       true, true, true, true, true
     )
@@ -772,7 +796,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
     assertNotNull(root)
     root = root!!.processTreeEvent(
       QodanaTreeExcludeEvent(
-        setOf(ConfigExcludeItem("INSPECTION_ID", null)), project
+        setOf(ConfigExcludeItem("INSPECTION_ID", null)), qodanaFixture.project
       ),
       QodanaTreePath.Builder()
     )
@@ -803,7 +827,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(false, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               null
             )
           }.toSet()
@@ -835,7 +859,7 @@ class QodanaTreeTest : QodanaPluginLightTestBase() {
             SarifProblemWithPropertiesAndFile(
               it,
               SarifProblemProperties(true, false, false, it.startLine!!, it.startColumn!!),
-              project,
+              qodanaFixture.project,
               testDir.resolve("project/anotherModule/AnotherLogic.java").refreshAndFindVirtualFile()
             )
           }.toSet()),

@@ -1,37 +1,45 @@
 package org.jetbrains.qodana.webUi
 
 import com.intellij.ide.browsers.BrowserLauncher
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.util.application
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.run.QodanaConverterInput
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class QodanaWebUiServiceTest : QodanaPluginLightTestBase() {
+@TestApplication
+class QodanaWebUiServiceTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private val testBrowserLauncher = TestBrowserLauncher()
 
   private val webUiService: QodanaWebUiService
-    get() = QodanaWebUiService.getInstance(project)
+    get() = QodanaWebUiService.getInstance(qodanaFixture.project)
 
   private val converterSarifInput: QodanaConverterInput.SarifFileOnly
-    get() = QodanaConverterInput.SarifFileOnly(sarifTestReports.validForConverter)
+    get() = QodanaConverterInput.SarifFileOnly(qodanaFixture.sarifTestReports.validForConverter)
 
-  override fun runInDispatchThread(): Boolean = false
-
-  override fun setUp() {
-    super.setUp()
-    invokeAndWaitIfNeeded {
-      reinstansiateService(project, QodanaWebUiService::class.java, QodanaWebUiService(project, scope))
-      reinstansiateService(application, BrowserLauncher::class.java, testBrowserLauncher)
-    }
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaWebUiService::class.java, QodanaWebUiService(qodanaFixture.project, qodanaFixture.scope))
+    qodanaFixture.reinstansiateService(application, BrowserLauncher::class.java, testBrowserLauncher)
   }
 
-  fun `test by default no active web uis`(): Unit = runBlocking {
+  @Test
+  fun `test by default no active web uis`(): Unit = timeoutRunBlocking {
     assertThat(webUiService.activeWebUis.value).isEmpty()
   }
 
-  fun `test open active web ui`(): Unit = runBlocking {
+  @Test
+  fun `test open active web ui`(): Unit = timeoutRunBlocking {
     val id = "1"
     val activeWebUi = webUiService.requestOpenBrowserWebUi(id, converterSarifInput)
     assertThat(activeWebUi).isNotNull
@@ -40,13 +48,15 @@ class QodanaWebUiServiceTest : QodanaPluginLightTestBase() {
     assertThat(webUiService.activeWebUis.value).contains(activeWebUi)
   }
 
-  fun `test open active web ui has long enough token`(): Unit = runBlocking {
+  @Test
+  fun `test open active web ui has long enough token`(): Unit = timeoutRunBlocking {
     val id = "1"
     val activeWebUi = webUiService.requestOpenBrowserWebUi(id, converterSarifInput)!!
     assertThat(activeWebUi.token.length).isGreaterThan(35)
   }
 
-  fun `test open active web ui twice with same id`(): Unit = runBlocking {
+  @Test
+  fun `test open active web ui twice with same id`(): Unit = timeoutRunBlocking {
     val id = "1"
     val activeWebUi = webUiService.requestOpenBrowserWebUi(id, converterSarifInput)
     assertThat(activeWebUi).isNotNull
@@ -60,7 +70,8 @@ class QodanaWebUiServiceTest : QodanaPluginLightTestBase() {
     assertThat(webUiService.activeWebUis.value).contains(activeWebUi)
   }
 
-  fun `test open two active web uis`(): Unit = runBlocking {
+  @Test
+  fun `test open two active web uis`(): Unit = timeoutRunBlocking {
     val id1 = "1"
     val activeWebUi1 = webUiService.requestOpenBrowserWebUi(id1, converterSarifInput)
     assertThat(activeWebUi1).isNotNull
@@ -78,7 +89,8 @@ class QodanaWebUiServiceTest : QodanaPluginLightTestBase() {
     assertThat(activeWebUi2.token).isNotEqualTo(activeWebUi1.token)
   }
 
-  fun `test open and close web ui`(): Unit = runBlocking {
+  @Test
+  fun `test open and close web ui`(): Unit = timeoutRunBlocking {
     val id1 = "1"
     val activeWebUi1 = webUiService.requestOpenBrowserWebUi(id1, converterSarifInput)!!
 
@@ -86,7 +98,8 @@ class QodanaWebUiServiceTest : QodanaPluginLightTestBase() {
     assertThat(webUiService.activeWebUis.value).isEmpty()
   }
 
-  fun `test open and close twice web ui`(): Unit = runBlocking {
+  @Test
+  fun `test open and close twice web ui`(): Unit = timeoutRunBlocking {
     val id1 = "1"
     val activeWebUi1 = webUiService.requestOpenBrowserWebUi(id1, converterSarifInput)!!
 
@@ -95,7 +108,8 @@ class QodanaWebUiServiceTest : QodanaPluginLightTestBase() {
     assertThat(webUiService.activeWebUis.value).isEmpty()
   }
 
-  fun `test open two active web uis close first`(): Unit = runBlocking {
+  @Test
+  fun `test open two active web uis close first`(): Unit = timeoutRunBlocking {
     val id1 = "1"
     val activeWebUi1 = webUiService.requestOpenBrowserWebUi(id1, converterSarifInput)!!
 

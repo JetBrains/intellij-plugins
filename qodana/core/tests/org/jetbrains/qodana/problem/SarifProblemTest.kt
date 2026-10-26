@@ -1,21 +1,34 @@
 package org.jetbrains.qodana.problem
 
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.vfs.refreshAndFindVirtualFile
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.util.PathUtil.toSystemIndependentName
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.Result.BaselineState
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.report.ValidatedSarif
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.io.path.Path
 
 private const val PROJECT_PATH = "SarifProblemTest/vcsRoot/monorepo/project"
 
-class SarifProblemTest: QodanaPluginLightTestBase() {
+@TestApplication
+class SarifProblemTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
 
-  private val sarifProblemTestDir by lazy { Path(myFixture.testDataPath, "SarifProblemTest") }
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
+  private val sarifProblemTestDir by lazy { Path(qodanaFixture.fixture.testDataPath, "SarifProblemTest") }
 
   private val problems1 by lazy { getReport(sarifProblemTestDir.resolve("report1.sarif.json")) }
   private val problemsBad by lazy { getReport(sarifProblemTestDir.resolve("reportBad.sarif.json")) }
@@ -40,13 +53,14 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
   private val gitlabReport by lazy { getReport(sarifProblemTestDir.resolve("gitlab.sarif.json")) }
   
-  private fun projectPath() = Path(myFixture.testDataPath, PROJECT_PATH)
+  private fun projectPath() = Path(qodanaFixture.fixture.testDataPath, PROJECT_PATH)
 
-  override fun setUp() {
-    super.setUp()
-    myFixture.copyDirectoryToProject(PROJECT_PATH, ".")
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.fixture.copyDirectoryToProject(PROJECT_PATH, ".")
   }
   
+  @Test
   fun `test default sarif initialization` () {
     assertThat(problems1.size).isEqualTo(3)
     val problem = problems1[0]
@@ -62,16 +76,19 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertNotNull(problems1[2].snippetText)
   }
 
+  @Test
   fun `test bad sarif initialization` () {
     assertThat(problemsBad.size).isEqualTo(0)
   }
 
+  @Test
   fun `test absolute paths initialization`() {
     assertThat(problemsAbsPaths.size).isEqualTo(2)
     assertThat(problemsAbsPaths[0].relativePathToFile).isEqualTo("Main.java")
     assertThat(toSystemIndependentName(problemsAbsPaths[1].relativePathToFile)).isEqualTo("src/Logic.java")
   }
 
+  @Test
   fun `test default Main problem`() {
     assertThat(problems1.size).isEqualTo(3)
 
@@ -97,6 +114,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
   }
 
+  @Test
   fun `test End Line Columns Main problem`() {
     assertThat(problemsWithEndLineColumn.size).isEqualTo(2)
 
@@ -113,6 +131,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(textRange?.endOffset!! - textRange.startOffset).isEqualTo(0)
   }
 
+  @Test
   fun `test End Line Columns Logic problem`() {
     assertThat(problemsWithEndLineColumn.size).isEqualTo(2)
 
@@ -130,6 +149,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
   }
 
+  @Test
   fun `test problem with graph from taint analysis`() {
     assertThat(problemsWithGraph.size).isEqualTo(3)
 
@@ -157,6 +177,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(document.getText(textRange!!)).isEqualTo("args[1]")
   }
 
+  @Test
   fun `test problem with complex graph from taint analysis`() {
     assertThat(problemsWithComplexGraph.size).isEqualTo(2)
 
@@ -181,6 +202,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(document2.getText(textRange2!!)).isEqualTo("args[2]")
   }
 
+  @Test
   fun `test multiple runs`() {
     assertThat(problemsMultipleRuns.size).isEqualTo(4)
     val problem = problemsMultipleRuns[3]
@@ -194,6 +216,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem.isInBaseline).isFalse
   }
 
+  @Test
   fun `test originUriIds resolved correctly`() {
     assertThat(problemsWithOriginalUriBaseIds.size).isEqualTo(2)
 
@@ -204,6 +227,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test paths resolved correctly if both source files can remap to the path`() {
     assertThat(reportWithOriginalUriBaseIdsAndMultiplePossibleFiles.size).isEqualTo(2)
 
@@ -214,6 +238,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("src/Main.java")
   }
 
+  @Test
   fun `test originUriIds resolved correctly if absolute path in project root specified`() {
     assertThat(problemsWithOriginalUriBaseIdsAndAbsolutePaths.size).isEqualTo(2)
 
@@ -224,6 +249,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test originUriIds with percentage sigh resolved correctly`() {
     assertThat(problemsWithOriginalUriBaseIds2.size).isEqualTo(2)
 
@@ -234,6 +260,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test gitlab resolved correctly`() {
     assertThat(gitlabReport.size).isEqualTo(1)
 
@@ -241,6 +268,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem1.relativePathToFile).isEqualTo("src/fileURI")
   }
 
+  @Test
   fun `test originUriIds resolved correctly if directory URI does not end with slash`() {
     assertThat(problemsWithOriginalUriBaseIdsNoSlash.size).isEqualTo(2)
 
@@ -251,6 +279,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test originUriIds cyclic resolution`() {
     assertThat(problemsBadWithOriginalUriBaseIds.size).isEqualTo(2)
 
@@ -261,6 +290,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test originUriIds resolved correctly if opened project not equal repository root`() {
     assertThat(problemsWithParentBaseUri.size).isEqualTo(2)
 
@@ -271,6 +301,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test absolute paths and relative paths in one resolved correctly`() {
     assertThat(problemsWithMixedPaths.size).isEqualTo(4)
 
@@ -287,6 +318,7 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem4.relativePathToFile).isEqualTo("Main.java")
   }
 
+  @Test
   fun `test report with versionControlProvenance is parsed and revisionId is propagated`() {
     // Light test fixture has no GitRepositoryManager-registered repos that match the SARIF
     // repositoryUri, so pickVcsContentRoot returns null. Parsing must still succeed and
@@ -302,14 +334,14 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
   private fun getDocument(documentName: String): Document? {
     val mainFile = projectPath().resolve(documentName).refreshAndFindVirtualFile() ?: return null
 
-    val documentFile = myFixture.psiManager.findFile(mainFile) ?: return null
+    val documentFile = runReadActionBlocking { qodanaFixture.fixture.psiManager.findFile(mainFile) } ?: return null
 
-    return myFixture.getDocument(documentFile)
+    return runReadActionBlocking { qodanaFixture.fixture.getDocument(documentFile) }
   }
 
   private fun getReport(path: Path): List<SarifProblem> {
     val sarif = SarifUtil.readReport(path)
 
-    return SarifProblem.fromReport(project, ValidatedSarif(sarif))
+    return SarifProblem.fromReport(qodanaFixture.project, ValidatedSarif(sarif))
   }
 }

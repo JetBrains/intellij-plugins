@@ -1,19 +1,20 @@
 package org.jetbrains.qodana.protocol
 
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.io.write
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createTempFile
 import kotlin.io.path.relativeTo
 
-class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
-  override fun runInDispatchThread() = false
-
-  fun `test find region`(): Unit = runBlocking {
+@TestApplication
+class OpenInIdeFileRegionLocatorTest {
+  @Test
+  fun `test find region`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -26,7 +27,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isTrue
   }
 
-  fun `test find multiline region`(): Unit = runBlocking {
+  @Test
+  fun `test find multiline region`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -39,7 +41,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isTrue
   }
 
-  fun `test first file line region`(): Unit = runBlocking {
+  @Test
+  fun `test first file line region`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -52,7 +55,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isTrue
   }
 
-  fun `test last file line region`(): Unit = runBlocking {
+  @Test
+  fun `test last file line region`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -65,7 +69,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isTrue
   }
 
-  fun `test no region wrong relative path`(): Unit = runBlocking {
+  @Test
+  fun `test no region wrong relative path`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -78,7 +83,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region wrong line`(): Unit = runBlocking {
+  @Test
+  fun `test no region wrong line`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -91,7 +97,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region wrong offsetInLine`(): Unit = runBlocking {
+  @Test
+  fun `test no region wrong offsetInLine`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -104,7 +111,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region wrong regionLength`(): Unit = runBlocking {
+  @Test
+  fun `test no region wrong regionLength`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -117,7 +125,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region wrong region`(): Unit = runBlocking {
+  @Test
+  fun `test no region wrong region`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -130,7 +139,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region too big start line`(): Unit = runBlocking {
+  @Test
+  fun `test no region too big start line`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -143,7 +153,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region too big offset in line`(): Unit = runBlocking {
+  @Test
+  fun `test no region too big offset in line`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -156,7 +167,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test no region too big regionLength`(): Unit = runBlocking {
+  @Test
+  fun `test no region too big regionLength`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -169,7 +181,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isFalse
   }
 
-  fun `test always true region validator`(): Unit = runBlocking {
+  @Test
+  fun `test always true region validator`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(
@@ -182,7 +195,8 @@ class OpenInIdeFileRegionLocatorTest : QodanaPluginLightTestBase() {
     assertThat(locator.regionExistsInDirectory(root)).isTrue
   }
 
-  fun `test zero region`(): Unit = runBlocking {
+  @Test
+  fun `test zero region`(): Unit = timeoutRunBlocking {
     val file = createJavaTempFile("A.java")
     val root = file.parent.parent
     val locator = OpenInIdeFileRegionLocator(

@@ -5,6 +5,8 @@ import com.intellij.openapi.editor.impl.ImaginaryEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.DumbModeTestUtils
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
@@ -14,11 +16,11 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.dispatchAllTasksOnUi
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.respond200PublishReport
 import org.jetbrains.qodana.run.QodanaInIdeOutput
 import org.jetbrains.qodana.run.QodanaRunInIdeService
@@ -27,41 +29,51 @@ import org.jetbrains.qodana.run.RunInIdeParameters
 import org.jetbrains.qodana.runDispatchingOnUi
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderMock
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.util.UUID
 import kotlin.io.path.copyTo
 
-class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
+@TestApplication
+class LocalRunQodanaViewModelTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private val emptyProjectVcsDataProvider = ProjectVcsDataProviderMock()
 
-  override fun runInDispatchThread(): Boolean = false
-
-  fun `test save yaml state is initially save`() = runDispatchingOnUi {
+  @Test
+  fun `test save yaml state is initially save`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.SAVE }
   }
 
-  fun `test save yaml state is already physical when yaml is physical`() = runDispatchingOnUi {
+  @Test
+  fun `test save yaml state is already physical when yaml is physical`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     yamlViewModelMock.yamlStateFlow.value = yamlStateMock(isPhysical = true)
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.ALREADY_PHYSICAL }
   }
 
-  fun `test set save yaml state to false`() = runDispatchingOnUi {
+  @Test
+  fun `test set save yaml state to false`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     viewModel.setSaveQodanaYaml(false)
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.NO_SAVE }
   }
 
-  fun `test save yaml state to false and to true`() = runDispatchingOnUi {
+  @Test
+  fun `test save yaml state to false and to true`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     viewModel.setSaveQodanaYaml(false)
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.NO_SAVE }
@@ -70,15 +82,16 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.SAVE }
   }
 
-  fun `test save yaml state to false or to true has no effect when yaml is physical`() = runDispatchingOnUi {
+  @Test
+  fun `test save yaml state to false or to true has no effect when yaml is physical`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
     yamlViewModelMock.yamlStateFlow.value = yamlStateMock(isPhysical = true)
 
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.ALREADY_PHYSICAL }
 
     var lastSaveState: LocalRunQodanaViewModel.SaveQodanaYamlState? = null
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.saveQodanaYamlStateFlow.collect {
         lastSaveState = it
       }
@@ -95,18 +108,20 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(lastSaveState).isEqualTo(LocalRunQodanaViewModel.SaveQodanaYamlState.ALREADY_PHYSICAL)
   }
 
-  fun `test set cloud token`() = runDispatchingOnUi {
+  @Test
+  fun `test set cloud token`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     val token = UUID.randomUUID().toString()
     viewModel.setCloudToken(token)
     viewModel.cloudTokenStateFlow.first { it == token }
   }
 
-  fun `test set cloud token twice`() = runDispatchingOnUi {
+  @Test
+  fun `test set cloud token twice`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     val token = UUID.randomUUID().toString()
     viewModel.setCloudToken(token)
@@ -117,24 +132,27 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     viewModel.cloudTokenStateFlow.first { it == token2 }
   }
 
-  fun `test set do publish to cloud initially false`() = runDispatchingOnUi {
+  @Test
+  fun `test set do publish to cloud initially false`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     assertThat(viewModel.publishToCloudStateFlow.value).isFalse()
   }
 
-  fun `test set true do publish to cloud`() = runDispatchingOnUi {
+  @Test
+  fun `test set true do publish to cloud`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     viewModel.setPublishToCloud(true)
     viewModel.publishToCloudStateFlow.first { it }
   }
 
-  fun `test set true publish to cloud then set false`() = runDispatchingOnUi {
+  @Test
+  fun `test set true publish to cloud then set false`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     viewModel.setPublishToCloud(true)
     viewModel.publishToCloudStateFlow.first { it }
@@ -143,12 +161,13 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     viewModel.publishToCloudStateFlow.first { !it }
   }
 
-  fun `test can finish initially`() = runDispatchingOnUi {
+  @Test
+  fun `test can finish initially`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     var lastCanFinish: Boolean? = null
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.isFinishAvailableFlow.collect {
         lastCanFinish = it
       }
@@ -157,14 +176,15 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(lastCanFinish).isTrue()
   }
 
-  fun `test can't finish when publish is true and token is empty`() = runDispatchingOnUi {
+  @Test
+  fun `test can't finish when publish is true and token is empty`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
     viewModel.setPublishToCloud(true)
     viewModel.setCloudToken("")
 
     var lastCanFinish: Boolean? = null
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.isFinishAvailableFlow.collect {
         lastCanFinish = it
       }
@@ -173,14 +193,15 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(lastCanFinish).isFalse()
   }
 
-  fun `test can finish when publish is true and token is not empty`() = runDispatchingOnUi {
+  @Test
+  fun `test can finish when publish is true and token is not empty`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
     viewModel.setPublishToCloud(true)
     viewModel.setCloudToken("not empty token")
 
     var lastCanFinish: Boolean? = null
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.isFinishAvailableFlow.collect {
         lastCanFinish = it
       }
@@ -189,13 +210,14 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(lastCanFinish).isTrue()
   }
 
-  fun `test can't finish when in dumb mode`() = runDispatchingOnUi {
+  @Test
+  fun `test can't finish when in dumb mode`(): Unit = runDispatchingOnUi {
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
-    DumbModeTestUtils.runInDumbModeSynchronously(project) {
+    DumbModeTestUtils.runInDumbModeSynchronously(qodanaFixture.project) {
       var lastCanFinish: Boolean? = null
-      scope.launch(QodanaDispatchers.Ui){
+      qodanaFixture.scope.launch(QodanaDispatchers.Ui){
         viewModel.isFinishAvailableFlow.collect {
           lastCanFinish = it
         }
@@ -205,15 +227,16 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     }
   }
 
-  fun `test can't finish when already running`() = runDispatchingOnUi {
+  @Test
+  fun `test can't finish when already running`(): Unit = runDispatchingOnUi {
     val runInIdeServiceMock = QodanaRunInIdeServiceMock(qodanaRunningStateMock(null))
-    QodanaRunInIdeService.setTestInstance(project, runInIdeServiceMock, testRootDisposable)
+    QodanaRunInIdeService.setTestInstance(qodanaFixture.project, runInIdeServiceMock, qodanaFixture.testRootDisposable)
 
     val yamlViewModelMock = QodanaYamlViewModelMock()
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     var lastCanFinish: Boolean? = null
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.isFinishAvailableFlow.collect {
         lastCanFinish = it
       }
@@ -222,15 +245,16 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(lastCanFinish).isFalse()
   }
 
-  fun `test launch analysis and publish`() = runDispatchingOnUi {
+  @Test
+  fun `test launch analysis and publish`(): Unit = runDispatchingOnUi {
     val qodanaInIdeOutput = prepareQodanaInIdeOutput()
     val notRunningMock = QodanaNotRunningStateMock(qodanaRunningStateMock(qodanaInIdeOutput))
     val runInIdeServiceMock = QodanaRunInIdeServiceMock(notRunningMock)
-    QodanaRunInIdeService.setTestInstance(project, runInIdeServiceMock, testRootDisposable)
+    QodanaRunInIdeService.setTestInstance(qodanaFixture.project, runInIdeServiceMock, qodanaFixture.testRootDisposable)
 
     val yamlViewModelMock = QodanaYamlViewModelMock(parseResult = QodanaYamlViewModel.ParseResult.Valid(QodanaYamlConfig.EMPTY_V1))
     yamlViewModelMock.yamlStateFlow.value = yamlStateMock(isPhysical = false)
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
     viewModel.setPublishToCloud(true)
     viewModel.setCloudToken("token")
 
@@ -238,7 +262,7 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     publishToCloudApiMock.installOnHttpClient()
 
     var analysisWasLaunched = false
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.analysisWasLaunchedFlow.collect {
         analysisWasLaunched = true
       }
@@ -255,21 +279,22 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(publishToCloudApiMock.publishWasCalled).isTrue()
   }
 
-  fun `test launch analysis no publish`() = runDispatchingOnUi {
+  @Test
+  fun `test launch analysis no publish`(): Unit = runDispatchingOnUi {
     val qodanaInIdeOutput = prepareQodanaInIdeOutput()
     val notRunningMock = QodanaNotRunningStateMock(qodanaRunningStateMock(qodanaInIdeOutput))
     val runInIdeServiceMock = QodanaRunInIdeServiceMock(notRunningMock)
-    QodanaRunInIdeService.setTestInstance(project, runInIdeServiceMock, testRootDisposable)
+    QodanaRunInIdeService.setTestInstance(qodanaFixture.project, runInIdeServiceMock, qodanaFixture.testRootDisposable)
 
     val yamlViewModelMock = QodanaYamlViewModelMock(parseResult = QodanaYamlViewModel.ParseResult.Valid(QodanaYamlConfig.EMPTY_V1))
     yamlViewModelMock.yamlStateFlow.value = yamlStateMock(isPhysical = false)
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     val publishToCloudApiMock = QodanaCloudPublishToCloudApiMock()
     publishToCloudApiMock.installOnHttpClient()
 
     var analysisWasLaunched = false
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.analysisWasLaunchedFlow.collect {
         analysisWasLaunched = true
       }
@@ -286,14 +311,15 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(publishToCloudApiMock.publishWasCalled).isFalse()
   }
 
-  fun `test launch analysis no yaml write`() = runDispatchingOnUi {
+  @Test
+  fun `test launch analysis no yaml write`(): Unit = runDispatchingOnUi {
     val qodanaInIdeOutput = prepareQodanaInIdeOutput()
     val notRunningMock = QodanaNotRunningStateMock(qodanaRunningStateMock(qodanaInIdeOutput))
     val runInIdeServiceMock = QodanaRunInIdeServiceMock(notRunningMock)
-    QodanaRunInIdeService.setTestInstance(project, runInIdeServiceMock, testRootDisposable)
+    QodanaRunInIdeService.setTestInstance(qodanaFixture.project, runInIdeServiceMock, qodanaFixture.testRootDisposable)
 
     val yamlViewModelMock = QodanaYamlViewModelMock(parseResult = QodanaYamlViewModel.ParseResult.Valid(QodanaYamlConfig.EMPTY_V1))
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
     yamlViewModelMock.yamlStateFlow.value = yamlStateMock(isPhysical = false)
     viewModel.saveQodanaYamlStateFlow.first { it == LocalRunQodanaViewModel.SaveQodanaYamlState.SAVE }
     viewModel.setSaveQodanaYaml(false)
@@ -302,7 +328,7 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     publishToCloudApiMock.installOnHttpClient()
 
     var analysisWasLaunched = false
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.analysisWasLaunchedFlow.collect {
         analysisWasLaunched = true
       }
@@ -319,21 +345,22 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     assertThat(publishToCloudApiMock.publishWasCalled).isFalse()
   }
 
-  fun `test launch analysis parse failed`() = runDispatchingOnUi {
+  @Test
+  fun `test launch analysis parse failed`(): Unit = runDispatchingOnUi {
     val qodanaInIdeOutput = prepareQodanaInIdeOutput()
     val notRunningMock = QodanaNotRunningStateMock(qodanaRunningStateMock(qodanaInIdeOutput))
     val runInIdeServiceMock = QodanaRunInIdeServiceMock(notRunningMock)
-    QodanaRunInIdeService.setTestInstance(project, runInIdeServiceMock, testRootDisposable)
+    QodanaRunInIdeService.setTestInstance(qodanaFixture.project, runInIdeServiceMock, qodanaFixture.testRootDisposable)
 
     val yamlViewModelMock = QodanaYamlViewModelMock(parseResult = QodanaYamlViewModel.ParseResult.Error("error"))
     yamlViewModelMock.yamlStateFlow.value = yamlStateMock(isPhysical = false)
-    val viewModel = LocalRunQodanaViewModel(project, scope, yamlViewModelMock, emptyProjectVcsDataProvider)
+    val viewModel = LocalRunQodanaViewModel(qodanaFixture.project, qodanaFixture.scope, yamlViewModelMock, emptyProjectVcsDataProvider)
 
     val publishToCloudApiMock = QodanaCloudPublishToCloudApiMock()
     publishToCloudApiMock.installOnHttpClient()
 
     var analysisWasLaunched = false
-    scope.launch(QodanaDispatchers.Ui){
+    qodanaFixture.scope.launch(QodanaDispatchers.Ui){
       viewModel.analysisWasLaunchedFlow.collect {
         analysisWasLaunched = true
       }
@@ -358,7 +385,7 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     override val yamlValidationErrorFlow: Flow<QodanaYamlViewModel.ParseResult.Error?> = emptyFlow()
 
     override val project: Project
-      get() = myFixture.project
+      get() = qodanaFixture.project
 
     var timesParseCalled = 0
     var timesWriteCalled = 0
@@ -381,7 +408,7 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
     } else {
       null
     }
-    return QodanaYamlViewModel.YamlState(mockDocument, ImaginaryEditor(project, mockDocument), physicalFile)
+    return QodanaYamlViewModel.YamlState(mockDocument, ImaginaryEditor(qodanaFixture.project, mockDocument), physicalFile)
   }
 
   private class QodanaRunInIdeServiceMock(qodanaRunState: QodanaRunState) : QodanaRunInIdeService {
@@ -427,7 +454,7 @@ class LocalRunQodanaViewModelTest : QodanaPluginLightTestBase() {
   }
 
   private fun prepareQodanaInIdeOutput(): QodanaInIdeOutput {
-    val sarif = sarifTestReports.validForConverter
+    val sarif = qodanaFixture.sarifTestReports.validForConverter
     val outputDir = FileUtilRt.createTempDirectory("converter", "", true).toPath()
     val sarifInOutput = outputDir.resolve("qodana.sarif.json")
     sarif.copyTo(sarifInOutput)

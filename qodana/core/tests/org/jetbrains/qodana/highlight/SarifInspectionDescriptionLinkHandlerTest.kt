@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.MultiformatMessageString
@@ -27,9 +29,9 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.dispatchAllTasksOnUi
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.report.AggregatedReportMetadata
 import org.jetbrains.qodana.report.BannerContentProvider
@@ -40,28 +42,35 @@ import org.jetbrains.qodana.report.NotificationCallback
 import org.jetbrains.qodana.report.ReportDescriptor
 import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.runDispatchingOnUi
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.UUID
 
-class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
+@TestApplication
+class SarifInspectionDescriptionLinkHandlerTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
+
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
+
   private lateinit var inspectionFromPlatformWithDescription: InspectionToolWrapper<*, *>
 
-  override fun setUp() {
-    super.setUp()
-    reinstansiateService(project, QodanaHighlightedReportService(project, scope))
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaHighlightedReportService(qodanaFixture.project, qodanaFixture.scope))
     initPlatformInspections()
   }
 
-  override fun runInDispatchThread(): Boolean = false
-
   private fun initPlatformInspections() {
-    val inspectionProfileManager = (InspectionProfileManager.getInstance(project) as ProjectInspectionProfileManager)
+    val inspectionProfileManager = (InspectionProfileManager.getInstance(qodanaFixture.project) as ProjectInspectionProfileManager)
     val previousProfile = inspectionProfileManager.currentProfile
 
     InspectionProfileImpl.INIT_INSPECTIONS = true
     val profile = InspectionProfileImpl("profile_with_platform_inspections")
     inspectionProfileManager.setCurrentProfile(profile)
 
-    Disposer.register(testRootDisposable) {
+    Disposer.register(qodanaFixture.testRootDisposable) {
       InspectionProfileImpl.INIT_INSPECTIONS = false
       inspectionProfileManager.setCurrentProfile(previousProfile)
       inspectionProfileManager.deleteProfile(profile)
@@ -71,12 +80,13 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
   }
 
   private val highlightedReportService: QodanaHighlightedReportService
-    get() = QodanaHighlightedReportService.getInstance(project)
+    get() = QodanaHighlightedReportService.getInstance(qodanaFixture.project)
 
   private val editorMock: Editor
-    get() = ImaginaryEditor(project, MockDocument())
+    get() = ImaginaryEditor(qodanaFixture.project, MockDocument())
 
-  fun `test inspection available from platform get description from platform`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection available from platform get description from platform`(): Unit = runDispatchingOnUi {
     val inspectionShortName = inspectionFromPlatformWithDescription.shortName
     val expectedInspectionDescription = inspectionFromPlatformWithDescription.loadDescription()
 
@@ -92,7 +102,8 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
       .isEqualTo(expectedInspectionDescription)
   }
 
-  fun `test inspection not available from platform with sarif markdown get description from markdown`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection not available from platform with sarif markdown get description from markdown`(): Unit = runDispatchingOnUi {
     val inspectionId = UUID.randomUUID().toString()
     @Language("HTML")
     val expectedInspectionDescription = """
@@ -163,7 +174,8 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
       .isEqualTo(expectedInspectionDescription)
   }
 
-  fun `test inspection not available from platform only with plain text get description as plain text`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection not available from platform only with plain text get description as plain text`(): Unit = runDispatchingOnUi {
     val inspectionId = UUID.randomUUID().toString()
     val expectedInspectionDescription = "description in plain text"
 
@@ -179,7 +191,8 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
       .isEqualTo(expectedInspectionDescription)
   }
 
-  fun `test inspection not available from platform empty description in sarif`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection not available from platform empty description in sarif`(): Unit = runDispatchingOnUi {
     val inspectionId = UUID.randomUUID().toString()
 
     val reportDescriptor = SingleInspectionProblemReportDescriptor(
@@ -194,7 +207,8 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
       .isEqualTo(null)
   }
 
-  fun `test unknown inspection not present in platform and sarif`() = runDispatchingOnUi {
+  @Test
+  fun `test unknown inspection not present in platform and sarif`(): Unit = runDispatchingOnUi {
     val inspectionId = UUID.randomUUID().toString()
 
     val reportDescriptor = SingleInspectionProblemReportDescriptor(
@@ -209,16 +223,18 @@ class SarifInspectionDescriptionLinkHandlerTest : QodanaPluginLightTestBase() {
       .isEqualTo(null)
   }
 
-  fun `test inspection from platform no description because no report is highlighted`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection from platform no description because no report is highlighted`(): Unit = runDispatchingOnUi {
     val inspectionShortName = inspectionFromPlatformWithDescription.shortName
     assertThat(TooltipLinkHandlerEP.getDescription(SarifInspectionDescriptionLinkHandler.getLinkReferenceToInspection(inspectionShortName), editorMock))
       .isEqualTo(null)
   }
 
-  fun `test inspection from platform no description during loading of report`() = runDispatchingOnUi {
+  @Test
+  fun `test inspection from platform no description during loading of report`(): Unit = runDispatchingOnUi {
     val inspectionShortName = inspectionFromPlatformWithDescription.shortName
 
-    scope.launch(QodanaDispatchers.Default) {
+    qodanaFixture.scope.launch(QodanaDispatchers.Default) {
       highlightedReportService.highlightReport(InfiniteLoadingReportDescriptorMock)
     }
     dispatchAllTasksOnUi()

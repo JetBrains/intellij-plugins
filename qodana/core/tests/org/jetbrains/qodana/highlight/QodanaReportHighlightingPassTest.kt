@@ -3,7 +3,6 @@ package org.jetbrains.qodana.highlight
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.navigation.JBProtocolRevisionResolver
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
@@ -18,7 +17,8 @@ import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.util.ThrowableRunnable
+import com.intellij.testFramework.junit5.StressTestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.qodana.sarif.model.ArtifactContent
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Location
@@ -40,10 +40,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.QODANA_TEST_DATA_BASE_PATH
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.dispatchAllTasksOnUi
 import org.jetbrains.qodana.getDocument
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.report.AggregatedReportMetadata
 import org.jetbrains.qodana.report.BannerContentProvider
@@ -56,6 +57,8 @@ import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.run.RUN_TIMESTAMP
 import org.jetbrains.qodana.runDispatchingOnUi
 import org.jetbrains.qodana.staticAnalysis.sarif.withSuppressToolId
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.pathString
@@ -83,24 +86,24 @@ private const val REVISIONS_DIR = "revisions"
  *         └── B.java
  * ```
  */
-class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
-  override fun getBasePath() = Path(super.getBasePath(), "highlight").pathString
+@StressTestApplication
+class QodanaReportHighlightingPassTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
+  }
 
-  override fun setUp() {
-    super.setUp()
-    (PsiDocumentManager.getInstance(project) as PsiDocumentManagerBase).disableBackgroundCommit(testRootDisposable)
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture, basePath = Path(QODANA_TEST_DATA_BASE_PATH, "highlight").pathString)
 
-    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
+  @BeforeEach
+  fun setUp() {
+    (PsiDocumentManager.getInstance(qodanaFixture.project) as PsiDocumentManagerBase).disableBackgroundCommit(qodanaFixture.testRootDisposable)
+    (qodanaFixture.fixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
 
-    copyProjectTestData("project")
+    qodanaFixture.copyProjectTestData("project")
     configureGit()
     initPlatformInspections()
 
-    reinstansiateService(project, QodanaHighlightedReportService(project, scope))
-  }
-
-  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-    ApplicationManagerEx.runInStressTest<Exception>(true) { super.runTestRunnable(testRunnable) }
+    qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaHighlightedReportService(qodanaFixture.project, qodanaFixture.scope))
   }
 
   private val reportLatestRevision = ReportDescriptorTestMock(
@@ -129,47 +132,53 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     )
   )
 
-  fun `test no highlight when report is not selected`() = runDispatchingOnUi {
+  @Test
+  fun `test no highlight when report is not selected`(): Unit = runDispatchingOnUi {
     openFileInEditorByRelativePath("src/Main.java")
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test no highlight when report is loading`() = runDispatchingOnUi {
+  @Test
+  fun `test no highlight when report is loading`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusLoading()
     reportLatestRevision.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision full line snippets`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision full line snippets`(): Unit = runDispatchingOnUi {
     reportLatestRevisionFullLineSnippets.setStatusHighlighted()
     reportLatestRevisionFullLineSnippets.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
   // QD-14233: making any change to the file used to drop every highlight; unedited lines must keep theirs.
-  fun `test highlight report latest revision full line snippets insert line before`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision full line snippets insert line before`(): Unit = runDispatchingOnUi {
     reportLatestRevisionFullLineSnippets.setStatusHighlighted()
     reportLatestRevisionFullLineSnippets.problems[0].openFileInEditor()
     reportLatestRevisionFullLineSnippets.problems[0].editDocument { document, _ ->
       document.insertString(0, "//inserted line\n")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
   // QD-14233: the problem must still be found when everything around it on its line changed,
   // as long as the problem's own text survives (only the sub-span text is validated).
-  fun `test highlight report latest revision full line snippets surroundings changed`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision full line snippets surroundings changed`(): Unit = runDispatchingOnUi {
     reportLatestRevisionFullLineSnippets.setStatusHighlighted()
     reportLatestRevisionFullLineSnippets.problems[1].openFileInEditor()
     reportLatestRevisionFullLineSnippets.problems[1].editDocument { document, problemRange ->
@@ -177,30 +186,33 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.replaceString(document.getLineStartOffset(7), problemRange.startOffset, "    /* CHANGED_BEFORE */ ")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision delete line before`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision delete line before`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, _ ->
       document.deleteString(document.getLineStartOffset(1), document.getLineEndOffset(1) + 1)
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision delete line after`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision delete line after`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, _ ->
       document.deleteString(document.getLineStartOffset(5), document.getLineEndOffset(5) + 1)
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision delete lines before and after`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision delete lines before and after`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, _ ->
@@ -210,30 +222,33 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.deleteString(document.getLineStartOffset(1), document.getLineEndOffset(1) + 1)
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision insert line before`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision insert line before`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, _ ->
       document.insertString(document.getLineStartOffset(1), "  //inserted line\n")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision insert line after`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision insert line after`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, _ ->
       document.insertString(document.getLineStartOffset(5), "  //inserted line\n")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision insert lines before and after`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision insert lines before and after`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, _ ->
@@ -243,41 +258,45 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.insertString(document.getLineStartOffset(1), "  //inserted line\n")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision insert text before problem with snippet`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision insert text before problem with snippet`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[2].openFileInEditor()
     reportLatestRevision.problems[2].editDocument { document, problemRange ->
       document.insertString(problemRange.startOffset, "ADDED_TEXT ")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision insert text after problem with snippet`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision insert text after problem with snippet`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[2].openFileInEditor()
     reportLatestRevision.problems[2].editDocument { document, problemRange ->
       document.insertString(problemRange.endOffset, " ADDED_TEXT")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
 
-  fun `test highlight report latest revision delete text after problem with snippet`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision delete text after problem with snippet`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[2].openFileInEditor()
     reportLatestRevision.problems[2].editDocument { document, problemRange ->
       document.deleteString(problemRange.endOffset, problemRange.endOffset + 3)
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision delete text after problem without snippet`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision delete text after problem without snippet`(): Unit = runDispatchingOnUi {
     val reportFeatureRevision = ReportDescriptorTestMock(
       "report_latest",
       listOf(
@@ -293,10 +312,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.deleteString(problemRange.endOffset, problemRange.endOffset + 3)
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision complex editing`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision complex editing`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[2].openFileInEditor()
     reportLatestRevision.problems[2].editDocument { document, _ ->
@@ -313,10 +333,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.insertString(document.getLineEndOffset(16), " more text")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report latest revision another complex editing`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report latest revision another complex editing`(): Unit = runDispatchingOnUi {
     reportLatestRevision.setStatusHighlighted()
     reportLatestRevision.problems[0].openFileInEditor()
     reportLatestRevision.problems[0].editDocument { document, problemRange ->
@@ -332,10 +353,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.deleteString(document.getLineStartOffset(17), document.getLineEndOffset(17) + 1)
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report feature revision problem only in feature revision`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report feature revision problem only in feature revision`(): Unit = runDispatchingOnUi {
     val reportFeatureRevision = ReportDescriptorTestMock(
       "report_feature",
       listOf(
@@ -349,10 +371,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportFeatureRevision.setStatusHighlighted()
     reportFeatureRevision.problems[3].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report old revision ide run problems`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report old revision ide run problems`(): Unit = runDispatchingOnUi {
     val reportFeatureRevision = ReportDescriptorTestMock(
       "report_feature",
       listOf(
@@ -366,10 +389,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportFeatureRevision.setStatusHighlighted()
     reportFeatureRevision.problems[1].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report old revision ide run problems then modified`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report old revision ide run problems then modified`(): Unit = runDispatchingOnUi {
     val reportFeatureRevision = ReportDescriptorTestMock(
       "report_feature",
       listOf(
@@ -386,10 +410,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
       document.insertString(document.getLineStartOffset(1), "\n")
     }
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report old revision not ide run still highlighted`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report old revision not ide run still highlighted`(): Unit = runDispatchingOnUi {
     val reportFeatureRevision = ReportDescriptorTestMock(
       "report_feature",
       listOf(
@@ -403,10 +428,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportFeatureRevision.setStatusHighlighted()
     reportFeatureRevision.problems[1].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report invalid revision valid problems`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report invalid revision valid problems`(): Unit = runDispatchingOnUi {
     val reportInvalidRevisionValidProblems = ReportDescriptorTestMock(
       "report_invalid_revision_valid_problems",
       listOf(
@@ -419,10 +445,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportInvalidRevisionValidProblems.setStatusHighlighted()
     reportInvalidRevisionValidProblems.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report invalid revision invalid problems`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report invalid revision invalid problems`(): Unit = runDispatchingOnUi {
     val reportInvalidRevisionValidProblems = ReportDescriptorTestMock(
       "report_invalid_revision_valid_problems",
       listOf(
@@ -435,10 +462,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportInvalidRevisionValidProblems.setStatusHighlighted()
     reportInvalidRevisionValidProblems.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test highlight report problems with range of multiple lines`() = runDispatchingOnUi {
+  @Test
+  fun `test highlight report problems with range of multiple lines`(): Unit = runDispatchingOnUi {
     val reportWithProblemsMultipleLinesRange = ReportDescriptorTestMock(
       "multiple_lines_report",
       listOf(
@@ -450,10 +478,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithProblemsMultipleLinesRange.setStatusHighlighted()
     reportWithProblemsMultipleLinesRange.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test multiple runs all highlighted`() = runDispatchingOnUi {
+  @Test
+  fun `test multiple runs all highlighted`(): Unit = runDispatchingOnUi {
     val reportWithProblemsMultipleLinesRange = ReportDescriptorTestMock(
       "multiple_lines_report",
       listOf(
@@ -466,10 +495,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithProblemsMultipleLinesRange.setStatusHighlighted()
     reportWithProblemsMultipleLinesRange.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/MainExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/MainExpectedHighlight.java")
   }
 
-  fun `test one statement suppressed other not`() = runDispatchingOnUi {
+  @Test
+  fun `test one statement suppressed other not`(): Unit = runDispatchingOnUi {
     val reportWithEmptyMethodProblems = ReportDescriptorTestMock(
       "suppress_test",
       listOf(
@@ -481,10 +511,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithEmptyMethodProblems.setStatusHighlighted()
     reportWithEmptyMethodProblems.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/LogicExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/LogicExpectedHighlight.java")
   }
 
-  fun `test don't suppress other inspections`() = runDispatchingOnUi {
+  @Test
+  fun `test don't suppress other inspections`(): Unit = runDispatchingOnUi {
     val reportWithUnusedProblems = ReportDescriptorTestMock(
       "suppress_test",
       listOf(
@@ -496,10 +527,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithUnusedProblems.setStatusHighlighted()
     reportWithUnusedProblems.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/LogicExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/LogicExpectedHighlight.java")
   }
 
-  fun `test suppress all for class`() = runDispatchingOnUi {
+  @Test
+  fun `test suppress all for class`(): Unit = runDispatchingOnUi {
     val reportWithConstantValueProblems = ReportDescriptorTestMock(
       "suppress_test",
       listOf(
@@ -511,10 +543,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithConstantValueProblems.setStatusHighlighted()
     reportWithConstantValueProblems.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/LogicExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/LogicExpectedHighlight.java")
   }
 
-  fun `test suppress with tool id in sarif`() = runDispatchingOnUi {
+  @Test
+  fun `test suppress with tool id in sarif`(): Unit = runDispatchingOnUi {
     val reportWithUnusedProblems = ReportDescriptorTestMock(
       "suppress_test",
       listOf(
@@ -529,10 +562,11 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithUnusedProblems.setStatusHighlighted()
     reportWithUnusedProblems.problems[0].openFileInEditor()
 
-    checkHighlighting("$name/LogicExpectedHighlight.java")
+    checkHighlighting("${qodanaFixture.testMethodName}/LogicExpectedHighlight.java")
   }
 
-  fun `test clashed highlightings when file opened`() = runDispatchingOnUi {
+  @Test
+  fun `test clashed highlightings when file opened`(): Unit = runDispatchingOnUi {
     val reportWithProblemsMultipleLinesRange = ReportDescriptorTestMock(
       "multiple_lines_report",
       listOf(
@@ -543,26 +577,27 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithProblemsMultipleLinesRange.setStatusHighlighted()
     reportWithProblemsMultipleLinesRange.problems[0].openFileInEditor()
 
-    val currentFile = myFixture.file!!
+    val currentFile = qodanaFixture.fixture.file!!
 
-    val expectedDocument1 = loadAdditionalTestDataFile("$name/MainExpectedHighlight1.java").getDocument()!!
+    val expectedDocument1 = qodanaFixture.loadAdditionalTestDataFile("${qodanaFixture.testMethodName}/MainExpectedHighlight1.java").getDocument()!!
     val expectedHighlightingData1 = expectedDocument1.extractHighlightingData()
     prepareForHighlight()
-    val realHighlightingInfo1 = myFixture.doHighlighting()
+    val realHighlightingInfo1 = qodanaFixture.fixture.doHighlighting()
     expectedHighlightingData1.checkResult(currentFile, realHighlightingInfo1, currentFile.text)
 
-    myFixture.enableInspections(EmptyStatementBodyInspection::class.java)
+    qodanaFixture.fixture.enableInspections(EmptyStatementBodyInspection::class.java)
 
-    val expectedDocument2 = loadAdditionalTestDataFile("$name/MainExpectedHighlight2.java").getDocument()!!
+    val expectedDocument2 = qodanaFixture.loadAdditionalTestDataFile("${qodanaFixture.testMethodName}/MainExpectedHighlight2.java").getDocument()!!
     val expectedHighlightingData2 = expectedDocument2.extractHighlightingData()
     prepareForHighlight()
-    val realHighlightingInfo2 = myFixture.doHighlighting()
+    val realHighlightingInfo2 = qodanaFixture.fixture.doHighlighting()
     assertThat(realHighlightingInfo1.size).isEqualTo(realHighlightingInfo2.size)
     expectedHighlightingData2.checkResult(currentFile, realHighlightingInfo2, currentFile.text)
-    myFixture.disableInspections()
+    qodanaFixture.fixture.disableInspections()
   }
 
-  fun `test highlightings with enabled local inspection`() = runDispatchingOnUi {
+  @Test
+  fun `test highlightings with enabled local inspection`(): Unit = runDispatchingOnUi {
     val reportWithProblemsMultipleLinesRange = ReportDescriptorTestMock(
       "multiple_lines_report",
       listOf(
@@ -574,21 +609,21 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     reportWithProblemsMultipleLinesRange.setStatusHighlighted()
     reportWithProblemsMultipleLinesRange.problems[0].openFileInEditor()
 
-    val currentFile = myFixture.file!!
+    val currentFile = qodanaFixture.fixture.file!!
 
-    val expectedDocument1 = loadAdditionalTestDataFile("$name/MainExpectedHighlight1.java").getDocument()!!
+    val expectedDocument1 = qodanaFixture.loadAdditionalTestDataFile("${qodanaFixture.testMethodName}/MainExpectedHighlight1.java").getDocument()!!
     val expectedHighlightingData1 = expectedDocument1.extractHighlightingData()
     prepareForHighlight()
-    val realHighlightingInfo1 = myFixture.doHighlighting()
+    val realHighlightingInfo1 = qodanaFixture.fixture.doHighlighting()
     expectedHighlightingData1.checkResult(currentFile, realHighlightingInfo1, currentFile.text)
 
-    myFixture.enableInspections(EmptyStatementBodyInspection::class.java)
+    qodanaFixture.fixture.enableInspections(EmptyStatementBodyInspection::class.java)
 
-    val expectedDocument2 = loadAdditionalTestDataFile("$name/MainExpectedHighlight2.java").getDocument()!!
+    val expectedDocument2 = qodanaFixture.loadAdditionalTestDataFile("${qodanaFixture.testMethodName}/MainExpectedHighlight2.java").getDocument()!!
     val expectedHighlightingData2 = expectedDocument2.extractHighlightingData()
     prepareForHighlight()
-    myFixture.doHighlighting()
-    val realHighlightingInfo2 = myFixture.doHighlighting()
+    qodanaFixture.fixture.doHighlighting()
+    val realHighlightingInfo2 = qodanaFixture.fixture.doHighlighting()
     assertThat(realHighlightingInfo1.size).isEqualTo(realHighlightingInfo2.size + 1)
     expectedHighlightingData2.checkResult(currentFile, realHighlightingInfo2, currentFile.text)
   }
@@ -596,7 +631,7 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
   private fun configureGit() {
     JBProtocolRevisionResolver.EP_NAME.point.registerExtension(
       JBProtocolRevisionResolver { _, absolutePath, revision ->
-        val projectDirectory = projectDir
+        val projectDirectory = qodanaFixture.projectDir
         val projectPath = Path(projectDirectory!!.path)
         val pathToFile = Path(absolutePath)
         if (!pathToFile.startsWith(projectPath))
@@ -605,21 +640,21 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
         val relativePathFromProjectDir = projectPath.relativize(pathToFile).pathString
         projectDirectory.findFileByRelativePath(Path(REVISIONS_DIR, revision, relativePathFromProjectDir).invariantSeparatorsPathString)
       },
-      testRootDisposable
+      qodanaFixture.testRootDisposable
     )
   }
 
   private fun initPlatformInspections() {
-    val inspectionProfileManager = (InspectionProfileManager.getInstance(project) as ProjectInspectionProfileManager)
+    val inspectionProfileManager = (InspectionProfileManager.getInstance(qodanaFixture.project) as ProjectInspectionProfileManager)
     val previousProfile = inspectionProfileManager.currentProfile
 
     InspectionProfileImpl.INIT_INSPECTIONS = true
     val profile = InspectionProfileImpl("profile_with_platform_inspections")
-    profile.disableAllTools(project)
+    profile.disableAllTools(qodanaFixture.project)
     inspectionProfileManager.addProfile(profile)
     inspectionProfileManager.setCurrentProfile(profile)
 
-    Disposer.register(testRootDisposable) {
+    Disposer.register(qodanaFixture.testRootDisposable) {
       InspectionProfileImpl.INIT_INSPECTIONS = false
       inspectionProfileManager.setCurrentProfile(previousProfile)
       inspectionProfileManager.deleteProfile(profile)
@@ -627,12 +662,12 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
   }
 
   private fun checkHighlighting(pathToExpectedFileInTestData: String) {
-    val expectedDocument = loadAdditionalTestDataFile(pathToExpectedFileInTestData).getDocument()!!
+    val expectedDocument = qodanaFixture.loadAdditionalTestDataFile(pathToExpectedFileInTestData).getDocument()!!
     val expectedHighlightingData = expectedDocument.extractHighlightingData()
 
     prepareForHighlight()
-    val realHighlightingInfo = myFixture.doHighlighting()
-    val currentFile = myFixture.file!!
+    val realHighlightingInfo = qodanaFixture.fixture.doHighlighting()
+    val currentFile = qodanaFixture.fixture.file!!
     expectedHighlightingData.checkResult(currentFile, realHighlightingInfo, currentFile.text)
   }
 
@@ -652,24 +687,24 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
   }
 
   private fun prepareForHighlight() {
-    val revisionIds = QodanaHighlightedReportService.getInstance(project)
+    val revisionIds = QodanaHighlightedReportService.getInstance(qodanaFixture.project)
                         .highlightedReportState.value.highlightedReportDataIfSelected?.allProblems?.map { it.revisionId } ?: return
     val revisionId = revisionIds[0] ?: return
 
-    val filePath = myFixture.file.virtualFile.canonicalPath
-    val revisionFile = filePath?.let { revisionId.let { JBProtocolRevisionResolver.processResolvers(project!!, filePath, revisionId) } }
-    val revisionPsiFile = revisionFile?.let { PsiManager.getInstance(project!!).findFile(revisionFile) }
+    val filePath = qodanaFixture.fixture.file.virtualFile.canonicalPath
+    val revisionFile = filePath?.let { revisionId.let { JBProtocolRevisionResolver.processResolvers(qodanaFixture.project, filePath, revisionId) } }
+    val revisionPsiFile = revisionFile?.let { PsiManager.getInstance(qodanaFixture.project).findFile(revisionFile) }
 
     val data = revisionIds.associateWith { revisionPsiFile }
 
-    val ideRunTimestamp = QodanaHighlightedReportService.getInstance(project)
+    val ideRunTimestamp = QodanaHighlightedReportService.getInstance(qodanaFixture.project)
                         .highlightedReportState.value.highlightedReportDataIfSelected?.ideRunData?.ideRunTimestamp
 
     if (ideRunTimestamp == null) {
-      myFixture.editor.document.putUserData(QODANA_REVISION_DATA, QodanaRevisionData.VCSInfo(data))
+      qodanaFixture.fixture.editor.document.putUserData(QODANA_REVISION_DATA, QodanaRevisionData.VCSInfo(data))
     } else {
-      val createdDocument = EditorFactory.getInstance().createDocument(myFixture.file.text)
-      myFixture.editor.document.putUserData(QODANA_REVISION_DATA,QodanaRevisionData.LocalInfo(
+      val createdDocument = EditorFactory.getInstance().createDocument(qodanaFixture.fixture.file.text)
+      qodanaFixture.fixture.editor.document.putUserData(QODANA_REVISION_DATA,QodanaRevisionData.LocalInfo(
         QodanaLocalDocumentData(ideRunTimestamp, createdDocument))
       )
     }
@@ -696,16 +731,16 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     override suspend fun loadReport(project: Project) = LoadedReport.Sarif(ValidatedSarif(reportDeferred.await()), AggregatedReportMetadata(emptyMap()), "")
 
     fun setStatusLoading() {
-      scope.launch(QodanaDispatchers.Default) {
-        QodanaHighlightedReportService.getInstance(project).highlightReport(this@ReportDescriptorTestMock)
+      qodanaFixture.scope.launch(QodanaDispatchers.Default) {
+        QodanaHighlightedReportService.getInstance(qodanaFixture.project).highlightReport(this@ReportDescriptorTestMock)
       }
       dispatchAllTasksOnUi()
     }
 
     fun setStatusHighlighted() {
       completeLoading()
-      scope.launch(QodanaDispatchers.Default) {
-        QodanaHighlightedReportService.getInstance(project).highlightReport(this@ReportDescriptorTestMock)
+      qodanaFixture.scope.launch(QodanaDispatchers.Default) {
+        QodanaHighlightedReportService.getInstance(qodanaFixture.project).highlightReport(this@ReportDescriptorTestMock)
       }
       dispatchAllTasksOnUi()
     }
@@ -781,13 +816,13 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
   private fun ProblemTestDescription.openFileInEditor() = openFileInEditorByRelativePath(file)
 
   private fun ProblemTestDescription.editDocument(editAction: (Document, TextRange) -> Unit) {
-    WriteCommandAction.runWriteCommandAction(project) {
-      editAction.invoke(myFixture.editor.document, toTextRange())
+    WriteCommandAction.runWriteCommandAction(qodanaFixture.project) {
+      editAction.invoke(qodanaFixture.fixture.editor.document, toTextRange())
     }
   }
 
   private fun ProblemTestDescription.toTextRange(): TextRange {
-    val lineOffset = myFixture.editor.document.getLineStartOffset(line - 1)
+    val lineOffset = qodanaFixture.fixture.editor.document.getLineStartOffset(line - 1)
     val problemOffset = lineOffset + (column - 1)
     return TextRange(problemOffset, problemOffset + charLength)
   }
@@ -797,5 +832,5 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
     val suppressToolId: String
   )
 
-  private fun openFileInEditorByRelativePath(path: String) = myFixture.openFileInEditor(projectDir!!.findFileByRelativePath(path)!!)
+  private fun openFileInEditorByRelativePath(path: String) = qodanaFixture.fixture.openFileInEditor(qodanaFixture.projectDir!!.findFileByRelativePath(path)!!)
 }

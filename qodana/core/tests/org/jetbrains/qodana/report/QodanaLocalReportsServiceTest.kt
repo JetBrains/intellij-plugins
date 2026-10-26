@@ -1,19 +1,33 @@
 package org.jetbrains.qodana.report
 
 import com.intellij.openapi.project.Project
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.qodana.qodanaPluginLightFixture
 import org.jetbrains.qodana.reinstansiateService
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class QodanaLocalReportsServiceTest : QodanaPluginLightTestBase() {
-  override fun setUp() {
-    super.setUp()
-    reinstansiateService(project, QodanaLocalReportsService(project))
+@TestApplication
+class QodanaLocalReportsServiceTest {
+  companion object {
+    private val projectFixture = projectFixture(openAfterCreation = true)
   }
 
-  private val localReportsService get() = QodanaLocalReportsService.getInstance(project)
+  private val qodanaFixture by qodanaPluginLightFixture(projectFixture)
 
+  @BeforeEach
+  fun setUp() {
+    qodanaFixture.reinstansiateService(qodanaFixture.project, QodanaLocalReportsService(qodanaFixture.project))
+  }
+
+  private val localReportsService get() = QodanaLocalReportsService.getInstance(qodanaFixture.project)
+
+  @Test
   fun `test add available report`() {
     val report = ReportDescriptorMock("report1", _isReportAvailable = true)
     localReportsService.addReport(report)
@@ -21,21 +35,24 @@ class QodanaLocalReportsServiceTest : QodanaPluginLightTestBase() {
     assertEquals(setOf(report), localReportsService.getReports())
   }
 
+  @Test
   fun `test add unavailable report`() {
     val report = ReportDescriptorMock("report1", _isReportAvailable = false)
     localReportsService.addReport(report)
 
-    assertEmpty(localReportsService.getReports())
+    assertThat(localReportsService.getReports()).isEmpty()
   }
 
+  @Test
   fun `test add available report then becomes unavailable`() {
     val report = ReportDescriptorMock("report1", _isReportAvailable = true)
     localReportsService.addReport(report)
     report._isReportAvailable = false
 
-    assertEmpty(localReportsService.getReports())
+    assertThat(localReportsService.getReports()).isEmpty()
   }
 
+  @Test
   fun `test add available report1 add available report2`() {
     val report1 = ReportDescriptorMock("report1", _isReportAvailable = true)
     localReportsService.addReport(report1)
@@ -46,6 +63,7 @@ class QodanaLocalReportsServiceTest : QodanaPluginLightTestBase() {
     assertEquals(setOf(report1, report2), localReportsService.getReports())
   }
 
+  @Test
   fun `test add available report1 add unavailable report2`() {
     val report1 = ReportDescriptorMock("report1", _isReportAvailable = true)
     localReportsService.addReport(report1)
@@ -56,6 +74,7 @@ class QodanaLocalReportsServiceTest : QodanaPluginLightTestBase() {
     assertEquals(setOf(report1), localReportsService.getReports())
   }
 
+  @Test
   fun `test add available report1 add available report2 then report1 becomes unavailable`() {
     val report1 = ReportDescriptorMock("report1", _isReportAvailable = true)
     localReportsService.addReport(report1)
