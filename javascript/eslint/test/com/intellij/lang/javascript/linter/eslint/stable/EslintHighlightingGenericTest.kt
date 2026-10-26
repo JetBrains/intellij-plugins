@@ -6,6 +6,7 @@ import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.inspections.JSInspection
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage
+import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintInspection
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
@@ -151,6 +152,16 @@ abstract class EslintHighlightingGenericTest : EslintPackageLockTestBase() {
   fun testESLintGlobalFatalError() {
     myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("eslint-config-does-not-exist", false, true)
     doHighlightingTestWithInstallation("test.jsx")
+  }
+
+  // A rule that catches its own failure and only logs it to stderr (WEB-78300): the IDE shows the logged exception as a
+  // file-level ESLint error, and the problems that the other rules report stay. The stack frames hold temp paths, so
+  // the check stops at the first frame.
+  fun testStderrOutputReported() {
+    val loggedError = "Could not read file [object Object]\nError: ENOENT: no such file or directory\n    at "
+    val message = EslintBundle.message("eslint.inspections.error.logged.error", loggedError)
+    myExpectedGlobalAnnotation = ExpectedGlobalAnnotation("ESLint: $message", true, false)
+    doHighlightingTestWithInstallation("test.js")
   }
 
   // A file matched by flat-config `ignores` is skipped (isPathIgnored), so no problems are reported.

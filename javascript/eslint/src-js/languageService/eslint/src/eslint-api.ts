@@ -59,6 +59,10 @@ export class ESLintResponse {
   body?: any;
   error?: string;
   isNoConfigFile?: boolean
+  /** The text that the linter wrote to stderr while it handled the request. Absent when it wrote nothing. */
+  stderr?: string;
+  /** True when the stderr text lost its tail to the cap of the capture. */
+  stderrTruncated?: boolean;
 }
 
 /**

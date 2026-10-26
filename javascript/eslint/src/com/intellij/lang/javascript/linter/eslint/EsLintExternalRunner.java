@@ -26,6 +26,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.AnsiCsiUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -42,9 +43,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.regex.Pattern;
 
 public abstract class EsLintExternalRunner<TResult> {
   public static final Logger LOG = Logger.getInstance(EsLintExternalRunner.class);
+  /** A stack frame of Node.js or Bun, such as {@code     at readFileSync (node:fs:483:20)}. */
+  private static final Pattern STACK_FRAME = Pattern.compile("^\\s+at .+:\\d+:\\d+\\)?\\s*$", Pattern.MULTILINE);
   private final boolean myIsOnTheFly;
   private final EslintLanguageServiceClient myLanguageService;
 
@@ -66,8 +70,16 @@ public abstract class EsLintExternalRunner<TResult> {
       }
     };
     try {
-      List<EslintError> execute = ObjectUtils.coalesce(runner.execute(input), Collections.emptyList());
-      return JSLinterAnnotationResult.createLinterResult(input, execute, bestGuessConfig.get());
+      Response<List<EslintError>> response = runner.executeForResponse(input);
+      List<EslintError> errors = ObjectUtils.coalesce(response != null ? response.value : null, Collections.emptyList());
+      // The IDE starts Node.js with FORCE_COLOR, so a logged exception comes with color codes.
+      String stderr = response != null && response.stderr != null ? AnsiCsiUtil.stripAnsi(response.stderr) : null;
+      if (!containsStackTrace(stderr)) {
+        return JSLinterAnnotationResult.createLinterResult(input, errors, bestGuessConfig.get());
+      }
+      // The results miss the problems of the failed rule (WEB-78300). The problems that the other rules report stay.
+      String message = EslintBundle.message("eslint.inspections.error.logged.error", stderr);
+      return JSLinterAnnotationResult.createLinterResult(input, createFileLevelAnnotation(input, message), errors, bestGuessConfig.get());
     }
     catch (LinterExecutionException e) {
       return JSLinterAnnotationResult.create(input, e.getAnnotation(), bestGuessConfig.get());
@@ -88,8 +100,8 @@ public abstract class EsLintExternalRunner<TResult> {
 
   protected abstract @Nullable Future<EslintLanguageServiceClient.Response<TResult>> performServiceRequest(@NotNull EslintRequestData requestData);
 
-  private @Nullable TResult eslint(@NotNull JSLinterInput<EslintState> input,
-                                   @NotNull EslintRequestData requestData) throws LinterExecutionException {
+  private @Nullable Response<TResult> eslint(@NotNull JSLinterInput<EslintState> input,
+                                             @NotNull EslintRequestData requestData) throws LinterExecutionException {
     final Future<Response<TResult>> future = performServiceRequest(requestData);
     String error;
     Response<TResult> result = null;
@@ -115,7 +127,17 @@ public abstract class EsLintExternalRunner<TResult> {
       throw new LinterExecutionException(createFileLevelAnnotation(input, error));
     }
 
-    return result != null ? result.value : null;
+    return result;
+  }
+
+  /**
+   * A rule can catch its own failure and only log it. The log of an exception has a stack frame.
+   * A plain warning, such as the React version warning of eslint-plugin-react, has none and is not a failure.
+   *
+   * @param stderr the text without color codes
+   */
+  static boolean containsStackTrace(@Nullable String stderr) {
+    return stderr != null && STACK_FRAME.matcher(stderr).find();
   }
 
   private static boolean suppressNoConfigError(@Nullable Response result,
@@ -151,6 +173,16 @@ public abstract class EsLintExternalRunner<TResult> {
   }
 
   public @Nullable TResult execute(final @NotNull JSLinterInput<EslintState> input) throws LinterExecutionException {
+    Response<TResult> response = executeForResponse(input);
+    return response != null ? response.value : null;
+  }
+
+  /**
+   * Sends the request to the service and returns the whole response, so the caller can also read the stderr text.
+   *
+   * @return null when the file is not linted, for example when an unsaved config must be saved first
+   */
+  public @Nullable Response<TResult> executeForResponse(final @NotNull JSLinterInput<EslintState> input) throws LinterExecutionException {
     final VirtualFile fileToLint = input.getVirtualFile();
     if (!fileToLint.isValid() || fileToLint.getParent() == null) {
       return null;

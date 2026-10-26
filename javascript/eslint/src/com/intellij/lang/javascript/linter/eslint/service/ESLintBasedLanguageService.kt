@@ -92,7 +92,14 @@ abstract class ESLintBasedLanguageService<TStoredState : JSNpmLinterState<TStore
       return EslintLanguageServiceClient.Response.error(languageServiceError, isNoConfigFile)
     }
     val parser = ESLintJsonProblemsParser.parse(answer.element)
-    return EslintLanguageServiceClient.Response<List<EslintError>>(parser.fileLevelError, parser.errors, false)
+    return EslintLanguageServiceClient.Response<List<EslintError>>(parser.fileLevelError, parser.errors, false, readStderr(answer))
+  }
+
+  /** The stderr text of the response. The Node-side plugin caps the text, and the IDE adds the note about the cap. */
+  private fun readStderr(answer: JSLanguageServiceAnswer): @NlsSafe String? {
+    val stderr: @NlsSafe String = JsonUtil.getChildAsString(answer.element, "stderr") ?: return null
+    if (!JsonUtil.getChildAsBoolean(answer.element, "stderrTruncated", false)) return stderr
+    return stderr + "\n" + EslintBundle.message("eslint.service.stderr.truncated")
   }
 
   private fun createGetErrorsCommand(requestData: EslintRequestData, extraOptions: String?): GetErrorsCommand? {

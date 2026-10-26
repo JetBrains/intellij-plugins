@@ -52,6 +52,7 @@ var fs = require("fs");
 var path = require("path");
 var eslint_api_1 = require("./eslint-api");
 var eslint_common_1 = require("./eslint-common");
+var stderr_capture_1 = require("./stderr-capture");
 // https://eslint.org/docs/latest/use/suppressions
 var DEFAULT_SUPPRESSIONS_FILENAME = "eslint-suppressions.json";
 var ESLint8Plugin = /** @class */ (function () {
@@ -109,15 +110,16 @@ var ESLint8Plugin = /** @class */ (function () {
     }
     ESLint8Plugin.prototype.onMessage = function (p, writer) {
         return __awaiter(this, void 0, void 0, function () {
-            var request, response, lintResults, lintResults, e_1;
+            var request, response, stderrCapture, lintResults, lintResults, e_1, stderr;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         request = JSON.parse(p);
                         response = new eslint_api_1.ESLintResponse(request.seq, request.command);
+                        stderrCapture = stderr_capture_1.StderrCapture.start();
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 7, , 8]);
+                        _a.trys.push([1, 7, 8, 9]);
                         if (!(request.command === eslint_api_1.GetErrors)) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.getErrors(request.arguments)];
                     case 2:
@@ -134,7 +136,7 @@ var ESLint8Plugin = /** @class */ (function () {
                     case 5:
                         response.error = "Unknown command: ".concat(request.command);
                         _a.label = 6;
-                    case 6: return [3 /*break*/, 8];
+                    case 6: return [3 /*break*/, 9];
                     case 7:
                         e_1 = _a.sent();
                         response.isNoConfigFile = "no-config-found" === e_1.messageTemplate
@@ -142,8 +144,17 @@ var ESLint8Plugin = /** @class */ (function () {
                             || (e_1.message && ((0, eslint_common_1.containsString)(e_1.message.toString(), "No ESLint configuration found")
                                 || (0, eslint_common_1.containsString)(e_1.message.toString(), "Could not find config file.")));
                         response.error = e_1.toString() + "\n\n" + e_1.stack;
-                        return [3 /*break*/, 8];
+                        return [3 /*break*/, 9];
                     case 8:
+                        stderr = stderrCapture.stop();
+                        if (stderr.text.length > 0) {
+                            response.stderr = stderr.text;
+                            if (stderr.truncated) {
+                                response.stderrTruncated = true;
+                            }
+                        }
+                        return [7 /*endfinally*/];
+                    case 9:
                         writer.write(JSON.stringify(response));
                         return [2 /*return*/];
                 }

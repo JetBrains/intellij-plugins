@@ -28,11 +28,32 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
 
     assertNull(response!!.globalError)
     assertFalse(response.isNoConfigFile)
+    assertNull(response.stderr)
     assertEquals(1, response.value.size)
     val error = response.value.single()
     assertEquals("Unexpected constant.", error.description)
     assertEquals("no-const", error.code)
     assertEquals("GetErrors", service.executedCommand!!.command)
+  }
+
+  fun testHighlightSuspendingAddsTheCapNoteToTruncatedStderr() = timeoutRunBlocking {
+    val service = createService(createQueue(highlightResponse(stderr = "Could not read file", truncated = true)))
+    val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())
+
+    val response = service.highlightSuspending(requestData, null)
+
+    assertEquals("Could not read file\n" + EslintBundle.message("eslint.service.stderr.truncated"), response!!.stderr)
+  }
+
+  fun testHighlightSuspendingReturnsStderrOfResponse() = timeoutRunBlocking {
+    val service = createService(createQueue(highlightResponse(stderr = "Could not read file [object Object]")))
+    val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())
+
+    val response = service.highlightSuspending(requestData, null)
+
+    assertNull(response!!.globalError)
+    assertEquals("Could not read file [object Object]", response.stderr)
+    assertEquals(1, response.value.size)
   }
 
   fun testFixFileSuspendingExecutesCommandAndProcessesResponse() = timeoutRunBlocking {
@@ -108,9 +129,11 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
 
   private fun createQueue(response: String = highlightResponse()): TestQueue = TestQueue(JSLanguageServiceAnswer(response))
 
-  private fun highlightResponse(): String =
+  private fun highlightResponse(stderr: String? = null, truncated: Boolean = false): String =
     """
       {
+        ${if (stderr != null) "\"stderr\": \"$stderr\"," else ""}
+        ${if (truncated) "\"stderrTruncated\": true," else ""}
         "body": {
           "results": [
             {

@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {EslintPluginState, ESLintRequest, ESLintResponse, FileKind, FixErrors, GetErrors, RequestArguments} from "./eslint-api"
 import {containsString, normalizePath, requireInContext, requireResolveInContext} from "./eslint-common"
+import {StderrCapture} from "./stderr-capture"
 
 // https://eslint.org/docs/latest/use/suppressions
 const DEFAULT_SUPPRESSIONS_FILENAME = "eslint-suppressions.json";
@@ -84,6 +85,7 @@ export class ESLint8Plugin implements LanguagePlugin {
   async onMessage(p: string, writer: MessageWriter) {
     const request: ESLintRequest = JSON.parse(p);
     let response: ESLintResponse = new ESLintResponse(request.seq, request.command);
+    const stderrCapture = StderrCapture.start();
     try {
       if (request.command === GetErrors) {
         let lintResults: ESLint.LintResult[] = await this.getErrors(request.arguments);
@@ -103,6 +105,15 @@ export class ESLint8Plugin implements LanguagePlugin {
         || (e.message && (containsString(e.message.toString(), "No ESLint configuration found")
                           || containsString(e.message.toString(), "Could not find config file.")));
       response.error = e.toString() + "\n\n" + e.stack;
+    }
+    finally {
+      const stderr = stderrCapture.stop();
+      if (stderr.text.length > 0) {
+        response.stderr = stderr.text;
+        if (stderr.truncated) {
+          response.stderrTruncated = true;
+        }
+      }
     }
     writer.write(JSON.stringify(response));
   }
