@@ -1,6 +1,5 @@
 package com.intellij.clion.embedded.platformio
 
-import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
 import com.jetbrains.cidr.cpp.embedded.platformio.project.BoardsJsonParser
 import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
@@ -14,7 +13,7 @@ import org.junit.jupiter.api.Test
 import kotlin.io.path.readText
 
 class TestPlatformioBoardsParser {
-  private var myJson = CidrTestDataFixture.getPlatformioTestData().resolve(this::class.simpleName + ".json").readText()
+  private var myJson = platformioTestDataRoot.resolve(this::class.simpleName + ".json").readText()
 
   private fun boardInfo(sourceTemplate: SourceTemplate, vararg params: String) = BoardInfo(sourceTemplate, listOf(*params))
 

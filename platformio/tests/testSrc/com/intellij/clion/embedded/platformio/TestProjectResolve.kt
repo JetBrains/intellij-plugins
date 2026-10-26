@@ -24,7 +24,6 @@ import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.PathUtil
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
-import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
@@ -54,7 +53,7 @@ import kotlin.io.path.readText
 @RunWithAllWindowsToolchains
 @ArgumentsSource(SupportedToolchainsProvider::class)
 class TestProjectResolve(private val compilerAndToolSet: CompilerAndToolSet) {
-  private val projectPathFixture = tempDirTestFixture(CidrTestDataFixture.getPlatformioTestData() / "project1")
+  private val projectPathFixture = tempDirTestFixture(platformioTestDataRoot.resolve("project1"))
 
   private val toolchainFixture = toolchainFixture(compilerAndToolSet)
 

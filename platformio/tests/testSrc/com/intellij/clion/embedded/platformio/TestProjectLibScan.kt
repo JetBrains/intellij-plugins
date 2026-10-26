@@ -16,7 +16,6 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.system.OS
-import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
@@ -40,7 +39,7 @@ import kotlin.io.path.readText
 @RunWithAllWindowsToolchains
 @ArgumentsSource(SupportedToolchainsProvider::class)
 class TestProjectLibScan(private val compilerAndToolSet: CompilerAndToolSet) {
-  private val projectDirFixture = tempDirTestFixture(CidrTestDataFixture.getPlatformioTestData()  / "project-scan-libraries")
+  private val projectDirFixture = tempDirTestFixture(platformioTestDataRoot.resolve("project-scan-libraries"))
 
   private val toolchainFixture = toolchainFixture(compilerAndToolSet)
 

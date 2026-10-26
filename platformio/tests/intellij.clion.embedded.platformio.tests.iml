@@ -9,11 +9,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib" level="project" />
-    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.lang.base" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.psi.base" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.util" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.util.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.embedded.platformio" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.execution" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.externalSystem" scope="TEST" />
@@ -38,10 +38,10 @@
     <orderEntry type="module" module-name="intellij.platform.lang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.util.ex" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
   </component>
   <component name="TestModuleProperties" production-module="intellij.clion.embedded.platformio" />
 </module>

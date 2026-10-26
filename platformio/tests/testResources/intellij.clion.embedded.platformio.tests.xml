@@ -2,11 +2,11 @@
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="intellij.clion.embedded.platformio"/>
-    <module name="intellij.cidr.common.testFramework.core.nolang"/>
     <module name="intellij.cidr.lang.base"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.psi.base"/>
     <module name="intellij.cidr.util"/>
+    <module name="intellij.cidr.util.execution"/>
     <module name="intellij.clion.execution"/>
     <module name="intellij.clion.externalSystem"/>
     <module name="intellij.clion.testFramework.nolang"/>
