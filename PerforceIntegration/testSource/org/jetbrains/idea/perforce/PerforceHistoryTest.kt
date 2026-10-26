@@ -12,6 +12,7 @@ import com.intellij.openapi.vcs.history.VcsHistoryUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase.assertOneElement
@@ -23,7 +24,6 @@ import org.jetbrains.idea.perforce.application.PerforceAnnotationProvider
 import org.jetbrains.idea.perforce.application.PerforceFileRevision
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.application.annotation.PerforceFileAnnotation
-import org.jetbrains.idea.perforce.perforce.P4Revision
 import org.jetbrains.idea.perforce.perforce.PerforceChangeList
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.junit.Assert.assertEquals
@@ -91,21 +91,21 @@ class PerforceHistoryTest : PerforceTestCase() {
     val branchedFile = dir2.findChild("a.txt")
 
     val fileAnnotation = createTestAnnotation(branchedFile!!)
-    val revision = fileAnnotation.findRevisionForLine(0)
-    assertTrue(revision!!.submitMessage.contains("added bbb"))
+    val change = fileAnnotation.findChangeForLine(0)
+    assertTrue(change!!.description().contains("added bbb"))
 
-    val singleChange = assertOneElement(getSubmittedChanges(revision))
+    val singleChange = assertOneElement(getSubmittedChanges(change))
 
     assertEquals("aaa", singleChange.beforeRevision!!.content)
     assertEquals("bbb", singleChange.afterRevision!!.content)
   }
 
-  private fun getSubmittedChanges(revision: P4Revision): Collection<Change> {
+  private fun getSubmittedChanges(change: PerforceFileAnnotation.LineChange): Collection<Change> {
     var changeList: PerforceChangeList? = null
     runInEdtAndWait {
       changeList = ShowAllSubmittedFilesAction.
-      getSubmittedChangeList(myProject, revision.changeNumber, revision.submitMessage,
-          revision.date, revision.user, connection)!!
+      getSubmittedChangeList(myProject, change.number(), change.description(),
+          change.date(), change.user(), connection)!!
     }
     return changeList!!.changes
   }
@@ -122,8 +122,8 @@ class PerforceHistoryTest : PerforceTestCase() {
     submitDefaultList("added whitespace")
 
     val fileAnnotation = createTestAnnotation(file)
-    val revision = fileAnnotation.findRevisionForLine(0)
-    assertTrue(revision!!.submitMessage.contains("initial"))
+    val change = fileAnnotation.findChangeForLine(0)
+    assertTrue(change!!.description().contains("initial"))
   }
 
   @Test
@@ -149,7 +149,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     val annotationProvider = PerforceVcs.getInstance(myProject).annotationProvider as PerforceAnnotationProvider
     val annotation = annotationProvider.annotate(filePath, (history[0] as PerforceFileRevision).revisionNumber) as PerforceFileAnnotation
     Disposer.register(myTestRootDisposable, Disposable { annotation.dispose() })
-    assertEquals("initial", annotation.findRevisionForLine(0)!!.submitMessage)
+    assertEquals("initial", annotation.findChangeForLine(0)!!.description())
   }
 
   @Test
@@ -205,10 +205,10 @@ class PerforceHistoryTest : PerforceTestCase() {
 
     // check annotate works
     val fileAnnotation = createTestAnnotation(file1)
-    val revision = fileAnnotation.findRevisionForLine(0)
-    assertEquals("change", revision!!.submitMessage)
+    val change = fileAnnotation.findChangeForLine(0)
+    assertEquals("change", change!!.description())
 
-    var singleChange = assertOneElement(getSubmittedChanges(revision))
+    var singleChange = assertOneElement(getSubmittedChanges(change))
     assertEquals(file1.path, singleChange.beforeRevision!!.file.path)
 
     // p4 copy to dir2
@@ -218,7 +218,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertNotNull(file2)
 
     // check copied file history is still there
-    singleChange = assertOneElement(getSubmittedChanges(revision))
+    singleChange = assertOneElement(getSubmittedChanges(change))
     assertEquals(file1.path, singleChange.beforeRevision!!.file.path)
 
     // narrow down project to dir2
@@ -228,7 +228,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     refreshChanges()
 
     // check copied file history is still there, under depot path
-    singleChange = assertOneElement(getSubmittedChanges(revision))
+    singleChange = assertOneElement(getSubmittedChanges(change))
     assertEquals("//depot/dir1/a.txt", singleChange.beforeRevision!!.file.path)
 
     // narrow down workspace to dir2
@@ -236,19 +236,57 @@ class PerforceHistoryTest : PerforceTestCase() {
     refreshChanges()
 
     // check copied file history is still there, under depot path
-    singleChange = assertOneElement(getSubmittedChanges(revision))
+    singleChange = assertOneElement(getSubmittedChanges(change))
     assertEquals("//depot/dir1/a.txt", singleChange.beforeRevision!!.file.path)
   }
 
-/*
-  override fun getPerforceVersion(): String {
-    return "2015.1"
-  }
-*/
+  @Test
+  fun `annotate follows integrations into the file`() {
+    setAnnotateFollowIntegrations(true)
+    val (sourceFile, branchedFile) = createFileWithIntegratedChanges()
 
-  //@Test todo make it work for all p4 versions
-  fun test_annotate_after_integrate() {
-    val file = createFileInCommand(createDirInCommand(workingCopyDir, "subdir"), "a.txt", "aaa")
+    val fileAnnotation = createTestAnnotation(PerforceVcs.getInstance(myProject).annotationProvider!!,
+                                              branchedFile) as PerforceFileAnnotation
+    assertTrue(fileAnnotation.findChangeForLine(0)!!.description().contains("initial"))
+    assertTrue(fileAnnotation.findChangeForLine(1)!!.description().contains("added bbb"))
+    assertTrue(fileAnnotation.findChangeForLine(2)!!.description().contains("added ccc"))
+
+    val addedBbbNumber = getFileHistory(sourceFile).first { it.commitMessage == "added bbb" }.revisionNumber.asString()
+    assertEquals(addedBbbNumber, fileAnnotation.findChangeForLine(1)!!.number().toString())
+    assertEquals(addedBbbNumber, fileAnnotation.getLineRevisionNumber(1)!!.asString())
+
+    val changeList = fileAnnotation.revisionsChangesProvider!!.getChangesIn(1).first
+    assertEquals(addedBbbNumber, changeList.number.toString())
+    val change = assertOneElement(changeList.changes)
+    assertEquals("aaa\nbbb\n", StringUtil.convertLineSeparators(change.afterRevision!!.content!!))
+  }
+
+  @Test
+  fun `annotate does not follow integrations`() {
+    setAnnotateFollowIntegrations(false)
+    val (_, branchedFile) = createFileWithIntegratedChanges()
+
+    val fileAnnotation = createTestAnnotation(PerforceVcs.getInstance(myProject).annotationProvider!!,
+                                              branchedFile) as PerforceFileAnnotation
+    assertTrue(fileAnnotation.findChangeForLine(0)!!.description().contains("initial"))
+    assertTrue(fileAnnotation.findChangeForLine(1)!!.description().contains("copied again"))
+    assertTrue(fileAnnotation.findChangeForLine(2)!!.description().contains("copied again"))
+  }
+
+  private fun setAnnotateFollowIntegrations(value: Boolean) {
+    val settings = PerforceSettings.getSettings(myProject)
+    val old = settings.ANNOTATE_FOLLOW_INTEGRATIONS
+    settings.ANNOTATE_FOLLOW_INTEGRATIONS = value
+    Disposer.register(myTestRootDisposable, Disposable { settings.ANNOTATE_FOLLOW_INTEGRATIONS = old })
+  }
+
+  /**
+   * Creates `subdir/a.txt`, branches it to `subdir2/a.txt`, edits the source twice, and integrates the edits into the branch.
+   * Returns the source file and the branched file.
+   */
+  private fun createFileWithIntegratedChanges(): Pair<VirtualFile, VirtualFile> {
+    val file = createFileInCommand(createDirInCommand(workingCopyDir, "subdir"), "a.txt", "aaa\n")
+    refreshChanges()
     submitDefaultList("initial")
 
     verify(runP4WithClient("integrate", workingCopyDir.path + "/subdir/...", workingCopyDir.path + "/subdir2/..."))
@@ -256,11 +294,11 @@ class PerforceHistoryTest : PerforceTestCase() {
     refreshVfs()
 
     verify(runP4WithClient("edit", file.path))
-    setFileText(file, "aaa\nbbb")
+    setFileText(file, "aaa\nbbb\n")
     submitDefaultList("added bbb")
 
     verify(runP4WithClient("edit", file.path))
-    setFileText(file, "aaa\nbbb\nccc")
+    setFileText(file, "aaa\nbbb\nccc\n")
     submitDefaultList("added ccc")
 
     verify(runP4WithClient("integrate", workingCopyDir.path + "/subdir/...", workingCopyDir.path + "/subdir2/..."))
@@ -268,13 +306,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     submitDefaultList("copied again")
     refreshVfs()
 
-    val branchedFile = workingCopyDir.findChild("subdir2")!!.findChild("a.txt")
-
-    val fileAnnotation = createTestAnnotation(PerforceVcs.getInstance(myProject).annotationProvider!!,
-                                              branchedFile!!) as PerforceFileAnnotation
-    assertTrue(fileAnnotation.findRevisionForLine(0)?.submitMessage?.contains("initial") == true)
-    assertTrue(fileAnnotation.findRevisionForLine(1)?.submitMessage?.contains("added bbb") == true)
-    assertTrue(fileAnnotation.findRevisionForLine(2)?.submitMessage?.contains("added ccc") == true)
+    return file to workingCopyDir.findChild("subdir2")!!.findChild("a.txt")!!
   }
 
   @Test
@@ -312,8 +344,8 @@ class PerforceHistoryTest : PerforceTestCase() {
     submitDefaultList("second edit")
 
     val fileAnnotation = createTestAnnotation(PerforceVcs.getInstance(myProject).annotationProvider!!, file1) as PerforceFileAnnotation
-    assertTrue(fileAnnotation.findRevisionForLine(0)?.submitMessage?.contains("first edit") == true)
-    assertTrue(fileAnnotation.findRevisionForLine(1)?.submitMessage?.contains("second edit") == true)
+    assertTrue(fileAnnotation.findChangeForLine(0)?.description()?.contains("first edit") == true)
+    assertTrue(fileAnnotation.findChangeForLine(1)?.description()?.contains("second edit") == true)
     assertEquals("4", fileAnnotation.getLineRevisionNumber(1)!!.asString())
 
     val revisions = fileAnnotation.revisions!!
