@@ -23,7 +23,7 @@ public class ChangeListData {
       return Date.from(Instant.from(format.parse(date)));
     }
     catch (DateTimeException e) {
-      LOG.warn(e);
+      LOG.error(e);
       return new Date();
     }
   }
