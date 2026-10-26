@@ -32,7 +32,6 @@
   <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
-    <editorNotificationProvider implementation="org.jetbrains.qodana.inspectionKts.ui.InspectionKtsBannerProvider"/>
     <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.core.KtsDynamicInspectionsProvider"/>
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsEventsCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsMetricsCollector"/>

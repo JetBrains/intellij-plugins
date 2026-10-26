@@ -20,18 +20,12 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.observable.util.whenDisposed
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.UserDataHolderEx
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.util.coroutines.childScope
 import com.intellij.ui.EditorNotificationPanel
-import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.JBColor
 import com.intellij.ui.border.CustomLineBorder
 import com.intellij.ui.components.ActionLink
@@ -59,61 +53,44 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
-import java.util.function.Function
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 import kotlin.io.path.Path
 
-private val INSPECTION_KTS_BANNER_KEY = Key.create<Lazy<InspectionKtsBanner>>("InspectionKtsBanner")
-
-internal class InspectionKtsBannerProvider : EditorNotificationProvider, DumbAware {
-  override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
-    if (!file.name.endsWith(INSPECTIONS_KTS_EXTENSION)) {
+/** The banner of an `.inspection.kts` file. The script definition shows it as the editor toolbar. */
+fun createInspectionKtsBanner(project: Project, fileEditor: FileEditor, lifetime: Disposable): JComponent? {
+  val file = fileEditor.file ?: return null
+  if (!file.name.endsWith(INSPECTIONS_KTS_EXTENSION)) return null
+  val filePath = try {
+    file.toNioPath()
+  }
+  catch (_ : UnsupportedOperationException) {
+    try {
+      Path(file.path)
+    }
+    catch (_ : InvalidPathException) {
       return null
     }
-
-    return Function { fileEditor ->
-      if (fileEditor !is UserDataHolderEx) return@Function null
-      val filePath = try {
-        file.toNioPath()
-      }
-      catch (_ : UnsupportedOperationException) {
-        try {
-          Path(file.path)
-        }
-        catch (_ : InvalidPathException) {
-          return@Function null
-        }
-      }
-      val newBanner = lazy { InspectionKtsBanner(filePath, project, fileEditor) }
-      val currentBanner = fileEditor.putUserDataIfAbsent(INSPECTION_KTS_BANNER_KEY, newBanner)
-      currentBanner.value
-    }
   }
+  return InspectionKtsBanner(filePath, project, fileEditor, lifetime)
 }
 
 internal class InspectionKtsBanner(
   file: Path,
   private val project: Project,
-  private val fileEditor: FileEditor
+  private val fileEditor: FileEditor,
+  lifetime: Disposable,
 ) : EditorNotificationPanel(fileEditor, inspectionKtsBannerBackgroundColor(), null) {
   init {
-    val disposable = Disposer.newDisposable("InspectionKtsBanner")
-
-    val isDisposableRegistered = Disposer.tryRegister(fileEditor, disposable)
-    if (!isDisposableRegistered) {
-      Disposer.dispose(disposable)
-    } else {
-      val scope = project.projectScope.childScope("InspectionKtsBanner")
-      disposable.whenDisposed {
-        scope.cancel()
-      }
-
-      val viewModel = InspectionKtsBannerViewModelImpl(file, project, scope, KtsInspectionsManager.getInstance(project))
-      init(disposable, scope, viewModel)
+    val scope = project.projectScope.childScope("InspectionKtsBanner")
+    lifetime.whenDisposed {
+      scope.cancel()
     }
+
+    val viewModel = InspectionKtsBannerViewModelImpl(file, project, scope, KtsInspectionsManager.getInstance(project))
+    init(lifetime, scope, viewModel)
   }
 
   private fun init(disposable: Disposable, scope: CoroutineScope, viewModel: InspectionKtsBannerViewModel) {

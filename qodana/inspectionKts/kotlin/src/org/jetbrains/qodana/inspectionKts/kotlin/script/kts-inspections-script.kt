@@ -1,7 +1,10 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.script
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.core.script.definition.ScriptEditorToolbarProvider
+import org.jetbrains.kotlin.idea.core.script.definition.editorToolbar
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
+import org.jetbrains.qodana.inspectionKts.ui.createInspectionKtsBanner
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
@@ -12,6 +15,7 @@ import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.api.displayName
 import kotlin.script.experimental.api.fileExtension
 import kotlin.script.experimental.api.hostConfiguration
+import kotlin.script.experimental.api.ide
 import kotlin.script.experimental.api.refineConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JvmDependency
@@ -21,7 +25,7 @@ internal fun qodanaInspectionsKtsScriptCompilationConfiguration(
   hostConfiguration: ScriptingHostConfiguration
 ): ScriptCompilationConfiguration {
   val provider = inspectionKtsClasspathProvider(project, doInitialize = true)
-  return QodanaKtsInspectionsScriptCompilationConfiguration(provider, hostConfiguration)
+  return QodanaKtsInspectionsScriptCompilationConfiguration(project, provider, hostConfiguration)
 }
 
 /**
@@ -37,6 +41,7 @@ internal fun qodanaInspectionsKtsScriptCompilationConfiguration(
  * when the .inspection.kts file is actually met (for example, opened in editor), the [InspectionKtsClasspathProvider.collectClassPath] is called
  */
 internal class QodanaKtsInspectionsScriptCompilationConfiguration(
+  project: Project,
   classpathProvider: InspectionKtsClasspathProvider,
   hostConfiguration: ScriptingHostConfiguration
 ) : ScriptCompilationConfiguration({
@@ -45,6 +50,7 @@ internal class QodanaKtsInspectionsScriptCompilationConfiguration(
   baseClass(KotlinType("kotlin.script.templates.standard.ScriptTemplateWithBindings"))
   displayName("Qodana .inspection.kts")
   fileExtension("inspection.kts")
+  ide.editorToolbar(ScriptEditorToolbarProvider { fileEditor, lifetime -> createInspectionKtsBanner(project, fileEditor, lifetime) })
   refineConfiguration {
     beforeCompiling { context ->
       ScriptCompilationConfiguration(context.compilationConfiguration) {
