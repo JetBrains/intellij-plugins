@@ -12,7 +12,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
@@ -86,6 +88,7 @@ class QodanaReportHighlightingPassTest : QodanaPluginLightTestBase() {
 
   override fun setUp() {
     super.setUp()
+    (PsiDocumentManager.getInstance(project) as PsiDocumentManagerBase).disableBackgroundCommit(testRootDisposable)
 
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
 
