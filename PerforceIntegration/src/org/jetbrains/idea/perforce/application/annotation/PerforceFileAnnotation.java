@@ -172,12 +172,12 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return myAnnotationInfo.getContent();
   }
 
-  @VisibleForTesting
-  public @Nullable P4Revision findRevisionForLine(final int lineNumber) {
+  private @Nullable P4Revision findRevisionForLine(final int lineNumber) {
     return myRevisionsByNumber.get(myAnnotationInfo.getRevision(lineNumber));
   }
 
-  private @Nullable LineChange findChangeForLine(int lineNumber) {
+  @VisibleForTesting
+  public @Nullable LineChange findChangeForLine(int lineNumber) {
     return myChangesByNumber.get(myAnnotationInfo.getRevision(lineNumber));
   }
 
@@ -186,7 +186,8 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return myIntegratedChanges.get(myAnnotationInfo.getRevision(lineNumber));
   }
 
-  private record LineChange(long number, @NlsSafe String user, Date date, @NlsSafe String description) {
+  @VisibleForTesting
+  public record LineChange(long number, @NlsSafe String user, Date date, @NlsSafe String description) {
   }
 
   @Override

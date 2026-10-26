@@ -136,6 +136,7 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io",
         "@community//libraries/mockito",
         "@community//platform/forms_rt:java-guiForms-rt",
+        "@community//platform/vcs/plugin",
     ],
 )
 
@@ -161,6 +162,7 @@ jvm_library(
         ":vcs-perforce-tests",
         "@community//platform/platform-util-io:ide-util-io_test_lib",
         "@community//platform/ide-core:ide-core_test_lib",
+        "@community//platform/vcs/plugin:plugin_test_lib",
     ],
     deps = [
         # do not sort,
