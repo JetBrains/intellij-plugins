@@ -1,7 +1,7 @@
 <idea-plugin>
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
-    <module name="intellij.cidr.common.testFramework.core.nolang"/>
+    <module name="intellij.cidr.util.execution"/>
     <module name="intellij.clion.diagnostics.cmake"/>
     <module name="intellij.clion.diagnostics.core"/>
     <module name="intellij.clion.testFramework.nolang"/>

@@ -45,8 +45,8 @@ jvm_library(
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
-        "//CIDR/cidr-common-testFramework/nolang",
-        "//CIDR/cidr-common-testFramework/nolang:nolang_test_lib",
+        "//CIDR/cidr-util/execution",
+        "//CIDR/cidr-util/execution:execution_test_lib",
         "//contrib/cpp-diagnostics/core",
         "//contrib/cpp-diagnostics/core:core_test_lib",
         "//CIDR/clion-testFramework-nolang",

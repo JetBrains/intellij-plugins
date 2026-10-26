@@ -9,7 +9,6 @@ import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAll
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.SupportedToolchainsProvider
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.toolchainFixture
 import com.intellij.testFramework.junit5.TestApplication
-import com.jetbrains.cidr.CidrTestDataFixture
 import com.jetbrains.cidr.cpp.diagnostics.collectCidrWorkspaces
 import com.jetbrains.cidr.cpp.diagnostics.collectOCWorkspace
 import com.jetbrains.cidr.cpp.diagnostics.collectToolchains
@@ -29,11 +28,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 @RunWithAllWindowsToolchains
 @ArgumentsSource(SupportedToolchainsProvider::class)
 class DiagnosticsCollectorsTest(compilerAndToolSet: CompilerAndToolSet) {
-  companion object {
-    private val projectDir = CidrTestDataFixture.getCppDiagnosticsTestData()
-  }
-
-  private val tempDir = tempDirTestFixture(projectDir.resolve("simple-cmake-project"))
+  private val tempDir = tempDirTestFixture(cppDiagnosticsTestDataRoot.resolve("simple-cmake-project"))
   private val toolchainFixture = toolchainFixture(compilerAndToolSet)
   private val project by cmakeProjectTestFixture(tempDir, toolchainFixture)
 
