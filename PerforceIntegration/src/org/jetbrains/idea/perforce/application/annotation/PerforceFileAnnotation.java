@@ -220,6 +220,7 @@ public class PerforceFileAnnotation extends FileAnnotation {
     return myAnnotationInfo.getLineCount();
   }
 
+  // Override default provider to use changes from myIntegratedChanges
   @Override
   public @Nullable RevisionChangesProvider getRevisionsChangesProvider() {
     RevisionChangesProvider defaultProvider = super.getRevisionsChangesProvider();
@@ -228,6 +229,8 @@ public class PerforceFileAnnotation extends FileAnnotation {
       ChangeListData data = findRevisionForLine(lineNumber) == null ? findIntegratedChangeForLine(lineNumber) : null;
       if (data == null) return defaultProvider.getChangesIn(lineNumber);
       PerforceChangeList changeList = new PerforceChangeList(data, myProject, myConnection, new PerforceChangeCache(myProject));
+      // pre-load changes to avoid doing it on EDT
+      changeList.getChanges();
       return Pair.create(changeList, VcsUtil.getFilePath(myFile));
     };
   }
