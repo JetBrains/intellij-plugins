@@ -2,63 +2,71 @@
 package com.intellij.flex.template.postfix;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.template.postfix.JSPostfixTemplateTestCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.lang.javascript.template.postfix.JSPostfixTemplateFixture;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class ActionScriptPostfixTemplatesTest extends JSPostfixTemplateTestCase {
+import static com.intellij.lang.javascript.template.postfix.JSPostfixTemplateFixtureKt.jsPostfixTemplateFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
 
-  @Override
-  protected @NotNull String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("/postfixTemplate/" + getSuffix());
-  }
+@TestApplication
+public class ActionScriptPostfixTemplatesTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+  private final TestFixture<JSPostfixTemplateFixture> postfix =
+    jsPostfixTemplateFixture(projectFixture, FlexTestUtils.getTestDataPath("/postfixTemplate/js2"), ".js2");
 
-  @Override
-  protected @NotNull String getSuffix() {
-    return "js2";
-  }
-
+  @Test
   public void testSimpleElse() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleForIn() {
-    doTestNotAvailable();
+    postfix.get().doTestNotAvailable();
   }
 
+  @Test
   public void testSimpleIf() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleNot() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleNotNull() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleNull() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimplePar() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleReturn() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleThrow() {
-    doTest();
+    postfix.get().doTest();
   }
 
+  @Test
   public void testSimpleVar() {
-    doTest();
-  }
-
-  @Override
-  protected String getDefaultExtension() {
-    return ".js2";
+    postfix.get().doTest();
   }
 }
