@@ -2,18 +2,29 @@
 package com.intellij.flex.inspections;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.sixrr.inspectjs.InspectionJSTestCase;
+import com.intellij.ide.impl.OpenProjectTask;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import com.sixrr.inspectjs.InspectionJSFixture;
 import com.sixrr.inspectjs.validity.ReservedWordUsedAsNameJSInspection;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-public class ReservedWordUsedAsNameActionScriptTest extends InspectionJSTestCase {
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.projectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.tempPathFixture;
+import static com.sixrr.inspectjs.InspectionJSFixtureKt.inspectionJSFixture;
 
-  @Override
-  protected @NotNull String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("/inspections/ReservedWordUsedAsName/");
-  }
+@TestApplication
+public class ReservedWordUsedAsNameActionScriptTest {
+  @SuppressWarnings("deprecation")
+  private static final TestFixture<Project> projectFixture = projectFixture(tempPathFixture(), OpenProjectTask.build(), true);
+  private final TestFixture<InspectionJSFixture> inspection =
+    inspectionJSFixture(projectFixture, FlexTestUtils.getTestDataPath("/inspections/ReservedWordUsedAsName/"));
 
+  @Test
   public void test() {
+    CodeInsightTestFixture myFixture = inspection.get().getFixture();
     myFixture.enableInspections(ReservedWordUsedAsNameJSInspection.class);
     myFixture.testHighlighting("test.as");
   }
