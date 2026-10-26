@@ -129,6 +129,8 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     assertEquals(qodanaProductCode(), run.tool.driver.name)
     assertEquals(listOf("a", "b"), run.results.map { it.partialFingerprints?.get("equalIndicator", 1) })
     assertEquals(listOf("short-a", "short-b"), run.results.map { it.partialFingerprints?.get("equalIndicator", 2) })
+    // qodana-sarif reads this property to set the baseline source of the report.
+    assertEquals("CLOUD", run.properties?.get("baselineOrigin"))
   }
 
   @Test

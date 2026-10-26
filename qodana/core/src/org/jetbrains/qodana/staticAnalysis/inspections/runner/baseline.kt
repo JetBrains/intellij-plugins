@@ -10,6 +10,7 @@ import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
@@ -62,6 +63,9 @@ internal suspend fun applyBaselineCalculation(
   val baseline = readBaselineReport(config.baseline, config.projectPath) ?: run {
     reporter.reportError("Can't find baseline report file: ${config.baseline}. Baseline will be calculated against empty report.")
     createSarifReport(emptyList())
+  }
+  if (config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE) {
+    markAsCloudBaseline(baseline)
   }
   val options = getOptions(scope, config)
 
