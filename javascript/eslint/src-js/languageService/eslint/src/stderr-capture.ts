@@ -3,8 +3,6 @@ let hookInstalled = false;
 
 /** Node.js and Bun print a process warning, such as a deprecation, with this prefix. */
 const RUNTIME_WARNING_PREFIX = "(node:";
-/** `js-language-service.ts` prints this heartbeat once a minute. */
-const HEARTBEAT_PATTERN = /^Process \S+ heartbeat: "alive"\s*$/;
 /** A rule that logs on every node visit must not grow the response without a bound. The first lines hold the failure. */
 const MAX_CAPTURED_LENGTH = 64 * 1024;
 
@@ -56,7 +54,7 @@ export class StderrCapture {
 
   /**
    * Stops the capture.
-   * @returns the collected text without the process warnings of the runtime and without the heartbeat of the service
+   * @returns the collected text without the process warnings of the runtime
    */
   stop(): CapturedStderr {
     activeCaptures.delete(this);
@@ -93,5 +91,5 @@ function toText(chunk: unknown): string | null {
 }
 
 function isIgnoredChunk(chunk: string): boolean {
-  return chunk.startsWith(RUNTIME_WARNING_PREFIX) || HEARTBEAT_PATTERN.test(chunk);
+  return chunk.startsWith(RUNTIME_WARNING_PREFIX);
 }
