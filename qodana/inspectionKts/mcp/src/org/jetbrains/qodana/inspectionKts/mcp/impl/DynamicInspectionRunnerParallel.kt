@@ -34,7 +34,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
-import org.jetbrains.qodana.staticAnalysis.script.getResultsForInspectionGroup
+import org.jetbrains.qodana.staticAnalysis.script.populateRunWithInspectionResults
 import org.jetbrains.qodana.staticAnalysis.script.runAnalysis
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.annotations.TestOnly
@@ -269,7 +269,7 @@ private class QodanaAnalysisExecutor(private val project: Project) : AnalysisExe
       runContext.runAnalysis(context = inspectionContext)
       val run = report.getOrCreateRun()
       fillComponents(run.tool, qodanaProfile)
-      run.results = runContext.getResultsForInspectionGroup(inspectionContext)
+      inspectionContext.populateRunWithInspectionResults(run)
     }
     finally {
       withContext(NonCancellable) { inspectionContext.closeQodanaContext() }
