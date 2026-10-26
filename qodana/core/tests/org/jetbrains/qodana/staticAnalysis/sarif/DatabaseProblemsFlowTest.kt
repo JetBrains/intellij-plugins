@@ -2,8 +2,12 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.EQUAL_INDICATOR
+import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.PhysicalLocation
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
@@ -12,6 +16,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
 import org.jetbrains.qodana.util.QodanaMessageReporter
@@ -106,6 +111,46 @@ class DatabaseProblemsFlowTest : QodanaTestCase() {
       }
       assertEmpty(expectedResultsSecondRun)
     }
+  }
+
+  @Test
+  fun `vulnerable dependencies with related problems use the related location type`(): Unit = timeoutRunBlocking {
+    val location = Location().withPhysicalLocation(PhysicalLocation().withArtifactLocation(ArtifactLocation().withUri("src/Usage.kt")))
+    val result = loadRelatedResult("VulnerableLibrariesLocal", listOf(location))
+
+    assertEquals(ProblemType.VULNERABLE_API_WITH_RELATED_LOCATIONS.name, result.properties?.get(PROBLEM_TYPE)?.toString())
+    assertEquals(listOf(location), result.relatedLocations.toList())
+  }
+
+  @Test
+  fun `vulnerable dependencies without related problems keep the regular type`(): Unit = timeoutRunBlocking {
+    val result = loadRelatedResult("VulnerableLibrariesLocal", emptyList())
+
+    assertEquals(ProblemType.REGULAR.name, result.properties?.get(PROBLEM_TYPE)?.toString())
+    assertEmpty(result.relatedLocations)
+  }
+
+  @Test
+  fun `other inspections with related problems keep the regular type`(): Unit = timeoutRunBlocking {
+    val location = Location().withPhysicalLocation(PhysicalLocation().withArtifactLocation(ArtifactLocation().withUri("src/Usage.kt")))
+    val result = loadRelatedResult("VulnerableAPI", listOf(location))
+
+    assertEquals(ProblemType.REGULAR.name, result.properties?.get(PROBLEM_TYPE)?.toString())
+    assertEquals(listOf(location), result.relatedLocations.toList())
+  }
+
+  private suspend fun loadRelatedResult(ruleId: String, relatedLocations: List<Location>): Result {
+    val rootHash = "dependency"
+    val result = Result().withRuleId(ruleId).apply {
+      getOrAssignProperties()[RELATED_PROBLEMS_ROOT_HASH_PROP] = rootHash
+      getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.REGULAR
+    }
+    database.insert("related", ruleId, rootHash, gson.toJson(result))
+    if (relatedLocations.isNotEmpty()) {
+      val relatedResult = Result().withRuleId("VulnerableAPI").withLocations(relatedLocations)
+      database.insertRelatedProblem(rootHash, gson.toJson(relatedResult))
+    }
+    return database.resultsFlowByGroup("related", QodanaMessageReporter.EMPTY).toList().single()
   }
 
 

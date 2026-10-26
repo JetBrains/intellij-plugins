@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.transform
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_API_INSPECTION_ID
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_LIBRARIES_INSPECTION_ID
 import org.jetbrains.qodana.util.QodanaMessageReporter
 
 private val LOG = logger<QodanaToolResultDatabase>()
@@ -57,7 +57,7 @@ private fun QodanaToolResultDatabase.updateRelatedLocations(result: Result) {
     relatedResults.flatMap { it.locations }
   }.toSet()
   result.relatedLocations = result.relatedLocations?.plus(locations) ?: locations
-  if (result.ruleId == VULNERABLE_API_INSPECTION_ID && result.relatedLocations?.isNotEmpty() == true) {
+  if (result.ruleId == VULNERABLE_LIBRARIES_INSPECTION_ID && result.relatedLocations?.isNotEmpty() == true) {
     result.getOrAssignProperties()[PROBLEM_TYPE] = ProblemType.VULNERABLE_API_WITH_RELATED_LOCATIONS
   }
 }
