@@ -67,6 +67,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.actions.ShelfUtils;
+import org.jetbrains.idea.perforce.changesBrowser.PerforceChangeBrowserSettingsService;
 import org.jetbrains.idea.perforce.merge.PerforceMergeProvider;
 import org.jetbrains.idea.perforce.operations.P4EditOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperation;
@@ -395,6 +396,7 @@ public final class PerforceVcs extends AbstractVcs {
     ((PerforceConnectionManager)PerforceConnectionManager.getInstance(myProject)).startListening(disposable);
     PerforceNumberNameSynchronizer.getInstance(myProject).startListening(disposable);
     PerforceSettings.getSettings(myProject).ensureOfflineNotify();
+    PerforceChangeBrowserSettingsService.getInstance(myProject);
 
     ReadonlyStatusIsVisibleActivationCheck.check(myProject, NAME);
     initChangeProvider();
