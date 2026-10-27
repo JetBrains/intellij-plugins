@@ -21,6 +21,7 @@ import org.junit.Test
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.nio.file.Path
+import java.time.Duration
 import java.util.zip.GZIPOutputStream
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.readText
@@ -192,6 +193,17 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     val host = serve { it.sendResponseHeaders(HttpURLConnection.HTTP_NO_CONTENT, -1) }
 
     assertNull(httpBaseline(host, "the-token", qodanaProductCode()))
+  }
+
+  @Test
+  fun `the download timeout takes a positive number of seconds and falls back to the default`() {
+    assertEquals(Duration.ofSeconds(300), downloadTimeout("300"))
+    assertEquals(Duration.ofSeconds(300), downloadTimeout(" 300 "))
+    assertEquals(Duration.ofSeconds(60), downloadTimeout(null))
+    assertEquals(Duration.ofSeconds(60), downloadTimeout(""))
+    assertEquals(Duration.ofSeconds(60), downloadTimeout("0"))
+    assertEquals(Duration.ofSeconds(60), downloadTimeout("-5"))
+    assertEquals(Duration.ofSeconds(60), downloadTimeout("5m"))
   }
 
   /**
