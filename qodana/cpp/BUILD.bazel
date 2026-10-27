@@ -222,8 +222,6 @@ jvm_library(
         "@community//images:images-tests_test_lib",
         "@community//RegExpSupport:regexp-tests",
         "@community//RegExpSupport:regexp-tests_test_lib",
-        "@community//platform/xdebugger-impl:debugger-impl-tests",
-        "@community//platform/xdebugger-impl:debugger-impl-tests_test_lib",
         "//platform/ijent/impl:impl-tests",
         "//platform/ijent/impl:impl-tests_test_lib",
         "//contrib/qodana",
