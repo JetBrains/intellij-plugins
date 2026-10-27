@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -81,11 +80,6 @@ class Angular2TsConfigFile(
       """.trimIndent())
   }
 
-  override fun beforeDirectoryComparison(fixture: CodeInsightTestFixture, resultsDir: VirtualFile, goldDir: VirtualFile) {
-    WriteAction.run<Throwable> {
-      fixture.tempDirFixture
-        .getFile("tsconfig.json")
-        ?.delete(Any())
-    }
-  }
+  override fun rootFilesToSkipInDirectoryComparison(fixture: CodeInsightTestFixture, goldDir: VirtualFile): Collection<String> =
+    if (goldDir.findChild("tsconfig.json") == null) listOf("tsconfig.json") else emptyList()
 }

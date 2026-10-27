@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -35,20 +34,8 @@ data class VueTsConfigFile(
     fixture.configureByText(FILE_NAME, content)
   }
 
-  override fun beforeDirectoryComparison(
-    fixture: CodeInsightTestFixture,
-    resultsDir: VirtualFile,
-    goldDir: VirtualFile,
-  ) {
-    if (!enabled)
-      return
-
-    WriteAction.run<Throwable> {
-      fixture.tempDirFixture
-        .getFile(FILE_NAME)
-        ?.delete(Any())
-    }
-  }
+  override fun rootFilesToSkipInDirectoryComparison(fixture: CodeInsightTestFixture, goldDir: VirtualFile): Collection<String> =
+    if (enabled && goldDir.findChild(FILE_NAME) == null) listOf(FILE_NAME) else emptyList()
 
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
