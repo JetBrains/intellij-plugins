@@ -133,13 +133,15 @@ jvm_library(
         "@community//platform/testRunner:testRunner_test_lib",
     ],
 )
+### auto-generated section `build intellij.cfml` end
 
+### auto-generated section `plugin intellij.cfml` start
 ij_plugin(
     name = "cfml_plugin",
     descriptor_module = ":cfml",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.cfml` end
+### auto-generated section `plugin intellij.cfml` end
 
 ### auto-generated section `iml intellij.cfml` start
 exports_files(

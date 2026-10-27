@@ -151,13 +151,15 @@ jvm_library(
         "@community//libraries/guava:guava_test_lib",
     ],
 )
+### auto-generated section `build intellij.javascript.eslint` end
 
+### auto-generated section `plugin intellij.javascript.eslint` start
 ij_plugin(
     name = "eslint_plugin",
     descriptor_module = ":eslint_plugin_module",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.javascript.eslint` end
+### auto-generated section `plugin intellij.javascript.eslint` end
 
 ### auto-generated section `iml intellij.javascript.eslint` start
 exports_files(

@@ -77,13 +77,15 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
     ],
 )
+### auto-generated section `build intellij.javascript.bower` end
 
+### auto-generated section `plugin intellij.javascript.bower` start
 ij_plugin(
     name = "bower_plugin",
     descriptor_module = ":bower",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.javascript.bower` end
+### auto-generated section `plugin intellij.javascript.bower` end
 
 ### auto-generated section `iml intellij.javascript.bower` start
 exports_files(

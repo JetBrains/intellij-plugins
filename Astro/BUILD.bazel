@@ -179,13 +179,15 @@ jvm_library(
         "@community//json:json_test_lib",
     ],
 )
+### auto-generated section `build intellij.astro` end
 
+### auto-generated section `plugin intellij.astro` start
 ij_plugin(
     name = "astro_plugin",
     descriptor_module = ":astro_plugin_module",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.astro` end
+### auto-generated section `plugin intellij.astro` end
 
 ### auto-generated section `iml intellij.astro` start
 exports_files(

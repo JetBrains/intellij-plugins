@@ -89,13 +89,15 @@ jvm_library(
         "@community//platform/util:util-ui_test_lib",
     ],
 )
+### auto-generated section `build intellij.nextjs` end
 
+### auto-generated section `plugin intellij.nextjs` start
 ij_plugin(
     name = "nextjs_plugin",
     descriptor_module = ":nextjs",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.nextjs` end
+### auto-generated section `plugin intellij.nextjs` end
 
 ### auto-generated section `iml intellij.nextjs` start
 exports_files(

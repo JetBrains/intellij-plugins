@@ -105,13 +105,15 @@ jvm_library(
         "@community//spellchecker:spellchecker_test_lib",
     ],
 )
+### auto-generated section `build intellij.javascript.jshint` end
 
+### auto-generated section `plugin intellij.javascript.jshint` start
 ij_plugin(
     name = "jshint_plugin",
     descriptor_module = ":jshint",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.javascript.jshint` end
+### auto-generated section `plugin intellij.javascript.jshint` end
 
 ### auto-generated section `iml intellij.javascript.jshint` start
 exports_files(

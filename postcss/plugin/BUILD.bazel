@@ -56,7 +56,9 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl_test_lib",
     ],
 )
+### auto-generated section `build intellij.postcss.plugin` end
 
+### auto-generated section `plugin intellij.postcss.plugin` start
 ij_plugin(
     name = "plugin_plugin",
     descriptor_module = ":plugin",
@@ -67,7 +69,7 @@ ij_plugin(
     ],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.postcss.plugin` end
+### auto-generated section `plugin intellij.postcss.plugin` end
 
 ### auto-generated section `iml intellij.postcss.plugin` start
 exports_files(

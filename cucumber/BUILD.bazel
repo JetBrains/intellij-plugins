@@ -120,13 +120,15 @@ jvm_library(
         "@community//platform/backend:backend_test_lib",
     ],
 )
+### auto-generated section `build intellij.gherkin` end
 
+### auto-generated section `plugin intellij.gherkin` start
 ij_plugin(
     name = "gherkin_plugin",
     descriptor_module = ":gherkin",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.gherkin` end
+### auto-generated section `plugin intellij.gherkin` end
 
 ### auto-generated section `iml intellij.gherkin` start
 exports_files(

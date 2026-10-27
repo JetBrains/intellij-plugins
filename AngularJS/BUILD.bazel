@@ -138,13 +138,15 @@ jvm_library(
         "@community//json:json_test_lib",
     ],
 )
+### auto-generated section `build intellij.angularJS` end
 
+### auto-generated section `plugin intellij.angularJS` start
 ij_plugin(
     name = "angularJS_plugin",
     descriptor_module = ":angularJS",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.angularJS` end
+### auto-generated section `plugin intellij.angularJS` end
 
 ### auto-generated section `iml intellij.angularJS` start
 exports_files(

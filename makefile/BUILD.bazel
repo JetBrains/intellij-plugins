@@ -102,7 +102,9 @@ jvm_library(
         "@community//platform/execution:execution_test_lib",
     ],
 )
+### auto-generated section `build intellij.makefile` end
 
+### auto-generated section `plugin intellij.makefile` start
 ij_plugin(
     name = "makefile_plugin",
     descriptor_module = ":makefile",
@@ -113,7 +115,7 @@ ij_plugin(
     ],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.makefile` end
+### auto-generated section `plugin intellij.makefile` end
 
 ### auto-generated section `iml intellij.makefile` start
 exports_files(

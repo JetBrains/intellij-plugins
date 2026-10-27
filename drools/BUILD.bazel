@@ -90,13 +90,15 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     ],
 )
+### auto-generated section `build intellij.jboss.drools` end
 
+### auto-generated section `plugin intellij.jboss.drools` start
 ij_plugin(
     name = "drools_plugin",
     descriptor_module = ":drools",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.jboss.drools` end
+### auto-generated section `plugin intellij.jboss.drools` end
 
 ### auto-generated section `iml intellij.jboss.drools` start
 exports_files(

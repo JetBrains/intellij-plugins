@@ -164,13 +164,15 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     ],
 )
+### auto-generated section `build intellij.deno` end
 
+### auto-generated section `plugin intellij.deno` start
 ij_plugin(
     name = "deno_plugin",
     descriptor_module = ":deno_plugin_module",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.deno` end
+### auto-generated section `plugin intellij.deno` end
 
 ### auto-generated section `iml intellij.deno` start
 exports_files(

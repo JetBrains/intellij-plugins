@@ -137,7 +137,9 @@ jvm_library(
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl_test_lib",
     ],
 )
+### auto-generated section `build intellij.jade` end
 
+### auto-generated section `plugin intellij.jade` start
 ij_plugin(
     name = "jade_plugin",
     descriptor_module = ":jade",
@@ -148,7 +150,7 @@ ij_plugin(
     ],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.jade` end
+### auto-generated section `plugin intellij.jade` end
 
 ### auto-generated section `iml intellij.jade` start
 exports_files(

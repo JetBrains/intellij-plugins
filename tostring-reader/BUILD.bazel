@@ -62,13 +62,15 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     ],
 )
+### auto-generated section `build intellij.tsr` end
 
+### auto-generated section `plugin intellij.tsr` start
 ij_plugin(
     name = "tsr_plugin",
     descriptor_module = ":tsr",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.tsr` end
+### auto-generated section `plugin intellij.tsr` end
 
 ### auto-generated section `iml intellij.tsr` start
 exports_files(

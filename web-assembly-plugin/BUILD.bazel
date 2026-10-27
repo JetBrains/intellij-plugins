@@ -64,13 +64,15 @@ jvm_library(
         "@community//platform/util/jdom:jdom_test_lib",
     ],
 )
+### auto-generated section `build intellij.webassembly` end
 
+### auto-generated section `plugin intellij.webassembly` start
 ij_plugin(
     name = "webassembly_plugin",
     descriptor_module = ":webassembly",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.webassembly` end
+### auto-generated section `plugin intellij.webassembly` end
 
 ### auto-generated section `iml intellij.webassembly` start
 exports_files(

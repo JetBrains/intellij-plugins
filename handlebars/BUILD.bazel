@@ -112,14 +112,16 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
     ],
 )
+### auto-generated section `build intellij.handlebars` end
 
+### auto-generated section `plugin intellij.handlebars` start
 ij_plugin(
     name = "handlebars_plugin",
     descriptor_module = ":handlebars",
     content_modules = ["//contrib/handlebars/javascript"],
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.handlebars` end
+### auto-generated section `plugin intellij.handlebars` end
 
 ### auto-generated section `iml intellij.handlebars` start
 exports_files(

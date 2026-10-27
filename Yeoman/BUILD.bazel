@@ -110,13 +110,15 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
     ],
 )
+### auto-generated section `build intellij.yeoman` end
 
+### auto-generated section `plugin intellij.yeoman` start
 ij_plugin(
     name = "yeoman_plugin",
     descriptor_module = ":yeoman_plugin_module",
     visibility = ["//visibility:public"],
 )
-### auto-generated section `build intellij.yeoman` end
+### auto-generated section `plugin intellij.yeoman` end
 
 ### auto-generated section `iml intellij.yeoman` start
 exports_files(
