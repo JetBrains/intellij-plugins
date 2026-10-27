@@ -156,6 +156,7 @@
     <widget.widgetStatusProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
     <notifications.editorNotificationWarningProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
     <popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
+    <projectModelDetector implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
   </extensions>
 
   <actions>
