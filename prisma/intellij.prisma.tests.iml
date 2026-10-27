@@ -73,6 +73,7 @@
     <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.xml.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
   </component>
 </module>
