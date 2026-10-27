@@ -28,12 +28,25 @@ import java.util.zip.GZIPInputStream
 import kotlin.io.path.deleteIfExists
 
 private val LOG = Logger.getInstance("org.jetbrains.qodana.staticAnalysis.inspections.runner.CloudBaselineService")
+private const val DOWNLOAD_TIMEOUT_PROPERTY = "qodana.cloud.baseline.download.timeout.seconds"
+private val DEFAULT_DOWNLOAD_TIMEOUT: Duration = Duration.ofSeconds(60)
+
 /**
- * The time limit for the download of the cloud baseline. The default is 60 seconds.
- * Set `-Dqodana.cloud.baseline.download.timeout=<seconds>` for a large baseline or a slow network.
+ * The time limit for the response of the cloud baseline download.
+ * Set `-Dqodana.cloud.baseline.download.timeout.seconds=<seconds>` for a large baseline or a slow network.
  */
-private val DOWNLOAD_TIMEOUT: Duration =
-  Duration.ofSeconds(java.lang.Long.getLong("qodana.cloud.baseline.download.timeout", 60).takeIf { it > 0 } ?: 60)
+private val DOWNLOAD_TIMEOUT: Duration = downloadTimeout(System.getProperty(DOWNLOAD_TIMEOUT_PROPERTY))
+
+/** Parses [value] as a positive number of seconds. Gives [DEFAULT_DOWNLOAD_TIMEOUT] for a missing or invalid value. */
+internal fun downloadTimeout(value: String?): Duration {
+  if (value == null) return DEFAULT_DOWNLOAD_TIMEOUT
+  val seconds = value.trim().toLongOrNull()?.takeIf { it > 0 }
+  if (seconds == null) {
+    LOG.warn("Invalid value '$value' of the '$DOWNLOAD_TIMEOUT_PROPERTY' property. Use a positive number of seconds. Using the default ${DEFAULT_DOWNLOAD_TIMEOUT.seconds} s")
+    return DEFAULT_DOWNLOAD_TIMEOUT
+  }
+  return Duration.ofSeconds(seconds)
+}
 
 /** Writes the baseline of `toolName` to a temporary file. Gives null when Qodana Cloud keeps none. */
 internal typealias QodanaCloudBaselineSource = (toolName: String) -> Path?
