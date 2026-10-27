@@ -218,8 +218,6 @@ jvm_library(
         "@community//libraries/kotlinx/serialization/core:core_test_lib",
         "@community//libraries/kotlinx/serialization/json",
         "@community//libraries/kotlinx/serialization/json:json_test_lib",
-        "@community//RegExpSupport:regexp-tests",
-        "@community//RegExpSupport:regexp-tests_test_lib",
         "//platform/ijent/impl:impl-tests",
         "//platform/ijent/impl:impl-tests_test_lib",
         "//contrib/qodana",
