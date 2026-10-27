@@ -244,6 +244,8 @@ jvm_library(
         "//plugins/JavaScriptDebugger/wip/protocol:protocol_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/execution/testFramework",
+        "@community//platform/execution/testFramework:testFramework_test_lib",
         "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/ide-core",
         "//plugins/js-test-common/test:javascript-testing-tests",

@@ -271,6 +271,8 @@ jvm_library(
         "@community//platform/refactoring:refactoring_test_lib",
         "@community//platform/testFramework",
         "@community//platform/testFramework:testFramework_test_lib",
+        "@community//platform/execution/testFramework",
+        "@community//platform/execution/testFramework:testFramework_test_lib",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
