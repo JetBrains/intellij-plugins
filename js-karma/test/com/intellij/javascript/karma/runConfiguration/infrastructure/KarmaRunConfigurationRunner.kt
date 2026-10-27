@@ -19,7 +19,7 @@ import com.intellij.javascript.testFramework.runConfigurations.JsRunConfiguratio
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExecutionTestUtil
 import junit.framework.TestCase.fail
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.CountDownLatch
@@ -48,7 +48,7 @@ class KarmaRunConfigurationRunner: JsRunConfigurationRunner<KarmaRunConfiguratio
     // Should prepare Karma server before running tests, because the configuration execution has issue with waiting correct state in tests.
     startKarmaServerAndWaitBrowsersReady(configuration.project, configuration, executor)
 
-    return PlatformTestUtil.executeConfigurationAndWait(configuration, executor.id, 60)
+    return ExecutionTestUtil.executeConfigurationAndWait(configuration, executor.id, 60)
   }
 
   override fun getFullConsoleOutput(smtRunnerConsoleView: SMTRunnerConsoleView): String {

@@ -24,8 +24,8 @@ import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
+import com.intellij.testFramework.ExecutionTestUtil;
 import com.intellij.testFramework.HeavyPlatformTestCase;
-import com.intellij.testFramework.PlatformTestUtil;
 import kotlin.coroutines.EmptyCoroutineContext;
 import kotlinx.coroutines.BuildersKt;
 import org.jetbrains.annotations.NotNull;
@@ -127,7 +127,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
 
     RunConfiguration runConfiguration = getRunConfiguration();
 
-    RunContentDescriptor runContentDescriptor = PlatformTestUtil.executeConfigurationAndWait(runConfiguration).getContentToReuse();
+    RunContentDescriptor runContentDescriptor = ExecutionTestUtil.executeConfigurationAndWait(runConfiguration).getContentToReuse();
 
     SMTRunnerTestTreeView smtRunnerTestTreeView = UITestUtil.getTreeOfTests(runContentDescriptor);
     assertTreeEqual(smtRunnerTestTreeView, expectedTreeOfTests);
