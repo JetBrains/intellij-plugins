@@ -188,6 +188,7 @@ jvm_library(
         "//plugins/ultimate-plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//xml/plugin",
+        "//plugins/JavaScriptLanguage/javascript-codeinsight",
     ],
 )
 
@@ -221,6 +222,7 @@ jvm_library(
         "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
         "@community//xml/plugin:plugin_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
     ],
     deps = [
         # do not sort,
