@@ -275,6 +275,15 @@ class PrismaConfigManager(private val project: Project, private val coroutineSco
       return null
     }
 
+    if (loader.isPrisma8Config(project, configFile)) {
+      LOG.info("Skipping evaluation of Prisma 8 config $configFile")
+      val config = PrismaConfig(configFile, null)
+      lock.withLock {
+        configEntries[configFile] = ConfigEntry(configFile, config, null, timestamp)
+      }
+      return config
+    }
+
     val config = try {
       loader.load(project, configFile)
     }
