@@ -8,18 +8,25 @@ import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
+import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.serialization.json.Json
 import org.intellij.prisma.PrismaBundle
 
 private const val TIMEOUT = 15000
+
+private const val PRISMA_PACKAGE = "prisma"
+
+private const val PRISMA_8_CONFIG_FUNCTION = "definePrismaConfig"
 
 private val LOG = logger<PrismaConfigLoader>()
 
@@ -29,6 +36,17 @@ class PrismaConfigLoader {
 
   fun accepts(file: VirtualFile): Boolean {
     return file.extension in EXTENSIONS
+  }
+
+  /**
+   * Returns `true` for a Prisma 8 config. The loader cannot evaluate it, because Prisma 8 has no `@prisma/config` package.
+   */
+  suspend fun isPrisma8Config(project: Project, file: VirtualFile): Boolean = readAction {
+    if (!file.isValid) return@readAction false
+    if (VfsUtil.loadText(file).contains(PRISMA_8_CONFIG_FUNCTION)) return@readAction true
+
+    val prismaVersion = NodeInstalledPackageFinder(project, file).findInstalledPackage(PRISMA_PACKAGE)?.version
+    prismaVersion != null && prismaVersion.major >= 8
   }
 
   @Suppress("RedundantSuspendModifier")
