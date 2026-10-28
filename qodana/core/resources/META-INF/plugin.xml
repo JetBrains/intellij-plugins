@@ -326,6 +326,9 @@
     <extensionPoint name="projectDescriber"
                     interface="org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber"
                     dynamic="true"/>
+    <extensionPoint name="sdkLibraryProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaSdkLibraryProvider"
+                    dynamic="true"/>
     <extensionPoint name="inspectionProfileProvider"
                     interface="org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider"
                     dynamic="true"/>
