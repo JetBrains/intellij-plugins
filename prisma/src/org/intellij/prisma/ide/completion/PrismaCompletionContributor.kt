@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.prevLeaf
 import org.intellij.prisma.ide.completion.schema.PrismaBlockAttributesProvider
@@ -18,23 +19,28 @@ import org.intellij.prisma.ide.completion.schema.PrismaParametersProvider
 import org.intellij.prisma.ide.completion.schema.PrismaPrimitiveTypeProvider
 import org.intellij.prisma.ide.completion.schema.PrismaValuesProvider
 import org.intellij.prisma.lang.psi.PrismaElementTypes
+import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 
 class PrismaCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, PrismaKeywordProvider)
     extend(CompletionType.BASIC, PrismaPrimitiveTypeProvider)
-    extend(CompletionType.BASIC, PrismaDatasourceFieldsProvider)
-    extend(CompletionType.BASIC, PrismaGeneratorFieldsProvider)
+    extend(CompletionType.BASIC, PrismaDatasourceFieldsProvider, prisma7Only = true)
+    extend(CompletionType.BASIC, PrismaGeneratorFieldsProvider, prisma7Only = true)
     extend(CompletionType.BASIC, PrismaBlockAttributesProvider)
     extend(CompletionType.BASIC, PrismaFieldAttributesProvider)
     extend(CompletionType.BASIC, PrismaParametersProvider)
     extend(CompletionType.BASIC, PrismaValuesProvider)
     extend(CompletionType.BASIC, PrismaOperatorClassProvider)
-    extend(CompletionType.BASIC, PrismaNativeTypeProvider)
+    extend(CompletionType.BASIC, PrismaNativeTypeProvider, prisma7Only = true)
   }
 
-  private fun extend(type: CompletionType, provider: PrismaCompletionProvider) {
-    extend(type, provider.pattern, provider)
+  /**
+   * @param prisma7Only `true` hides the [provider] in a Prisma 8 contract.
+   */
+  private fun extend(type: CompletionType, provider: PrismaCompletionProvider, prisma7Only: Boolean = false) {
+    val pattern = if (prisma7Only) psiElement().and(provider.pattern).andNot(PrismaPsiPatterns.inPrismaContract) else provider.pattern
+    extend(type, pattern, provider)
   }
 
   override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {

@@ -15,6 +15,7 @@ import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 import org.intellij.prisma.lang.PrismaConstants.Types
+import org.intellij.prisma.lang.isPrismaContract
 import org.intellij.prisma.lang.psi.PrismaModelDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
@@ -217,6 +218,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
   }
 
   deferred(PrismaSchemaKind.FIELD_ATTRIBUTE) { ctx ->
+    if (ctx.file?.isPrismaContract == true) return@deferred
     ctx.metadata?.datasources?.forEach { (name) ->
       element {
         label = "@$name"
