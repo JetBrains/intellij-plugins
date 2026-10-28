@@ -8,6 +8,21 @@ groups:
   - groupId: QodanaOpengrepInspections
     groups:
       - "category:OpenGrep"
+  - groupId: LuaOpengrepRules
+    groups:
+      - "category:OpenGrep/Lua"
+  - groupId: LuaPluginRules
+    inspections:
+      - LuaConstantLogicalOperand
+      - LuaDuplicateCondition
+      - LuaDuplicateTableKey
+      - LuaSelfAssignment
+      - LuaUnreachableCode
+      - LuaUnusedLabel
+      - LuaVariableAttribute
+      - LuaRecursiveLocal
+      - LuaSuspiciousForRange
+      - LuaUnusedLocal
 
 inspections:
   - group: QodanaOpengrepInspections
@@ -18,3 +33,17 @@ inspections:
     enabled: false
   - group: PqcMinLevel1
     enabled: true
+  - group: LuaOpengrepRules
+    enabled: true
+  - group: LuaPluginRules
+    enabled: true
+  - group: ALL
+    ignore:
+      - "vendor/**"
+      - "**/node_modules/**"
+      - "dist/**"
+      - "build/**"
+      - "tests/**"
+      - "test/**"
+      - "spec/**"
+      - "scope#$gitignore" # $gitignore scope available only in qodana execution
