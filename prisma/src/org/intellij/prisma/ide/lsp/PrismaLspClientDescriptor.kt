@@ -2,11 +2,16 @@
 package org.intellij.prisma.ide.lsp
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.typescript.lsp.JSNodeLspClientDescriptor
 import com.intellij.markdown.utils.convertMarkdownToHtml
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.lsp.api.Lsp4jClient
+import com.intellij.platform.lsp.api.LspServerNotificationsHandler
 import com.intellij.platform.lsp.api.customization.LspCodeLensCustomizer
 import com.intellij.platform.lsp.api.customization.LspCodeLensDisabled
 import com.intellij.platform.lsp.api.customization.LspCompletionDisabled
@@ -37,6 +42,7 @@ import org.eclipse.lsp4j.Diagnostic
 import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.ide.formatter.settings.PrismaCodeStyleSettings
 import org.intellij.prisma.lang.PrismaFileType
+import org.intellij.prisma.lang.isPrismaContract
 
 class PrismaLspClientDescriptor(project: Project)
   : JSNodeLspClientDescriptor(project, PrismaLspServerActivationRule, PrismaBundle.message("prisma.framework.name")) {
@@ -59,6 +65,13 @@ class PrismaLspClientDescriptor(project: Project)
     override val codeLensCustomizer: LspCodeLensCustomizer = LspCodeLensDisabled
 
     override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
+      // The server skips an open contract, but it lints a Prisma 7 file together with all `.prisma` files of its directory on disk,
+      // contracts included, and publishes Prisma 7 errors for them. This descriptor serves only the Prisma 7 server.
+      override fun createAnnotation(holder: AnnotationHolder, diagnostic: Diagnostic, textRange: TextRange, quickFixes: List<IntentionAction>) {
+        if (holder.currentAnnotationSession.file.isPrismaContract) return
+        super.createAnnotation(holder, diagnostic, textRange, quickFixes)
+      }
+
       override fun getTooltip(diagnostic: Diagnostic): @NlsSafe String = convertMarkdownToHtml(diagnostic.messageIfStringOrEmpty)
     }
 
@@ -69,6 +82,12 @@ class PrismaLspClientDescriptor(project: Project)
       }
     }
   }
+
+  /**
+   * Uses the platform client without the TypeScript diagnostics proxy.
+   * The proxy keeps the pushed diagnostics for a TypeScript language service, and the Prisma integration has no such service.
+   */
+  override fun createLsp4jClient(handler: LspServerNotificationsHandler): Lsp4jClient = Lsp4jClient(handler)
 
   override fun getWorkspaceConfiguration(item: ConfigurationItem): Any? {
     if (item.section == "prisma") {
