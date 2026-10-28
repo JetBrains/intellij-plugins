@@ -5,6 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
+import org.intellij.prisma.lang.PrismaConstants.Keywords
+import org.intellij.prisma.lang.isPrismaContract
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 
 object PrismaKeywordProvider : PrismaSchemaCompletionProvider() {
@@ -17,7 +19,9 @@ object PrismaKeywordProvider : PrismaSchemaCompletionProvider() {
     parameters: CompletionParameters,
     context: ProcessingContext
   ): LookupElementBuilder? {
+    if (schemaElement.label in PRISMA_7_ONLY_KEYWORDS && parameters.originalFile.isPrismaContract) return null
     return super.createLookupElement(schemaElement, parameters, context)?.bold()
   }
 }
 
+private val PRISMA_7_ONLY_KEYWORDS = setOf(Keywords.DATASOURCE, Keywords.GENERATOR)

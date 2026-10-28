@@ -1,6 +1,14 @@
 package org.intellij.prisma.lang
 
 object PrismaConstants {
+  object Keywords {
+    const val DATASOURCE = "datasource"
+    const val GENERATOR = "generator"
+    const val MODEL = "model"
+    const val ENUM = "enum"
+    const val TYPE = "type"
+  }
+
   object PrimitiveTypes {
     const val STRING = "String"
     const val BOOLEAN = "Boolean"

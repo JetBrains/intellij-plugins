@@ -14,6 +14,7 @@ import com.intellij.psi.util.prevLeaf
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.PRISMA_ENTITY_DECLARATION
 import org.intellij.prisma.lang.PrismaConstants
+import org.intellij.prisma.lang.isPrismaContract
 import org.intellij.prisma.lang.types.PrismaType
 import org.intellij.prisma.lang.types.unwrapOptionalType
 
@@ -22,6 +23,10 @@ object PrismaPsiPatterns {
     psiElement(PrismaElementTypes.IDENTIFIER).withParent(
       psiElement(PsiErrorElement::class.java).withParent(PrismaFile::class.java).afterNewLine()
     )
+
+  val inPrismaContract: PsiElementPattern.Capture<PsiElement> = psiElement().with("inPrismaContract") { element ->
+    element.containingFile?.isPrismaContract == true
+  }
 
   val typeReference: PsiElementPattern.Capture<PsiElement> =
     psiElement(PrismaElementTypes.IDENTIFIER).withParent(psiElement(PrismaTypeReference::class.java))
