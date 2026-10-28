@@ -24,6 +24,7 @@ private const val QODANA_POLY_PRODUCT_CODE = "QDPOLY"
 private const val QODANA_STARTER_OTHER = "qodana.starter.yaml"
 private const val QODANA_STARTER_WITH_JS = "qodana-js.starter.yaml"
 private const val QODANA_STARTER_WITH_DOTNET = "qodana-dotnet.starter.yaml"
+private const val QODANA_STARTER_WITH_POLY = "qodana-poly.starter.yaml"
 
 class QodanaEmbeddedProfilesProvider : QodanaInspectionProfileProvider {
 
@@ -70,6 +71,7 @@ class QodanaEmbeddedProfilesProvider : QodanaInspectionProfileProvider {
         "qodana.sanity.yaml"
       }
       QodanaEmbeddedProfile.QODANA_STARTER -> when {
+        isQodanaPolyLinter() -> QODANA_STARTER_WITH_POLY
         PlatformUtils.isWebStorm() || PlatformUtils.isPhpStorm() -> QODANA_STARTER_WITH_JS
         PlatformUtils.isRider() -> QODANA_STARTER_WITH_DOTNET
         else -> QODANA_STARTER_OTHER

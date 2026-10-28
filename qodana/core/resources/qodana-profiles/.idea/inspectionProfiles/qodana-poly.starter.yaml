@@ -1,0 +1,69 @@
+baseProfile: "empty"
+name: "qodana.starter"
+
+include:
+  - "qodana-poly.recommended.yaml"
+
+inspections:
+  - group: LuaOpengrepRules
+    enabled: false
+  - inspection: lua-unchecked-nil-returning-result-dereferenced
+    enabled: true
+  - inspection: lua-assignment-to-undeclared-global
+    enabled: true
+  - inspection: lua-request-data-in-os-command
+    enabled: true
+  - inspection: lua-index-into-nil-returning-stdlib-call
+    enabled: true
+  - inspection: lua-gsub-nonliteral-replacement-not-escaped
+    enabled: true
+  - inspection: lua-not-before-equality-comparison
+    enabled: true
+  - inspection: lua_fd_leak
+    enabled: true
+  - inspection: no-and-or-conditional-with-a-false-middle
+    enabled: true
+  - inspection: lua-luci-untrusted-data-in-cbi-markup
+    enabled: true
+  - inspection: lua-os-command-built-by-concatenation
+    enabled: true
+  - inspection: lua-byte-truncation-with-ellipsis
+    enabled: true
+  - inspection: lua-socket-http-request-unprotected
+    enabled: true
+  - inspection: lua-error-message-never-read
+    enabled: true
+  - inspection: lua-tls-verification-off-by-default-in-schema
+    enabled: true
+  - inspection: lua-type-call-on-comparison
+    enabled: true
+  - inspection: pairs-traversal-must-not-add-keys
+    enabled: true
+  - inspection: lua-string-literal-as-assert-condition
+    enabled: true
+  - inspection: lua-or-with-truthy-literal-operand
+    enabled: true
+  - inspection: lua-self-used-outside-a-method
+    enabled: true
+  - inspection: lua-then-branch-local-used-in-else-branch
+    enabled: true
+  - inspection: lua-cors-request-origin-reflected
+    enabled: true
+  - inspection: lua-pattern-unescaped-hyphen-in-literal-text
+    enabled: true
+  - inspection: lua-format-too-many-arguments
+    enabled: true
+  - inspection: lua-table-remove-in-ipairs-loop
+    enabled: true
+  - inspection: lua-percent-q-as-shell-quote
+    enabled: true
+  - inspection: lua-pattern-class-range-mixes-character-kinds
+    enabled: true
+  - inspection: lua-request-data-loaded-as-code
+    enabled: true
+  - inspection: lua-concat-binds-tighter-than-or-default
+    enabled: true
+  - inspection: lua-method-receiver-passed-again
+    enabled: true
+  - inspection: LuaUnusedLocal
+    enabled: false
