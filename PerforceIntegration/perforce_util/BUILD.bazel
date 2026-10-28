@@ -24,24 +24,6 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io",
     ],
 )
-
-jvm_library(
-    name = "vcs-perforce-util_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.vcs.perforce.util",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":vcs-perforce-util",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//platform/platform-util-io:ide-util-io_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.vcs.perforce.util` end
 
 ### auto-generated section `iml intellij.vcs.perforce.util` start

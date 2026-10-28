@@ -40,33 +40,6 @@ jvm_library(
         "@community//platform/progress/shared:ide-progress",
     ],
 )
-
-jvm_library(
-    name = "ruby-featuresTrainer_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.ruby.featuresTrainer",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":ruby-featuresTrainer",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/lang-core:lang-core_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/refactoring:refactoring_test_lib",
-        "//ruby/backend:backend_test_lib",
-        "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-        "@community//platform/progress/shared:ide-progress_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.ruby.featuresTrainer` end
 
 ### auto-generated section `iml intellij.ruby.featuresTrainer` start
@@ -81,21 +54,6 @@ exports_files(
 
 ### auto-generated section `build intellij.ruby.featuresTrainer.tests` start
 jvm_library(
-    name = "ruby-featuresTrainer-tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.ruby.featuresTrainer.tests",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
-        "@community//community-resources:customization",
-    ],
-)
-
-jvm_library(
     name = "ruby-featuresTrainer-tests_test_lib",
     testonly = True,
     srcs = glob(
@@ -106,10 +64,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/ide-features-trainer/ruby-features-trainer:ruby-featuresTrainer",
-        "//contrib/ide-features-trainer/ruby-features-trainer:ruby-featuresTrainer_test_lib",
-    ],
+    associates = ["//contrib/ide-features-trainer/ruby-features-trainer:ruby-featuresTrainer"],
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -117,23 +72,17 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":ruby-featuresTrainer-tests",
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
-        "@community//community-resources:customization_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
     ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@community//plugins/ide-features-trainer:featuresTrainer",
-        "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
         "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
-        "@community//plugins/ide-features-trainer:featuresTrainer-tests",
         "@community//plugins/ide-features-trainer:featuresTrainer-tests_test_lib",
         "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/scratch/plugin",
-        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.ruby.featuresTrainer.tests` end

@@ -32,26 +32,6 @@ jvm_library(
         "@community//xml/xml-parser:parser",
     ],
 )
-
-jvm_library(
-    name = "xml_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.xml",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":xml",
-        "//contrib/qodana:qodana_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/util:util_test_lib",
-        "@community//xml/xml-psi-api:psi_test_lib",
-        "@community//xml/xml-parser:parser_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.qodana.xml` end
 
 ### auto-generated section `iml intellij.qodana.xml` start

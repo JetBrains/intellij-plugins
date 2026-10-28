@@ -26,25 +26,6 @@ jvm_library(
         "//plugins/frameworks/quarkus/quarkus-core:quarkus",
     ],
 )
-
-jvm_library(
-    name = "quarkus_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.openRewrite.quarkus",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":quarkus",
-        "//contrib/open-rewrite:open-rewrite_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/external-system-api/dependency-updater:dependency-updater_test_lib",
-        "//plugins/frameworks/quarkus/quarkus-core:quarkus_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.openRewrite.quarkus` end
 
 ### auto-generated section `iml intellij.openRewrite.quarkus` start

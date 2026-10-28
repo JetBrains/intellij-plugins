@@ -50,24 +50,6 @@ jvm_library(
         "@community//platform/structure-view-impl:structureView",
     ],
 )
-
-jvm_library(
-    name = "protoeditor_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.protoeditor",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":protoeditor",
-        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-        "@community//libraries/protobuf-java-util:protobuf-java-util_test_lib",
-        "@community//platform/structure-view-impl:structureView_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.protoeditor` end
 
 ### auto-generated section `iml intellij.protoeditor` start

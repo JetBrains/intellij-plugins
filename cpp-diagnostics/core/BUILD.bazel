@@ -47,41 +47,6 @@ jvm_library(
         "@community//platform/util/jdom",
     ],
 )
-
-jvm_library(
-    name = "core_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.clion.diagnostics.core",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":core",
-        "//CIDR/cidr-projectModel:cidr-projectModel_test_lib",
-        "//CIDR/cidr-psi-base:cidr-psi-base_test_lib",
-        "//CIDR/cidr-util:cidr-util_test_lib",
-        "//CIDR/cidr-util/execution:execution_test_lib",
-        "//CIDR/cidr-workspaceModel:cidr-workspaceModel_test_lib",
-        "//CIDR/clion-toolchains:clion-toolchains_test_lib",
-        "@community//libraries/kotlinx/serialization/core:core_test_lib",
-        "@community//libraries/kotlinx/serialization/json:json_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/platform-util-io:ide-util-io_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/remote-core:remote-core_test_lib",
-        "//platform/ssh-ui:ssh-ui_test_lib",
-        "@community//platform/util-ex:util-ex_test_lib",
-        "@community//platform/util/jdom:jdom_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.clion.diagnostics.core` end
 
 ### auto-generated section `iml intellij.clion.diagnostics.core` start

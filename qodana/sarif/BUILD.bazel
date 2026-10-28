@@ -25,28 +25,6 @@ jvm_library(
         "@community//platform/backend",
     ],
 )
-
-jvm_library(
-    name = "sarif_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.sarif",
-    visibility = ["//visibility:public"],
-    exports = [
-        # do not sort,
-        "@community//libraries/qodana/sarif",
-        "@community//libraries/qodana/sarif:sarif_test_lib",
-    ],
-    runtime_deps = [
-        # do not sort,
-        ":sarif",
-        "@community//libraries/qodana/sarif:sarif_test_lib",
-        "@community//platform/backend:backend_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.qodana.sarif` end
 
 ### auto-generated section `iml intellij.qodana.sarif` start

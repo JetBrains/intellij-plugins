@@ -76,43 +76,6 @@ jvm_library(
         "@community//platform/forms_rt:java-guiForms-rt",
     ],
 )
-
-jvm_library(
-    name = "serial-monitor_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.serial.monitor",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":serial-monitor",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//platform/lang-core:lang-core_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "@community//platform/execution-impl:execution-impl_test_lib",
-        "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/lang-impl:lang-impl_test_lib",
-        "@community//libraries/guava:guava_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/statistics:statistics_test_lib",
-        "@community//libraries/jediterm-core:jediterm-core_test_lib",
-        "@community//libraries/jediterm-ui:jediterm-ui_test_lib",
-        "@community//libraries/commons/io:io_test_lib",
-        "@community//platform/execution:execution_test_lib",
-        "@community//platform/consoleView:consoleView_test_lib",
-        "@community//platform/consoleView/impl:impl_test_lib",
-        "@community//platform/forms_rt:java-guiForms-rt_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.serial.monitor` end
 
 ### auto-generated section `iml intellij.serial.monitor` start

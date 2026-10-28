@@ -37,36 +37,6 @@ jvm_library(
         "@community//platform/util:util-ui",
     ],
 )
-
-jvm_library(
-    name = "javascript-debugger-featuresTrainer_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.javascript.debugger.featuresTrainer",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":javascript-debugger-featuresTrainer",
-        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/execution-impl:execution-impl_test_lib",
-        "@community//platform/testRunner:testRunner_test_lib",
-        "@community//platform/smRunner:smRunner_test_lib",
-        "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/editor-ui-ex:editor-ex_test_lib",
-        "@community//platform/xdebugger-api:debugger_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "//plugins/JavaScriptDebugger/backend:backend_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-        "@community//platform/execution:execution_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.javascript.debugger.featuresTrainer` end
 
 ### auto-generated section `iml intellij.javascript.debugger.featuresTrainer` start

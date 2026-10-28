@@ -63,51 +63,6 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
-
-jvm_library(
-    name = "paid_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.postcss.paid",
-    visibility = ["//visibility:public"],
-    exports = [
-        # do not sort,
-        "@community//xml/xml-psi-impl:psi-impl",
-        "@community//xml/xml-psi-impl:psi-impl_test_lib",
-    ],
-    runtime_deps = [
-        # do not sort,
-        ":paid",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/code-style-api:codeStyle_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/indexing-api:indexing_test_lib",
-        "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/lang-impl:lang-impl_test_lib",
-        "//plugins/css/common:common_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/structure-view-impl:structureView_test_lib",
-        "@community//platform/usageView:usageView_test_lib",
-        "//plugins/css/codeinsight/analysis:analysis_test_lib",
-        "@community//platform/indexing-impl:indexing-impl_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//xml/xml-parser:parser_test_lib",
-        "@community//xml/xml-psi-impl:psi-impl_test_lib",
-        "//plugins/css/plugin:plugin_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-        "//plugins/css/common/psi:psi_test_lib",
-        "//plugins/css/backend:backend_test_lib",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.postcss.paid` end
 
 ### auto-generated section `iml intellij.postcss.paid` start

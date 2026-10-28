@@ -34,27 +34,6 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel",
     ],
 )
-
-jvm_library(
-    name = "poly_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.poly",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":poly",
-        "//contrib/qodana:qodana_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/util:util_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.qodana.poly` end
 
 ### auto-generated section `iml intellij.qodana.poly` start
@@ -69,21 +48,6 @@ exports_files(
 
 ### auto-generated section `build intellij.qodana.poly.tests` start
 jvm_library(
-    name = "poly-tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.poly.tests",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
-        "@community//community-resources:customization",
-    ],
-)
-
-jvm_library(
     name = "poly-tests_test_lib",
     testonly = True,
     srcs = glob(
@@ -94,10 +58,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/qodana/poly",
-        "//contrib/qodana/poly:poly_test_lib",
-    ],
+    associates = ["//contrib/qodana/poly"],
     resource_strip_prefix = "test-data",
     resources = glob(
         ["test-data/**/*"],
@@ -105,35 +66,23 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":poly-tests",
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
-        "@community//community-resources:customization_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
     ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@community//platform/core-api:core",
-        "@community//platform/core-api:core_test_lib",
         "@community//platform/util",
-        "@community//platform/util:util_test_lib",
         "@community//libraries/qodana/sarif",
-        "@community//libraries/qodana/sarif:sarif_test_lib",
         "@community//platform/testFramework/junit5",
-        "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//tools/intellij.tools.ide.starter:ide-starter",
-        "@community//tools/intellij.tools.ide.starter:ide-starter_test_lib",
         "@community//tools/intellij.tools.ide.starter.product.idea.ultimate:ide-starter-product-idea-ultimate",
-        "@community//tools/intellij.tools.ide.starter.product.idea.ultimate:ide-starter-product-idea-ultimate_test_lib",
         "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
-        "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure_test_lib",
-        "//tests/intellij.qodana.testsFramework:qodana-testsFramework",
         "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
         "//tests/intellij.ide.starter.extended:ide-starter-extended",
-        "//tests/intellij.ide.starter.extended:ide-starter-extended_test_lib",
         "@community//libraries/junit6",
-        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.poly.tests` end

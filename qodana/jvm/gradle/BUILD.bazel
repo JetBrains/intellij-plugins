@@ -43,37 +43,6 @@ jvm_library(
         "@community//platform/core-impl",
     ],
 )
-
-jvm_library(
-    name = "gradle_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.jvm.gradle",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":gradle",
-        "@community//platform/lang-core:lang-core_test_lib",
-        "@community//platform/execution:execution_test_lib",
-        "@community//java/openapi:java_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//plugins/gradle:gradle_test_lib",
-        "@community//platform/external-system-api:externalSystem_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/progress/shared:ide-progress_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "//contrib/qodana:qodana_test_lib",
-        "@community//platform/backend/observation:observation_test_lib",
-        "//contrib/qodana/jvm/java:java_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/external-system-impl:externalSystem-impl_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.qodana.jvm.gradle` end
 
 ### auto-generated section `iml intellij.qodana.jvm.gradle` start

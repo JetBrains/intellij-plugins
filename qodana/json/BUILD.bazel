@@ -40,33 +40,6 @@ jvm_library(
         "@community//libraries/kotlinx/coroutines/core",
     ],
 )
-
-jvm_library(
-    name = "json_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.json",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":json",
-        "//contrib/qodana:qodana_test_lib",
-        "@community//json/backend:backend_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//jps/model-api:model_test_lib",
-        "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/util:util_test_lib",
-        "@community//libraries/kotlinx/coroutines/core:core_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.qodana.json` end
 
 ### auto-generated section `iml intellij.qodana.json` start
@@ -80,21 +53,6 @@ exports_files(
 ### auto-generated section `iml intellij.qodana.json` end
 
 ### auto-generated section `build intellij.qodana.json.tests` start
-jvm_library(
-    name = "json-tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.qodana.json.tests",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
-        "@community//community-resources:customization",
-    ],
-)
-
 jvm_library(
     name = "json-tests_test_lib",
     testonly = True,
@@ -110,29 +68,20 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":json-tests",
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
-        "@community//community-resources:customization_test_lib",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//community-resources:customization",
     ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "//contrib/qodana",
-        "//contrib/qodana:qodana_test_lib",
         "//contrib/qodana/json",
-        "//contrib/qodana/json:json_test_lib",
         "@community//json/backend",
-        "@community//json/backend:backend_test_lib",
         "@community//platform/core-api:core",
-        "@community//platform/core-api:core_test_lib",
         "@community//platform/core-impl",
-        "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//libraries/assertj-core",
-        "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.json.tests` end

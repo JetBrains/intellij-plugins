@@ -10,16 +10,6 @@ clion_dev_test(
 
 ### auto-generated section `build intellij.serial.monitor.tests` start
 jvm_library(
-    name = "tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.serial.monitor.tests",
-    visibility = ["//visibility:public"],
-)
-
-jvm_library(
     name = "tests_test_lib",
     testonly = True,
     srcs = glob(
@@ -36,20 +26,14 @@ jvm_library(
         ["testResources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [":tests"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@community//platform/core-api:core",
-        "@community//platform/core-api:core_test_lib",
         "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/testFramework/junit5",
-        "@community//platform/testFramework/junit5:junit5_test_lib",
         "//contrib/serial-monitor",
-        "//contrib/serial-monitor:serial-monitor_test_lib",
         "@community//libraries/junit6",
-        "@community//libraries/junit6:junit6_test_lib",
     ],
 )
 ### auto-generated section `build intellij.serial.monitor.tests` end

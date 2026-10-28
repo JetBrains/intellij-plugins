@@ -46,41 +46,6 @@ jvm_library(
         "@community//xml/impl",
     ],
 )
-
-jvm_library(
-    name = "css_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.jade.css",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":css",
-        "@community//libraries/jetbrains/annotations:annotations_test_lib",
-        "//contrib/jade:jade_test_lib",
-        "@community//RegExpSupport:regexp_test_lib",
-        "//plugins/css:css_test_lib",
-        "//plugins/css/common:common_test_lib",
-        "//plugins/css/common/psi:psi_test_lib",
-        "//plugins/css/backend:backend_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/util:util_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//xml/xml-psi-api:psi_test_lib",
-        "@community//xml/xml-psi-impl:psi-impl_test_lib",
-        "@community//xml/xml-parser:parser_test_lib",
-        "@community//xml/impl:impl_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.jade.css` end
 
 ### auto-generated section `iml intellij.jade.css` start

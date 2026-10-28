@@ -28,27 +28,6 @@ jvm_library(
         "//plugins/spring/spring-boot/spring-boot-shared",
     ],
 )
-
-jvm_library(
-    name = "openRewrite-spring-boot_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.openRewrite.spring.boot",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":openRewrite-spring-boot",
-        "//contrib/open-rewrite:open-rewrite_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/external-system-api/dependency-updater:dependency-updater_test_lib",
-        "@community//java/java-impl:impl_test_lib",
-        "//plugins/spring/spring-boot/spring-boot-shared:spring-boot-shared_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.openRewrite.spring.boot` end
 
 ### auto-generated section `iml intellij.openRewrite.spring.boot` start

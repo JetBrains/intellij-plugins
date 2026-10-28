@@ -45,37 +45,6 @@ jvm_library(
         "//plugins/css",
     ],
 )
-
-jvm_library(
-    name = "common_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.vuejs.common",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":common",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/util:util_test_lib",
-        "//plugins/JavaScriptLanguage/web-platform:javascript-web_test_lib",
-        "@community//xml/xml-parser:parser_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-parser:javascript-parser_test_lib",
-        "@community//xml/xml-psi-api:psi_test_lib",
-        "@community//libraries/stream:stream_test_lib",
-        "@community//platform/polySymbols/shared:polySymbols_test_lib",
-        "@community//platform/polySymbols/web:web_test_lib",
-        "@community//xml/xml-psi-impl:psi-impl_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "//plugins/css:css_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.vuejs.common` end
 
 ### auto-generated section `iml intellij.vuejs.common` start

@@ -69,47 +69,6 @@ ij_plugin_module(
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
     ],
 )
-
-jvm_library(
-    name = "yeoman_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.yeoman",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":yeoman",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/execution:execution_test_lib",
-        "@community//platform/consoleView:consoleView_test_lib",
-        "@community//platform/consoleView/impl:impl_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//jps/model-api:model_test_lib",
-        "@community//platform/lang-api:lang_test_lib",
-        "@community//platform/lang-core:lang-core_test_lib",
-        "@community//platform/lang-impl:lang-impl_test_lib",
-        "@community//libraries/gson:gson_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "//plugins/JavaScriptLanguage/plugin:plugin_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "@community//platform/platform-util-io:ide-util-io_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/util/text-matching:text-matching_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-        "@community//platform/forms_rt:java-guiForms-rt_test_lib",
-        "@community//platform/welcome-screen-impl:welcomeScreen-impl_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/code-style-api:codeStyle_test_lib",
-        "@community//platform/util/concurrency:concurrency_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.yeoman` end
 
 ### auto-generated section `plugin intellij.yeoman` start
@@ -132,16 +91,6 @@ exports_files(
 
 ### auto-generated section `build intellij.yeoman.tests` start
 jvm_library(
-    name = "yeoman-tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.yeoman.tests",
-    visibility = ["//visibility:public"],
-)
-
-jvm_library(
     name = "yeoman-tests_test_lib",
     testonly = True,
     srcs = glob(
@@ -154,17 +103,12 @@ jvm_library(
     ),
     module_name = "intellij.yeoman.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = [":yeoman-tests"],
     deps = [
         # do not sort,
         "//contrib/Yeoman:yeoman",
-        "//contrib/Yeoman:yeoman_test_lib",
         "@community//platform/testFramework/junit5",
-        "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//libraries/junit6",
-        "@community//libraries/junit6:junit6_test_lib",
         "@community//platform/scratch/plugin",
-        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.yeoman.tests` end

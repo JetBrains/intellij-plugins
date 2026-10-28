@@ -56,50 +56,6 @@ jvm_library(
         "@lib//:kotlin-stdlib",
     ],
 )
-
-jvm_library(
-    name = "debug_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.javascript.karma.debug",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":debug",
-        "//contrib/js-karma:karma_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-        "//plugins/JavaScriptDebugger/backend:backend_test_lib",
-        "//plugins/JavaScriptDebugger/common:common_test_lib",
-        "//plugins/JavaScriptDebugger/wip/backend:backend_test_lib",
-        "//plugins/JavaScriptDebugger/wip/protocol:protocol_test_lib",
-        "//plugins/js-test-common:javascript-testing_test_lib",
-        "@community//libraries/guava:guava_test_lib",
-        "@community//platform/util/concurrency:concurrency_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "@community//platform/xdebugger-api:debugger_test_lib",
-        "@community//platform/xdebugger-impl:debugger-impl_test_lib",
-        "@community//platform/execution:execution_test_lib",
-        "@community//platform/execution-impl:execution-impl_test_lib",
-        "@community//platform/consoleView:consoleView_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/platform-util-io:ide-util-io_test_lib",
-        "@community//platform/projectModel-api:projectModel_test_lib",
-        "@community//platform/script-debugger/backend:backend_test_lib",
-        "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui_test_lib",
-        "@community//platform/smRunner:smRunner_test_lib",
-        "@community//platform/testRunner:testRunner_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.javascript.karma.debug` end
 
 ### auto-generated section `iml intellij.javascript.karma.debug` start

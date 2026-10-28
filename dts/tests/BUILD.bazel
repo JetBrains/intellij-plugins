@@ -3,21 +3,6 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.dts.tests` start
 jvm_library(
-    name = "tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.dts.tests",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "@community//community-resources:customization",
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
-    ],
-)
-
-jvm_library(
     name = "tests_test_lib",
     testonly = True,
     srcs = glob(
@@ -28,10 +13,7 @@ jvm_library(
         ],
         allow_empty = True,
     ),
-    associates = [
-        "//contrib/dts/core",
-        "//contrib/dts/core:core_test_lib",
-    ],
+    associates = ["//contrib/dts/core"],
     resource_strip_prefix = "testResources",
     resources = glob(
         ["testResources/**/*"],
@@ -39,45 +21,28 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        ":tests",
-        "@community//community-resources:customization_test_lib",
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
+        "@community//community-resources:customization",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "//contrib/dts/pp",
-        "//contrib/dts/pp:pp_test_lib",
         "@community//libraries/assertj-core",
-        "@community//libraries/assertj-core:assertj-core_test_lib",
         "@community//libraries/json-schema-validator",
-        "@community//libraries/json-schema-validator:json-schema-validator_test_lib",
         "@community//libraries/junit6",
-        "@community//libraries/junit6:junit6_test_lib",
         "@community//libraries/snakeyaml",
-        "@community//libraries/snakeyaml:snakeyaml_test_lib",
         "@community//platform/analysis-api:analysis",
-        "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/code-style-api:codeStyle",
-        "@community//platform/code-style-api:codeStyle_test_lib",
         "@community//platform/core-api:core",
-        "@community//platform/core-api:core_test_lib",
         "@community//platform/core-impl",
-        "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/editor-ui-api:editor-ui",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/lang-impl",
-        "@community//platform/lang-impl:lang-impl_test_lib",
         "@community//platform/projectModel-api:projectModel",
-        "@community//platform/projectModel-api:projectModel_test_lib",
         "@community//platform/syntax/syntax-api:syntax",
-        "@community//platform/syntax/syntax-api:syntax_test_lib",
         "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "@community//platform/testFramework/junit5",
-        "@community//platform/testFramework/junit5:junit5_test_lib",
         "@community//platform/testFramework/junit5/codeInsight",
-        "@community//platform/testFramework/junit5/codeInsight:codeInsight_test_lib",
     ],
 )
 ### auto-generated section `build intellij.dts.tests` end

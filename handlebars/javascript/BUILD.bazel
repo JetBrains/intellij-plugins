@@ -32,26 +32,6 @@ jvm_library(
         "@community//platform/platform-api:ide",
     ],
 )
-
-jvm_library(
-    name = "javascript_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.handlebars.javascript",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":javascript",
-        "//contrib/handlebars:handlebars_test_lib",
-        "//plugins/JavaScriptLanguage/javascript-backend:javascript-backend_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/ide-core:ide-core_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.handlebars.javascript` end
 
 ### auto-generated section `iml intellij.handlebars.javascript` start

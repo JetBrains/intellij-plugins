@@ -32,26 +32,6 @@ jvm_library(
         "//contrib/platformio",
     ],
 )
-
-jvm_library(
-    name = "terminal_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.clion.embedded.platformio.terminal",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":terminal",
-        "@community//plugins/terminal:terminal_test_lib",
-        "@community//platform/platform-util-io:ide-util-io_test_lib",
-        "@community//platform/util:util_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "//contrib/platformio:platformio_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.clion.embedded.platformio.terminal` end
 
 ### auto-generated section `iml intellij.clion.embedded.platformio.terminal` start

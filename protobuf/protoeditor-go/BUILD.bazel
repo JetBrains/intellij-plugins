@@ -43,33 +43,6 @@ jvm_library(
         "@community//platform/statistics",
     ],
 )
-
-jvm_library(
-    name = "protoeditor-go_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.protoeditor.go",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":protoeditor-go",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/core-ui:core-ui_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/indexing-api:indexing_test_lib",
-        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
-        "//goland/intellij-go/impl:impl_test_lib",
-        "@community//libraries/guava:guava_test_lib",
-        "//goland/intellij-go/go-frontback:go-frontback_test_lib",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-        "@community//platform/statistics:statistics_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.protoeditor.go` end
 
 ### auto-generated section `iml intellij.protoeditor.go` start
@@ -84,9 +57,14 @@ exports_files(
 
 ### auto-generated section `build intellij.protoeditor.go.tests` start
 jvm_library(
-    name = "protoeditor-go-tests",
+    name = "protoeditor-go-tests_test_lib",
+    testonly = True,
     srcs = glob(
-        [],
+        [
+            "test/**/*.kt",
+            "test/**/*.java",
+            "test/**/*.form",
+        ],
         allow_empty = True,
     ),
     module_name = "intellij.protoeditor.go.tests",
@@ -107,71 +85,24 @@ jvm_library(
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "//plugins/http-client/plugin",
     ],
-)
-
-jvm_library(
-    name = "protoeditor-go-tests_test_lib",
-    testonly = True,
-    srcs = glob(
-        [
-            "test/**/*.kt",
-            "test/**/*.java",
-            "test/**/*.form",
-        ],
-        allow_empty = True,
-    ),
-    module_name = "intellij.protoeditor.go.tests",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":protoeditor-go-tests",
-        "@community//platform/ide-core-impl:ide-core-impl_test_lib",
-        "//contrib/protobuf/protoeditor-go:protoeditor-go_test_lib",
-        "//ultimate/ultimate-resources:idea-ultimate-customization_test_lib",
-        "//contrib/protobuf:protoeditor_test_lib",
-        "//plugins/http-client/http-client-grpc:httpClient-grpc_test_lib",
-        "@community//platform/execution.serviceView/plugin:plugin_test_lib",
-        "@community//platform/navbar/plugin:plugin_test_lib",
-        "//plugins/ultimate-plugin:ultimate-plugin_test_lib",
-        "@community//xml/plugin:plugin_test_lib",
-        "@community//platform/structure-view-impl/plugin:plugin_test_lib",
-        "@community//platform/testRunner/plugin:plugin_test_lib",
-        "//plugins/uml/impl:impl_test_lib",
-        "@community//platform/main/intellij.platform.monolith.main:monolith-main_test_lib",
-        "//plugins/http-client/plugin:plugin_test_lib",
-    ],
     deps = [
         # do not sort,
         "@community//platform/core-impl",
-        "@community//platform/core-impl:core-impl_test_lib",
         "@community//platform/analysis-api:analysis",
-        "@community//platform/analysis-api:analysis_test_lib",
         "@community//platform/editor-ui-api:editor-ui",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
         "@community//platform/core-api:core",
-        "@community//platform/core-api:core_test_lib",
         "@community//platform/testFramework",
-        "@community//platform/testFramework:testFramework_test_lib",
         "//contrib/protobuf/protoeditor-core",
-        "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
         "//goland/intellij-go/impl",
-        "//goland/intellij-go/impl:impl_test_lib",
         "@community//libraries/guava",
-        "@community//libraries/guava:guava_test_lib",
         "@community//platform/ide-core-impl",
         "@community//platform/lang-impl",
-        "@community//platform/lang-impl:lang-impl_test_lib",
         "@lib//:truth",
         "//goland/intellij-go/testFramework",
-        "//goland/intellij-go/testFramework:testFramework_test_lib",
         "//goland/intellij-go/plugin",
-        "//goland/intellij-go/plugin:plugin_test_lib",
-        "//contrib/protobuf/protoeditor-core:protoeditor-core-tests",
         "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
         "@community//libraries/junit4",
-        "@community//libraries/junit4:junit4_test_lib",
         "@community//platform/scratch/plugin",
-        "@community//platform/scratch/plugin:plugin_test_lib",
     ],
 )
 ### auto-generated section `build intellij.protoeditor.go.tests` end

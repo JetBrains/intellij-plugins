@@ -36,32 +36,6 @@ jvm_library(
         "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
-
-jvm_library(
-    name = "tsr_test_lib",
-    testonly = True,
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.tsr",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":tsr",
-        "@community//platform/analysis-api:analysis_test_lib",
-        "@community//platform/code-style-api:codeStyle_test_lib",
-        "@community//platform/core-api:core_test_lib",
-        "@community//platform/editor-ui-api:editor-ui_test_lib",
-        "@community//platform/platform-api:ide_test_lib",
-        "@community//platform/lang-impl:lang-impl_test_lib",
-        "@community//platform/platform-impl:ide-impl_test_lib",
-        "@community//platform/code-style-impl:codeStyle-impl_test_lib",
-        "@community//platform/core-impl:core-impl_test_lib",
-        "@community//platform/util:util-ui_test_lib",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable_test_lib",
-    ],
-)
 ### auto-generated section `build intellij.tsr` end
 
 ### auto-generated section `plugin intellij.tsr` start
@@ -84,17 +58,6 @@ exports_files(
 
 ### auto-generated section `build intellij.tsr.tests` start
 jvm_library(
-    name = "tsr-tests",
-    srcs = glob(
-        [],
-        allow_empty = True,
-    ),
-    module_name = "intellij.tsr.tests",
-    visibility = ["//visibility:public"],
-    runtime_deps = ["//contrib/tostring-reader:tsr"],
-)
-
-jvm_library(
     name = "tsr-tests_test_lib",
     testonly = True,
     srcs = glob(
@@ -111,16 +74,8 @@ jvm_library(
         ["test-resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        ":tsr-tests",
-        "//contrib/tostring-reader:tsr_test_lib",
-    ],
-    deps = [
-        # do not sort,
-        "@community//libraries/junit6",
-        "@community//libraries/junit6:junit6_test_lib",
-    ],
+    runtime_deps = ["//contrib/tostring-reader:tsr"],
+    deps = ["@community//libraries/junit6"],
 )
 ### auto-generated section `build intellij.tsr.tests` end
 
