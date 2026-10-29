@@ -8,29 +8,21 @@ import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
 
-/** Tests the baseline source that qodana-sarif writes to the report when it compares the report with the baseline. */
+/** Tests the baseline source that the run writes to the report after it compares the report with the baseline. */
 class BaselineSourceReportTest : QodanaRunnerTestCase() {
   // Any run with a baseline file fits, so all tests share the data of one.
   override val testDataBasePath: Path get() = Path.of("QodanaRunnerTest", "baseline, new results")
 
   @Test
-  fun `a baseline file without the origin gives the local source`() {
+  fun `a local baseline file gives the local source`() {
     runAnalysis()
 
     assertEquals("LOCAL", reportedBaselineSource())
   }
 
   @Test
-  fun `a baseline file with the cloud origin gives the cloud source`() {
-    useBaselineWith("baselineOrigin" to "CLOUD")
-
-    runAnalysis()
-
-    assertEquals("CLOUD", reportedBaselineSource())
-  }
-
-  @Test
-  fun `a baseline file of qodana-cli without the origin gives the cloud source`() {
+  fun `a cloud baseline gives the cloud source`() {
+    // The run downloaded the baseline itself, or qodana-cli reported a cloud baseline for the file.
     updateQodanaConfig { it.copy(baselineSource = QodanaBaselineSource.CLOUD_BASELINE) }
 
     runAnalysis()
@@ -41,7 +33,7 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
   @Test
   fun `a report that was compared with a cloud baseline gives the local source as the next baseline`() {
     // A report carries the source and not the origin, so a run that uses it as the baseline does not chain CLOUD.
-    useBaselineWith("baselineSource" to "CLOUD")
+    useCloudComparedReportAsBaseline()
 
     runAnalysis()
 
@@ -59,11 +51,11 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
 
   private fun reportedBaselineSource(): Any? = manager.sarifRun.properties?.get("baselineSource")
 
-  /** Makes the run use a copy of the baseline of the test data, with the run property [property]. */
-  private fun useBaselineWith(property: Pair<String, String>) {
+  /** Makes the run use a copy of the baseline of the test data, marked like a report that was compared with a cloud baseline. */
+  private fun useCloudComparedReportAsBaseline() {
     val report = SarifUtil.readReport(getTestDataPath("baseline-results.sarif.json"))
     for (run in report.runs) {
-      run.properties = (run.properties ?: PropertyBag()).also { it[property.first] = property.second }
+      run.properties = (run.properties ?: PropertyBag()).also { it["baselineSource"] = "CLOUD" }
     }
     val file = Path.of(project.basePath!!).resolve("baseline.sarif.json")
     Files.newBufferedWriter(file).use { SarifUtil.writeReport(it, report) }
