@@ -21,7 +21,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.u
 import java.io.DataInput
 import java.io.DataOutput
 
-private const val TRANSPILED_FILE_GIST_VERSION: Int = 7
+/** The version of the generated code of a Vue file, see [org.jetbrains.vuejs.lang.typescript.kolar.VueKolarTranspiler.transpiledCodeVersion]. */
+internal const val TRANSPILED_FILE_GIST_VERSION: Int = 8
 
 @Service(Service.Level.APP)
 class VueTranspiledFileBuilder {

@@ -44,6 +44,10 @@ class VueKolarTranspiler(
     return VueTranspiledFile(project, file)
   }
 
+  // The code generation reads only the Vue PSI of the file and the default compiler options
+  override val transpiledCodeVersion: Int
+    get() = TRANSPILED_FILE_GIST_VERSION
+
   override fun getRelatedFiles(files: Collection<VirtualFile>): Collection<VirtualFile> =
     VueKolarContext.getRelatedFiles(project, files)
 
