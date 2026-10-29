@@ -57,6 +57,9 @@ class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consum
   private val lock = Object()
 
   @Volatile
+  private var disconnected = false
+
+  @Volatile
   private var bufferReader: Reader? = null
 
   @Volatile
@@ -225,7 +228,7 @@ class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consum
 
   fun readChars(buf: CharArray, offset: Int, length: Int): Int {
     synchronized(lock) {
-      while (true) {
+      while (!disconnected) {
         val currentReader = bufferReader
         if (currentReader?.ready() == true) {
           return currentReader.read(buf, offset, length)
@@ -234,8 +237,20 @@ class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consum
           lock.wait()
         }
         catch (_: InterruptedException) {
+          Thread.currentThread().interrupt()
+          disconnected = true
         }
       }
+      return -1
+    }
+  }
+
+  internal fun isConnected(): Boolean = !disconnected
+
+  internal fun disconnect() {
+    synchronized(lock) {
+      disconnected = true
+      lock.notifyAll()
     }
   }
 

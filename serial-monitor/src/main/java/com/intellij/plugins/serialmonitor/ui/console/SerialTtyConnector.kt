@@ -25,7 +25,7 @@ internal class SerialTtyConnector(private val consoleView: JeditermConsoleView,
   override fun write(string: String) =
     write(string.toByteArray(charset))
 
-  override fun isConnected(): Boolean = true
+  override fun isConnected(): Boolean = consoleView.isConnected()
 
   override fun waitFor(): Int = 0
 
@@ -34,6 +34,7 @@ internal class SerialTtyConnector(private val consoleView: JeditermConsoleView,
   override fun getName(): String = name
 
   override fun close() {
+    consoleView.disconnect()
   }
 
   override fun resize(size: TermSize) {
