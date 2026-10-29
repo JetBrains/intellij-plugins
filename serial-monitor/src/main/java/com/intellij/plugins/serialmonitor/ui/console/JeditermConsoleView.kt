@@ -12,9 +12,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.SerialProfileService.NewLine
-import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.JBTerminalWidget
@@ -27,20 +26,23 @@ import com.jediterm.terminal.emulator.JediEmulator
 import com.jediterm.terminal.model.JediTerminal
 import com.jediterm.terminal.model.TerminalTextBuffer
 import org.apache.commons.io.input.buffer.CircularByteBuffer
+import org.jetbrains.annotations.ApiStatus
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
 import java.nio.charset.Charset
+import java.util.function.Consumer
 import javax.swing.JComponent
 import kotlin.math.min
 
 private const val BUFFER_SIZE = 100000
 
-internal class JeditermConsoleView(project: Project, connection: SerialPortService.SerialConnection) : ConsoleView {
+@ApiStatus.Internal
+class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consumer<ByteArray>?) : ConsoleView {
 
   private val widget: JBTerminalWidget
 
-  private val serialConnector = SerialTtyConnector(this, connection)
+  private val connector = SerialTtyConnector(this, name, input)
 
   private var emulator: CustomJeditermEmulator? = null
 
@@ -53,7 +55,7 @@ internal class JeditermConsoleView(project: Project, connection: SerialPortServi
   @Volatile
   var paused: Boolean = false
 
-  fun isTimestamped() = emulator?.isTimestamped == true
+  fun isTimestamped(): Boolean = emulator?.isTimestamped == true
 
   private val bytesStream = object : InputStream() {
     override fun read(): Int {
@@ -100,8 +102,7 @@ internal class JeditermConsoleView(project: Project, connection: SerialPortServi
             CustomJeditermEmulator(dataStream, terminal).apply { emulator = this }
         }
     }
-    widget.start(serialConnector)
-    Disposer.register(this, connection)
+    widget.start(connector)
   }
 
 
@@ -176,11 +177,11 @@ internal class JeditermConsoleView(project: Project, connection: SerialPortServi
     }
   }
 
-  fun reconnect(charset: Charset, newLine: NewLine, localEcho: Boolean) {
+  /** Decodes the bytes from now on with [charset] and ends lines on [newLine], dropping the bytes not shown yet. */
+  fun configure(charset: Charset, newLine: NewLine) {
     emulator?.newLine = newLine
     widget.terminal.setAutoNewLine(newLine == NewLine.CRLF) //todo LF mode is not supported due JediTerm limitations
-    serialConnector.charset = charset
-    serialConnector.localEcho = localEcho
+    connector.charset = charset
     synchronized(lock) {
       bytesBuffer.clear()
       bufferReader = InputStreamReader(bytesStream, charset)
@@ -205,7 +206,7 @@ internal class JeditermConsoleView(project: Project, connection: SerialPortServi
 
   fun getTerminalTextBuffer(): TerminalTextBuffer = widget.terminalTextBuffer
 
-  val scrollToTheEndToolbarAction = object : ToggleAction(
+  val scrollToTheEndToolbarAction: ToggleAction = object : ToggleAction(
     ActionsBundle.messagePointer("action.EditorConsoleScrollToTheEnd.text"),
     ActionsBundle.messagePointer("action.EditorConsoleScrollToTheEnd.text"),
     AllIcons.RunConfigurations.Scroll_down) {
@@ -216,6 +217,7 @@ internal class JeditermConsoleView(project: Project, connection: SerialPortServi
     }
 
     override fun update(e: AnActionEvent) {
+      super.update(e)
       e.presentation.isEnabledAndVisible = widget.isShowing
     }
 
@@ -226,12 +228,13 @@ internal class JeditermConsoleView(project: Project, connection: SerialPortServi
     }
   }
 
-  val printTimestampsToggleAction = object : ToggleAction(
+  val printTimestampsToggleAction: ToggleAction = object : ToggleAction(
     SerialMonitorBundle.message("action.print.timestamps.text"),
     SerialMonitorBundle.message("action.print.timestamps.description"),
     AllIcons.Scope.Scratches) {
 
     override fun update(e: AnActionEvent) {
+      super.update(e)
       e.presentation.isEnabled = widget.isShowing
     }
 
