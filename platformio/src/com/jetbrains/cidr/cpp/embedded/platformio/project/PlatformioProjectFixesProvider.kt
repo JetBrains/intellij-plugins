@@ -38,7 +38,7 @@ class PlatformioProjectFixesProvider : ProjectFixesProvider {
 class ExternalProjectStatusAndFixesProvider : ExternalProjectStatusAndFixesProviderBase() {
   override fun isBuildFile(file: VirtualFile): Boolean = PlatformioFileType.isFileOfType(file)
 
-  override fun createLoadAction(project: Project, buildFile: VirtualFile): AnAction = LoadPlatformioAction(project, buildFile).asProjectFixAction(ProjectFixKinds.PLATFORMIO_LOAD_PROJECT)
+  override fun createLoadAction(project: Project, buildFile: VirtualFile): AnAction = LoadPlatformioAction(project, buildFile).asProjectFixAction(ProjectFixKinds.PLATFORMIO_LOAD_PROJECT, priority = 100)
 
   private class LoadPlatformioAction(private val project: Project, private val buildFile: VirtualFile)
     : AnAction(ClionEmbeddedPlatformioBundle.message("action.PlatformioLoadProjectAction.text")) {
@@ -48,7 +48,7 @@ class ExternalProjectStatusAndFixesProvider : ExternalProjectStatusAndFixesProvi
   }
 
   override fun createSelectAndLoadAction(project: Project, rootDirectory: VirtualFile): AnAction = SelectAndLoadPlatformioAction(
-    rootDirectory).asProjectFixAction(ProjectFixKinds.PLATFORMIO_SELECT_AND_LOAD_PROJECT)
+    rootDirectory).asProjectFixAction(ProjectFixKinds.PLATFORMIO_SELECT_AND_LOAD_PROJECT, priority = 80)
 
   private class SelectAndLoadPlatformioAction(rootDirectory: VirtualFile) : SelectAndLoadProjectActionBase(rootDirectory, @Suppress("DialogTitleCapitalization") ClionEmbeddedPlatformioBundle.message("project.status.action.select")) {
     override fun isBuildFile(file: VirtualFile): Boolean = PlatformioFileType.isFileOfType(file)
