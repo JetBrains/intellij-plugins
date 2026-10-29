@@ -1,0 +1,3 @@
+# The jSerialComm natives of the serial monitor plugin
+serial_monitor_downloads = use_extension("//contrib/serial-monitor:downloads.bzl", "serial_monitor_downloads")
+use_repo(serial_monitor_downloads, "jserialcomm_natives")

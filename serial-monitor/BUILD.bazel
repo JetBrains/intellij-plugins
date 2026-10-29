@@ -24,7 +24,7 @@ dev_dist_complex_plugin(
     },
     remainder_trees = ["bin"],
     resource_inputs = {
-        "@dev_launch_jserialcomm//:files": "layout-source:resource-generator:0:0",
+        "@jserialcomm_natives//:files": "layout-source:resource-generator:0:0",
     },
 )
 ### auto-generated section `dev intellij.serial.monitor` end
