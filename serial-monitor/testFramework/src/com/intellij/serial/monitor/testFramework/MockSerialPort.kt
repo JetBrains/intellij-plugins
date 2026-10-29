@@ -1,7 +1,8 @@
-package com.intellij.plugins.serialmonitor
+package com.intellij.serial.monitor.testFramework
 
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.util.Disposer
+import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.SerialPort
 import com.intellij.plugins.serialmonitor.service.SerialPortException
 import com.intellij.plugins.serialmonitor.service.SerialPortProvider

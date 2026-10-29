@@ -5,6 +5,9 @@ import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.util.Disposer
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
+import com.intellij.serial.monitor.testFramework.serialConnectionFixture
+import com.intellij.serial.monitor.testFramework.serialPortFixture
+import com.intellij.serial.monitor.testFramework.serialPortProviderFixture
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntil
 import com.intellij.testFramework.junit5.TestApplication

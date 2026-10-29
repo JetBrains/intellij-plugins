@@ -6,13 +6,14 @@
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.testFramework"/>
     <module name="intellij.platform.testFramework.junit5"/>
+    <module name="intellij.serial.monitor.testFramework"/>
   </dependencies>
   <!-- endregion -->
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService
       serviceInterface="com.intellij.plugins.serialmonitor.service.SerialPortProvider"
-      serviceImplementation="com.intellij.plugins.serialmonitor.MockSerialPortProvider"
+      serviceImplementation="com.intellij.serial.monitor.testFramework.MockSerialPortProvider"
       overrides="true"
     />
   </extensions>

@@ -33,6 +33,7 @@ jvm_library(
         "@community//platform/testFramework",
         "@community//platform/testFramework/junit5",
         "//contrib/serial-monitor",
+        "//contrib/serial-monitor/testFramework",
         "@community//libraries/junit6",
     ],
 )

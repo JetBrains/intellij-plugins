@@ -1,0 +1,42 @@
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.serial.monitor.testFramework` start
+jvm_library(
+    name = "testFramework",
+    srcs = glob(
+        [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.serial.monitor.testFramework",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort,
+        "@lib//:kotlin-stdlib",
+        "@community//libraries/jetbrains/annotations",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//platform/core-api:core",
+        "@community//platform/platform-api:ide",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/util",
+        "//contrib/serial-monitor",
+    ],
+)
+### auto-generated section `build intellij.serial.monitor.testFramework` end
+
+### auto-generated section `iml intellij.serial.monitor.testFramework` start
+exports_files(
+    [
+        "intellij.serial.monitor.testFramework.iml",
+        "resources/intellij.serial.monitor.testFramework.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.serial.monitor.testFramework` end
