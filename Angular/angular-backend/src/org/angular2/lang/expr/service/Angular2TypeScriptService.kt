@@ -4,6 +4,7 @@ package org.angular2.lang.expr.service
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
+import com.intellij.javascript.JSTypeEngineEvaluation
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.javascript.types.TSType
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -315,7 +316,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
     override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean =
-      Registry.`is`("typescript.tskotlin.enabled")
+      JSTypeEngineEvaluation.tsKotlinEnabled
       || !Registry.`is`("typescript.service.powered.type.engine.force.default.usage.context")
       || super.isEnabledInUsageContext(usageContext)
 
