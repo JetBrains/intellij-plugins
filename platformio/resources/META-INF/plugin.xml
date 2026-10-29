@@ -153,8 +153,6 @@
   <extensions  defaultExtensionNs="cidr.project">
     <workspaceProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceProvider"/>
     <popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectFixesProvider" />
-    <widget.widgetStatusProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
-    <notifications.editorNotificationWarningProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
     <popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
     <projectModelDetector implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
   </extensions>

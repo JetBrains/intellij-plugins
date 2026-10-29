@@ -1,7 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.intellij.clion.projectStatus.fus.ProjectFixKinds
-import com.intellij.clion.projectStatus.isProjectAwareFile
+import com.intellij.clion.projectStatus.isProjectAwareSourceFile
 import com.intellij.clion.projectStatus.popup.ProjectFixesProvider
 import com.intellij.clion.projectStatus.popup.asProjectFixAction
 import com.intellij.openapi.actionSystem.AnAction
@@ -25,7 +25,7 @@ class PlatformioProjectFixesProvider : ProjectFixesProvider {
   override suspend fun collectFixes(project: Project, file: VirtualFile?, context: DataContext): List<AnAction> =
     if (file != null
         && PlatformioWorkspace.isPlatformioProject(project)
-        && readAction { isProjectAwareFile(file, project) }
+        && readAction { isProjectAwareSourceFile(file, project) }
         && OCFileTypeHelpers.isSourceFile(file.name)
         && OCFileScopeProvider.waitGetProjectSourceLocationKind(project, file).isOutOfProject())
       listOf(PlatformioRefreshAction().asProjectFixAction(ProjectFixKinds.PLATFORMIO_RELOAD_PROJECT))
