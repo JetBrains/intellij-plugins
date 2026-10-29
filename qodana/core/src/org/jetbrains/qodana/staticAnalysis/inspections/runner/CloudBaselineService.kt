@@ -8,8 +8,6 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.net.PlatformHttpClient
 import com.intellij.diagnostic.rethrowControlFlowException
-import com.jetbrains.qodana.sarif.model.PropertyBag
-import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.cloud.api.IjQDCloudClient
 import org.jetbrains.qodana.cloudclient.asSuccess
@@ -49,10 +47,6 @@ internal fun downloadTimeout(value: String?): Duration {
   }
   return Duration.ofSeconds(seconds)
 }
-
-/** The run property that marks a baseline file as made from the baseline of Qodana Cloud. qodana-sarif reads it. */
-private const val BASELINE_ORIGIN_PROPERTY = "baselineOrigin"
-private const val CLOUD_BASELINE_ORIGIN = "CLOUD"
 
 /** Writes the baseline of `toolName` to a temporary file. Gives null when Qodana Cloud keeps none. */
 internal typealias QodanaCloudBaselineSource = (toolName: String) -> Path?
@@ -165,14 +159,7 @@ internal suspend fun downloadCloudBaseline(source: QodanaCloudBaselineSource): P
   }
 }
 
-/** Marks each run of the baseline [report] as a cloud baseline. */
-internal fun markAsCloudBaseline(report: SarifReport) {
-  for (run in report.runs.orEmpty()) {
-    run.properties = (run.properties ?: PropertyBag()).also { it[BASELINE_ORIGIN_PROPERTY] = CLOUD_BASELINE_ORIGIN }
-  }
-}
-
-/** Writes the baseline problems of [input] to a temporary file as a SARIF report of one run, marked as a cloud baseline. */
+/** Writes the baseline problems of [input] to a temporary file as a SARIF report of one run. */
 internal fun writeBaseline(input: InputStream, toolName: String): Path? {
   val directory = Files.createDirectories(PathManager.getTempDir())
   val file = Files.createTempFile(directory, "qodana-cloud-baseline", ".sarif.json")
@@ -204,7 +191,6 @@ private fun copyBaseline(reader: JsonReader, writer: JsonWriter, toolName: Strin
   writer.name("version").value("2.1.0")
   writer.name("runs").beginArray().beginObject()
   writer.name("tool").beginObject().name("driver").beginObject().name("name").value(toolName).endObject().endObject()
-  writer.name("properties").beginObject().name(BASELINE_ORIGIN_PROPERTY).value(CLOUD_BASELINE_ORIGIN).endObject()
   writer.name("results").beginArray()
 
   reader.beginObject()

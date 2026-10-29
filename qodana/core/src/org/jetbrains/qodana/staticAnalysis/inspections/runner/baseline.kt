@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
@@ -23,6 +24,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
+
+private const val BASELINE_SOURCE_PROPERTY = "baselineSource"
 
 private suspend fun readBaselineReport(
   baseline: String,
@@ -64,13 +67,15 @@ internal suspend fun applyBaselineCalculation(
     reporter.reportError("Can't find baseline report file: ${config.baseline}. Baseline will be calculated against empty report.")
     createSarifReport(emptyList())
   }
-  if (config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE) {
-    markAsCloudBaseline(baseline)
-  }
   val options = getOptions(scope, config)
 
   // This mutates the `report` parameter!
   BaselineCalculation.compare(report, baseline, options)
+
+  val source = if (config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE) "CLOUD" else "LOCAL"
+  for (run in report.runs.orEmpty()) {
+    run.properties = (run.properties ?: PropertyBag()).also { it[BASELINE_SOURCE_PROPERTY] = source }
+  }
 }
 
 private fun getOptions(scope: QodanaAnalysisScope, config: QodanaConfig): BaselineCalculation.Options {

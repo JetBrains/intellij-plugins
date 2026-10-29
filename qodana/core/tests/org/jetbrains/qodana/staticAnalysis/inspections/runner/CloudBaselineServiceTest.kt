@@ -12,7 +12,10 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.cloud.api.IjQDCloudClientProvider
 import org.jetbrains.qodana.cloud.api.IjQDCloudClientProviderTestImpl
 import org.jetbrains.qodana.cloudclient.QDCloudClient
+import org.jetbrains.qodana.cloudclient.QDCloudEnvironment
 import org.jetbrains.qodana.cloudclient.QDCloudHttpClient
+import org.jetbrains.qodana.cloudclient.QDCloudResponse
+import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
@@ -83,6 +86,18 @@ class CloudBaselineServiceTest : QodanaTestCase() {
   }
 
   @Test
+  fun `a baseline file of the cli with the local source is a local one`() = runTest {
+    cliResolved(QodanaBaselineSource.LOCAL_BASELINE.name)
+
+    val resolved = resolveBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL)
+
+    assertEquals(0, cloudProvider.clients)
+    assertEquals("given.sarif.json", resolved.path)
+    assertEquals(QodanaBaselineSource.LOCAL_BASELINE, resolved.source)
+    assertNull(resolved.temporaryFile)
+  }
+
+  @Test
   fun `a baseline file without the variable is a local one`() = runTest {
     val resolved = resolveBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL)
 
@@ -99,6 +114,23 @@ class CloudBaselineServiceTest : QodanaTestCase() {
 
     // The fake cloud answers on a host that no test reaches, so only the attempt is observable here.
     assertEquals(1, cloudProvider.clients)
+  }
+
+  @Test
+  fun `a downloaded baseline is a cloud baseline`() = runTest {
+    tokenOnly()
+    cloudProvider.lintersHost = serve { exchange ->
+      val body = responseWith(entry("a")).toByteArray()
+      exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, body.size.toLong())
+      exchange.responseBody.use { it.write(body) }
+    }
+
+    val resolved = resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL)
+    resolved.temporaryFile?.let(downloaded::add)
+
+    assertEquals(QodanaBaselineSource.CLOUD_BASELINE, resolved.source)
+    assertNotNull(resolved.temporaryFile)
+    assertEquals(resolved.temporaryFile.toString(), resolved.path)
   }
 
   @Test
@@ -129,8 +161,6 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     assertEquals(qodanaProductCode(), run.tool.driver.name)
     assertEquals(listOf("a", "b"), run.results.map { it.partialFingerprints?.get("equalIndicator", 1) })
     assertEquals(listOf("short-a", "short-b"), run.results.map { it.partialFingerprints?.get("equalIndicator", 2) })
-    // qodana-sarif reads this property to set the baseline source of the report.
-    assertEquals("CLOUD", run.properties?.get("baselineOrigin"))
   }
 
   @Test
@@ -224,16 +254,30 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     })
   }
 
-  /** Counts how often the run built a Qodana Cloud client, which is how it reaches the baseline. */
+  /**
+   * Counts how often the run built a Qodana Cloud client, which is how it reaches the baseline.
+   *
+   * With [lintersHost] set, the client tells that host for the linters API, so the run can download a baseline from it.
+   */
   private class CountingCloudClientProvider : IjQDCloudClientProvider {
     private val delegate = IjQDCloudClientProviderTestImpl()
     var clients: Int = 0
+    var lintersHost: String? = null
 
     override val httpClient: QDCloudHttpClient get() = delegate.httpClient
 
     override fun getQDCloudClient(frontendUrl: String): QDCloudClient {
       clients++
-      return delegate.getQDCloudClient(frontendUrl)
+      val host = lintersHost ?: return delegate.getQDCloudClient(frontendUrl)
+      val environment = object : QDCloudEnvironment {
+        override suspend fun getApis(): QDCloudResponse<QDCloudEnvironment.Apis> = qodanaCloudResponse {
+          QDCloudEnvironment.Apis(
+            api = listOf(QDCloudEnvironment.Apis.Api(frontendUrl, majorVersion = 1, minorVersion = 0)),
+            linters = listOf(QDCloudEnvironment.Apis.Api(host, majorVersion = 1, minorVersion = 0)),
+          )
+        }
+      }
+      return QDCloudClient(httpClient, environment)
     }
   }
 
