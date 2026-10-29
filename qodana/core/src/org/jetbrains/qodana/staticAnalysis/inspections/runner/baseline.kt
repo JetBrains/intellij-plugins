@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
-import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
@@ -15,6 +14,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSour
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
@@ -86,7 +86,7 @@ internal fun appliedBaselineSource(report: SarifReport): Any? = report.runs?.fir
 /** Writes to each run of [report] which baseline the analysis applied. */
 private fun setBaselineSource(report: SarifReport, source: String) {
   for (run in report.runs.orEmpty()) {
-    run.properties = (run.properties ?: PropertyBag()).also { it[BASELINE_SOURCE_PROPERTY] = source }
+    run.getOrAssignProperties()[BASELINE_SOURCE_PROPERTY] = source
   }
 }
 

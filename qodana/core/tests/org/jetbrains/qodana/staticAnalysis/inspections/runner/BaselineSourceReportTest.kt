@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.jetbrains.qodana.sarif.SarifUtil
-import com.jetbrains.qodana.sarif.model.PropertyBag
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 import java.nio.file.Files
@@ -73,7 +73,7 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
   private fun useCloudComparedReportAsBaseline() {
     val report = SarifUtil.readReport(getTestDataPath("baseline-results.sarif.json"))
     for (run in report.runs) {
-      run.properties = (run.properties ?: PropertyBag()).also { it["baselineSource"] = "CLOUD" }
+      run.getOrAssignProperties()["baselineSource"] = "CLOUD"
     }
     val file = Path.of(project.basePath!!).resolve("baseline.sarif.json")
     Files.newBufferedWriter(file).use { SarifUtil.writeReport(it, report) }
