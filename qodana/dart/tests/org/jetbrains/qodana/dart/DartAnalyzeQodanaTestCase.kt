@@ -6,8 +6,10 @@ import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.openapi.application.PluginPathManager
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.HeavyTestHelper
+import com.intellij.testFramework.common.runAll
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.Result
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
@@ -20,11 +22,13 @@ import java.nio.file.Path
 internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
   protected open val analyzeResponses: Map<String, RecordedDartAnalyzeResponse> = emptyMap()
   private lateinit var analyzerExecutions: MutableList<Pair<String, String>>
+  private val inspectionDisposable = Disposer.newDisposable()
 
   override val testData: Path = Path.of(PluginPathManager.getPluginHomePath("qodana"), "dart", "test-data")
 
   override fun setUp() {
     super.setUp()
+    Disposer.register(testRootDisposable, inspectionDisposable)
     updateQodanaConfig { it.copy(profile = QodanaProfileConfig.named("qodana.single:DartAnalyze")) }
     analyzerExecutions = mutableListOf()
     val runnerFactory = createRunnerFactory(analyzerExecutions)
@@ -36,6 +40,13 @@ internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
     }
     GlobalOutputConsumer.EP_NAME.point.registerExtension(DartAnalyzeGlobalOutputConsumer(), testRootDisposable)
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
+  }
+
+  override fun tearDown() {
+    runAll(
+      { Disposer.dispose(inspectionDisposable) },
+      { super.tearDown() },
+    )
   }
 
   protected open fun createRunnerFactory(executions: MutableList<Pair<String, String>>): DartAnalyzeRunnerFactory =
@@ -55,7 +66,7 @@ internal abstract class DartAnalyzeQodanaTestCase : QodanaRunnerTestCase() {
     inspection.shortName = shortName
     inspection.enabledByDefault = true
     inspection.pluginDescriptor = DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.classLoader)
-    InspectionEP.GLOBAL_INSPECTION.point.registerExtension(inspection, testRootDisposable)
+    InspectionEP.GLOBAL_INSPECTION.point.registerExtension(inspection, inspectionDisposable)
   }
 
   protected fun singleSarifResult(): Result {
