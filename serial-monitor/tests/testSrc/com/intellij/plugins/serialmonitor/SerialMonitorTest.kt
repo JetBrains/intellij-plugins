@@ -12,6 +12,7 @@ import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntil
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.TestDisposable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.concurrent.CountDownLatch
 import java.util.function.Consumer
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -88,6 +90,27 @@ class SerialMonitorTest {
       // Now connect with the second connection to make sure it functions
       second.connect(SerialPortProfile(portName = "/dev/ttyUSB0", baudRate = 9600))
       assertTrue(port.connected)
+    }
+
+    @Test
+    fun `connect waits until the replaced connection closed the port`() = timeoutRunBlocking {
+      val first = createConnection("/dev/ttyUSB0")
+      first.connect(SerialPortProfile(portName = "/dev/ttyUSB0", baudRate = 9600))
+      val gate = CountDownLatch(1)
+      port.disconnectGate = gate
+      try {
+        val second = createConnection("/dev/ttyUSB0")
+        val connecting = launch(Dispatchers.IO) {
+          second.connect(SerialPortProfile(portName = "/dev/ttyUSB0", baudRate = 9600))
+        }
+        delay(200.milliseconds)
+        gate.countDown()
+        connecting.join()
+        assertEquals(PortStatus.CONNECTED, second.getStatus())
+      }
+      finally {
+        gate.countDown()
+      }
     }
 
     @Test

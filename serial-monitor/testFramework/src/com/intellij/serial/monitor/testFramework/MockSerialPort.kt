@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -97,11 +99,15 @@ class MockSerialPort(private val name: String) : SerialPort {
   @Volatile
   var failOnGetDSR: Boolean = false
 
+  @Volatile
+  var disconnectGate: CountDownLatch? = null
+
   override fun getSystemName(): String = name
   override fun getDescriptiveName(): String = "USB Device $name"
 
   override fun connect(profile: SerialPortProfile, listener: SerialPort.SerialPortListener, rts: Boolean, dtr: Boolean) {
     if (failOnConnect) throw RuntimeException("connect failed for $name")
+    if (connected) throw RuntimeException("$name is already open")
     connected = true
     connectedProfile = profile
     portListener = listener
@@ -110,6 +116,7 @@ class MockSerialPort(private val name: String) : SerialPort {
   }
 
   override fun disconnect() {
+    if (disconnectGate?.await(10, TimeUnit.SECONDS) == false) throw AssertionError("The disconnect gate of $name was never opened")
     if (failOnDisconnect) throw SerialPortException("disconnect failed for $name")
     connected = false
   }

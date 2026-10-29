@@ -27,7 +27,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import java.util.TreeSet
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.function.Consumer
 
 @Service
@@ -105,8 +108,13 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
   fun getPortsNames(): Set<String> = portNames.value
 
   fun newConnection(portName: String): SerialConnection {
-    connections[portName]?.also { Disposer.dispose(it) }
-    val serialConnection = SerialConnection(portName)
+    val previous = connections[portName]
+    val serialConnection = if(previous != null) {
+      Disposer.dispose(previous)
+      SerialConnection(portName, previous.closed)
+    } else {
+      SerialConnection(portName)
+    }
     connections[portName] = serialConnection
     return serialConnection
   }
@@ -126,7 +134,8 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
   }
 
 
-  inner class SerialConnection(val portName: @NlsSafe String) : Disposable {
+  inner class SerialConnection(val portName: @NlsSafe String, private val previousClosed: CompletableFuture<Unit> = CompletableFuture.completedFuture(Unit)) : Disposable {
+    internal val closed = CompletableFuture<Unit>()
 
     var dataListener: Consumer<ByteArray>? = null
 
@@ -176,7 +185,12 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
 
     override fun dispose() {
       application.executeOnPooledThread {
-        closeSilently(true)
+        try {
+          closeSilently(true)
+        }
+        finally {
+          previousClosed.whenComplete { _, _ -> closed.complete(Unit) }
+        }
         connections.remove(portName, this)
         cs.launch {
           rescanPorts()
@@ -233,6 +247,8 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
     @RequiresBackgroundThread(generateAssertion = false /* IJPL-115548 */)
     @Throws(SerialMonitorException::class)
     fun connect(profile: SerialPortProfile) {
+      waitForPreviousClosed()
+
       this.status = PortStatus.CONNECTING
       this.localEcho = profile.localEcho
 
@@ -261,6 +277,15 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
         portMessageTopic().portsStatusChanged()
 
         throw SerialMonitorException(SerialMonitorBundle.message("port.connect.error", portName, e.message))
+      }
+    }
+
+    private fun waitForPreviousClosed() {
+      try {
+        previousClosed.get(5, TimeUnit.SECONDS)
+      }
+      catch (_: TimeoutException) {
+        thisLogger().warn("The previous connection to $portName did not close in time")
       }
     }
 
