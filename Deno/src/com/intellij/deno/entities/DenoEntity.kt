@@ -8,10 +8,7 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 internal object DenoEntitySource : EntitySource
 
 interface DenoEntity : WorkspaceEntity {
-  @IndexVfu
   val depsFile: VirtualFileUrl?
-  @IndexVfu
   val npmFolder: VirtualFileUrl?
-  @IndexVfu
   val denoTypes: VirtualFileUrl?
 }

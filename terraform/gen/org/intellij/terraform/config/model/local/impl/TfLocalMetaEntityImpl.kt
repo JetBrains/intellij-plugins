@@ -86,10 +86,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
       updateChildToParentReferences(parents)
     }
 
-    override fun index() {
-      index(this, "lockFile", this.lockFile)
-    }
-
     override var entitySource: EntitySource
       get() = getEntityData().entitySource
       set(value) {
@@ -124,10 +120,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
         checkModificationAllowed()
         getEntityData(true).lockFile = value
         changedProperty.add("lockFile")
-        val _diff = diff
-        if (_diff != null) {
-          index(this, "lockFile", value)
-        }
       }
 
     override fun getEntityClass(): Class<TfLocalMetaEntity> = TfLocalMetaEntity::class.java

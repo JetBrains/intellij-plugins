@@ -72,12 +72,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       updateChildToParentReferences(parents)
     }
 
-    override fun index() {
-      index(this, "depsFile", this.depsFile)
-      index(this, "npmFolder", this.npmFolder)
-      index(this, "denoTypes", this.denoTypes)
-    }
-
     override var entitySource: EntitySource
       get() = getEntityData().entitySource
       set(value) {
@@ -91,10 +85,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         checkModificationAllowed()
         getEntityData(true).depsFile = value
         changedProperty.add("depsFile")
-        val _diff = diff
-        if (_diff != null) {
-          index(this, "depsFile", value)
-        }
       }
     override var npmFolder: VirtualFileUrl?
       get() = getEntityData().npmFolder
@@ -102,10 +92,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         checkModificationAllowed()
         getEntityData(true).npmFolder = value
         changedProperty.add("npmFolder")
-        val _diff = diff
-        if (_diff != null) {
-          index(this, "npmFolder", value)
-        }
       }
     override var denoTypes: VirtualFileUrl?
       get() = getEntityData().denoTypes
@@ -113,10 +99,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         checkModificationAllowed()
         getEntityData(true).denoTypes = value
         changedProperty.add("denoTypes")
-        val _diff = diff
-        if (_diff != null) {
-          index(this, "denoTypes", value)
-        }
       }
 
     override fun getEntityClass(): Class<DenoEntity> = DenoEntity::class.java

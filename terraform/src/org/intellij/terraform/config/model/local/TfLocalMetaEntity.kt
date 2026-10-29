@@ -14,7 +14,6 @@ interface TfLocalMetaEntity : WorkspaceEntity {
 
   val jsonPath: String
 
-  @IndexVfu
   val lockFile: VirtualFileUrl
 
   val timeStamp: Long
