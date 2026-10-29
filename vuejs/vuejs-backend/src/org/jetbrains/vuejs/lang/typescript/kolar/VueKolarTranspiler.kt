@@ -19,6 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ThreeState
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.VueFile
@@ -47,6 +48,8 @@ class VueKolarTranspiler(
   // The code generation reads only the Vue PSI of the file and the default compiler options
   override val transpiledCodeVersion: Int
     get() = TRANSPILED_FILE_GIST_VERSION
+
+  override val importExtensions: List<String> = listOf(VUE_FILE_EXTENSION)
 
   override fun getRelatedFiles(files: Collection<VirtualFile>): Collection<VirtualFile> =
     VueKolarContext.getRelatedFiles(project, files)
