@@ -159,18 +159,18 @@ class QodanaInspectionApplication(
 
       publishFixedProblemsReport(sarif)
     }
-    logUsedBaseline()
+    logUsedBaseline(sarif)
     return sarif
   }
 
   /** Tells which baseline the analysis used, because the problems of the report depend on it. */
-  private fun logUsedBaseline() {
+  private fun logUsedBaseline(sarif: SarifReport) {
     // qodana-cli prints this itself once it has resolved the baseline, so a second line would repeat it.
     if (!qodanaEnv().QODANA_BASELINE_SOURCE.value.isNullOrEmpty()) return
 
     val baseline = config.baseline
     val message = when {
-      baseline == null -> QodanaBundle.message("baseline.used.none")
+      baseline == null || appliedBaselineSource(sarif) == "NONE" -> QodanaBundle.message("baseline.used.none")
       config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE -> QodanaBundle.message("baseline.used.cloud")
       else -> QodanaBundle.message("baseline.used.file", baseline)
     }

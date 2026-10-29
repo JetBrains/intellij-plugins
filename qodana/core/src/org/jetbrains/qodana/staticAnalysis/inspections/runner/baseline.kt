@@ -62,17 +62,25 @@ internal suspend fun applyBaselineCalculation(
   scope: QodanaAnalysisScope,
   reporter: QodanaMessageReporter
 ) {
-  if (config.baseline == null) return
+  if (config.baseline == null) return setBaselineSource(report, "NONE")
+  var source = if (config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE) "CLOUD" else "LOCAL"
   val baseline = readBaselineReport(config.baseline, config.projectPath) ?: run {
     reporter.reportError("Can't find baseline report file: ${config.baseline}. Baseline will be calculated against empty report.")
+    source = "NONE"
     createSarifReport(emptyList())
   }
   val options = getOptions(scope, config)
 
   // This mutates the `report` parameter!
   BaselineCalculation.compare(report, baseline, options)
+  setBaselineSource(report, source)
+}
 
-  val source = if (config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE) "CLOUD" else "LOCAL"
+/** Tells which baseline the analysis applied to [report], `CLOUD`, `LOCAL` or `NONE`. */
+internal fun appliedBaselineSource(report: SarifReport): Any? = report.runs?.firstOrNull()?.properties?.get(BASELINE_SOURCE_PROPERTY)
+
+/** Writes to each run of [report] which baseline the analysis applied. */
+private fun setBaselineSource(report: SarifReport, source: String) {
   for (run in report.runs.orEmpty()) {
     run.properties = (run.properties ?: PropertyBag()).also { it[BASELINE_SOURCE_PROPERTY] = source }
   }

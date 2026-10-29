@@ -41,12 +41,21 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `a run without a baseline gives no source`() {
+  fun `a run without a baseline gives the none source`() {
     updateQodanaConfig { it.copy(baseline = null) }
 
     runAnalysis()
 
-    assertNull(reportedBaselineSource())
+    assertEquals("NONE", reportedBaselineSource())
+  }
+
+  @Test
+  fun `a missing baseline file gives the none source`() {
+    updateQodanaConfig { it.copy(baseline = "missing.sarif.json") }
+
+    runAnalysis()
+
+    assertEquals("NONE", reportedBaselineSource())
   }
 
   private fun reportedBaselineSource(): Any? = manager.sarifRun.properties?.get("baselineSource")
