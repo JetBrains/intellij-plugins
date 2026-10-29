@@ -100,7 +100,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends JeditermDuplexConsol
         myCharset = Charset.availableCharsets().getOrDefault(myPortProfile.getEncoding(), StandardCharsets.US_ASCII);
         if (myConnection.getStatus() == PortStatus.DISCONNECTED || myConnection.getStatus() == PortStatus.READY) {
           // try to connect only when settings are known to be valid
-          getPrimaryConsoleView().configure(getCharset(), myPortProfile.getNewLine());
+          configure(getCharset(), myPortProfile.getNewLine());
           myConnection.connect(myPortProfile);
         }
         else {

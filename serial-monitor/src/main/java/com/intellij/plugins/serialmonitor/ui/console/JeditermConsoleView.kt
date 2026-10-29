@@ -18,19 +18,26 @@ import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.JBTerminalWidget
 import com.jediterm.terminal.Terminal
+import com.jediterm.terminal.TerminalCustomCommandListener
 import com.jediterm.terminal.TerminalDataStream
 import com.jediterm.terminal.TerminalStarter
 import com.jediterm.terminal.TtyBasedArrayDataStream
 import com.jediterm.terminal.TtyConnector
 import com.jediterm.terminal.emulator.JediEmulator
 import com.jediterm.terminal.model.JediTerminal
+import com.jediterm.terminal.model.TerminalApplicationTitleListener
+import com.jediterm.terminal.model.TerminalResizeListener
 import com.jediterm.terminal.model.TerminalTextBuffer
 import org.apache.commons.io.input.buffer.CircularByteBuffer
 import org.jetbrains.annotations.ApiStatus
+import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
+import java.io.Writer
 import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.function.Consumer
 import javax.swing.JComponent
 import kotlin.math.min
@@ -53,9 +60,17 @@ class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consum
   private var bufferReader: Reader? = null
 
   @Volatile
+  private var log: TerminalLog? = null
+
+  @Volatile
   var paused: Boolean = false
 
-  fun isTimestamped(): Boolean = emulator?.isTimestamped == true
+  /** Whether each line starts with the time it was received. */
+  var isTimestamped: Boolean = false
+    set(value) {
+      field = value
+      emulator?.isTimestamped = value
+    }
 
   private val bytesStream = object : InputStream() {
     override fun read(): Int {
@@ -99,14 +114,34 @@ class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consum
                                  TtyBasedArrayDataStream(connector) { typeAheadManager.onTerminalStateChanged() },
                                  typeAheadManager, getExecutorServiceManager()) {
           override fun createEmulator(dataStream: TerminalDataStream, terminal: Terminal): JediEmulator =
-            CustomJeditermEmulator(dataStream, terminal).apply { emulator = this }
+            CustomJeditermEmulator(dataStream, LoggingTerminal(terminal)).apply {
+              isTimestamped = this@JeditermConsoleView.isTimestamped
+              emulator = this
+            }
         }
     }
     widget.start(connector)
   }
 
 
+  /**
+   * Writes the text the terminal shows from now on, timestamps included, to the file at [path] in UTF-8, replacing its content,
+   * until the view is disposed. Stops at the first failure to open or write the file, which [onFailure] gets.
+   * Opens the file on the calling thread.
+   */
+  fun logTo(path: Path, onFailure: Consumer<IOException>) {
+    val writer = try {
+      Files.newBufferedWriter(path)
+    }
+    catch (e: IOException) {
+      onFailure.accept(e)
+      return
+    }
+    log = TerminalLog(writer, onFailure)
+  }
+
   override fun dispose() {
+    log?.close()
   }
 
   override fun getComponent(): JComponent = widget
@@ -238,10 +273,88 @@ class JeditermConsoleView(project: Project, name: @NlsSafe String, input: Consum
       e.presentation.isEnabled = widget.isShowing
     }
 
-    override fun isSelected(e: AnActionEvent): Boolean = isTimestamped()
+    override fun isSelected(e: AnActionEvent): Boolean = isTimestamped
     override fun setSelected(e: AnActionEvent, isSelected: Boolean) {
-      emulator?.isTimestamped = isSelected
+      isTimestamped = isSelected
     }
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  }
+
+  // The emulator writes each run of displayed text, timestamps included, through writeCharacters, tabs through horizontalTab
+  // and ends lines with newLine, while soft wraps stay inside JediTerminal.
+  private inner class LoggingTerminal(private val terminal: Terminal) : Terminal by terminal {
+    override fun writeCharacters(string: String) {
+      terminal.writeCharacters(string)
+      log?.write(string)
+    }
+
+    override fun newLine() {
+      terminal.newLine()
+      log?.write("\n")
+    }
+
+    override fun horizontalTab() {
+      terminal.horizontalTab()
+      log?.write("\t")
+    }
+
+    override fun addApplicationTitleListener(listener: TerminalApplicationTitleListener) {
+      terminal.addApplicationTitleListener(listener)
+    }
+
+    override fun removeApplicationTitleListener(listener: TerminalApplicationTitleListener) {
+      terminal.removeApplicationTitleListener(listener)
+    }
+
+    override fun addResizeListener(listener: TerminalResizeListener) {
+      terminal.addResizeListener(listener)
+    }
+
+    override fun removeResizeListener(listener: TerminalResizeListener) {
+      terminal.removeResizeListener(listener)
+    }
+
+    override fun addCustomCommandListener(listener: TerminalCustomCommandListener) {
+      terminal.addCustomCommandListener(listener)
+    }
+
+    override fun removeCustomCommandListener(listener: TerminalCustomCommandListener) {
+      terminal.removeCustomCommandListener(listener)
+    }
+
+    override fun processCustomCommand(args: List<String>) {
+      terminal.processCustomCommand(args)
+    }
+  }
+
+  private class TerminalLog(private val writer: Writer, private val onFailure: Consumer<IOException>) {
+    private var failed = false
+
+    @Synchronized
+    fun write(text: String) {
+      if (failed) return
+      try {
+        writer.write(text)
+        if (text.endsWith('\n')) writer.flush()
+      }
+      catch (e: IOException) {
+        fail(e)
+      }
+    }
+
+    @Synchronized
+    fun close() {
+      try {
+        writer.close()
+      }
+      catch (e: IOException) {
+        if (!failed) fail(e)
+      }
+    }
+
+    private fun fail(e: IOException) {
+      failed = true
+      onFailure.accept(e)
+    }
   }
 }

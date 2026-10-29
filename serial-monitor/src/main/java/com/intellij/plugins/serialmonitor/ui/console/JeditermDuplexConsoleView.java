@@ -18,6 +18,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
+import com.intellij.plugins.serialmonitor.SerialProfileService.NewLine;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.plugins.serialmonitor.ui.actions.SaveHistoryToFileAction;
 import icons.SerialMonitorIcons;
@@ -25,6 +26,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -93,8 +97,31 @@ public class JeditermDuplexConsoleView extends DuplexConsoleView<JeditermConsole
       new ClearAllAction()};
   }
 
+  /**
+   * Decodes the bytes in the terminal from now on with {@code charset} and ends lines on {@code newLine}, dropping the bytes not
+   * shown yet.
+   */
+  public void configure(@NotNull Charset charset, @NotNull NewLine newLine) {
+    getPrimaryConsoleView().configure(charset, newLine);
+  }
+
+  /**
+   * Whether each line in the terminal starts with the time it was received.
+   */
   public boolean isTimestamped() {
     return getPrimaryConsoleView().isTimestamped();
+  }
+
+  public void setTimestamped(boolean timestamped) {
+    getPrimaryConsoleView().setTimestamped(timestamped);
+  }
+
+  /**
+   * Writes the text the terminal shows from now on, timestamps included, to the file at {@code path}; see
+   * {@link JeditermConsoleView#logTo}.
+   */
+  public void logTo(@NotNull Path path, @NotNull Consumer<IOException> onFailure) {
+    getPrimaryConsoleView().logTo(path, onFailure);
   }
 
   public void append(byte[] dataChunk) {
