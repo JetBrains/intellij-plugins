@@ -63,7 +63,11 @@ internal suspend fun applyBaselineCalculation(
   reporter: QodanaMessageReporter
 ) {
   if (config.baseline == null) return setBaselineSource(report, "NONE")
-  var source = if (config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE) "CLOUD" else "LOCAL"
+  var source = when (config.baselineSource) {
+    QodanaBaselineSource.CLOUD_BASELINE -> "CLOUD"
+    QodanaBaselineSource.LOCAL_BASELINE -> "LOCAL"
+    QodanaBaselineSource.NO_BASELINE -> "NONE"
+  }
   val baseline = readBaselineReport(config.baseline, config.projectPath) ?: run {
     reporter.reportError("Can't find baseline report file: ${config.baseline}. Baseline will be calculated against empty report.")
     source = "NONE"

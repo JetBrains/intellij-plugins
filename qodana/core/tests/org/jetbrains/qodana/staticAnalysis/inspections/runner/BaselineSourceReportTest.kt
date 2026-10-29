@@ -50,6 +50,15 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
   }
 
   @Test
+  fun `a baseline file with the none source gives the none source`() {
+    updateQodanaConfig { it.copy(baselineSource = QodanaBaselineSource.NO_BASELINE) }
+
+    runAnalysis()
+
+    assertEquals("NONE", reportedBaselineSource())
+  }
+
+  @Test
   fun `a missing baseline file gives the none source`() {
     updateQodanaConfig { it.copy(baseline = "missing.sarif.json") }
 
