@@ -2,57 +2,64 @@ package com.intellij.flex.intentions;
 
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.BaseJSIntentionTestCase;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.JSIntentionFixture;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalInspection;
-import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
+import static com.intellij.lang.javascript.JSIntentionFixture.jsIntentionFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+@TestApplication
+public class FlexConvertToLocalTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSIntentionFixture> js =
+    jsIntentionFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath("") + "/convertToLocal")
+        .withModuleType(FlexModuleType.MODULE_TYPE_ID));
+
+  @BeforeEach
+  void setUp() {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(js.get().getFixture().getModule(), js.get().getTestName(false), getClass(), myFixture.getTestRootDisposable());
     myFixture.enableInspections(new JSFieldCanBeLocalInspection());
   }
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return FlexProjectDescriptor.DESCRIPTOR;
-  }
-
-  @NotNull
-  @Override
-  public String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("") + "/convertToLocal";
-  }
-
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testConvertToLocal_() {
-    doCompositeNameBeforeAfterTest("as", false);
+    js.get().doCompositeNameBeforeAfterTest("as", false);
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testConvertToLocal_1() {
-    doCompositeNameBeforeAfterTest("as", false);
+    js.get().doCompositeNameBeforeAfterTest("as", false);
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testConvertToLocal_2() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testConvertToLocal_3() {
-    doCompositeNameBeforeAfterTest("as", false);
+    js.get().doCompositeNameBeforeAfterTest("as", false);
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testConvertToLocal_4() {
-    doCompositeNameBeforeAfterTest("as", false);
+    js.get().doCompositeNameBeforeAfterTest("as", false);
   }
 }
 

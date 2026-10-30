@@ -36,7 +36,6 @@ import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
 import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
 import com.intellij.flex.intentions.CreateASVariableIntentionTest;
-import com.intellij.flex.intentions.FlexConvertToLocalTest;
 import com.intellij.flex.intentions.ImportJSClassIntentionTest;
 import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.refactoring.ActionScriptInPlaceIntroduceVariableTest;
@@ -113,7 +112,6 @@ public final class FlexTestSuite {
     //com.intellij.flex.intentions.*
     testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
     testSuite.addTestSuite(CreateASVariableIntentionTest.class);
-    testSuite.addTestSuite(FlexConvertToLocalTest.class);
     testSuite.addTestSuite(ImportJSClassIntentionTest.class);
 
     //com.intellij.flex.maven.*

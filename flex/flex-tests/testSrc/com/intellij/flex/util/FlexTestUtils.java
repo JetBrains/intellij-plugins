@@ -172,7 +172,7 @@ public final class FlexTestUtils {
   }
 
   public static void addASDocToSdk(final Module module, final Class<?> clazz, final String testName) {
-    WriteAction.run(() -> {
+    WriteAction.runAndWait(() -> {
       final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
       final SdkModificator sdkModificator = flexSdk.getSdkModificator();
       VirtualFile docRoot = StandardFileSystems.local().findFileByPath(getPathToMockFlex(clazz, testName) + "/asdoc");
@@ -185,7 +185,7 @@ public final class FlexTestUtils {
                                      final String flexSdkRootPath,
                                      final boolean air,
                                      final String sdkVersion, @NotNull Disposable parent) {
-    WriteAction.run(() -> {
+    WriteAction.runAndWait(() -> {
       final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion, parent);
 
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
@@ -389,7 +389,7 @@ public final class FlexTestUtils {
                                        @Nullable String asdocPath,
                                        LinkageType linkageType) {
     ModifiableRootModel moduleModifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-    WriteAction.run(() -> {
+    WriteAction.runAndWait(() -> {
       try {
         // first let's create Flex library
         final LibraryTable libraryTable;
@@ -634,7 +634,7 @@ public final class FlexTestUtils {
                                     final VirtualFile swc,
                                     @Nullable final VirtualFile srcRoot,
                                     @Nullable final VirtualFile asdocRoot) {
-    WriteAction.run(() -> {
+    WriteAction.runAndWait(() -> {
       final SdkModificator modificator = getFlexSdkModificator(module);
       modificator.removeAllRoots();
       modificator.addRoot(swc, OrderRootType.CLASSES);
@@ -675,7 +675,7 @@ public final class FlexTestUtils {
 
   public static void removeLibrary(Module module, String libraryName) {
     ModifiableRootModel moduleModifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-    WriteAction.run(() -> {
+    WriteAction.runAndWait(() -> {
       LibraryTable table = moduleModifiableModel.getModuleLibraryTable();
       table.removeLibrary(table.getLibraryByName(libraryName));
       moduleModifiableModel.commit();
@@ -683,7 +683,7 @@ public final class FlexTestUtils {
   }
 
   public static void disableFileHeadersInTemplates(Project project) {
-    WriteAction.run(() -> {
+    WriteAction.runAndWait(() -> {
       String parseDirective = "#parse(\"ActionScript File Header.as\")\n";
       FileTemplate template =
         FileTemplateManager.getInstance(project)
