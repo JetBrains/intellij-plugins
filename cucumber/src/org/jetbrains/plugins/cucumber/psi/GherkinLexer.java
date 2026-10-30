@@ -211,7 +211,9 @@ public class GherkinLexer extends LexerBase {
             myPosition += length;
             if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD) {
               myState = STATE_AFTER_STEP_KEYWORD;
-            } else if (myCurrentToken == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD) {
+            } else if (myCurrentToken == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD
+                       || myCurrentToken == GherkinTokenTypes.SCENARIO_KEYWORD) {
+              // Any scenario may have Examples (since Gherkin 6), so its title may hold <placeholders>.
               myState = STATE_AFTER_SCENARIO_KEYWORD;
             } else {
               myState = STATE_AFTER_KEYWORD;

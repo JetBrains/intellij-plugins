@@ -5,7 +5,7 @@ GherkinFile:scenario_with_examples.feature
     PsiWhiteSpace(' ')
     PsiElement(TEXT)('test')
     PsiWhiteSpace('\n  ')
-    GherkinScenario:with Examples
+    GherkinScenarioOutline:with Examples
       PsiElement(SCENARIO_KEYWORD)('Scenario')
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
