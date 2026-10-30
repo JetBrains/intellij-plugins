@@ -26,7 +26,7 @@ class QodanaConfigTest {
       profile:
         name: qodana.recommended
     """.trimIndent())
-    assertEquals(actual.profile.name, "qodana.recommended")
+    assertEquals("qodana.recommended", actual.profile.name)
   }
 
   @Test
@@ -95,12 +95,34 @@ class QodanaConfigTest {
     assertEquals(true, actual.failOnErrorNotification)
   }
 
-  private fun getQodanaConfig(yaml: QodanaYamlConfig) =
+  @Test
+  fun `the baseline source follows the baseline file`() {
+    assertEquals(QodanaBaselineSource.LOCAL_BASELINE, getQodanaConfig(QodanaYamlConfig.EMPTY_V1, baseline = "given.sarif.json").baselineSource)
+    assertEquals(QodanaBaselineSource.NO_BASELINE, getQodanaConfig(QodanaYamlConfig.EMPTY_V1).baselineSource)
+  }
+
+  @Test
+  fun `a baseline source that does not agree with the baseline file fails`() {
+    assertThrows<IllegalArgumentException> {
+      getQodanaConfig(QodanaYamlConfig.EMPTY_V1, baseline = "given.sarif.json", baselineSource = QodanaBaselineSource.NO_BASELINE)
+    }
+    assertThrows<IllegalArgumentException> {
+      getQodanaConfig(QodanaYamlConfig.EMPTY_V1, baselineSource = QodanaBaselineSource.CLOUD_BASELINE)
+    }
+  }
+
+  private fun getQodanaConfig(
+    yaml: QodanaYamlConfig,
+    baseline: String? = null,
+    baselineSource: QodanaBaselineSource = if (baseline != null) QodanaBaselineSource.LOCAL_BASELINE else QodanaBaselineSource.NO_BASELINE,
+  ) =
     QodanaConfig.fromYaml(
       Path.of(".").toAbsolutePath(),
       Path.of("unused"),
       yaml = yaml,
       resultsStorage = Path.of("these cause an env lookup so ignore them"),
+      baseline = baseline,
+      baselineSource = baselineSource,
       outputFormat = OutputFormat.SARIF_AND_PROJECT_STRUCTURE
     )
 

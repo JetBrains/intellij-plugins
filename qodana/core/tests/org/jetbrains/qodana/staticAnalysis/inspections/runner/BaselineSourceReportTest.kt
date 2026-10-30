@@ -42,16 +42,7 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
 
   @Test
   fun `a run without a baseline gives the none source`() {
-    updateQodanaConfig { it.copy(baseline = null) }
-
-    runAnalysis()
-
-    assertEquals("NONE", reportedBaselineSource())
-  }
-
-  @Test
-  fun `a baseline file with the none source gives the none source`() {
-    updateQodanaConfig { it.copy(baselineSource = QodanaBaselineSource.NO_BASELINE) }
+    updateQodanaConfig { it.copy(baseline = null, baselineSource = QodanaBaselineSource.NO_BASELINE) }
 
     runAnalysis()
 

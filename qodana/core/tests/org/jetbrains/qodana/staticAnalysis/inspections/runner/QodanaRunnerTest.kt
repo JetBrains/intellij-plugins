@@ -36,6 +36,7 @@ import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
@@ -230,24 +231,16 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     )
 
     val results = listOf(
-      result("NotExistingId", QodanaSeverity.CRITICAL, BaselineState.ABSENT)
+      Result().apply {
+        baselineState = BaselineState.ABSENT
+        ruleId = "NotExistingId"
+        properties = PropertyBag().apply {
+          this["qodanaSeverity"] = QodanaSeverity.CRITICAL.toString()
+        }
+      }
     )
 
     commandLinePrinter.printResultsWithBaselineState(results, true)
-  }
-
-  private fun result(
-    inspectionId: String,
-    severity: QodanaSeverity,
-    baselineState: BaselineState? = null
-  ): Result {
-    return Result().apply {
-      this.baselineState = baselineState
-      this.ruleId = inspectionId
-      this.properties = PropertyBag().apply {
-        this["qodanaSeverity"] = severity.toString()
-      }
-    }
   }
 
   @Test
@@ -363,6 +356,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -471,7 +465,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       runReverseScopedNewStageAnalysis()
       assertSarifResults()
       // resulting report non empty - decision - continue
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+      assertEquals(true, manager.sarifRun.isResultOutputSkipped())
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scopePath.readText())
     } finally {
@@ -545,6 +539,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         skipResultStrategy = SkipResultStrategy.ANY,
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -570,7 +565,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       runReverseScopedNewStageAnalysis()
       assertSarifResults()
       // resulting report non empty - decision - continue
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+      assertEquals(true, manager.sarifRun.isResultOutputSkipped())
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scopePath.readText())
     } finally {
@@ -591,6 +586,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         skipResultStrategy = SkipResultStrategy.ANY,
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -616,7 +612,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       runReverseScopedNewStageAnalysis()
       assertSarifResults()
       // resulting report empty from new results - decision - report
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+      assertEquals(false, manager.sarifRun.isResultOutputSkipped())
       // analysis stopped, file doesn't get created
       assertFalse(scopePath.exists())
     } finally {
@@ -659,7 +655,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
       runAnalysis()
       assertEmptySarifResults()
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+      assertEquals(false, manager.sarifRun.isResultOutputSkipped())
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }
@@ -743,7 +739,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
       runReverseScopedNewStageAnalysis()
       assertSarifResults()
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+      assertEquals(false, manager.sarifRun.isResultOutputSkipped())
       // analysis stopped, file doesn't get created
       assertFalse(scopePath.exists())
     } finally {
@@ -787,7 +783,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
       runReverseScopedNewStageAnalysis()
       assertSarifResults()
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+      assertEquals(true, manager.sarifRun.isResultOutputSkipped())
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scopePath.readText())
     } finally {
@@ -860,7 +856,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
       runAnalysis()
       assertSarifResults()
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+      assertEquals(true, manager.sarifRun.isResultOutputSkipped())
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }
@@ -878,6 +874,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
           STAGE_ARG to Stage.OLD.name
         )),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         skipResultStrategy = SkipResultStrategy.ANY,
       )
@@ -897,7 +894,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
       runAnalysis()
       assertSarifResults()
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+      assertEquals(false, manager.sarifRun.isResultOutputSkipped())
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }
@@ -938,7 +935,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
       runAnalysis()
       assertSarifResults()
-      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+      assertEquals(false, manager.sarifRun.isResultOutputSkipped())
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }
@@ -1008,6 +1005,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -1028,6 +1026,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }

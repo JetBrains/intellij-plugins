@@ -11,6 +11,7 @@ import com.jetbrains.qodana.sarif.model.Run
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
@@ -301,6 +302,7 @@ class QodanaExitStatusKtTest {
   fun `should set success with unchanged baseline results`() {
     val cfg = emptyConfig.copy(
       baseline = "anything that's not null",
+      baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
       failureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = 0))
     )
 
@@ -316,6 +318,7 @@ class QodanaExitStatusKtTest {
   fun `should set failure with new baseline results`() {
     val cfg = emptyConfig.copy(
       baseline = "anything that's not null",
+      baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
       failureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = 0)),
     )
 

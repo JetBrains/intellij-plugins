@@ -41,14 +41,14 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.util.Locale
 
-const val QODANA_YAML_CONFIG_FILENAME = "qodana.yaml"
-const val QODANA_YML_CONFIG_FILENAME = "qodana.yml"
+const val QODANA_YAML_CONFIG_FILENAME: String = "qodana.yaml"
+const val QODANA_YML_CONFIG_FILENAME: String = "qodana.yml"
 
-const val EMBEDDED_GIT_IGNORE_EXCLUDE = "embedded.gitignore"
+private const val EMBEDDED_GIT_IGNORE_EXCLUDE: String = "embedded.gitignore"
 
-const val COVERAGE_OUTPUT_DIR = "coverage"
+const val COVERAGE_OUTPUT_DIR: String = "coverage"
 
-internal val QODANA_EXCLUDE_SCOPE_MODIFIER = GlobalExcludeScopeModifier(
+internal val QODANA_EXCLUDE_SCOPE_MODIFIER: GlobalExcludeScopeModifier = GlobalExcludeScopeModifier(
   InspectScope(
     name = "embedded.qodana",
     paths = listOf(".qodana"),
@@ -56,7 +56,7 @@ internal val QODANA_EXCLUDE_SCOPE_MODIFIER = GlobalExcludeScopeModifier(
   )
 )
 
-internal val DEFAULT_EXCLUDE_SCOPE_MODIFIER = GlobalExcludeScopeModifier(
+internal val DEFAULT_EXCLUDE_SCOPE_MODIFIER: GlobalExcludeScopeModifier = GlobalExcludeScopeModifier(
   InspectScope(
     name = "embedded.default",
     paths = listOf("buildSrc", "vendor", "build", "builds", "dist", "tests", "tools", "vendor", "bin"),
@@ -64,15 +64,15 @@ internal val DEFAULT_EXCLUDE_SCOPE_MODIFIER = GlobalExcludeScopeModifier(
   )
 )
 
-internal val GIT_IGNORE_SCOPE_MODIFIER = GitIgnoreExcludeScopeModifier(
+internal val GIT_IGNORE_SCOPE_MODIFIER: GitIgnoreExcludeScopeModifier = GitIgnoreExcludeScopeModifier(
   InspectScope(EMBEDDED_GIT_IGNORE_EXCLUDE)
 )
 
-val DEFAULT_FIXES_STRATEGY = FixesStrategy.NONE.name
+internal const val DEFAULT_FIXES_STRATEGY: String =FixesStrategy.NONE.name
 
-const val DEFAULT_FILE_SUSPEND_THRESHOLD = "5"
-const val DEFAULT_MODULE_SUSPEND_THRESHOLD = "25"
-const val DEFAULT_PROJECT_SUSPEND_THRESHOLD = "125"
+private const val DEFAULT_FILE_SUSPEND_THRESHOLD: String = "5"
+private const val DEFAULT_MODULE_SUSPEND_THRESHOLD: String = "25"
+private const val DEFAULT_PROJECT_SUSPEND_THRESHOLD: String = "125"
 
 typealias InspectScopes = List<InspectScope>
 
@@ -142,7 +142,7 @@ enum class FixesStrategy(val stageName: String) {
       try {
         return FixesStrategy.valueOf(value.uppercase(Locale.getDefault()))
       }
-      catch (e: IllegalArgumentException) {
+      catch (_: IllegalArgumentException) {
         throw QodanaConfigurationException("Unknown value '$value' for fixesStrategy configuration parameter")
       }
     }
@@ -164,7 +164,7 @@ val Project.qodanaAnalysisConfig: QodanaConfig?
 
 /**
  * Not available in IDE run, use it for project configuration
- * If you need qodana config during analysis, use [Project.qodanaAnalysisConfig]
+ * If you need Qodana config during analysis, use [Project.qodanaAnalysisConfig]
  */
 // TODO – use in dotnet
 val Application.qodanaAnalysisConfigForConfiguration: QodanaConfig?
@@ -216,6 +216,11 @@ data class QodanaConfig(
   var moduleSuspendThreshold: Int = System.getProperty("qodana.module.suspend.threshold", DEFAULT_MODULE_SUSPEND_THRESHOLD).toInt(),
   var projectSuspendThreshold: Int = System.getProperty("qodana.project.suspend.threshold", DEFAULT_PROJECT_SUSPEND_THRESHOLD).toInt(),
 ) {
+  init {
+    require((baseline == null) == (baselineSource == QodanaBaselineSource.NO_BASELINE)) {
+      "The baseline '$baseline' does not agree with the baseline source $baselineSource"
+    }
+  }
 
   companion object {
     fun fromYaml(
@@ -300,7 +305,7 @@ data class QodanaConfig(
   }
 
   init {
-    // Allow non-absolute paths for windows tests, where temp://src is treatet as not absolute
+    // Allow non-absolute paths for windows tests, where temp://src is treated as not absolute
     if (!application.isUnitTestMode && !projectPath.isAbsolute) throw QodanaConfigurationException("Project path \"$projectPath\" must be absolute")
     if (failOnErrorNotification && maxRuntimeNotifications < 1) {
       throw QodanaConfigurationException("Cannot enable 'failOnErrorNotification' when 'maxRuntimeNotifications' is less than 1")
@@ -383,9 +388,13 @@ internal suspend fun copyConfigToDir(config: QodanaConfig, outDir: Path = PathMa
       config.yamlFiles.effectiveQodanaYaml?.let { it to QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME },
     )
 
-    filesWithNamesInDir.forEach { (file, nameInLog) ->
+    filesWithNamesInDir.forEach { [file, nameInLog] ->
       val pathInDir = outDir.resolve(nameInLog)
-      runCatching { Files.deleteIfExists(pathInDir) }
+      try {
+        Files.deleteIfExists(pathInDir)
+      }
+      catch (_: Exception) {
+      }
 
       Files.copy(file, pathInDir, StandardCopyOption.REPLACE_EXISTING)
     }
