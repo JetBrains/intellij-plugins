@@ -20,7 +20,6 @@ import org.angular2.codeInsight.Angular2ModelStructureTest
 import org.angular2.codeInsight.Angular2ParameterHintsTest
 import org.angular2.codeInsight.Angular2ParameterInfoTest
 import org.angular2.codeInsight.Angular2ServiceInlayHintsTest
-import org.angular2.codeInsight.Angular2StructureViewTest
 import org.angular2.codeInsight.Angular2TemplateTranspilerTest
 import org.angular2.codeInsight.Angular2UsageHighlightingTest
 import org.angular2.codeInsight.deprecated.Angular2AttributesTest
@@ -55,10 +54,8 @@ import org.angular2.codeInsight.navigation.Angular2GotoRelatedTest
 import org.angular2.codeInsight.navigation.Angular2GotoSymbolTest
 import org.angular2.codeInsight.navigation.Angular2JumpToSourceTest
 import org.angular2.codeInsight.navigation.Angular2TscGotoDeclarationTest
-import org.angular2.codeInsight.refactoring.Angular2ChangeSignatureTest
 import org.angular2.codeInsight.refactoring.Angular2ExtractComponentTest
 import org.angular2.codeInsight.refactoring.Angular2InlineTest
-import org.angular2.codeInsight.refactoring.Angular2MoveTest
 import org.angular2.codeInsight.refactoring.Angular2RenameTest
 import org.angular2.codeInsight.refactoring.Angular2TscRenameTest
 import org.angular2.css.Angular2CssClassTest
@@ -110,7 +107,6 @@ import org.junit.runners.Suite
   Angular2CompilerFlagsTest::class,
   Angular2SuppressionsTest::class,
   Angular2NgModuleImportQuickFixesTest::class,
-  Angular2ChangeSignatureTest::class,
   Angular2InaccessibleMemberAotQuickFixesTest::class,
   Angular2ControlFlowTest::class,
   Angular2CopyPasteTest::class,
@@ -118,7 +114,6 @@ import org.junit.runners.Suite
   Angular2UsageHighlightingTest::class,
   Angular2IntentionsAndQuickFixesTest::class,
   Angular2ServiceInlayHintsTest::class,
-  Angular2MoveTest::class,
   Angular2RenameTest::class,
   Angular2TscRenameTest::class,
   Angular2InlineTest::class,
@@ -127,7 +122,6 @@ import org.junit.runners.Suite
   Angular2CliContextTest::class,
   Angular2LiveTemplateTest::class,
   Angular2ExtractComponentTest::class,
-  Angular2StructureViewTest::class,
   Angular2GotoSymbolTest::class,
   Angular2GotoRelatedTest::class,
   Angular2GotoDeclarationTest::class,

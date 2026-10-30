@@ -2,25 +2,15 @@
 package com.intellij.flex;
 
 import com.intellij.flex.codeInsight.ActionScriptStatementMoverTest;
-import com.intellij.flex.codeInsight.FlexDocumentationTest;
-import com.intellij.flex.codeInsight.FlexFindUsagesTest;
 import com.intellij.flex.codeInsight.FlexGotoImplementationsTest;
 import com.intellij.flex.codeInsight.FlexHierarchyTest;
 import com.intellij.flex.codeInsight.FlexNavigationTest;
-import com.intellij.flex.codeInsight.FlexStructureViewTest;
 import com.intellij.flex.completion.ActionScriptCompletionInTextFieldTest;
-import com.intellij.flex.completion.ActionScriptCompletionTest;
 import com.intellij.flex.completion.FlexCompletionInUmlTextFieldsTest;
-import com.intellij.flex.completion.FlexCompletionTest;
-import com.intellij.flex.completion.FlexCssCompletionTest;
-import com.intellij.flex.editor.FlexEditorTest;
 import com.intellij.flex.editor.FlexLiveTemplatesTest;
-import com.intellij.flex.editor.FlexSelectWordTest;
 import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
-import com.intellij.flex.flexunit.codeInsight.FlexUnitCompletionTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
 import com.intellij.flex.formatter.ActionScriptFormatterTest;
-import com.intellij.flex.generate.ActionScriptGenerateTest;
 import com.intellij.flex.highlighting.ActionScriptHighlightingInTextFieldTest;
 import com.intellij.flex.highlighting.ActionScriptHighlightingTest;
 import com.intellij.flex.highlighting.ActionScriptLineMarkersTest;
@@ -34,18 +24,8 @@ import com.intellij.flex.highlighting.FlexScopeTest;
 import com.intellij.flex.highlighting.SwfHighlightingTest;
 import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
-import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
-import com.intellij.flex.intentions.CreateASVariableIntentionTest;
-import com.intellij.flex.intentions.ImportJSClassIntentionTest;
 import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.refactoring.ActionScriptInPlaceIntroduceVariableTest;
-import com.intellij.flex.refactoring.ActionScriptIntroduceVariableTest;
-import com.intellij.flex.refactoring.FlexChangeSignatureTest;
-import com.intellij.flex.refactoring.FlexExtractFunctionTest;
-import com.intellij.flex.refactoring.FlexInlineFunctionTest;
-import com.intellij.flex.refactoring.FlexInlineVariableTest;
-import com.intellij.flex.refactoring.FlexRenameTest;
-import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import com.intellij.testFramework.TestFrameworkUtil;
 import junit.framework.Test;
@@ -60,23 +40,15 @@ public final class FlexTestSuite {
 
     // com.intellij.flex.codeInsight.*
     testSuite.addTestSuite(ActionScriptStatementMoverTest.class);
-    testSuite.addTestSuite(FlexDocumentationTest.class);
-    testSuite.addTestSuite(FlexFindUsagesTest.class);
     testSuite.addTestSuite(FlexGotoImplementationsTest.class);
     testSuite.addTestSuite(FlexHierarchyTest.class);
     testSuite.addTestSuite(FlexNavigationTest.class);
-    testSuite.addTestSuite(FlexStructureViewTest.class);
 
     // com.intellij.flex.completion.*
     testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
-    testSuite.addTestSuite(ActionScriptCompletionTest.class);
     testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
-    testSuite.addTestSuite(FlexCompletionTest.class);
-    testSuite.addTestSuite(FlexCssCompletionTest.class);
 
     //com.intellij.flex.editor.*
-    testSuite.addTestSuite(FlexEditorTest.class);
-    testSuite.addTestSuite(FlexSelectWordTest.class);
     testSuite.addTestSuite(FlexLiveTemplatesTest.class);
 
     //com.intellij.flex.flashBuilder.*
@@ -84,13 +56,11 @@ public final class FlexTestSuite {
 
     //com.intellij.flex.flexunit.*
     testSuite.addTestSuite(FlexUnitHighlightingTest.class);
-    testSuite.addTestSuite(FlexUnitCompletionTest.class);
 
     //com.intellij.flex.formatter.*
     testSuite.addTestSuite(ActionScriptFormatterTest.class);
 
     //com.intellij.flex.generate.*
-    testSuite.addTestSuite(ActionScriptGenerateTest.class);
 
     //com.intellij.flex.highlighting.*
     testSuite.addTestSuite(ActionScriptHighlightingInTextFieldTest.class);
@@ -110,9 +80,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexOptimizeImportsTest.class);
 
     //com.intellij.flex.intentions.*
-    testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
-    testSuite.addTestSuite(CreateASVariableIntentionTest.class);
-    testSuite.addTestSuite(ImportJSClassIntentionTest.class);
 
     //com.intellij.flex.maven.*
     //testSuite.addTestSuite(Flexmojos3ImporterTest.class);
@@ -124,16 +91,9 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexImporterTest.class);
 
     //com.intellij.flex.refactoring.*
-    testSuite.addTestSuite(ActionScriptIntroduceVariableTest.class);
     testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
-    testSuite.addTestSuite(FlexChangeSignatureTest.class);
-    testSuite.addTestSuite(FlexExtractFunctionTest.class);
-    testSuite.addTestSuite(FlexInlineFunctionTest.class);
-    testSuite.addTestSuite(FlexInlineVariableTest.class);
-    testSuite.addTestSuite(FlexRenameTest.class);
 
     //com.intellij.flex.resolver.*
-    testSuite.addTestSuite(ActionScriptResolveTest.class);
     testSuite.addTestSuite(FlexCssNavigationTest.class);
 
     return TestFrameworkUtil.flattenSuite(testSuite);

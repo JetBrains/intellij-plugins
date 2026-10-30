@@ -3,7 +3,7 @@ package com.intellij.deno.codeInsight
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.deno.DenoSettings
 import com.intellij.deno.DenoTestBase
-import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
+import com.intellij.lang.javascript.JSDaemonAnalyzerFixture
 import com.intellij.util.ui.UIUtil
 
 class DenoModulesTest : DenoTestBase() {
@@ -41,7 +41,7 @@ class DenoModulesTest : DenoTestBase() {
   }
 
   fun testImportMap() {
-    myFixture.enableInspections(*JSDaemonAnalyzerLightTestCase.defaultInspections())
+    myFixture.enableInspections(*JSDaemonAnalyzerFixture.defaultInspections())
     myFixture.configureByText("import_map.json", """
       {
         "imports": {
@@ -55,7 +55,7 @@ class DenoModulesTest : DenoTestBase() {
   }
 
   fun testImportMapNoResolve() {
-    myFixture.enableInspections(*JSDaemonAnalyzerLightTestCase.defaultInspections())
+    myFixture.enableInspections(*JSDaemonAnalyzerFixture.defaultInspections())
     val service = DenoSettings.getService(project)
     val oldInit = service.getDenoInit()
     try {
@@ -79,7 +79,7 @@ class DenoModulesTest : DenoTestBase() {
   }
 
   fun testImportMapNested() {
-    myFixture.enableInspections(*JSDaemonAnalyzerLightTestCase.defaultInspections())
+    myFixture.enableInspections(*JSDaemonAnalyzerFixture.defaultInspections())
     myFixture.configureByText("import_map.json", """
       {
         "imports": {
@@ -94,7 +94,7 @@ class DenoModulesTest : DenoTestBase() {
   }
 
   fun testDenoConfigNested() {
-    myFixture.enableInspections(*JSDaemonAnalyzerLightTestCase.defaultInspections())
+    myFixture.enableInspections(*JSDaemonAnalyzerFixture.defaultInspections())
     myFixture.configureByText("deno.json", """
       {
         "imports": {

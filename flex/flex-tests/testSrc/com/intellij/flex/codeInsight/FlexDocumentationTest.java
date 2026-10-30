@@ -3,15 +3,18 @@ package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.idea.IJIgnore;
 import com.intellij.lang.documentation.DocumentationProvider;
-import com.intellij.lang.javascript.JSAbstractDocumentationTest;
+import com.intellij.lang.javascript.JSDocumentationFixture;
+import com.intellij.lang.javascript.JSDocumentationFixture.Check;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,414 +22,475 @@ import com.intellij.openapi.vfs.ex.http.HttpFileSystem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.descriptor.CssPropertyDescriptorStub;
 import com.intellij.psi.css.impl.util.CssDocumentationProvider;
-import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static com.intellij.lang.javascript.JSDocumentationFixture.jsDocumentationFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestApplication
 @IJIgnore(issue = "IDEA-387406")
-public class FlexDocumentationTest extends JSAbstractDocumentationTest {
+public class FlexDocumentationTest {
   private static final String BASE_PATH = "as_documentation/";
 
-  @Override
-  protected String getBasePath() {
-    return BASE_PATH;
-  }
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSDocumentationFixture> js =
+    jsDocumentationFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath(""), "js2")
+        .withBasePath(BASE_PATH)
+        .withModuleType(FlexModuleType.MODULE_TYPE_ID));
 
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
-  }
-
-  @Override
-  protected String getExtension() {
-    return "js2";
-  }
-
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return FlexProjectDescriptor.DESCRIPTOR;
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-  }
-
-  @Override
-  protected boolean runInDispatchThread() {
-    return false;
+  @BeforeEach
+  void setUp() {
+    FlexTestUtils.allowFlexVfsRootsFor(js.get().getFixture().getTestRootDisposable(), "");
   }
 
   protected void setUpJdk() {
-    WriteAction.runAndWait(() -> FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable()));
+    WriteAction.runAndWait(() -> FlexTestUtils.setupFlexSdk(js.get().getFixture().getModule(), js.get().getTestName(false), getClass(), js.get().getFixture().getTestRootDisposable()));
   }
 
   private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     WriteAction.runAndWait(() -> myFixture.configureByFile(BASE_PATH + fileName));
     return ReadAction.compute(() -> {
       PsiElement originalElement = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
-      return provider.getDocumentationElementForLookupItem(getPsiManager(), originalElement.getText(), originalElement);
+      return provider.getDocumentationElementForLookupItem(js.get().getFixture().getPsiManager(), originalElement.getText(), originalElement);
     });
   }
 
+  @Test
   public void testJSDocs6() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public void testJSDocs14() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public void testJSDocs15() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public void testJSDocs25() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public void testJSDocs31() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public void testAsSimpleDocs() {
-    doTestWithLinkNavigationCheck("as", 1);
+    js.get().doTestWithLinkNavigationCheck("as", 1);
   }
 
+  @Test
   public void testAsSimpleDocs2() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testAsSimpleDocs3() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testAsSimpleDocs4() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc() {
     setUpJdk();
-    doTest(getTestName(false), "mxml");
+    js.get().doTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc2() {
     setUpJdk();
-    doTest(getTestName(false), "mxml");
+    js.get().doTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc3() {
     setUpJdk();
-    doTest(getTestName(false), "mxml");
+    js.get().doTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc4() {
     setUpJdk();
-    doTest(getTestName(false), "mxml");
+    js.get().doTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc5() {
-    PsiElement element = getDocElementForLookupItem(new CssDocumentationProvider(), getTestName(false) + ".mxml");
+    PsiElement element = getDocElementForLookupItem(new CssDocumentationProvider(), js.get().getTestName(false) + ".mxml");
     assertNull(element);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc6() {
     setUpJdk();
-    doTest(getTestName(false), "mxml");
+    js.get().doTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMxmlDoc7() {
-    doTest(getTestName(false), "mxml");
+    js.get().doTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexCssSelector() {
     setUpJdk();
     DocumentationProvider cssDocumentationProvider = new CssDocumentationProvider();
-    PsiElement docElement = getDocElementForLookupItem(cssDocumentationProvider, getTestName(false) + ".css");
-    assertInstanceOf(docElement, JSClass.class);
+    PsiElement docElement = getDocElementForLookupItem(cssDocumentationProvider, js.get().getTestName(false) + ".css");
+    assertInstanceOf(JSClass.class, docElement);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexCssSelectorMultiDocumentation() {
-    testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> doTest(getTestName(false), "css"));
+    testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> js.get().doTest(js.get().getTestName(false), "css"));
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexCssSelectorMultiDocumentationInLookup() {
     testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> {
-      String doc = testOne(getTestName(false) + ".css");
+      String doc = js.get().testOne(js.get().getTestName(false) + ".css");
       assertTrue(doc.contains("p1.MyClass"));
       assertTrue(doc.contains("p2.MyClass"));
     });
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexMetadataStyle() {
-    String testName = getTestName(false);
+    String testName = js.get().getTestName(false);
     String s = BASE_PATH + testName;
-    doTest(new String[]{s + ".css", s + ".mxml"}, testName, Check.Content);
+    js.get().doTest(new String[]{s + ".css", s + ".mxml"}, testName, Check.Content);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexMetadataStyleMultidoc() {
-    String testName = getTestName(false);
+    String testName = js.get().getTestName(false);
     String s = BASE_PATH + testName;
-    doTest(new String[]{s + ".css", s + "1.mxml", s + "2.mxml"}, testName, Check.Content);
+    js.get().doTest(new String[]{s + ".css", s + "1.mxml", s + "2.mxml"}, testName, Check.Content);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexCssProperty() {
     setUpJdk();
     DocumentationProvider cssDocumentationProvider = new CssDocumentationProvider();
-    PsiElement docElement = getDocElementForLookupItem(cssDocumentationProvider, getTestName(false) + ".css");
-    assertInstanceOf(docElement, JSAttributeNameValuePair.class);
+    PsiElement docElement = getDocElementForLookupItem(cssDocumentationProvider, js.get().getTestName(false) + ".css");
+    assertInstanceOf(JSAttributeNameValuePair.class, docElement);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexCssPropertyMultiDocumentation() {
     setUpJdk();
-    doTest(getTestName(false), "css");
+    js.get().doTest(js.get().getTestName(false), "css");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testFlexCssPropertyMultiDocumentationInLookup() {
     setUpJdk();
     DocumentationProvider cssDocProvider = new CssDocumentationProvider();
-    String doc = testOne(getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
+    String doc = js.get().testOne(js.get().getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
     assertNotNull(doc);
-    assertTrue("Container's borderColor property missing", doc.contains("Container"));
-    assertTrue("Button's borderColor property missing", doc.contains("Button"));
-    assertTrue("UIComponent's borderColor property missing", doc.contains("UIComponent"));
+    assertTrue(doc.contains("Container"), "Container's borderColor property missing");
+    assertTrue(doc.contains("Button"), "Button's borderColor property missing");
+    assertTrue(doc.contains("UIComponent"), "UIComponent's borderColor property missing");
   }
 
+  @Test
   public void testQuickNavigateInfo() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testQuickNavigateInfoWithMxml() {
     setUpJdk();
-    doQuickNavigateTest(getTestName(false), "mxml");
+    js.get().doQuickNavigateTest(js.get().getTestName(false), "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testQuickNavigateInfoWithMxml2() {
-    doQuickNavigateTest(getTestName(false), "mxml");
+    js.get().doQuickNavigateTest(js.get().getTestName(false), "mxml");
   }
 
+  @Test
   public void testQuickNavigateInfo_2() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_3() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_4() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_5() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_5_2() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_6() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_7() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_9() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_10() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
+  @Test
   public void testQuickNavigateInfo_11() {
-    doQuickNavigateTest();
+    js.get().doQuickNavigateTest();
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testSeeAlso() {
     setUpJdk();
-    doTestWithLinkNavigationCheck("as", 4);
+    js.get().doTestWithLinkNavigationCheck("as", 4);
   }
 
+  @Test
   public void testWithLibrary1() {
-    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> doTest(getTestName(false), "as"));
+    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> js.get().doTest(js.get().getTestName(false), "as"));
   }
 
+  @Test
   public void testWithLibrary2() {
-    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> doTest(getTestName(false), "as"));
+    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> js.get().doTest(js.get().getTestName(false), "as"));
   }
 
+  @Test
   public void testWithAsDoc1() {
-    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "as", "WithAsDoc", Check.Content));
+    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> js.get().doTest(js.get().getTestName(false), "as", "WithAsDoc", Check.Content));
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testWithAsDoc2() {
-    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "mxml", "WithAsDoc", Check.Content));
+    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> js.get().doTest(js.get().getTestName(false), "mxml", "WithAsDoc", Check.Content));
   }
 
+  @Test
   public void testMxml1() {
-    doTest(getTestName(false), "mxml", getTestName(false), Check.Null);
+    js.get().doTest(js.get().getTestName(false), "mxml", js.get().getTestName(false), Check.Null);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testPackageWrapper() {
-    doTest(getTestName(false), "mxml", getTestName(false), Check.Null);
+    js.get().doTest(js.get().getTestName(false), "mxml", js.get().getTestName(false), Check.Null);
   }
 
+  @Test
   public void testSeeClassInSamePackage() {
-    String fullName = BASE_PATH + getTestName(false);
+    String fullName = BASE_PATH + js.get().getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as", fullName + "_3.as"};
-    doTest(files, getTestName(false), Check.Content);
+    js.get().doTest(files, js.get().getTestName(false), Check.Content);
   }
 
+  @Test
   public void testSeeTopLevelClass() {
-    String fullName = BASE_PATH + getTestName(false);
+    String fullName = BASE_PATH + js.get().getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as", fullName + "_3.as"};
-    doTest(files, getTestName(false), Check.Content);
+    js.get().doTest(files, js.get().getTestName(false), Check.Content);
   }
 
+  @Test
   public void testSeeTopLevelClassFromDefaultPackage() {
-    String fullName = BASE_PATH + getTestName(false);
+    String fullName = BASE_PATH + js.get().getTestName(false);
     final String[] files = {fullName + ".as", fullName + "_2.as"};
-    doTest(files, getTestName(false), Check.Content);
+    js.get().doTest(files, js.get().getTestName(false), Check.Content);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testExternalDoc1() {
     setUpJdk();
-    String fullName = BASE_PATH + getTestName(false);
+    String fullName = BASE_PATH + js.get().getTestName(false);
     final String[] files = {fullName + ".mxml"};
 
-    VirtualFile swc = StandardFileSystems.local().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
+    VirtualFile swc = StandardFileSystems.local().findFileByPath(js.get().getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
-    WriteAction.runAndWait(() -> FlexTestUtils.setupCustomSdk(getModule(), JarFileSystem.getInstance().getJarRootForLocalFile(swc), null, asdoc));
+    WriteAction.runAndWait(() -> FlexTestUtils.setupCustomSdk(js.get().getFixture().getModule(), JarFileSystem.getInstance().getJarRootForLocalFile(swc), null, asdoc));
 
-    doTest(files, getTestName(false), Check.Url);
+    js.get().doTest(files, js.get().getTestName(false), Check.Url);
   }
 
+  @Test
   public void testDocsInsideFunction() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsInsideFunction2() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsBeforeBindable() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsBeforeBindable2() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsBeforeBindable3() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsBeforeBindable4() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsBeforeBindable5() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsBeforeBindable6() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testDocsInsideClass() {
-    String testName = getTestName(false);
-    doTest(testName, "as", testName, Check.Content);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(testName, "as", testName, Check.Content);
   }
 
+  @Test
   public void testClassInheritDoc1() {
-    doTest(getTestName(false), "as");
+    js.get().doTest(js.get().getTestName(false), "as");
   }
 
+  @Test
   public void testClassInheritDoc2() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
   }
 
+  @Test
   public void testClassInheritDoc3() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
 
+  @Test
   public void testClassInheritDoc4() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
 
+  @Test
   public void testClassInheritDoc5() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
   }
 
+  @Test
   public void testMethodInheritDoc1() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2", testName + "_3", testName + "_4"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2", testName + "_3", testName + "_4"}, "as", testName);
   }
 
+  @Test
   public void testMethodInheritDoc2() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2", testName + "_3"}, "as", testName);
   }
 
+  @Test
   public void testMethodInheritDoc3() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName, testName + "_2"}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
 
+  @Test
   public void testQuickNavigateInfoFromSource() {
     testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> {
-      final String testName = getTestName(false);
-      doQuickNavigateTest();
+      final String testName = js.get().getTestName(false);
+      js.get().doQuickNavigateTest();
     });
   }
 
   private void testWithLibrary(String swc, String sources, String docs, Runnable test) {
-    WriteAction.runAndWait(() -> FlexTestUtils.addLibrary(getModule(), "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs));
+    WriteAction.runAndWait(() -> FlexTestUtils.addLibrary(js.get().getFixture().getModule(), "TestLib", js.get().getTestDataPath() + BASE_PATH, swc, sources, docs));
     try {
       test.run();
     }
     finally {
-      WriteAction.runAndWait(() -> FlexTestUtils.removeLibrary(getModule(), "TestLib"));
+      WriteAction.runAndWait(() -> FlexTestUtils.removeLibrary(js.get().getFixture().getModule(), "TestLib"));
     }
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testGenericType() {
     setUpJdk();
-    final String testName = getTestName(false);
-    WriteAction.runAndWait(() -> FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName));
-    doTest(new String[]{testName}, "as", testName);
+    final String testName = js.get().getTestName(false);
+    WriteAction.runAndWait(() -> FlexTestUtils.addASDocToSdk(js.get().getFixture().getModule(), getClass(), testName));
+    js.get().doTest(new String[]{testName}, "as", testName);
   }
 
+  @Test
   public void testEndOfLineComment() {
-    String testName = getTestName(false);
-    doTest(new String[]{testName}, "as", testName);
+    String testName = js.get().getTestName(false);
+    js.get().doTest(new String[]{testName}, "as", testName);
   }
 }

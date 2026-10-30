@@ -2,174 +2,210 @@ package com.intellij.flex.intentions;
 
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.BaseJSIntentionTestCase;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.JSIntentionFixture;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
-import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+import static com.intellij.lang.javascript.JSIntentionFixture.jsIntentionFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+
+@TestApplication
+public class CreateASVariableIntentionTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSIntentionFixture> js =
+    jsIntentionFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath("") + "/createvariable_as")
+        .withModuleType(FlexModuleType.MODULE_TYPE_ID));
+
+  @BeforeEach
+  void setUp() {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(js.get().getFixture().getModule(), js.get().getTestName(false), getClass(), myFixture.getTestRootDisposable());
     myFixture.enableInspections(new JSUnresolvedReferenceInspection());
   }
 
-  @NotNull
-  @Override
-  public String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("") + "/createvariable_as";
-  }
-
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return FlexProjectDescriptor.DESCRIPTOR;
-  }
-
-
+  @Test
   public void testCreateVariableAS_() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_2() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
-
+  @Test
   public void testCreateVariableAS_2Mxml() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_2_2() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_3() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_3Mxml() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_3_2() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCreateVariableAS_3_3() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_4() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCreateVariableAS_4Mxml() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_5() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_5Mxml() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_6() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_7() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_8() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_9() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_10() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_10_2() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_11() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_12() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_13() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_14() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_14_2() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_15() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_16() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_17() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_18() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_19() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_20() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_21() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_21Mxml() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS_22() {
-    doCompositeNameBeforeAfterTest("js2", false);
+    js.get().doCompositeNameBeforeAfterTest("js2", false);
   }
 
+  @Test
   public void testCreateVariableAS_Mxml() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS__2() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 
+  @Test
   public void testCreateVariableAS__3() {
-    doCompositeNameBeforeAfterTest("mxml", false);
+    js.get().doCompositeNameBeforeAfterTest("mxml", false);
   }
 }

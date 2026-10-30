@@ -1,14 +1,14 @@
 package com.intellij.deno.codeInsight
 
 import com.intellij.deno.DenoTestBase
-import com.intellij.lang.javascript.BaseJSCompletionTestCase
-import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
+import com.intellij.lang.javascript.JSCompletionFixture
+import com.intellij.lang.javascript.JSDaemonAnalyzerFixture
 
 class DenoHighlightCompletionTest : DenoTestBase() {
 
   override fun setUp() {
     super.setUp()
-    val tools = JSDaemonAnalyzerLightTestCase.configureDefaultLocalInspectionTools()
+    val tools = JSDaemonAnalyzerFixture.configureDefaultLocalInspectionTools()
     myFixture.enableInspections(*tools.toTypedArray())
   }
   
@@ -21,6 +21,6 @@ class DenoHighlightCompletionTest : DenoTestBase() {
   fun testDenoGlobalCompletion() {
     myFixture.configureByText("foo.ts","De<caret>")
     val elements = myFixture.completeBasic()
-    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "Deno")
+    JSCompletionFixture.checkWeHaveInCompletion(elements, "Deno")
   }
 }

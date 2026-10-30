@@ -2,22 +2,31 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableTestCase;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableFixture;
+import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class MxmlIntroduceVariableTest extends JSIntroduceVariableTestCase {
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableFixture.jsIntroduceVariableFixture;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-  @Override
-  protected @NotNull String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("/refactoring/introduceVariable/");
-  }
+@TestApplication
+public class MxmlIntroduceVariableTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSIntroduceVariableFixture> js =
+    jsIntroduceVariableFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath("/refactoring/introduceVariable/")));
 
+  @Test
   public void testKeepCData() {
-    doTest("created", true, ".mxml");
+    js.get().doTest("created", true, ".mxml");
   }
 
+  @Test
   public void testNoIntroduceInBinding() {
-    assertThrows(CommonRefactoringUtil.RefactoringErrorHintException.class, () -> doTest("created", true, ".mxml"));
+    assertThrows(CommonRefactoringUtil.RefactoringErrorHintException.class, () -> js.get().doTest("created", true, ".mxml"));
   }
 }

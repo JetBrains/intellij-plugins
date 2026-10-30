@@ -2,7 +2,6 @@
 package com.jetbrains.plugins.jade
 
 import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsHighlightingTest
-import com.jetbrains.plugins.jade.injectedScriptJs.JadeJsIntroduceVariableTest
 import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -22,6 +21,5 @@ import org.junit.runners.Suite
   JadeTodoTest::class,
   JadeTypingTest::class,
   JadeJsHighlightingTest::class,
-  JadeJsIntroduceVariableTest::class,
 )
 class JadeTestSuite

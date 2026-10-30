@@ -1,22 +1,23 @@
 package com.intellij.lang.javascript.frameworks.nextjs
 
-import com.intellij.lang.javascript.JSMoveTestBase
+import com.intellij.lang.javascript.JSFixtureOptions
+import com.intellij.lang.javascript.JSMoveFixture.jsMoveFixture
+import com.intellij.lang.javascript.jsProjectFixture
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
-open class NextJsMoveTest: JSMoveTestBase()  {
+@TestApplication
+class NextJsMoveTest {
+  private val projectFixture = jsProjectFixture()
+  private val js by jsMoveFixture(projectFixture, JSFixtureOptions(NextJsTestUtil.getTestDataPath()).withBasePath("/move/"))
 
-  override fun getTestDataPath(): String {
-    return NextJsTestUtil.getTestDataPath()
-  }
-
-  override fun getTestRoot(): String {
-    return "/move/"
-  }
-  
+  @Test
   fun testForm() {
-    doTest("pages/component.js", "pages/target")
+    js.doTest("pages/component.js", "pages/target")
   }
 
+  @Test
   fun testPlaceholder() {
-    doTest("pages/post", "pages/test")
+    js.doTest("pages/post", "pages/test")
   }
 }

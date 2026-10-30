@@ -7,72 +7,79 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSCompletionFixture;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
-import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
+import static com.intellij.lang.javascript.JSCompletionFixture.jsCompletionFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    CodeStyleSettings globalSettings = CodeStyle.getSettings(getProject());
+@TestApplication
+public class FlexCssCompletionTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSCompletionFixture> js =
+    jsCompletionFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath(FlexCompletionTest.BASE_PATH), "css")
+        .withModuleType(FlexModuleType.MODULE_TYPE_ID));
+
+  @BeforeEach
+  void setUp() {
+    FlexTestUtils.allowFlexVfsRootsFor(js.get().getTestRootDisposable(), "");
+
+    CodeStyleSettings globalSettings = CodeStyle.getSettings(js.get().getProject());
     CssCodeStyleSettings settings = globalSettings.getCustomSettings(CssCodeStyleSettings.class);
     settings.SPACE_AFTER_COLON = false;
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath(FlexCompletionTest.BASE_PATH);
-  }
-
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return FlexProjectDescriptor.DESCRIPTOR;
+    CamelHumpMatcher.forceStartMatching(js.get().getTestRootDisposable());
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
-  }
-
-  @Override
-  protected String getExtension() {
-    return "css";
+    FlexTestUtils.setupFlexSdk(js.get().getFixture().getModule(), js.get().getTestName(false), getClass(), js.get().getFixture().getTestRootDisposable());
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssPropertyCompletion() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssPropertyCompletion1() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssPropertyCompletion2() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssPropertyCompletion3() {
     setUpJdk();
-    doTest("", "mxml");
+    js.get().doTest("", "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testHtmlCssCompletion() {
-    doTest("", "html");
+    js.get().doTest("", "html");
   }
 
   /*@FlexTestOptions({WithJsSupportLoader, WithFlexFacet})
@@ -85,57 +92,66 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }*/
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssSelectorCompletion() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssSelectorAfterPipeCompletion() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssSelectorCompletion1() {
     setUpJdk();
-    doTest("", "mxml");
+    js.get().doTest("", "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssColorValueCompletion() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssEnumValueCompletion() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testCssClassCompletion() {
-    doTest("", "mxml");
+    js.get().doTest("", "mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations1() {
     addDifferentStyleDeclarationsLibrary();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations2() {
     addDifferentStyleDeclarationsLibrary();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations3() {
     setUpJdk();
     addDifferentStyleDeclarationsLibrary();
-    LookupElement[] items = doTest("");
+    LookupElement[] items = js.get().doTest("");
     assertNotNull(items);
     assertTrue(items.length > 100);
     assertTrue(items[0].getLookupString().startsWith("choose color"));
@@ -145,67 +161,78 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations4() {
     addDifferentStyleDeclarationsLibrary();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations5() {
     addDifferentStyleDeclarationsLibrary();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations6() {
     addDifferentStyleDeclarationsLibrary();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testDifferentStyleDeclarations7() {
     addDifferentStyleDeclarationsLibrary();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public void testMetadataStyle() {
-    String prefix = getTestName(false);
-    doTestForFiles(new String[]{prefix + "." + "css", prefix + "." + "mxml"}, "", "css");
+    String prefix = js.get().getTestName(false);
+    js.get().doTestForFiles(new String[]{prefix + "." + "css", prefix + "." + "mxml"}, "", "css");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void _testClassReferenceCompletion() {
-    myFixture.configureByFiles(FlexCompletionTest.BASE_PATH + getTestName(false) + ".css");
-    new CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(getProject(), myFixture.getEditor());
-    myFixture.checkResultByFile(FlexCompletionTest.BASE_PATH + getTestName(false) + "_after.css");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    myFixture.configureByFiles(FlexCompletionTest.BASE_PATH + js.get().getTestName(false) + ".css");
+    new CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(js.get().getProject(), myFixture.getEditor());
+    myFixture.checkResultByFile(FlexCompletionTest.BASE_PATH + js.get().getTestName(false) + "_after.css");
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testSelectorAfterNamespacePrefix1() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testSelectorAfterNamespacePrefix2() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testPropertyUnderSelectorWithNamespace1() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testPropertyUnderSelectorWithNamespace2() {
-    doTest("");
+    js.get().doTest("");
   }
 
   private void addDifferentStyleDeclarationsLibrary() {
-    FlexTestUtils.addLibrary(getModule(), "Lib", getTestDataPath(), "DifferentStyleDeclarations.swc", null, null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
+    FlexTestUtils.addLibrary(js.get().getFixture().getModule(), "Lib", js.get().getTestDataPath(), "DifferentStyleDeclarations.swc", null, null);
+    Module module = js.get().getFixture().getModule();
+    Disposer.register(js.get().getFixture().getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(module, "Lib"));
   }
 }

@@ -1,59 +1,51 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
-import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSCompletionFixture;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.IndexingTestUtil;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplateIndex;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class MeteorCompletionTest extends BaseJSCompletionTestCase {
-  @Override
-  protected boolean runInDispatchThread() {
-    return false;
-  }
+import static com.intellij.lang.javascript.JSCompletionFixture.jsCompletionFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
 
-  @Override
-  protected String getTestDataPath() {
-    return MeteorTestUtil.getTestDataPath() + "/testCompletion/completion";
-  }
-
-  @Override
-  protected String getExtension() {
-    return "js";
-  }
+@TestApplication
+public class MeteorCompletionTest {
+  private final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSCompletionFixture> js =
+    jsCompletionFixture(projectFixture, new JSFixtureOptions(MeteorTestUtil.getTestDataPath() + "/testCompletion/completion", "js"));
 
   public void _testTemplatesCompletion() {
     //final String fullPath = getTestDataPath() + "module";
     //final VirtualFile module = LocalFileSystem.getInstance().findFileByPath(fullPath.replace(File.separatorChar, '/'));
     //addSourceContentToRoots(myModule, module);
 
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testTemplatesNotCompletion() {
-    doTest("");
+    js.get().doTest("");
   }
 
-  @Override
-  protected void setUp() throws Exception {
+  @BeforeEach
+  void setUp() {
     MeteorTestUtil.enableMeteor();
-    super.setUp();
     FileBasedIndex.getInstance().requestRebuild(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX);
     UIUtil.pump();
-    IndexingTestUtil.waitUntilIndexesAreReady(getProject());
-    MeteorProjectTestBase.initMeteorDirs(getProject());
+    IndexingTestUtil.waitUntilIndexesAreReady(js.get().getProject());
+    MeteorProjectTestBase.initMeteorDirs(js.get().getProject());
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      MeteorTestUtil.disableMeteor();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+  @AfterEach
+  void tearDown() {
+    MeteorTestUtil.disableMeteor();
   }
 }

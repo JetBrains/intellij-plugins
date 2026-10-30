@@ -7,9 +7,6 @@ import org.junit.runners.Suite
 @Ignore("Manual only")
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-  NextJsMoveTest::class,
   NextJsResolveTest::class,
-  NextJsHighlightTest::class,
-  NextJsCompletionTest::class
 )
 class NextJsTestSuite

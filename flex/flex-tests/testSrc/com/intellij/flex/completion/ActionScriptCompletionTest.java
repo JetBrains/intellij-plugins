@@ -7,10 +7,10 @@ import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExBase;
-import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSCompletionFixture;
+import com.intellij.lang.javascript.JSFixtureOptions;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -19,14 +19,22 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.ThrowableRunnable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -34,44 +42,48 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 
-public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
+import static com.intellij.lang.javascript.JSCompletionFixture.assertLookupElement;
+import static com.intellij.lang.javascript.JSCompletionFixture.assertStartsWith;
+import static com.intellij.lang.javascript.JSCompletionFixture.checkNoCompletion;
+import static com.intellij.lang.javascript.JSCompletionFixture.checkWeHaveInCompletion;
+import static com.intellij.lang.javascript.JSCompletionFixture.isStrictMatched;
+import static com.intellij.lang.javascript.JSCompletionFixture.jsCompletionFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestApplication
+public class ActionScriptCompletionTest {
   protected static final String BASE_PATH = "/js2_completion/";
-  {
-    mySmartCompletionTests.addAll(Arrays.asList(
+
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSCompletionFixture> js =
+    jsCompletionFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath(BASE_PATH), "js2")
+        .withModuleType(FlexModuleType.MODULE_TYPE_ID));
+
+  @BeforeEach
+  void setUp() {
+    js.get().getSmartCompletionTests().addAll(Arrays.asList(
       "VarTypePickedUp", "VarTypePickedUp2", "FuncTypePickedUp", "FuncTypePickedUp2", "FuncTypePickedUp3", "CompleteAfterThis",
       "CompleteAfterThis2", "CompleteAfterSuper", "ConstrTypePickedUp", "CompleteWithoutQualifier"
     ));
-
-    myTestsWithSaveAndLoadCaches.addAll(Arrays.asList(
-      "FuncTypePickedUp", "FuncTypePickedUp2", "FuncTypePickedUp3", "ConstTypePickedUp",
-      "ConstTypePickedUp2", "VarTypePickedUp3", "VarTypePickedUp4", "VarTypePickedUp5"
-    ));
-  }
-
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      FlexTestUtils.modifyConfigs(getProject(), editor -> {
-        if (ModuleType.get(getModule()) == FlexModuleType.getInstance()) {
-          for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(getModule())) {
-            bc.getDependencies().setSdkEntry(null);
-          }
+  @AfterEach
+  void tearDown() {
+    FlexTestUtils.modifyConfigs(js.get().getProject(), editor -> {
+      if (ModuleType.get(js.get().getFixture().getModule()) == FlexModuleType.getInstance()) {
+        for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(js.get().getFixture().getModule())) {
+          bc.getDependencies().setSdkEntry(null);
         }
-      });
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+      }
+    });
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -79,48 +91,40 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @interface NeedsJavaModule {
   }
 
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath(getBasePath());
-  }
-
   private boolean needsJavaModule() {
-    return JSTestUtils.getTestMethod(getClass(), getTestName(false)).getAnnotation(NeedsJavaModule.class) != null;
+    return JSTestUtils.getTestMethod(getClass(), js.get().getTestName(false)).getAnnotation(NeedsJavaModule.class) != null;
   }
 
   protected void setUpJdk() {
     if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+      FlexTestUtils.setupFlexSdk(js.get().getFixture().getModule(), js.get().getTestName(false), getClass(), js.get().getFixture().getTestRootDisposable());
     }
   }
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return FlexProjectDescriptor.DESCRIPTOR;
-  }
-
+  @Test
   public final void testBasic() {
-    doTest("");
-    doTest("_2");
-    doTest("_3");
-    doTest("_4");
+    js.get().doTest("");
+    js.get().doTest("_2");
+    js.get().doTest("_3");
+    js.get().doTest("_4");
   }
 
+  @Test
   public final void testBoldForClassMembers() {
-    LookupElement[] elements = doTest("");
+    LookupElement[] elements = js.get().doTest("");
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
 
     assertTrue(isStrictMatched(elements[0]));
     assertTrue(isStrictMatched(elements[1]));
 
-    elements = doTest("_2");
+    elements = js.get().doTest("_2");
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
     assertTrue(isStrictMatched(elements[0]));
     assertTrue(isStrictMatched(elements[1]));
 
-    elements = doTest("_3");
+    elements = js.get().doTest("_3");
     assertNotNull(elements);
     assertEquals("____", elements[4].getLookupString());
     assertTrue(isStrictMatched(elements[4]));
@@ -133,261 +137,317 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("Bar", elements[5].getLookupString());
   }
 
+  @Test
   public final void testKeywords() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testKeywords2() {
-    final LookupElement[] elements = doTest("");
+    final LookupElement[] elements = js.get().doTest("");
     checkWeHaveInCompletion(elements, "return", "function", "if");
   }
 
   @JSTestOptions(selectLookupItem = 0)
+  @Test
   public final void testKeywordsInContext() {
-    final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    final LookupElement[] lookupElements = js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
     assertEquals("extends", lookupElements[0].getLookupString());
     assertTrue(isStrictMatched(lookupElements[0]));
-    assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
+    assertTrue(lookupElements.length > 1, "Test expected to have other options for completion");
   }
 
+  @Test
   public final void testKeywordsInContext2() {
-    final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    final LookupElement[] lookupElements = js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
     assertEquals("public", lookupElements[0].getLookupString());
     assertTrue(isStrictMatched(lookupElements[0]));
-    assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
+    assertTrue(lookupElements.length > 1, "Test expected to have other options for completion");
   }
 
+  @Test
   public void testKeywordsInContext3() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     assertStartsWith(lookupElements, "zzz");
     checkWeHaveInCompletion(lookupElements, "true", "null", "new");
   }
 
   @JSTestOptions(selectLookupItem = 0)
+  @Test
   public void testKeywordsInContext4() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testVarTypePickedUp() {
-    doTest("");
-    doTest("_2");
+    js.get().doTest("");
+    js.get().doTest("_2");
   }
 
+  @Test
   public final void testVarTypePickedUp2() {
-    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
   }
 
+  @Test
   public final void testCustomMeta() {
-    String testName = getTestName(false);
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    String testName = js.get().getTestName(false);
     myFixture.configureByFiles(testName + ".js2", testName + ".dtd");
     final VirtualFile relativeFile = VfsUtilCore.findRelativeFile(testName + ".dtd", myFixture.getFile().getVirtualFile());
-    ExternalResourceManagerExBase.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
+    ExternalResourceManagerExBase.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), js.get().getTestRootDisposable());
 
-    complete();
-    checkResultByFile("", getExtension());
+    js.get().complete();
+    js.get().checkResultByFile("", js.get().getExtension());
 
     myFixture.configureByFiles(testName + "2.js2");
-    complete();
-    checkResultByFile("2", getExtension());
+    js.get().complete();
+    js.get().checkResultByFile("2", js.get().getExtension());
   }
 
+  @Test
   public final void testCompleteAttrName() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testFuncTypePickedUp() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testFuncTypePickedUp2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testFuncTypePickedUp3() {
-    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
   }
 
+  @Test
   public final void testFuncTypePickedUp4() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testFuncTypePickedUp5() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAfterThis() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAfterThis2() {
-    doTest("");
-    mySmartCompletionTests.remove(getTestName(false));
+    js.get().doTest("");
+    js.get().getSmartCompletionTests().remove(js.get().getTestName(false));
     FileDocumentManager.getInstance().saveAllDocuments();
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAfterThis3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAfterType() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAfterThis4() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAfterSuper() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteWithoutQualifier() {
-    doTest("");
-    doTest("_2");
-    doTest("_3");
+    js.get().doTest("");
+    js.get().doTest("_2");
+    js.get().doTest("_3");
   }
 
+  @Test
   public final void testNoComplete() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteNS() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteNS2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteNS3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteNS4() {
-    doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    js.get().doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals("MyNamespace", myFixture.getLookupElementStrings().get(0));
   }
 
+  @Test
   public final void testCompleteType4() {
-    doTest("");
-    doTest("_2");
+    js.get().doTest("");
+    js.get().doTest("_2");
   }
 
+  @Test
   public final void testCompleteType5() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType6() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType7() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType7_2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType7_3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType7_4() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType8() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType9() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteFunInAddEventListener() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteAttributes() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteClassName() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteConstructorName() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testInsertImport() {
-    final String testName = getTestName(false);
-    doTestForFiles(testName + ".js2", testName + "_2.js2");
+    final String testName = js.get().getTestName(false);
+    js.get().doTestForFiles(testName + ".js2", testName + "_2.js2");
   }
 
+  @Test
   public final void testInsertImport2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testInsertImport3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testInsertImportAmbiguous1() {
-    final LookupElement[] items = doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    final LookupElement[] items = js.get().doTest("");
     assertQNames(items, "foo.ClassA", "bar.ClassA");
-    myFixture.getLookup().setCurrentItem(items[1]);
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(items[1]));
     myFixture.type('\n');
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
+  @Test
   public final void testInsertImportAmbiguous2() {
-    final LookupElement[] items = doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    final LookupElement[] items = js.get().doTest("");
     assertQNames(items, "foo.ClassA", "bar.ClassA");
-    myFixture.getLookup().setCurrentItem(items[1]);
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(items[1]));
     myFixture.type('\n');
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
+  @Test
   public final void testInsertImportAmbiguous3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testInsertImportAmbiguous4() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testInsertImportAmbiguous5() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testInsertImportAmbiguous6() {
-    final LookupElement[] items = doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    final LookupElement[] items = js.get().doTest("");
     assertQNames(items, "ClassA", "bar.ClassA");
-    myFixture.getLookup().setCurrentItem(items[0]);
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(items[0]));
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
   public final void _testInsertImportForStaticField() {
-    final String testName = getTestName(false);
-    doTestForFiles(testName + ".js2", testName + "_2.js2");
+    final String testName = js.get().getTestName(false);
+    js.get().doTestForFiles(testName + ".js2", testName + "_2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testConstTypePickedUp() {
-    final LookupElement[] items = doTest("");
+    final LookupElement[] items = js.get().doTest("");
     assertNotNull(items);
     assertEquals("addNamespace", items[0].getLookupString());
     assertEquals("appendChild", items[1].getLookupString());
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testConstTypePickedUp2() {
-    final LookupElement[] items = doTest("");
+    final LookupElement[] items = js.get().doTest("");
     assertNotNull(items);
     assertEquals("attribute", items[0].getLookupString());
     assertEquals("attributes", items[1].getLookupString());
@@ -395,46 +455,56 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("children", items[3].getLookupString());
   }
 
+  @Test
   public final void testConstrTypePickedUp() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testVarTypePickedUp3() {
-    doTest("");
-    assertNotNull(myFixture.getLookupElements());
+    js.get().doTest("");
+    assertNotNull(js.get().getFixture().getLookupElements());
   }
 
+  @Test
   public final void testVarTypePickedUp4() {
-    doTest("");
-    assertNotNull(myFixture.getLookupElements());
+    js.get().doTest("");
+    assertNotNull(js.get().getFixture().getLookupElements());
   }
 
+  @Test
   public final void testVarTypePickedUp5() {
-    doTest("");
-    assertNotNull(myFixture.getLookupElements());
+    js.get().doTest("");
+    assertNotNull(js.get().getFixture().getLookupElements());
   }
 
   @JSTestOptions(selectLookupItem = 0)
+  @Test
   public final void testCompletePackage() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompletePackage2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompletePackage3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompletePackage4() {
-    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testCompleteType() {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
     assertEquals("*", myFixture.getLookupElements()[0].getLookupString());
     assertEquals("MyClass", myFixture.getLookupElements()[1].getLookupString());
     assertEquals("Array", myFixture.getLookupElements()[14].getLookupString());
@@ -443,216 +513,262 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testCompleteType2() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteType3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteTypeInNew() {
-    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testCompleteTypeInNew2() {
     setUpJdk();
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteBeforeLocalVar() {
-    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
+    js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_2.js2");
   }
 
+  @Test
   public final void testNoCompletionForDHTML() {
-    doTest("", "js2");
-    doTest("_2", "js2");
+    js.get().doTest("", "js2");
+    js.get().doTest("_2", "js2");
   }
 
+  @Test
   public final void testNoCompletionForKeywordsInInlineMxml() {
-    doTest("", "js2");
+    js.get().doTest("", "js2");
   }
 
+  @Test
   public final void testECMACompletion() {
-    doTest("", "js2");
+    js.get().doTest("", "js2");
   }
 
+  @Test
   public final void testECMACompletion2() {
-    doTest("", "js2");
-    doTest("_2", "js2");
+    js.get().doTest("", "js2");
+    js.get().doTest("_2", "js2");
   }
 
+  @Test
   public final void testCompleteVarInNsPlace() {
-    doTest("", "js2");
-    doTest("_2", "js2");
-    doTest("_3", "js2");
+    js.get().doTest("", "js2");
+    js.get().doTest("_2", "js2");
+    js.get().doTest("_3", "js2");
   }
 
+  @Test
   public final void testCompleteFunction() {
-    doTest("", "js2");
+    js.get().doTest("", "js2");
   }
 
+  @Test
   public final void testNoTypeAtNsPosition() {
-    doTest("", "js2");
-    doTest("_2", "js2");
-    doTest("_3", "js2");
+    js.get().doTest("", "js2");
+    js.get().doTest("_2", "js2");
+    js.get().doTest("_3", "js2");
   }
 
+  @Test
   public final void testNoKeywordAtPosition() {
-    doTest("", "js2");
+    js.get().doTest("", "js2");
   }
 
+  @Test
   public final void testNoKeywordAtPosition2() {
-    doTest("", "js2");
+    js.get().doTest("", "js2");
   }
 
+  @Test
   public final void testCompleteKeyword() {
-    doTest("", "js2");
+    js.get().doTest("", "js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompletionInXmlTag() {
-    LookupElement[] items = doTest("");
-    assertEmpty(items);
+    LookupElement[] items = js.get().doTest("");
+    assertThat(items).isNullOrEmpty();
   }
 
+  @Test
   public void testGenerics() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testGenerics2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testGenerics2_2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testPrivateMethodCompletion() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testPrivateMethodCompletion_2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testPrivateMethodCompletion_3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testProtectedMethodCompletion() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testProtectedMethodCompletion_2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testProtectedMethodCompletion_3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testProtectedMethodCompletion_4() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteInReferenceList() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteInReferenceList_2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteInReferenceList_3() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteInReferenceList_4() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteInReferenceList_5() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testStaticConstCompletion() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteAfterCast() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testInternalKeywordCompletion() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testProtectedKeywordCompletion() {
-    doTest("");
+    js.get().doTest("");
   }
 
   @JSTestOptions(selectLookupItem = 0)
+  @Test
   public void testCompleteOverriddenName() {
-    final LookupElement[] elements = doTest("");
+    final LookupElement[] elements = js.get().doTest("");
     assertEquals(2, elements.length);
   }
 
+  @Test
   public void testCompleteAfterUnknownVariable() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteTopLevelPackage() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testCompleteInsertProperty() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testSkipClassWithExcludedAnnotation() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testJSDoc() {
-    doTest("");
-    doTest("_2");
+    js.get().doTest("");
+    js.get().doTest("_2");
   }
 
+  @Test
   public void testSeeFunctionInSamePackage() {
-    String prefix = getTestName(false);
-    myFixture.configureByFiles(prefix + ".as", prefix + "_2.as", prefix + "_3.as");
-    LookupElement[] elements = complete();
+    String prefix = js.get().getTestName(false);
+    js.get().getFixture().configureByFiles(prefix + ".as", prefix + "_2.as", prefix + "_3.as");
+    LookupElement[] elements = js.get().complete();
     assertNotNull(elements);
     assertEquals(2, elements.length);
     assertEquals("fooInPackage", elements[0].getLookupString());
     assertEquals("fooTopLevel", elements[1].getLookupString());
-    selectItem(elements[0]);
-    checkResultByFile(prefix + "_after.as");
+    js.get().selectItem(elements[0]);
+    js.get().checkResultByFile(prefix + "_after.as");
   }
 
+  @Test
   public void testSeeTopLevelFunction() {
-    String name = getTestName(false);
-    doTestForFiles(new String[]{name + ".as", name + "_2.as", name + "_3.as"}, "as");
+    String name = js.get().getTestName(false);
+    js.get().doTestForFiles(new String[]{name + ".as", name + "_2.as", name + "_3.as"}, "as");
   }
 
+  @Test
   public final void testCompleteSkipsUnopenedNamespaces() {
-    doTest("");
-    doTest("_2");
-    doTest("_3");
+    js.get().doTest("");
+    js.get().doTest("_2");
+    js.get().doTest("_3");
   }
 
+  @Test
   public void testCompleteWithSemicolon() {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     boolean old = CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION;
     CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false;
     try {
-      final String testName = getTestName(false);
+      final String testName = js.get().getTestName(false);
 
       myFixture.configureByFile(testName + ".js2");
-      complete();
-      myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+      js.get().complete();
+      EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]));
       myFixture.type(';');
       myFixture.checkResultByFile(testName + "_after.js2");
     }
@@ -661,101 +777,109 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     }
   }
 
+  @Test
   public final void testIncludedMemberTypePickedUp() {
-    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_included.js2");
+    js.get().doTestForFiles(js.get().getTestName(false) + ".js2", js.get().getTestName(false) + "_included.js2");
   }
 
   @JSTestOptions(selectLookupItem = 0)
+  @Test
   public final void testSOE() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testCompleteAmbiguousClass() {
-    doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    js.get().doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
     assertLookupElement(myFixture.getLookupElements()[0], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
     assertLookupElement(myFixture.getLookupElements()[1], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
 
-    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]));
     myFixture.type('\n');
-    myFixture.checkResultByFile(getTestName(false) + "_2_after.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_2_after.js2");
   }
 
+  @Test
   public final void testCompleteStaticFunction() {
-    doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    js.get().doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
     assertLookupElement(myFixture.getLookupElements()[0], "getXXX", "() (test)", "Class");
     assertLookupElement(myFixture.getLookupElements()[1], "getYYY", "() (test2)", "Class");
   }
 
+  @Test
   public final void testCompleteStaticFunction2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteClassWithConstructor() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testNamesakeConstructors() {
-    doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    js.get().doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
     assertEquals("Test", myFixture.getLookupElements()[0].getLookupString());
     assertEquals("Test", myFixture.getLookupElements()[1].getLookupString());
   }
 
+  @Test
   public void testUnambiguousConstructor() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testAmbiguousConstructor() {
-    doTest("");
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    js.get().doTest("");
 
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
     assertLookupElement(myFixture.getLookupElements()[0], "MyClass", " (bar)", "AmbiguousConstructor.js2");
     assertLookupElement(myFixture.getLookupElements()[1], "MyClass", " (foo)", "AmbiguousConstructor.js2");
 
-    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]));
     myFixture.type('\n');
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
+  @Test
   public void testStaticField() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testParentClassField() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testClassHierarchyMembersOrder() {
-    final LookupElement[] lookupElements = doTest("");
+    final LookupElement[] lookupElements = js.get().doTest("");
     assertStartsWith(lookupElements, "zbb", "zzz", "zaa", "constructor");
     checkWeHaveInCompletion(lookupElements, "toSource");
   }
 
+  @Test
   public void testClassHierarchyMembersOrder2() {
-    final LookupElement[] lookupElements = doTest("");
+    final LookupElement[] lookupElements = js.get().doTest("");
     assertStartsWith(lookupElements, "e", "param");
     checkWeHaveInCompletion(lookupElements, "return", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
     checkNoCompletion(lookupElements, "basePrivate");
   }
 
+  @Test
   public void testUseKeyword() {
-    doTest("");
-  }
-
-  @Override
-  protected String getExtension() {
-    return "js2";
-  }
-
-  @Override
-  protected String getBasePath() {
-    return BASE_PATH;
+    js.get().doTest("");
   }
 
   private static void assertQNames(LookupElement[] items, String... qnames) {
@@ -766,474 +890,570 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   private static String getQName(LookupElement item) {
-    return ((JSQualifiedNamedElement)item.getPsiElement()).getQualifiedName();
+    return ReadAction.computeBlocking(() -> ((JSQualifiedNamedElement)item.getPsiElement()).getQualifiedName());
   }
 
+  @Test
   public final void testMoveCursorInsideConstructor() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public final void testCompleteConst() {
-    doTest("");
+    js.get().doTest("");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testEventName() {
     setUpJdk();
-    doTest("");
-    doTest("_2");
-    doTest("_3");
-    doTest("_4");
-    doTest("_5");
+    js.get().doTest("");
+    js.get().doTest("_2");
+    js.get().doTest("_3");
+    js.get().doTest("_4");
+    js.get().doTest("_5");
   }
 
+  @Test
   public void testConditionalCompileBlock() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testStaticBlock() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testStaticBlock2() {
-    doTest("");
+    js.get().doTest("");
   }
 
+  @Test
   public void testPrefix() {
-    doTest("");
+    js.get().doTest("");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion_2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion_3() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion_4() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @Test
   public final void testSmartCompletion2_2() {
     setUpJdk();
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testSmartCompletion2_3() {
     // TODO consider parseInt() returning Number etc expect to appear. + 2_36 and 2_36_2. see JSTypeUtils.typeCanBeAssignedWithoutCoercion
     setUpJdk();
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_4() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_5() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_6() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_7() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_8() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_9() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_10() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_11() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_12() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_13() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_14() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_15() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_16() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_17() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_18() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_19() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_20() {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     setUpJdk();
-    LookupElement[] lookupElements = defaultTest();
+    LookupElement[] lookupElements = js.get().defaultTest();
     assertEquals(2, lookupElements.length);
     assertEquals("<Boolean>[]", lookupElements[0].getLookupString());
-    myFixture.getLookup().setCurrentItem(lookupElements[1]);
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(lookupElements[1]));
     myFixture.type('\n');
-    checkResultByFile("_2", "js2");
+    js.get().checkResultByFile("_2", "js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_21() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_22() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_23() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_24() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_25() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_26() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_27() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_27_2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_28() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_29() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testSmartCompletion2_30() {
-    LookupElement[] lookupElements = defaultTest();
+    LookupElement[] lookupElements = js.get().defaultTest();
     for (LookupElement l : lookupElements) {
       assertFalse("toString".equals(l.getLookupString()));
     }
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_31() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_32() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_33() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_34() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_35() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_36() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_36_2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_37() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_38() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_38_2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_38_3() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_39() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_40() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSmartCompletion2_41() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSuggestInterfaceAfterIs() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testVectorReverse() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testNoGetterSetterWhenFunExpectedType() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSuggestIntOrUintWhenNumberExpected() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testSuggestAnyInRestParameter() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testCompleteFunName() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testCompleteFunName2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testNoComplete2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testCompleteClassBeforeVar() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testNoCompleteFinalClassInExtends() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteInNew() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testNoInheritor() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testVectorAfterNew() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testNoJs() {
-    String testName = getTestName(false);
-    doTestForFiles(new String[] {testName + ".js2", testName + ".js"}, "", "js2");
+    String testName = js.get().getTestName(false);
+    js.get().doTestForFiles(new String[] {testName + ".js2", testName + ".js"}, "", "js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteInRHSOfAsBinOp() {
-    String testName = getTestName(false);
-    doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
+    String testName = js.get().getTestName(false);
+    js.get().doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
   }
 
+  @Test
   public final void testCompleteStaticConst() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public final void testCompleteNoDuplicates() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteInCase() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testNoInaccessibleCompletion() {
-    String testName = getTestName(false);
-    doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
+    String testName = js.get().getTestName(false);
+    js.get().doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testNoInaccessibleCompletion2() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
-  public final void testNoKeywordsInLiteral() { defaultTest(); }
+  @Test
+  public final void testNoKeywordsInLiteral() { js.get().defaultTest(); }
 
-  public final void testNoKeywordsInLiteral_2() { defaultTest(); }
+  @Test
+  public final void testNoKeywordsInLiteral_2() { js.get().defaultTest(); }
 
-  public final void testNoKeywordsInComments() { defaultTest(); }
+  @Test
+  public final void testNoKeywordsInComments() { js.get().defaultTest(); }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
-  public final void testNoParens() { defaultTest(); }
+  @Test
+  public final void testNoParens() { js.get().defaultTest(); }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteTypeInAs() {
-    defaultTest();
+    js.get().defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteWithTab() {
-    LookupElement[] lookupElements = defaultTest();
-    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    LookupElement[] lookupElements = js.get().defaultTest();
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(lookupElements[0]));
     myFixture.type(Lookup.REPLACE_SELECT_CHAR);
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteWithCompleteStatement() {
-    LookupElement[] lookupElements = defaultTest();
-    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    LookupElement[] lookupElements = js.get().defaultTest();
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(lookupElements[0]));
     myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteWithCompleteStatement2() {
-    LookupElement[] lookupElements = defaultTest();
-    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    LookupElement[] lookupElements = js.get().defaultTest();
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(lookupElements[0]));
     myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public final void testCompleteWithCompleteStatement2_2() {
-    LookupElement[] lookupElements = defaultTest();
-    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    LookupElement[] lookupElements = js.get().defaultTest();
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(lookupElements[0]));
     myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
+  @Test
   public final void testCompleteNearParen() {
-    LookupElement[] lookupElements = defaultTest();
-    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    LookupElement[] lookupElements = js.get().defaultTest();
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.getLookup().setCurrentItem(lookupElements[0]));
     myFixture.type('\n');
-    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
+    myFixture.checkResultByFile(js.get().getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
-  public final void testDetectExprType() { defaultTest(); }
+  @Test
+  public final void testDetectExprType() { js.get().defaultTest(); }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public final void testQualifiedReference() {
     setUpJdk();
-    defaultTest();
+    js.get().defaultTest();
   }
 
+  @Test
   public void testTwoSdks() {
+    CodeInsightTestFixture myFixture = js.get().getFixture();
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, myFixture.getTestRootDisposable());
-    FlexTestUtils.modifyConfigs(getProject(), editor -> {
-      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
+    FlexTestUtils.modifyConfigs(js.get().getProject(), editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(js.get().getFixture().getModule())[0];
       bc1.setName("1");
       FlexTestUtils.setSdk(bc1, sdk45);
-      ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(getModule());
+      ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(js.get().getFixture().getModule());
       bc2.setName("2");
       FlexTestUtils.setSdk(bc2, sdk46);
     });
-    final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(getModule());
+    final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(js.get().getFixture().getModule());
 
     class TestZZ implements ThrowableRunnable<Exception> {
       private final String myBcName;
@@ -1246,8 +1466,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
       @Override
       public void run() {
-        m.setActiveBuildConfiguration(m.findConfigurationByName(myBcName));
-        defaultTest();
+        EdtTestUtil.runInEdtAndWait(() -> m.setActiveBuildConfiguration(m.findConfigurationByName(myBcName)));
+        js.get().defaultTest();
         for (LookupElement item : myFixture.getLookupElements()) {
           final TestLookupElementPresentation p = TestLookupElementPresentation.renderReal(item);
           assertEquals(myExpectedTypeText, p.getTypeText());
@@ -1260,72 +1480,84 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     new TestZZ("1", sdk45.getName()).run();
   }
 
+  @Test
   public void testSameParameterName() {
-    LookupElement[] lookupElements = doTest("", "js2");
+    LookupElement[] lookupElements = js.get().doTest("", "js2");
     assertStartsWith(lookupElements, "x", "a");
   }
 
+  @Test
   public void testSameParameterName2() {
-    String testName = getTestName(false);
-    final LookupElement[] lookupElements = doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
+    String testName = js.get().getTestName(false);
+    final LookupElement[] lookupElements = js.get().doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
     assertStartsWith(lookupElements, "x", "a");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @Test
   public void testSameParameterName3() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     assertStartsWith(lookupElements, "x");
     checkNoCompletion(lookupElements, "a");
   }
 
+  @Test
   public void testTypeContext() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     assertStartsWith(lookupElements, "W", "Z");
     checkWeHaveInCompletion(lookupElements, "A", "Array");
   }
 
+  @Test
   public void testNullInIfStatement() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     checkWeHaveInCompletion(lookupElements, "null", "true", "false", "this");
     checkNoCompletion(lookupElements, "function", "interface", "extends", "static", "var", "const", "break", "try", "return", "in", "throw",
                       "void", "int");
   }
 
+  @Test
   public void testFinalClass() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     checkWeHaveInCompletion(lookupElements, "final");
   }
 
+  @Test
   public void testNoKeywordsInImportStatement() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     checkNoCompletion(lookupElements, "function", "interface", "extends", "static", "var", "const", "break", "try", "return", "in", "throw",
                       "void", "use", "package", "override");
   }
 
+  @Test
   public void testNoKeywordsInReturnType() {
-    final LookupElement[] lookupElements = defaultTest();
+    final LookupElement[] lookupElements = js.get().defaultTest();
     checkNoCompletion(lookupElements, "function", "interface", "extends", "static", "var", "const", "break", "try", "return", "in", "throw",
                       "use", "package", "override");
   }
 
   @NeedsJavaModule
+  @Test
   public void testObjectVariants() {
-    final LookupElement[] elements = defaultTest();
+    final LookupElement[] elements = js.get().defaultTest();
     checkWeHaveInCompletion(elements, "hasOwnProperty", "length", "isPrototypeOf", "toString");
   }
 
+  @Test
   public void testRestartOnTypingIfOverflow() {
-    LookupElement[] lookupElements = defaultTest();
+    CodeInsightTestFixture myFixture = js.get().getFixture();
+    LookupElement[] lookupElements = js.get().defaultTest();
     checkNoCompletion(lookupElements, "Array"); // there are so many local classes that there's no place for Array within the limit
     myFixture.type('r');
     lookupElements = myFixture.getLookupElements();
     checkWeHaveInCompletion(lookupElements, "Array");
   }
 
+  @Test
   public final void testAnnotatedWithObjectGetsAnyCompletion() {
     String [] vFiles = new String[]{
-      getTestName(false) + ".js2"
+      js.get().getTestName(false) + ".js2"
     };
-    doTestForFiles(vFiles, "", "js2");
+    js.get().doTestForFiles(vFiles, "", "js2");
   }
 }

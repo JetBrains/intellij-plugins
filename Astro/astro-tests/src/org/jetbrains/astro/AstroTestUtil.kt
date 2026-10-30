@@ -1,7 +1,7 @@
 package org.jetbrains.astro
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.lang.javascript.BaseJSCompletionTestCase
+import com.intellij.lang.javascript.JSCompletionFixture
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import java.io.File
 
@@ -12,7 +12,7 @@ fun getAstroTestDataPath(): String =
 
 fun getRelativeAstroTestDataPath(): String = "/contrib$ASTRO_TEST_DATA_PATH"
 
-internal fun Array<LookupElement>.checkCompletionContains(vararg variants: String) = BaseJSCompletionTestCase.checkWeHaveInCompletion(this, *variants)
+internal fun Array<LookupElement>.checkCompletionContains(vararg variants: String) = JSCompletionFixture.checkWeHaveInCompletion(this, *variants)
 
 private fun getContribPath(): String {
   val homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy()

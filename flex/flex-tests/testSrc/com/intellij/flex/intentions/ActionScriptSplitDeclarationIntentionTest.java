@@ -2,18 +2,25 @@
 package com.intellij.flex.intentions;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.BaseJSIntentionTestCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.JSIntentionFixture;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class ActionScriptSplitDeclarationIntentionTest extends BaseJSIntentionTestCase {
+import static com.intellij.lang.javascript.JSIntentionFixture.jsIntentionFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
 
-  @Override
-  public @NotNull String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("/highlighting/intention/splitDeclaration");
-  }
+@TestApplication
+public class ActionScriptSplitDeclarationIntentionTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSIntentionFixture> js =
+    jsIntentionFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath("/highlighting/intention/splitDeclaration")));
 
+  @Test
   public void testSplitDeclaration() {
     //before.as / after.as
-    doCompositeNameBeforeAfterTest("as", false);
+    js.get().doCompositeNameBeforeAfterTest("as", false);
   }
 }
