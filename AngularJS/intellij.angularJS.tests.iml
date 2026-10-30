@@ -89,6 +89,7 @@
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.problemView.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.navbar.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.json.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.javascript.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />

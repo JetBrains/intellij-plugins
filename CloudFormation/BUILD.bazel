@@ -85,6 +85,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
+        "@community//json/plugin",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",

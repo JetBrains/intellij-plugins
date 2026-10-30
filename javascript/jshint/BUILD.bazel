@@ -111,6 +111,7 @@ jvm_library(
         "@community//platform/vcs/plugin",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/navbar/plugin",
+        "@community//json/plugin",
     ],
     deps = [
         # do not sort,

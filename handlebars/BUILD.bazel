@@ -112,6 +112,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
+        "@community//json/plugin",
         "//plugins/JavaScriptLanguage/plugin",
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/problemsView/plugin",

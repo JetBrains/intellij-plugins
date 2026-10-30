@@ -295,6 +295,7 @@ jvm_library(
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//duplicatedetector:duplicatesDetector",
         "//plugins/ultimate-plugin",
+        "@community//json/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
     deps = [

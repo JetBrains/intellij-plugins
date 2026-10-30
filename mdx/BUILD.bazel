@@ -74,6 +74,7 @@ jvm_library(
         "@community//platform/vcs/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//xml/plugin",
+        "@community//json/plugin",
     ],
     deps = [
         # do not sort,

@@ -141,6 +141,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
+        "@community//json/plugin",
         "@community//platform/testRunner/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/problemsView/plugin",

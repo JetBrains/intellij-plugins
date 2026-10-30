@@ -91,6 +91,7 @@ jvm_library(
         "@community//json",
         "//plugins/ultimate-plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//json/plugin",
     ],
     deps = [
         # do not sort,

@@ -79,6 +79,7 @@ jvm_library(
         # do not sort,
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//plugins/ultimate-plugin",
+        "@community//json/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "//phpstorm/php:php-impl",
     ],

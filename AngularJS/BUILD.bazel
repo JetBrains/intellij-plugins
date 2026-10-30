@@ -120,6 +120,7 @@ jvm_library(
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/problemsView/plugin",
         "@community//platform/navbar/plugin",
+        "@community//json/plugin",
         "//plugins/JavaScriptLanguage/plugin",
         "//plugins/ultimate-plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",

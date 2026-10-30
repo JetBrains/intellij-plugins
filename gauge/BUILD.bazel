@@ -122,6 +122,7 @@ jvm_library(
         "@community//java/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/testRunner/plugin",
+        "@community//json/plugin",
         "@community//xml/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//community-resources:customization",

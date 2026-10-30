@@ -78,7 +78,11 @@ jvm_library(
     ),
     module_name = "intellij.qodana.yaml.tests",
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/main/intellij.platform.monolith.main:monolith-main"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//json/plugin",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",

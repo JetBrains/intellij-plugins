@@ -67,6 +67,7 @@ jvm_library(
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//aether-dependency-resolver/plugin",
         "@community//xml/plugin",
+        "@community//json/plugin",
         "//plugins/microservices/microservices-jvm:jvm",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/testRunner/plugin",

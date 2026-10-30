@@ -99,6 +99,7 @@ jvm_library(
         "@community//platform/structuralsearch/plugin",
         "@community//platform/testRunner/plugin",
         "@community//xml/plugin",
+        "@community//json/plugin",
         "@community//platform/problemsView/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/vcs/plugin",

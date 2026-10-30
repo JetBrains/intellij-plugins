@@ -37,6 +37,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
+        "@community//json/plugin",
         "//contrib/jade/css",
         "@community//idea/customization/plugin",
         "//plugins/ultimate-plugin",

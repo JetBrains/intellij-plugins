@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="intellij.openRewrite.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.microservices.jvm" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.json.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />

@@ -68,6 +68,7 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
+        "@community//json/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//community-resources:customization",
     ],
