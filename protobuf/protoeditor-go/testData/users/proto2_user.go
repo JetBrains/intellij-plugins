@@ -1,7 +1,7 @@
 // Package proto2user provides dummy uses of proto2 for testing resolving to proto from go.
 package proto2user
 
-import pb "proto2_go_proto/go"
+import pb "jetbrains.com/hello/proto2_go_proto/go"
 
 // EXPECT-NEXT: proto2.proto / M1
 func use(m pb. /* caretAfterThis */ M1) {

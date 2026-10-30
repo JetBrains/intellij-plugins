@@ -103,7 +103,8 @@ jvm_library(
         "//goland/intellij-go/testFramework",
         "//goland/intellij-go/plugin",
         "//contrib/protobuf/protoeditor-core:protoeditor-core-tests_test_lib",
-        "@community//libraries/junit4",
+        "@community//platform/testFramework/junit5",
+        "@community//libraries/junit6",
         "@community//platform/scratch/plugin",
     ],
 )

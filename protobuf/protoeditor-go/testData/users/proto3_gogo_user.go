@@ -1,7 +1,7 @@
 // Package proto3user provides dummy uses of proto3 for testing resolving to proto from go.
 package proto3user
 
-import pb "proto3_gogo_go_proto/go"
+import pb "jetbrains.com/hello/proto3_gogo_go_proto/go"
 
 // EXPECT-NEXT: proto3_gogo.proto / M1
 func use(m pb. /* caretAfterThis */ M1) {
