@@ -1,5 +1,6 @@
 package com.intellij.openRewrite.gradle
 
+import com.intellij.gradle.testFramework.importing.GradleImportingTestCase
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -9,7 +10,6 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.junit.Test
 import org.junit.runners.Parameterized
 import java.util.concurrent.Callable
