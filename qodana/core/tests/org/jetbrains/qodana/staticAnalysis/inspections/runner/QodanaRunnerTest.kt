@@ -33,6 +33,7 @@ import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
@@ -358,6 +359,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -487,6 +489,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         skipResultStrategy = SkipResultStrategy.ANY,
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -533,6 +536,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         skipResultStrategy = SkipResultStrategy.ANY,
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -779,6 +783,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
           STAGE_ARG to Stage.OLD.name
         )),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         skipResultStrategy = SkipResultStrategy.ANY,
       )
@@ -909,6 +914,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }
@@ -929,6 +935,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         script = QodanaScriptConfig(TEAMCITY_CHANGES_SCRIPT_NAME),
         profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
         baseline = "test-module/baseline.sarif.json",
+        baselineSource = QodanaBaselineSource.LOCAL_BASELINE,
         includeAbsent = true
       )
     }

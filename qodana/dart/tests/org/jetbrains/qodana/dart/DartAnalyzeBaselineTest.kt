@@ -7,6 +7,7 @@ import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.SarifReport
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import java.nio.file.Files
@@ -37,7 +38,7 @@ internal class DartAnalyzeBaselineTest : DartAnalyzeProjectQodanaTestCase() {
     Files.newBufferedWriter(baseline).use { writer ->
       SarifUtil.writeReport(writer, SarifReport().withRuns(listOf(manager.sarifRun)))
     }
-    updateQodanaConfig { it.copy(baseline = baseline.toString(), includeAbsent = true) }
+    updateQodanaConfig { it.copy(baseline = baseline.toString(), baselineSource = QodanaBaselineSource.LOCAL_BASELINE, includeAbsent = true) }
 
     runAnalysis()
 
@@ -60,7 +61,7 @@ internal class DartAnalyzeBaselineTest : DartAnalyzeProjectQodanaTestCase() {
     Files.newBufferedWriter(baseline).use { writer ->
       SarifUtil.writeReport(writer, SarifReport().withRuns(listOf(manager.sarifRun)))
     }
-    updateQodanaConfig { it.copy(baseline = baseline.toString(), includeAbsent = true) }
+    updateQodanaConfig { it.copy(baseline = baseline.toString(), baselineSource = QodanaBaselineSource.LOCAL_BASELINE, includeAbsent = true) }
 
     updateSource(getTestDataPath("baseline-after.dart").readText())
     analyzeResponses["lib"] = readDartAnalyzeTestData("baseline-after.json")
