@@ -216,6 +216,11 @@ data class QodanaConfig(
   var moduleSuspendThreshold: Int = System.getProperty("qodana.module.suspend.threshold", DEFAULT_MODULE_SUSPEND_THRESHOLD).toInt(),
   var projectSuspendThreshold: Int = System.getProperty("qodana.project.suspend.threshold", DEFAULT_PROJECT_SUSPEND_THRESHOLD).toInt(),
 ) {
+  init {
+    require((baseline == null) == (baselineSource == QodanaBaselineSource.NO_BASELINE)) {
+      "The baseline '$baseline' does not agree with the baseline source $baselineSource"
+    }
+  }
 
   companion object {
     fun fromYaml(
