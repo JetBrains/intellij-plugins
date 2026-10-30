@@ -80,6 +80,7 @@ jvm_library(
         "//plugins/ultimate-plugin",
         "@community//xml/plugin",
         "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/testRunner/plugin",
         "//plugins/uml/impl",

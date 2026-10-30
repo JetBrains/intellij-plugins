@@ -38,6 +38,7 @@ jvm_library(
         "//plugins/wechat-miniprogram",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
     ],
     deps = [
         # do not sort,

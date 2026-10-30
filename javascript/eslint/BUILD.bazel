@@ -140,6 +140,7 @@ jvm_library(
         "//contrib/vuejs/vuejs-plugin:plugin",
         "@community//idea/customization/plugin",
         "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
     ],
     deps = [
         # do not sort,

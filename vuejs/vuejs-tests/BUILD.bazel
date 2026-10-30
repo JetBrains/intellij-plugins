@@ -38,6 +38,7 @@ jvm_library(
     runtime_deps = [
         # do not sort,
         "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
         "//contrib/jade/css",
         "@community//idea/customization/plugin",
         "//plugins/ultimate-plugin",

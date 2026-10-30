@@ -36,6 +36,7 @@
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.ultimate.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.json.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.yaml.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.php.impl" scope="RUNTIME" />
   </component>

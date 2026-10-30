@@ -143,6 +143,7 @@ jvm_library(
         "@community//plugins/properties/properties-common:properties",
         "//plugins/ultimate-plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//plugins/yaml/plugin",
     ],
     deps = [
         # do not sort,

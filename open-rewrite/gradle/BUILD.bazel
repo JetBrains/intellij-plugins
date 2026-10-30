@@ -69,6 +69,7 @@ jvm_library(
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "//plugins/microservices/microservices-jvm:jvm",
         "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
         "//plugins/ultimate-plugin",
     ],
     deps = [
