@@ -29,7 +29,7 @@
       <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="intellij.vuejs.webpack" />
+    <orderEntry type="module" module-name="intellij.vuejs.webpack" scope="TEST" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
@@ -41,17 +41,17 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.common" />
+    <orderEntry type="module" module-name="intellij.css.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.plugin" />
+    <orderEntry type="module" module-name="intellij.css.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.rt" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.parser" />
+    <orderEntry type="module" module-name="intellij.javascript.parser" scope="TEST" />
     <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.xml.parser" />
+    <orderEntry type="module" module-name="intellij.xml.parser" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.spellchecker" scope="TEST" />
     <orderEntry type="module" module-name="intellij.grazie.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.indexing.impl" />
+    <orderEntry type="module" module-name="intellij.platform.indexing.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.eslint" scope="TEST" />
@@ -76,7 +76,7 @@
     <orderEntry type="module" module-name="intellij.platform.core.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.web" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.lsp" />
+    <orderEntry type="module" module-name="intellij.platform.lsp" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lang.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.web" scope="TEST" />

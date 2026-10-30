@@ -17,7 +17,7 @@
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
