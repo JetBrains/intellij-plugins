@@ -25,7 +25,7 @@
     <orderEntry type="module" module-name="intellij.libraries.xstream" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module-library">
-      <library name="intellij.aws.cloudformation.meta" type="repository">
+      <library name="cloudformation-meta" type="repository">
         <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2026.1.8">
           <verification>
             <artifact url="file://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2026.1.8/cloudformation-meta-2026.1.8.jar">
