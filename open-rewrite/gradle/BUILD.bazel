@@ -83,7 +83,7 @@ jvm_library(
         "@community//platform/lang-impl",
         "@community//platform/testFramework",
         "@community//platform/external-system-impl:externalSystem-tests_test_lib",
-        "@community//plugins/gradle/testFramework:testFramework_test_lib",
+        "@community//plugins/gradle/testFramework",
         "@community//platform/execution",
         "//contrib/open-rewrite:openRewrite-tests_test_lib",
         "@community//libraries/junit4",

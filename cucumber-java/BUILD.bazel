@@ -154,7 +154,7 @@ jvm_library(
         "@community//plugins/gradle:gradle-common",
         "@community//plugins/gradle/plugin",
         "@community//plugins/gradle/java:java-tests_test_lib",
-        "@community//plugins/gradle/testFramework:testFramework_test_lib",
+        "@community//plugins/gradle/testFramework",
         "@community//java/testFramework",
         "@community//plugins/maven",
         "@community//plugins/maven/testFramework",
