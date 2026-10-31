@@ -7,9 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.angular.backend" />
-    <orderEntry type="module" module-name="intellij.angular.free" />
-    <orderEntry type="module" module-name="intellij.angular.tslint" />
-    <orderEntry type="module" module-name="intellij.javascript.plugin" />
+    <orderEntry type="module" module-name="intellij.angular.backend" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.angular.free" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.angular.tslint" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.javascript.plugin" scope="RUNTIME" />
   </component>
 </module>

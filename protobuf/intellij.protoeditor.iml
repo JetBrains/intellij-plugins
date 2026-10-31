@@ -9,8 +9,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.protoeditor.core" />
-    <orderEntry type="module" module-name="intellij.libraries.protobuf.java.util" />
-    <orderEntry type="module" module-name="intellij.platform.structureView" />
+    <orderEntry type="module" module-name="intellij.protoeditor.core" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.libraries.protobuf.java.util" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.structureView" scope="RUNTIME" />
   </component>
 </module>
