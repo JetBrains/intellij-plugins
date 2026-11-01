@@ -1,21 +1,45 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
-class MakefileCompletionTest : BasePlatformTestCase() {
-  fun testSimple() = doTest("b", "c", "d", testFilename)
-  fun testTargets() = doTest("a", testFilename)
-  fun testAny() = doTest("include", "private", "define", "ifeq", "vpath", "ifndef", "ifneq", "override", "export", "undefine", "ifdef")
-  fun testFunctions() = doTest(*functions)
-  fun testVariables() = doTest("a", "b", "c", *functions)
-  fun testCurly() = doTest("a", "b", "c")
-  fun testComment() = doTest()
+@TestApplication
+class MakefileCompletionTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
 
-  fun doTest(vararg variants: String) = myFixture.testCompletionVariants("$basePath/$testFilename", *variants)
+  private lateinit var testName: String
 
-  private val testFilename get() = "${getTestName(true)}.mk"
-  override fun getTestDataPath() = BASE_TEST_DATA_PATH
-  override fun getBasePath() = "completion"
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
+    myFixture.testDataPath = BASE_TEST_DATA_PATH
+  }
+
+  @Test
+  fun testSimple(): Unit = doTest("b", "c", "d", testFilename)
+  @Test
+  fun testTargets(): Unit = doTest("a", testFilename)
+  @Test
+  fun testAny(): Unit = doTest("include", "private", "define", "ifeq", "vpath", "ifndef", "ifneq", "override", "export", "undefine", "ifdef")
+  @Test
+  fun testFunctions(): Unit = doTest(*functions)
+  @Test
+  fun testVariables(): Unit = doTest("a", "b", "c", *functions)
+  @Test
+  fun testCurly(): Unit = doTest("a", "b", "c")
+  @Test
+  fun testComment(): Unit = doTest()
+
+  fun doTest(vararg variants: String): Unit = myFixture.testCompletionVariants("$basePath/$testFilename", *variants)
+
+  private val testFilename get() = "$testName.mk"
+  private val basePath = "completion"
 
   private val functions = arrayOf("addsuffix", "realpath", "firstword", "origin", "dir", "error", "suffix", "wildcard", "findstring", "foreach", "file", "strip", "wordlist", "addprefix", "and", "guile", "abspath", "warning", "join", "if", "notdir", "value", "info", "or", "patsubst", "filter-out", "words", "subst", "sort", "call", "filter", "flavor", "basename", "eval", "lastword", "shell", "word")
 }

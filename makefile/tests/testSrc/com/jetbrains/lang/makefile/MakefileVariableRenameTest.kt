@@ -1,20 +1,48 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.openapi.application.EDT
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
-class MakefileVariableRenameTest : BasePlatformTestCase() {
-  fun testVarFromDeclaration() = doTest("NEW_NAME")
-  fun testVarFromUsageInRecipe() = doTest("NEW_NAME")
-  fun testVarUsedInPrerequisite() = doTest("NEW_NAME")
-  fun testVarUsedInTarget() = doTest("NEW_NAME")
-  fun testVarSimpleAssignmentTypes() = doTest("NEW_NAME")
+@TestApplication
+class MakefileVariableRenameTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
 
-  private fun doTest(newName: String) {
-    myFixture.configureByFile("$basePath/${getTestName(true)}.mk")
-    myFixture.renameElementAtCaret(newName)
-    myFixture.checkResultByFile("$basePath/${getTestName(true)}.gold.mk")
+  private lateinit var testName: String
+
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
+    myFixture.testDataPath = BASE_TEST_DATA_PATH
   }
 
-  override fun getTestDataPath() = BASE_TEST_DATA_PATH
-  override fun getBasePath() = "rename/variables"
+  @Test
+  fun testVarFromDeclaration(): Unit = doTest("NEW_NAME")
+  @Test
+  fun testVarFromUsageInRecipe(): Unit = doTest("NEW_NAME")
+  @Test
+  fun testVarUsedInPrerequisite(): Unit = doTest("NEW_NAME")
+  @Test
+  fun testVarUsedInTarget(): Unit = doTest("NEW_NAME")
+  @Test
+  fun testVarSimpleAssignmentTypes(): Unit = doTest("NEW_NAME")
+
+  private fun doTest(newName: String): Unit = timeoutRunBlocking {
+    withContext(Dispatchers.EDT) {
+      myFixture.configureByFile("$basePath/$testName.mk")
+      myFixture.renameElementAtCaret(newName)
+      myFixture.checkResultByFile("$basePath/$testName.gold.mk")
+    }
+  }
+
+  private val basePath = "rename/variables"
 }

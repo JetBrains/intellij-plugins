@@ -3,28 +3,52 @@ package com.jetbrains.lang.makefile
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.find.FindManager
 import com.intellij.find.impl.FindManagerImpl
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.hamcrest.core.IsNull.nullValue
-import org.junit.Assert.assertThat
+import com.intellij.openapi.application.runReadActionBlocking
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
-class MakefileFindUsagesTest : BasePlatformTestCase() {
+@TestApplication
+class MakefileFindUsagesTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+
+  private lateinit var testName: String
+
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
+    myFixture.testDataPath = BASE_TEST_DATA_PATH
+  }
+
+  @Test
   fun testSimple() {
-    val usages = myFixture.testFindUsages("$basePath/${getTestName(true)}.mk")
+    myFixture.configureByFile("$basePath/$testName.mk")
+    val usages = runReadActionBlocking { myFixture.testFindUsages() }
 
     assertEquals(2, usages.size)
   }
 
-  fun testPhony() = notSearchableForUsages()
-  fun testForce() = notSearchableForUsages()
+  @Test
+  fun testPhony(): Unit = notSearchableForUsages()
+  @Test
+  fun testForce(): Unit = notSearchableForUsages()
 
   fun notSearchableForUsages() {
-    myFixture.configureByFiles("$basePath/${getTestName(true)}.mk")
-    val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
-    val handler = (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement!!, false)
+    myFixture.configureByFiles("$basePath/$testName.mk")
+    val handler = runReadActionBlocking {
+      val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
+      (FindManager.getInstance(myFixture.project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement!!, false)
+    }
 
-    assertThat(handler, nullValue())
+    assertNull(handler)
   }
 
-  override fun getTestDataPath() = BASE_TEST_DATA_PATH
-  override fun getBasePath() = "findUsages"
+  private val basePath = "findUsages"
 }

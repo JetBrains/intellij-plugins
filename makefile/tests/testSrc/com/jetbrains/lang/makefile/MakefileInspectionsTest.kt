@@ -1,34 +1,41 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
-@RunWith(JUnit4::class)
-class MakefileInspectionsTest : BasePlatformTestCase() {
-  override fun getTestDataPath() =
-    BASE_TEST_DATA_PATH
+@TestApplication
+class MakefileInspectionsTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
 
-  override fun getBasePath() =
+  private val basePath =
     "inspections"
 
-  override fun setUp() {
-    super.setUp()
+  private lateinit var testName: String
+
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
+    myFixture.testDataPath = BASE_TEST_DATA_PATH
     myFixture.enableInspections(MakefileUnresolvedPrerequisiteInspection::class.java)
   }
 
   private fun doTest() {
-    myFixture.testHighlighting(true, false, true, "$basePath/${getTestName(true)}.mk")
+    myFixture.testHighlighting(true, false, true, "$basePath/$testName.mk")
   }
 
   @Test
-  fun unresolved() = doTest()
+  fun unresolved(): Unit = doTest()
 
   @Test
-  fun multiunresolved() = doTest()
+  fun multiunresolved(): Unit = doTest()
 
   @Test
-  fun unresolvedWithPattern() = doTest()
+  fun unresolvedWithPattern(): Unit = doTest()
 }

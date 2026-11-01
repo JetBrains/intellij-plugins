@@ -1,16 +1,30 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.testFramework.JUnit38AssumeSupportRunner
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.annotations.NonNls
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
 /**
  * @see MakefileFoldingBuilder
  */
-@RunWith(JUnit38AssumeSupportRunner::class)
-class MakefileFoldingTest : BasePlatformTestCase() {
+@TestApplication
+class MakefileFoldingTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+
+  private lateinit var testName: String
+
+  @BeforeEach
+  fun setUp(testInfo: TestInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
+    myFixture.testDataPath = BASE_TEST_DATA_PATH
+  }
+
   @Test
   fun testRule(): Unit =
     doTest()
@@ -53,15 +67,12 @@ class MakefileFoldingTest : BasePlatformTestCase() {
 
   private fun doTest(): Unit =
     try {
-      myFixture.testFolding("$testDataPath/$basePath/${getTestName(true)}.mk")
+      myFixture.testFolding("$BASE_TEST_DATA_PATH/$basePath/$testName.mk")
     }
     catch (re: RuntimeException) {
       throw AssertionError(re.cause ?: re)
     }
 
-  override fun getTestDataPath(): @NonNls String =
-    BASE_TEST_DATA_PATH
-
-  override fun getBasePath(): @NonNls String =
+  private val basePath: @NonNls String =
     "folding"
 }

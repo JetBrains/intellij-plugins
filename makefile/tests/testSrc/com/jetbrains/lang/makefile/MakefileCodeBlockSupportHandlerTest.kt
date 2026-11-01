@@ -1,35 +1,38 @@
 package com.jetbrains.lang.makefile
 
 import com.intellij.codeInsight.daemon.impl.IdentifierHighlighterPassFactory
-import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.application.EDT
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.testFramework.EditorTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.junit.Before
-import org.junit.FixMethodOrder
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestName
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.junit.runners.MethodSorters.NAME_ASCENDING
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.TestMethodOrder
 import java.nio.file.Paths
 
 /**
  * @see MakefileCodeBlockSupportHandler
  */
-@RunWith(JUnit4::class)
-@FixMethodOrder(NAME_ASCENDING)
-class MakefileCodeBlockSupportHandlerTest : BasePlatformTestCase() {
-  @get:Rule
-  val testName: TestName = TestName()
+@TestApplication
+@TestMethodOrder(MethodOrderer.MethodName::class)
+class MakefileCodeBlockSupportHandlerTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
 
-  @Before
-  fun before() {
+  private lateinit var testName: String
+
+  @BeforeEach
+  fun before(testInfo: TestInfo) {
+    testName = testInfo.testMethod.get().name
+    myFixture.testDataPath = Paths.get(BASE_TEST_DATA_PATH).resolve("highlighting").resolve("codeBlocks").toString()
     myFixture.setReadEditorMarkupModel(true)
   }
-
-  override fun getTestDataPath(): @NlsSafe String =
-    Paths.get(BASE_TEST_DATA_PATH).resolve("highlighting").resolve("codeBlocks").toString()
 
   @Test
   fun ifEndif(): Unit =
@@ -47,13 +50,14 @@ class MakefileCodeBlockSupportHandlerTest : BasePlatformTestCase() {
   fun ifElseifElseEndif(): Unit =
     doTest()
 
-  private fun doTest() {
-    IdentifierHighlighterPassFactory.doWithIdentifierHighlightingEnabled(project) {
-      val testName = testName.methodName
-      myFixture.configureByFile("$testName.$DEFAULT_EXTENSION")
-      EditorTestUtil.checkEditorHighlighting(myFixture,
-                                             Paths.get(testDataPath).resolve("$testName.result.$DEFAULT_EXTENSION").toString(),
-                                             setOf("MATCHED_BRACE_ATTRIBUTES"))
+  private fun doTest(): Unit = timeoutRunBlocking {
+    withContext(Dispatchers.EDT) {
+      IdentifierHighlighterPassFactory.doWithIdentifierHighlightingEnabled(myFixture.project) {
+        myFixture.configureByFile("$testName.$DEFAULT_EXTENSION")
+        EditorTestUtil.checkEditorHighlighting(myFixture,
+                                               Paths.get(myFixture.testDataPath).resolve("$testName.result.$DEFAULT_EXTENSION").toString(),
+                                               setOf("MATCHED_BRACE_ATTRIBUTES"))
+      }
     }
   }
 

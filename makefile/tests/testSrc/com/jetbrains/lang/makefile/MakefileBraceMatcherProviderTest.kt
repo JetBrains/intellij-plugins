@@ -1,7 +1,10 @@
 package com.jetbrains.lang.makefile
 
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.openapi.application.runReadActionBlocking
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.lang.makefile.psi.MakefileTypes.CLOSE_CURLY
 import com.jetbrains.lang.makefile.psi.MakefileTypes.CLOSE_PAREN
 import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_DEFINE
@@ -9,19 +12,20 @@ import com.jetbrains.lang.makefile.psi.MakefileTypes.KEYWORD_ENDEF
 import com.jetbrains.lang.makefile.psi.MakefileTypes.OPEN_CURLY
 import com.jetbrains.lang.makefile.psi.MakefileTypes.OPEN_PAREN
 import org.intellij.lang.annotations.Language
-import org.junit.Assert
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.junit.runners.MethodSorters.NAME_ASCENDING
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 
 /**
  * @see MakefileBraceMatcherProvider
  */
-@RunWith(JUnit4::class)
-@FixMethodOrder(NAME_ASCENDING)
-class MakefileBraceMatcherProviderTest : BasePlatformTestCase() {
+@TestApplication
+@TestMethodOrder(MethodOrderer.MethodName::class)
+class MakefileBraceMatcherProviderTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+
   @Test
   fun defineMatchForwardCaretBeforeOpeningBrace(): Unit =
     doTest(DEFINE_ENDEF_EXAMPLE,
@@ -120,9 +124,9 @@ class MakefileBraceMatcherProviderTest : BasePlatformTestCase() {
     val textWithCaret = StringBuilder(text).insert(caretOffset, CARET_MARKER).toString()
     myFixture.configureByText(MakefileFileType, textWithCaret)
     val expectedBraceOffset = text.indexOf(matchingBrace)
-    val actualBraceOffset = BraceMatchingUtil.getMatchedBraceOffset(myFixture.editor, forward, myFixture.file)
+    val actualBraceOffset = runReadActionBlocking { BraceMatchingUtil.getMatchedBraceOffset(myFixture.editor, forward, myFixture.file) }
 
-    Assert.assertEquals("$matchingBrace at offset", expectedBraceOffset, actualBraceOffset)
+    assertEquals(expectedBraceOffset, actualBraceOffset, "$matchingBrace at offset")
   }
 
   private companion object {
