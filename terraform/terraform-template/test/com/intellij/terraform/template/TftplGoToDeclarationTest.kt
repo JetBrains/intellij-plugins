@@ -2,17 +2,29 @@ package com.intellij.terraform.template
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.application.readAction
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
 import com.intellij.terraform.template.editor.TftplVariableGoToDeclarationHandler
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hil.psi.ForVariable
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class TftplGoToDeclarationTest : BasePlatformTestCase() {
-  fun `test gtd for local variable`() {
+@TestApplication
+class TftplGoToDeclarationTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+
+  @Test
+  fun `test gtd for local variable`(): Unit = timeoutRunBlocking {
     val templateFile = myFixture.configureByText("test.tftpl", """
       %{~ for var_1 in vars ~}
         %{~ for var_2 in var_1 ~}
@@ -22,12 +34,15 @@ class TftplGoToDeclarationTest : BasePlatformTestCase() {
         %{~ endfor ~}
       %{~ endfor ~}
     """.trimIndent())
-    val expectedTarget = templateFile.findElementWithText<ForVariable>("var_2")
-    val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
-    Assert.assertEquals(expectedTarget, actualTarget)
+    readAction {
+      val expectedTarget = templateFile.findElementWithText<ForVariable>("var_2")
+      val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
+      assertEquals(expectedTarget, actualTarget)
+    }
   }
 
-  fun `test gtd for variables passed to template function directly`() {
+  @Test
+  fun `test gtd for variables passed to template function directly`(): Unit = timeoutRunBlocking {
     val terraformFile = myFixture.addFileToProject("main.tf", """
       resource "resource" "example" {
         content  = templatefile("test.tftpl", {variable = 123})
@@ -37,12 +52,15 @@ class TftplGoToDeclarationTest : BasePlatformTestCase() {
       %{ if vari<caret>able }
       %{ endif }
     """.trimIndent())
-    val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable")
-    val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
-    Assert.assertEquals(expectedTarget, actualTarget)
+    readAction {
+      val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable")
+      val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
+      assertEquals(expectedTarget, actualTarget)
+    }
   }
 
-  fun `test gtd for variables inside data language segment`() {
+  @Test
+  fun `test gtd for variables inside data language segment`(): Unit = timeoutRunBlocking {
     val terraformFile = myFixture.addFileToProject("main.tf", """
       resource "resource" "example" {
         content  = templatefile("test.tftpl", {variable = 123})
@@ -51,9 +69,11 @@ class TftplGoToDeclarationTest : BasePlatformTestCase() {
     myFixture.configureByText("test.tftpl", """
       $dollar{ vari<caret>able }
     """.trimIndent())
-    val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable")
-    val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
-    Assert.assertEquals(expectedTarget, actualTarget)
+    readAction {
+      val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable")
+      val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
+      assertEquals(expectedTarget, actualTarget)
+    }
   }
 
   fun `ignored test gtd for variables inside injected HIL language segment`() {
@@ -70,13 +90,14 @@ class TftplGoToDeclarationTest : BasePlatformTestCase() {
     val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable")
 
      val targets = TftplVariableGoToDeclarationHandler().getGotoDeclarationTargets(injectedVariable, -1, null)
-    Assert.assertTrue(targets.size > 1)
+    assertTrue(targets.size > 1)
     val actualTarget = targets[0]
     //val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
-    Assert.assertEquals(expectedTarget, actualTarget)
+    assertEquals(expectedTarget, actualTarget)
   }
 
-  fun `test gtd for variables passed to template function via reference`() {
+  @Test
+  fun `test gtd for variables passed to template function via reference`(): Unit = timeoutRunBlocking {
     val terraformFile = myFixture.addFileToProject("main.tf", """
       resource "resource" "example" {
         content = templatefile("test.tftpl", var.fromReference)
@@ -92,9 +113,11 @@ class TftplGoToDeclarationTest : BasePlatformTestCase() {
       %{ if vari<caret>able }
       %{ endif }
     """.trimIndent())
-    val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable = 123", false, 3)
-    val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
-    Assert.assertEquals(expectedTarget, actualTarget)
+    readAction {
+      val expectedTarget = terraformFile.findElementWithText<HCLProperty>("variable = 123", false, 3)
+      val actualTarget = GotoDeclarationAction.findTargetElement(myFixture.project, myFixture.editor, myFixture.editor.caretModel.offset)
+      assertEquals(expectedTarget, actualTarget)
+    }
   }
 }
 
@@ -117,8 +140,8 @@ private inline fun <reified T : PsiElement> PsiFile.findElementWithText(searched
       foundElement to effectiveOffset
     }
 
-  Assert.assertNotNull("No element was found at offset $effectiveOffset", foundElement)
+  assertNotNull(foundElement, "No element was found at offset $effectiveOffset")
   val parentOfExpectedType = foundElement!!.parentOfType<T>()
-  Assert.assertNotNull("No parent of type ${T::class.simpleName} was found at offset $effectiveOffset", parentOfExpectedType)
+  assertNotNull(parentOfExpectedType, "No parent of type ${T::class.simpleName} was found at offset $effectiveOffset")
   return parentOfExpectedType!!
 }
