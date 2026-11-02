@@ -13,8 +13,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.psi.stubs.StubRecoveryService;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,8 +127,8 @@ public abstract class CfmlIndex implements Disposable {
   public static void rebuildFileIndex(PsiElement element, StubIndexKey k) {
     VirtualFile faultyContainer = PsiUtilCore.getVirtualFile(element);
     LOG.warn("Wrong element " + element.getText() + " from " + faultyContainer + " in index: " + k);
-    if (faultyContainer != null && faultyContainer.isValid()) {
-      FileBasedIndex.getInstance().requestReindex(faultyContainer);
+    if (faultyContainer != null) {
+      StubRecoveryService.getInstance().scheduleReindexing(element.getProject(), faultyContainer);
     }
   }
 }
