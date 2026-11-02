@@ -39,6 +39,7 @@ class VueCompletionTest :
         require(dir) { "Only `dir` option is supported!" }
 
         val separateExpectedData = fixture.tempDirFixture.getFile("items-tsgo-proxy") != null
+                                   || testMethodName == "testScriptSetupGlobals"
                                    || testMethodName == "testScriptSetupGlobalsTs"
 
         location
