@@ -80,9 +80,8 @@ jvm_library(
         "@community//json/backend",
         "@community//platform/core-api:core",
         "@community//platform/core-impl",
-        "@community//platform/testFramework",
         "@community//libraries/assertj-core",
-        "@community//libraries/junit4",
+        "@community//libraries/junit6",
     ],
 )
 ### auto-generated section `build intellij.qodana.json.tests` end
