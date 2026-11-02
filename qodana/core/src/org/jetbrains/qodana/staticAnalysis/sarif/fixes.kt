@@ -40,6 +40,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.platform.util.coroutines.mapConcurrent
+import com.intellij.psi.PsiBinaryFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -202,6 +203,7 @@ private suspend fun reconstructProblems(results: List<Result>,
   val inspections = results.map { it.ruleId }.toSet()
   val file = VfsUtil.findRelativeFile(uri, projectDir) ?: return emptyList()
   val psiFile = readAction { PsiManager.getInstance(runContext.project).findFile(file) } ?: return emptyList()
+  if (psiFile is PsiBinaryFile || psiFile.fileType.isBinary) return emptyList()
   val psiFileTextLength = readAction { psiFile.textLength }
 
   val textRange = TextRange(0, psiFileTextLength)

@@ -1,6 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.GlobalInspectionContext
+import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.GlobalSimpleInspectionTool
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalQuickFix
@@ -8,6 +10,8 @@ import com.intellij.codeInspection.ProblemDescriptionsProcessor
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.QuickFix
+import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.modcommand.ActionContext
 import com.intellij.modcommand.ModCommand
 import com.intellij.modcommand.ModCommandAction
@@ -16,15 +20,20 @@ import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.ModUpdateFileText
 import com.intellij.modcommand.Presentation
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
+import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiBinaryFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.concurrency.ThreadingAssertions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.incorrectFormatting.IncorrectFormattingResultHandlerProviderQodana.Companion.QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.sarif.ALLOW_NON_BATCH_FIXES
+import org.jetbrains.qodana.staticAnalysis.testFramework.logRecordsFrom
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 import kotlin.io.path.absolutePathString
@@ -99,6 +108,21 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
     finally {
       if (previousValue == null) System.clearProperty(ALLOW_NON_BATCH_FIXES) else System.setProperty(ALLOW_NON_BATCH_FIXES, previousValue)
     }
+  }
+
+  @Test
+  fun testBinaryFileProblem() {
+    registerGlobalTool(BinaryFileGlobalInspectionTool())
+    reinstantiateInspectionRelatedServices(project, testRootDisposable)
+    updateQodanaConfig {
+      it.copy(profile = QodanaProfileConfig.fromPath(getTestDataPath("profile.yaml").absolutePathString()))
+    }
+    val records = logRecordsFrom(QodanaRunner::class.java.name) {
+      runAnalysis()
+    }
+    val uris = manager.sarifRun.results.map { it.locations[0].physicalLocation.artifactLocation.uri }
+    assertEquals(listOf("test-module/icon.png"), uris)
+    assertEmpty(records)
   }
 
   private fun runTestWithGlobalSimpleTool(tool: TestGlobalSimpleInspectionTool) {
@@ -220,4 +244,59 @@ private class NonModCommandAddCommentQuickFix : LocalQuickFix {
     ThreadingAssertions.assertWriteAccess()
     descriptor.psiElement.containingFile.viewProvider.document?.insertString(0, "// test: non-ModCommand fix\n")
   }
+}
+
+/** Reports each PNG file the way Android Lint reports a problem on a binary file. */
+private class BinaryFileGlobalInspectionTool : GlobalInspectionTool() {
+  override fun getShortName(): String = "testBinaryFileInspectionName"
+
+  override fun getGroupDisplayName(): String = "testGroup"
+
+  override fun runInspection(scope: AnalysisScope,
+                             manager: InspectionManager,
+                             globalContext: GlobalInspectionContext,
+                             processor: ProblemDescriptionsProcessor) {
+    scope.accept { virtualFile ->
+      if (virtualFile.extension == "png") {
+        val psiFile = PsiManager.getInstance(manager.project).findFile(virtualFile)
+        if (psiFile is PsiBinaryFile) {
+          processor.addProblemElement(globalContext.refManager.getReference(psiFile), BinaryFileProblemDescriptor(psiFile))
+        }
+      }
+      true
+    }
+  }
+}
+
+/** A copy of the Android Lint descriptor for a binary file. It has no text range and line 0. */
+private class BinaryFileProblemDescriptor(private val file: PsiFile) : ProblemDescriptor {
+  private var group: ProblemGroup? = null
+
+  override fun getPsiElement(): PsiElement = file
+
+  override fun getStartElement(): PsiElement = file
+
+  override fun getEndElement(): PsiElement = file
+
+  override fun getTextRangeInElement(): TextRange = TextRange(0, 0)
+
+  override fun getLineNumber(): Int = 0
+
+  override fun getHighlightType(): ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+
+  override fun isAfterEndOfLine(): Boolean = false
+
+  override fun setTextAttributes(key: TextAttributesKey?) {}
+
+  override fun getProblemGroup(): ProblemGroup? = group
+
+  override fun setProblemGroup(problemGroup: ProblemGroup?) {
+    group = problemGroup
+  }
+
+  override fun showTooltip(): Boolean = false
+
+  override fun getDescriptionTemplate(): String = "Binary file problem"
+
+  override fun getFixes(): Array<QuickFix<*>> = arrayOf(AddCommentQuickFix())
 }
