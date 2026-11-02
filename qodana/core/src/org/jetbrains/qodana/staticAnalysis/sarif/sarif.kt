@@ -76,7 +76,7 @@ private const val PROJECT_DIR_PREFIX = "file://\$PROJECT_DIR\$/"
 internal const val QODANA_JOB_URL = "QODANA_JOB_URL"
 internal const val SUPPRESS_TOOL_ID_PARAMETER = "suppressToolId"
 internal const val CWE_IDS_PARAMETER = "cweIds"
-const val VULNERABILITY_IDS_PROPERTY: String = "vulnerabilityIds"
+internal const val VULNERABILITY_IDS_PROPERTY: String = "vulnerabilityIds"
 internal const val INSPECTION_ASPECTS_PARAMETER = "codeQualityCategory"
 
 internal const val REGION_LINES_COUNT_IF_PROBLEM_IS_FILE = 2
