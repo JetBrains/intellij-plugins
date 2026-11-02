@@ -20,6 +20,8 @@
     <orderEntry type="module" module-name="intellij.database.sql.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.database.sql.backend.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.indexing.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.structureView" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />

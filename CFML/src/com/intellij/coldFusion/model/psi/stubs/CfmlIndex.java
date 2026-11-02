@@ -3,30 +3,21 @@ package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.stubs.StubRecoveryService;
-import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class CfmlIndex implements Disposable {
-  private static final Logger LOG = Logger.getInstance(CfmlIndex.class);
   private static final Key<GlobalSearchScope> MY_SCOPE_KEY = Key.create("default.cfml.scope");
   private static final Map<Project, CfmlIndex> managers = new HashMap<>();
   private final Project project;
@@ -70,16 +61,14 @@ public abstract class CfmlIndex implements Disposable {
 
   public @NotNull Collection<CfmlComponent> getComponentsByNameInScope(final @Nullable String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
-    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlComponentIndex.KEY, StringUtil.toLowerCase(name), project, scope,
-                                                                     CfmlComponent.class);
-    return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlComponentIndex.KEY);
+    return StubIndex.getElements(CfmlComponentIndex.KEY, StringUtil.toLowerCase(name), project, scope,
+                                 CfmlComponent.class);
   }
 
   public @NotNull Collection<CfmlComponent> getInterfacesByNameInScope(final @Nullable String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
-    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlInterfaceIndex.KEY, StringUtil.toLowerCase(name), project, scope,
-                                                                     CfmlComponent.class);
-    return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlInterfaceIndex.KEY);
+    return StubIndex.getElements(CfmlInterfaceIndex.KEY, StringUtil.toLowerCase(name), project, scope,
+                                 CfmlComponent.class);
   }
 
   public @NotNull Collection<String> getAllComponentsNames() {
@@ -93,42 +82,5 @@ public abstract class CfmlIndex implements Disposable {
   @Override
   public void dispose() {
     managers.remove(project);
-  }
-
-  // reused code (com.jetbrains.php.PHPIndex) for the same reason
-  private static <T extends PsiElement> Collection<T> workaroundIndexBug(Collection<T> items, final Class<T> aClass,
-                                                                         StubIndexKey key) {
-    // following code is workaround against known yet unresolved bug with index corruption.
-    // but lets be optimistic and suppose that most of the time data is ok
-
-    boolean ok = true;
-    for (PsiElement element : items) {
-      if (!aClass.isInstance(element)) {
-        rebuildFileIndex(element, key);
-        ok = false;
-        break;
-      }
-    }
-
-    if (ok) return items;
-
-    Set<T> result = new HashSet<>(items.size());
-    for (T element : items) {
-      if (aClass.isInstance(element)) {
-        result.add(element);
-      }
-      else {
-        rebuildFileIndex(element, key);
-      }
-    }
-    return result;
-  }
-
-  public static void rebuildFileIndex(PsiElement element, StubIndexKey k) {
-    VirtualFile faultyContainer = PsiUtilCore.getVirtualFile(element);
-    LOG.warn("Wrong element " + element.getText() + " from " + faultyContainer + " in index: " + k);
-    if (faultyContainer != null) {
-      StubRecoveryService.getInstance().scheduleReindexing(element.getProject(), faultyContainer);
-    }
   }
 }
