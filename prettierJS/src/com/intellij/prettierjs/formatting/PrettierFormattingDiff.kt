@@ -26,6 +26,15 @@ internal fun computeFormattingDiff(
       add(document.getLineNumber(rm.endOffset))
     }
   }
+  val markerOffsets: List<Int> = buildList {
+    snapshot?.primary?.takeIf { it.isValid }?.let { rm ->
+      add(rm.startOffset)
+    }
+    snapshot?.secondary?.takeIf { it.isValid }?.let { rm ->
+      add(rm.startOffset)
+      add(rm.endOffset)
+    }
+  }
 
   val originalLines = LineOffsetsUtil.create(document)
   val formattedLines = LineOffsetsUtil.create(formatted)
@@ -126,8 +135,8 @@ internal fun computeFormattingDiff(
         DumbProgressIndicator.INSTANCE,
       )
 
-      for (charFragment in charFragments) {
-        addFragment(
+      val blockFragments = charFragments.map { charFragment ->
+        PrettierDiffFragment(
           startOffset1 = originalRange.startOffset + charFragment.startOffset1,
           endOffset1 = originalRange.startOffset + charFragment.endOffset1,
           startOffset2 = formattedRange.startOffset + charFragment.startOffset2,
@@ -135,8 +144,42 @@ internal fun computeFormattingDiff(
           isCharFragment = true,
         )
       }
+      addAll(joinFragmentsBetweenOffsets(blockFragments, markerOffsets))
     }
   }
+}
+
+/**
+ * Joins the [fragments] into as few fragments as the [offsets] allow.
+ * A fragment that touches an offset stays as it is, and a joined fragment never spans an offset.
+ * A range marker at an offset thus moves the same way as it does with the full list.
+ * The [fragments] must be sorted by offset and must not overlap.
+ */
+internal fun joinFragmentsBetweenOffsets(fragments: List<PrettierDiffFragment>, offsets: List<Int>): List<PrettierDiffFragment> {
+  val result = ArrayList<PrettierDiffFragment>()
+  var groupStart = 0
+  for (index in fragments.indices) {
+    val fragment = fragments[index]
+    val touchesOffset = offsets.any { it in fragment.startOffset1..fragment.endOffset1 }
+    val gapHoldsOffset = index > groupStart && offsets.any { it in fragments[index - 1].endOffset1..fragment.startOffset1 }
+    if (touchesOffset || gapHoldsOffset) {
+      if (index > groupStart) result.add(joinFragments(fragments, groupStart, index))
+      groupStart = index
+    }
+    if (touchesOffset) {
+      result.add(fragment)
+      groupStart = index + 1
+    }
+  }
+  if (groupStart < fragments.size) result.add(joinFragments(fragments, groupStart, fragments.size))
+  return result
+}
+
+/** One fragment that covers the fragments from [from] inclusive to [to] exclusive and the equal text between them. */
+private fun joinFragments(fragments: List<PrettierDiffFragment>, from: Int, to: Int): PrettierDiffFragment {
+  val first = fragments[from]
+  val last = fragments[to - 1]
+  return if (first === last) first else first.copy(endOffset1 = last.endOffset1, endOffset2 = last.endOffset2)
 }
 
 internal data class PrettierDiffFragment(
