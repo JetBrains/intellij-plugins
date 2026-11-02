@@ -140,6 +140,7 @@ jvm_library(
         "@community//platform/structure-view-impl/plugin",
         "@community//platform/testRunner/plugin",
         "@community//platform/vcs/plugin",
+        "@community//plugins/properties/plugin",
         "@community//plugins/properties/properties-common:properties",
         "//plugins/ultimate-plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
