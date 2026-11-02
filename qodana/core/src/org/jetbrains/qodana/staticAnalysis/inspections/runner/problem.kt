@@ -4,6 +4,7 @@ import com.intellij.codeInsight.daemon.impl.PROBLEM_DESCRIPTOR_TAG
 import com.intellij.codeInsight.daemon.impl.RELATED_LOCATIONS
 import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_CHILD_HASH
 import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_ROOT_HASH
+import com.intellij.codeInspection.ex.VULNERABILITY_IDS
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.UserDataHolderEx
@@ -19,6 +20,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
+import org.jetbrains.qodana.staticAnalysis.sarif.VULNERABILITY_IDS_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintDebugLog
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintData
@@ -53,6 +55,15 @@ internal class XmlProblem(
       fingerprintData?.storeIn(props)
       result.properties = props
       props.tags.addAll(userData?.getUserData(PROBLEM_DESCRIPTOR_TAG) ?: emptyList())
+      val vulnerabilityIds = userData?.getUserData(VULNERABILITY_IDS)
+        ?.map { it.trim() }
+        ?.filter { it.isNotEmpty() }
+        ?.distinct()
+        .orEmpty()
+      if (vulnerabilityIds.isNotEmpty()) {
+        props[VULNERABILITY_IDS_PROPERTY] = vulnerabilityIds
+        props.tags.addAll(vulnerabilityIds)
+      }
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
         ?.map { it.toSarifLocation(macroManager, result) }
         ?.toSet()
