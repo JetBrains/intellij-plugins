@@ -14,12 +14,16 @@
     <module name="intellij.platform.indexing"/>
     <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.lang.impl"/>
+    <module name="intellij.platform.projectModel"/>
     <module name="intellij.qodana.sarif"/>
   </dependencies>
   <!-- endregion -->
   <resource-bundle>messages.QodanaDartBundle</resource-bundle>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <globalOutputConsumer implementation="org.jetbrains.qodana.dart.DartAnalyzeGlobalOutputConsumer"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.intellij">
+    <qodana.workflowExtension implementation="org.jetbrains.qodana.dart.QodanaIncludeDartBinDirectory"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <globalInspection language=""

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "code": "undefined_identifier",
+      "severity": "ERROR",
+      "type": "COMPILE_TIME_ERROR",
+      "location": {
+        "file": "lib.dart",
+        "range": {
+          "start": { "offset": 23, "line": 2, "column": 3 },
+          "end": { "offset": 37, "line": 2, "column": 17 }
+        }
+      },
+      "problemMessage": "Undefined name 'missingFromLib'.",
+      "correctionMessage": "Try correcting the name to one that is defined, or defining the name."
+    }
+  ]
+}
