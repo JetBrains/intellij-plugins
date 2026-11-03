@@ -25,7 +25,9 @@ import java.nio.file.Path
 class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
 
   override fun canHandle(contextPath: Path): Boolean {
-    return contextPath.fileName.endsWith(".kt") || contextPath.fileName.endsWith(".kts")
+    // Path.endsWith compares whole path segments, so compare the file name as text.
+    val fileName = contextPath.fileName.toString()
+    return fileName.endsWith(".kt") || fileName.endsWith(".kts")
   }
 
   @OptIn(KaExperimentalApi::class)
@@ -34,8 +36,9 @@ class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
       val scope = GlobalSearchScope.projectScope(project)
       val fileName = contextPath.fileName.toString()
 
-      val byName = FilenameIndex.firstVirtualFileWithName(fileName, false, scope, null)
-      val ktVirtualFile = byName ?: findKtFileInMatchingModule(project, contextPath)
+      // The module that owns the context path comes first; a same-named file elsewhere may sit in an unrelated module.
+      val ktVirtualFile = findKtFileInMatchingModule(project, contextPath)
+                          ?: FilenameIndex.firstVirtualFileWithName(fileName, false, scope, null)
 
       ktVirtualFile
         ?.let { PsiManager.getInstance(project).findFile(it) }
@@ -55,9 +58,9 @@ class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
 
   /**
    * Finds a .kt file from the module that owns [contextPath].
-   * Walks up from the context path to find the nearest existing directory in the VFS,
-   * then asks [ProjectFileIndex] which module contains it. This avoids iterating all modules
-   * and touching their source roots, which forces lazy initialization and can break SDK checks.
+   * Walks up from the context path to find the nearest existing file or directory in the VFS, so a file that no longer
+   * exists still gets the module of its directory, then asks [ProjectFileIndex] which module contains it. This avoids
+   * iterating all modules and touching their source roots, which forces lazy initialization and can break SDK checks.
    */
   private fun findKtFileInMatchingModule(project: Project, contextPath: Path): VirtualFile? {
     val normalizedContext = if (contextPath.isAbsolute) {
@@ -71,7 +74,7 @@ class KotlinCustomPsiFileFactory : CustomPsiFileFactory {
     val projectFileIndex = ProjectFileIndex.getInstance(project)
     val localFs = LocalFileSystem.getInstance()
 
-    var current: Path? = normalizedContext.parent
+    var current: Path? = normalizedContext
     while (current != null) {
       val vFile = localFs.findFileByPath(current.toString()) ?: run {
         current = current.parent
