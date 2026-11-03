@@ -5,8 +5,8 @@
 - Kind: plugin
 - Plugin id: `mdx.js`
 - Plan root: `contrib/mdx`
-- Root descriptor: `contrib/mdx/src/main/resources/META-INF/plugin.xml`
-- Root JPS module: `intellij.mdx`
+- Root descriptor: `contrib/mdx/plugin/resources/META-INF/plugin.xml`
+- Root JPS module: `intellij.mdx.plugin`
 - Last verified: 2026-09-09. The optional React Emmet module is shared. MDX passed 4/4 tests. JSX passed 37/37 tests.
 
 ## Current Split State
@@ -18,7 +18,7 @@
   - `intellij.mdx.frontend`
   - `intellij.mdx.frontend.split`
   - `intellij.mdx.react`
-- Root descriptor state: metadata-only; the empty `intellij.mdx` legacy content descriptor remains for compatibility and is embedded in the top-level `lib/intellij.mdx.jar` so the plugin has a root classpath entry.
+- Root descriptor state: metadata-only; the `intellij.mdx.plugin` module contains only the plugin descriptor. The empty `intellij.mdx` legacy content descriptor remains for compatibility and is embedded in the top-level `lib/intellij.mdx.jar` so the plugin has a root classpath entry.
 - Module visibility: the legacy root, MDX shared, MDX React, and React shared content modules are `internal`.
 - Full Line has an explicit dependency on the MDX shared module.
 - Recognized module kinds:
@@ -66,10 +66,14 @@
 
 ## Module And Descriptor Inventory
 
+- `intellij.mdx.plugin`
+  - Descriptor: `plugin/resources/META-INF/plugin.xml`
+  - Role: plugin metadata and content composition
+
 - `intellij.mdx`
-  - Descriptor: `src/main/resources/META-INF/plugin.xml` plus empty `src/main/resources/intellij.mdx.xml`
+  - Descriptor: empty `src/main/resources/intellij.mdx.xml`
   - Kind: shared
-  - Role: plugin metadata and content composition; the legacy module is embedded in `lib/intellij.mdx.jar` to preserve its module identity and provide the root plugin classpath entry
+  - Role: the legacy module is embedded in `lib/intellij.mdx.jar` to preserve its module identity and provide the root plugin classpath entry
 
 - `intellij.mdx.shared`
   - Descriptor: `shared/resources/intellij.mdx.shared.xml`
