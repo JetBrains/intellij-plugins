@@ -11,7 +11,9 @@ import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.util.elementType
 import com.jetbrains.qodana.sarif.model.Result
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
@@ -36,6 +38,7 @@ import kotlin.io.path.createTempDirectory
 import kotlin.io.path.createTempFile
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.extension
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -150,9 +153,13 @@ internal suspend fun runInspectionKtsImpl(
                       inspectionResultMessage = "No PSI file found for $contextPath"
                     )
       val problems = inspectFile(compilation.tool, psiFile)
+      val found = if (problems.isEmpty()) "Inspection found no problems"
+                  else "Inspection found ${problems.size} problems"
+      val unresolved = unresolvedReferences(psiFile)
       InspectionKtsRunResult(
         compilationSuccess = true,
-        inspectionResultMessage = if (problems.isEmpty()) "Inspection found no problems" else "Inspection found ${problems.size} problems",
+        inspectionResultMessage = if (unresolved.isEmpty()) found
+                                  else "$found; unresolved references: ${unresolved.joinToString()}",
         foundProblems = problems,
       )
     }
@@ -259,7 +266,12 @@ private suspend fun inspectExample(
     return InspectionKtsFileResult(example.id, source.toString(), executionError = "Target source file does not exist")
   }
   return try {
-    val psiFile = CustomPsiFileFactory.createOrFindPsiFile(project, source, source.readText())
+    // The context path also names the file for the PSI factory, so it is used only when it has the example's language.
+    val contextPath = example.contextPath
+                        ?.let { project.resolveInProject(it, false) }
+                        ?.takeIf { it.extension == source.extension }
+                      ?: source
+    val psiFile = CustomPsiFileFactory.createOrFindPsiFile(project, contextPath, source.readText())
                   ?: return InspectionKtsFileResult(example.id, source.toString(), executionError = "No PSI file found")
     InspectionKtsFileResult(example.id, source.toString(), inspectFile(compilation.tool, psiFile))
   }
@@ -267,6 +279,18 @@ private suspend fun inspectExample(
     InspectionKtsFileResult(example.id, source.toString(), executionError = e.message ?: e.javaClass.simpleName)
   }
 }
+
+private suspend fun unresolvedReferences(psiFile: PsiFile): List<String> = readAction {
+  SyntaxTraverser.psiTraverser(psiFile).asSequence()
+    .flatMap { it.references.asSequence() }
+    .filter { !it.isSoft && it.resolve() == null }
+    .map { it.canonicalText }
+    .distinct()
+    .take(MAX_UNRESOLVED_REFERENCES)
+    .toList()
+}
+
+private const val MAX_UNRESOLVED_REFERENCES = 20
 
 private suspend fun inspectFile(
   tool: com.intellij.codeInspection.LocalInspectionTool,

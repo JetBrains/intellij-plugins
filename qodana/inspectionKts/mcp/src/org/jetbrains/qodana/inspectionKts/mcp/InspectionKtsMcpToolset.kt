@@ -112,7 +112,10 @@ class InspectionKtsMcpToolset : McpToolset {
   )
   suspend fun run_inspection_kts_examples(
     @McpDescription("The inspection.kts script content to compile and execute") inspectionKtsCode: String,
-    @McpDescription("Generic test-project paths and the source file to inspect in each project")
+    @McpDescription(
+      "Generic test-project paths, the source file to inspect in each project and, optionally, a contextPath in the " +
+      "opened project whose module resolves the source"
+    )
     examples: List<InspectionKtsExampleRequest>,
   ): InspectionKtsBatchRunResult {
     val project = currentCoroutineContext().project
@@ -147,6 +150,7 @@ data class InspectionKtsExampleRequest(
   val id: String,
   val projectPath: String,
   val targetFilePath: String,
+  val contextPath: String? = null,
 )
 
 @Serializable
