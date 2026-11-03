@@ -313,6 +313,16 @@ class VueKolarTranspilerTest {
   }
 
   @Test
+  fun `predefined-components`() {
+    doTest()
+  }
+
+  @Test
+  fun `predefined-components__vapor`() {
+    doTest()
+  }
+
+  @Test
   fun `props-array`() {
     doTest()
   }

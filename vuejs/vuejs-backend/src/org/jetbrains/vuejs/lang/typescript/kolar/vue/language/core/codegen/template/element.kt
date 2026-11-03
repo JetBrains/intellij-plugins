@@ -145,7 +145,7 @@ fun generateComponent(
       for (name in originalNames) {
         yield(", '$name'")
       }
-      yield(")[")
+      yield(">[")
       yieldAll(generateStringLiteralKey(
         tag,
         startTagOffset,

@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.u
 import java.io.DataInput
 import java.io.DataOutput
 
-private const val TRANSPILED_FILE_GIST_VERSION: Int = 5
+private const val TRANSPILED_FILE_GIST_VERSION: Int = 6
 
 @Service(Service.Level.APP)
 class VueTranspiledFileBuilder {
