@@ -8,7 +8,8 @@ The final SARIF report identifies each diagnostic with a derived rule such as `d
 ## SDK and project requirements
 
 - The scan environment must provide a Dart executable and the project dependencies.
-- `QODANA_FLUTTER_PATH` accepts an SDK `bin` directory or an executable path.
+- `QODANA_FLUTTER_PATH` accepts an SDK root, its `bin` directory, or an executable path.
+  For any configured directory, the runner checks that directory and its `bin` subdirectory.
   A Flutter SDK can supply the Dart executable.
 - Without an explicit path, the runner looks for `dart` on `PATH`.
   An unusable explicit path produces an error; it does not fall back to `PATH`.

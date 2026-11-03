@@ -20,7 +20,9 @@ internal const val FLUTTER_PATH_ENV = "QODANA_FLUTTER_PATH"
 internal sealed interface DartExecutable {
   data class Available(val path: Path) : DartExecutable
   data object Missing : DartExecutable
-  data class Unusable(val path: String) : DartExecutable
+  data class Unusable(val path: String, val reason: Reason) : DartExecutable
+
+  enum class Reason { INVALID_PATH, NOT_FOUND, NOT_EXECUTABLE }
 }
 
 internal fun interface DartExecutableResolver {
@@ -135,16 +137,19 @@ internal fun configuredExecutableResolver(
   }.onFailure { e ->
     rethrowControlFlowException(e)
     LOG.warn("Failed to parse the configured $executableName executable path", e)
-  }.getOrNull() ?: return@DartExecutableResolver DartExecutable.Unusable(configuredPath)
+  }.getOrNull() ?: return@DartExecutableResolver DartExecutable.Unusable(configuredPath, DartExecutable.Reason.INVALID_PATH)
   val executableNames = executableNames(executableName, isWindows)
   val executableCandidates = if (Files.isDirectory(configuredPathValue)) {
-    executableNames.map(configuredPathValue::resolve)
+    executableNames.map(configuredPathValue::resolve) + executableNames.map(configuredPathValue.resolve("bin")::resolve)
   }
   else {
     executablePaths(configuredPathValue, executableNames)
   }
   executableCandidates.firstOrNull(isExecutable)?.let(DartExecutable::Available)
-    ?: DartExecutable.Unusable(configuredPath)
+    ?: executableCandidates.firstOrNull(Files::isRegularFile)?.let {
+      DartExecutable.Unusable(it.toString(), DartExecutable.Reason.NOT_EXECUTABLE)
+    }
+    ?: DartExecutable.Unusable(configuredPath, DartExecutable.Reason.NOT_FOUND)
 }
 
 internal fun executableNames(executableName: String, isWindows: Boolean): List<String> =
@@ -172,7 +177,11 @@ internal class DartExecutableRunner(
 
 private fun DartExecutable.toFailure(envName: String): DartAnalyzeRunResult.Failure = when (this) {
   DartExecutable.Missing -> DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.executable.not.configured", envName))
-  is DartExecutable.Unusable -> DartAnalyzeRunResult.Failure(QodanaDartBundle.message("dart.analyze.error.executable.not.executable", path))
+  is DartExecutable.Unusable -> DartAnalyzeRunResult.Failure(when (reason) {
+    DartExecutable.Reason.INVALID_PATH -> QodanaDartBundle.message("dart.analyze.error.executable.invalid.path", envName, path)
+    DartExecutable.Reason.NOT_FOUND -> QodanaDartBundle.message("dart.analyze.error.executable.not.found", envName, path)
+    DartExecutable.Reason.NOT_EXECUTABLE -> QodanaDartBundle.message("dart.analyze.error.executable.not.executable", path)
+  })
   is DartExecutable.Available -> error("An available executable cannot produce a failure")
 }
 
