@@ -20,5 +20,7 @@
     <orderEntry type="module" module-name="intellij.tools.ide.starter.product.idea.ultimate" scope="TEST" />
     <orderEntry type="module" module-name="intellij.qodana.testsFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.ide.starter.extended" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.idea.community.customization" scope="RUNTIME" />
   </component>
 </module>
