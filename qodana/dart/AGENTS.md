@@ -22,17 +22,15 @@ The final SARIF report identifies each diagnostic with a derived rule such as `d
   Excluded files and non-Dart files must not trigger analysis.
 - Run `dart analyze --format=json .` once per inspection invocation.
   Check the SDK with `dart --version` first, and skip analysis if that check fails.
-  Select the common ancestor of the parent directories of the Dart files in the inspection scope.
-  Use `FilenameIndex` to select those files and `VfsUtil.getCommonAncestor` to select the directory.
-  Skip files in hidden directories under the project directory when selecting the analysis directory.
-- Analyze the selected directory as a whole, including nested packages.
+  Run it in the project directory. Do not narrow the directory to the Dart files in the scope.
+- Analyze the project directory as a whole, including nested packages.
   Do not discover packages and start a separate analyzer for each package.
   The [Dart analyzer](https://dart.dev/tools/dart-analyze) discovers the Dart files under that directory.
   It applies the relevant [analysis options](https://dart.dev/tools/analysis#the-analysis-options-file), including exclusions and lint rules.
   It looks for `analysis_options.yaml` at each package root, then in parent directories, and uses standard checks if none exists.
   Flutter projects use the same Dart command.
 - Qodana scope and inspection exclusions control which diagnostics reach the report.
-  An incremental scan analyzes the common directory of its Dart files but reports only results within its scope.
+  An incremental scan analyzes the project directory but reports only results within its scope.
 - Preserve diagnostic severity, message, correction text, and source location.
 - Accept a nonzero analyzer exit code when the output contains valid diagnostics.
   Report SDK check failures as `DartAnalyzeSanity` issues, while other inspections continue.

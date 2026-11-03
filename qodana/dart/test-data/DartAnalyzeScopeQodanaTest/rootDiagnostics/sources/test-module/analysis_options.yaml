@@ -1,0 +1,4 @@
+linter:
+  rules:
+    await_only_futures: true
+    missing_lint_rule: true

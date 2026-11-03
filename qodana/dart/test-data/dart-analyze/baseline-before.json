@@ -6,7 +6,7 @@
       "severity": "WARNING",
       "type": "STATIC_WARNING",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": {
             "offset": 22,
@@ -28,7 +28,7 @@
       "severity": "WARNING",
       "type": "STATIC_WARNING",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": {
             "offset": 47,
@@ -50,7 +50,7 @@
       "severity": "ERROR",
       "type": "COMPILE_TIME_ERROR",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": { "offset": 67, "line": 4, "column": 3 },
           "end": { "offset": 74, "line": 4, "column": 10 }

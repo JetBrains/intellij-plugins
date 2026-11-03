@@ -16,7 +16,7 @@ import kotlin.io.path.readText
 
 internal class DartAnalyzeBaselineTest : DartAnalyzeProjectQodanaTestCase() {
   override val analyzeResponses: MutableMap<String, RecordedDartAnalyzeResponse> = mutableMapOf(
-    "lib" to readDartAnalyzeTestData("fingerprints.json"),
+    "" to readDartAnalyzeTestData("fingerprints.json"),
   )
 
   @Test
@@ -50,7 +50,7 @@ internal class DartAnalyzeBaselineTest : DartAnalyzeProjectQodanaTestCase() {
   @Test
   fun `baseline keeps definitions for remaining and absent diagnostic rules`() {
     updateSource(getTestDataPath("baseline-before.dart").readText())
-    analyzeResponses["lib"] = readDartAnalyzeTestData("baseline-before.json")
+    analyzeResponses[""] = readDartAnalyzeTestData("baseline-before.json")
     runAnalysis()
 
     val ruleId = "dart_unused_local_variable"
@@ -64,7 +64,7 @@ internal class DartAnalyzeBaselineTest : DartAnalyzeProjectQodanaTestCase() {
     updateQodanaConfig { it.copy(baseline = baseline.toString(), baselineSource = QodanaBaselineSource.LOCAL_BASELINE, includeAbsent = true) }
 
     updateSource(getTestDataPath("baseline-after.dart").readText())
-    analyzeResponses["lib"] = readDartAnalyzeTestData("baseline-after.json")
+    analyzeResponses[""] = readDartAnalyzeTestData("baseline-after.json")
     runAnalysis()
 
     val results = manager.sarifRun.results.filter { it.ruleId == ruleId }

@@ -11,7 +11,7 @@
               },
               "level": "error",
               "exception": {
-                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$/lib': QODANA_FLUTTER_PATH is not set or is blank, and PATH has no Dart executable. Set QODANA_FLUTTER_PATH to a Dart or Flutter SDK directory.\n"
+                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$': QODANA_FLUTTER_PATH is not set or is blank, and PATH has no Dart executable. Set QODANA_FLUTTER_PATH to a Dart or Flutter SDK directory.\n"
               },
               "properties": {
                 "toolId": "DartAnalyze",

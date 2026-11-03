@@ -6,7 +6,7 @@
       "severity": "WARNING",
       "type": "STATIC_WARNING",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": {
             "offset": 22,

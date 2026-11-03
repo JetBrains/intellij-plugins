@@ -6,7 +6,7 @@
       "severity": "ERROR",
       "type": "COMPILE_TIME_ERROR",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": {
             "offset": 14,
@@ -28,7 +28,7 @@
       "severity": "WARNING",
       "type": "STATIC_WARNING",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": {
             "offset": 27,
@@ -50,7 +50,7 @@
       "severity": "INFO",
       "type": "LINT",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": {
             "offset": 72,
@@ -71,7 +71,7 @@
       "code": "undefined_identifier",
       "severity": "ERROR",
       "location": {
-        "file": "wanted.dart",
+        "file": "lib/wanted.dart",
         "range": {
           "start": {
             "offset": 14,
