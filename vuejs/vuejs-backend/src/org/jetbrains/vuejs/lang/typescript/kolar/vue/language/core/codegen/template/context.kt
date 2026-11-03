@@ -168,12 +168,16 @@ class TemplateCodegenContext {
         source = Source("template"),
         startOffset = expectError.node.loc.startOffset,
         features = VueCodeInformation(
-          verification = VerificationInfo.WithFilter(
+          verification = object : VerificationInfo.WithFilter {
             // If no errors/warnings/diagnostics were reported within the region of code covered
             // by the @vue-expect-error directive, then we should allow any `unused @ts-expect-error`
             // diagnostics to be reported upward.
-            shouldReport = { _, _ -> expectError.token == 0 },
-          ),
+            override fun shouldReport(
+              source: String?,
+              code: String?,
+            ): Boolean =
+              expectError.token == 0
+          },
         ),
       ))
       yield("// @ts-expect-error")
@@ -199,8 +203,11 @@ class TemplateCodegenContext {
         // we will need to propagate an "unused ts-expect-error" diagnostic back to the original
         // .vue file or not.
         return features.copy(
-          verification = VerificationInfo.WithFilter(
-            shouldReport = { source, code ->
+          verification = object : VerificationInfo.WithFilter {
+            override fun shouldReport(
+              source: String?,
+              code: String?,
+            ): Boolean {
               val featureVerification = features.verification
               if (
                 featureVerification !is VerificationInfo.WithFilter
@@ -208,9 +215,9 @@ class TemplateCodegenContext {
               ) {
                 expectError.token++
               }
-              false
-            },
-          ),
+              return false
+            }
+          }
         )
       }
     }

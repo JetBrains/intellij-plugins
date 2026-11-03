@@ -109,21 +109,15 @@ object codeFeatures {
   )
 
   val doNotReportTs2339AndTs2551: VueCodeInformation = VueCodeInformation(
-    verification = VerificationInfo.WithFilter(
-      shouldReport = { _, code -> code != "2339" && code != "2551" },
-    ),
+    verification = VerificationInfo.WithIgnoredCodes("2339", "2551"),
   )
 
   val doNotReportTs2353AndTs2561: VueCodeInformation = VueCodeInformation(
-    verification = VerificationInfo.WithFilter(
-      shouldReport = { _, code -> code != "2353" && code != "2561" },
-    ),
+    verification = VerificationInfo.WithIgnoredCodes("2353", "2561"),
   )
 
   val doNotReportTs6133: VueCodeInformation = VueCodeInformation(
-    verification = VerificationInfo.WithFilter(
-      shouldReport = { _, code -> code != "6133" },
-    ),
+    verification = VerificationInfo.WithIgnoredCodes("6133"),
   )
 
   val format: VueCodeInformation = VueCodeInformation(

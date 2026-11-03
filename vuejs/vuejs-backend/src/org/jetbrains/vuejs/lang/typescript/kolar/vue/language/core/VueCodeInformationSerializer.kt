@@ -20,7 +20,7 @@ object VueCodeInformationSerializer :
 
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("VueCodeInformation") {
-      element<Boolean>("verification", isOptional = true)
+      element("verification", VerificationInfo.serializer().descriptor, isOptional = true)
       element("completion", CompletionInfo.serializer().descriptor, isOptional = true)
       element<Boolean>("semantic", isOptional = true)
       element<Boolean>("navigation", isOptional = true)
@@ -33,8 +33,8 @@ object VueCodeInformationSerializer :
     value: VueCodeInformation,
   ) {
     encoder.encodeStructure(descriptor) {
-      if (value.verification == VerificationInfo.Enabled)
-        encodeBooleanElement(descriptor, 0, true)
+      if (value.verification == VerificationInfo.Enabled || value.verification is VerificationInfo.WithIgnoredCodes)
+        encodeSerializableElement(descriptor, 0, VerificationInfo.serializer(), value.verification)
       if (value.completion != null)
         encodeSerializableElement(descriptor, 1, CompletionInfo.serializer(), value.completion)
       if (value.semantic == SemanticInfo.Enabled)
@@ -61,10 +61,7 @@ object VueCodeInformationSerializer :
 
       while (true) {
         when (val index = decodeElementIndex(descriptor)) {
-          0 -> {
-            require(decodeBooleanElement(descriptor, index))
-            verification = VerificationInfo.Enabled
-          }
+          0 -> verification = decodeSerializableElement(descriptor, index, VerificationInfo.serializer())
           1 -> completion = decodeSerializableElement(descriptor, index, CompletionInfo.serializer())
           2 -> {
             require(decodeBooleanElement(descriptor, index))

@@ -152,7 +152,7 @@ fun generateComponent(
         VueCodeInformation(
           semantic = SemanticInfo.WithOptions(shouldHighlight = { false }),
           verification = if (options.vueCompilerOptions.checkUnknownComponents) VerificationInfo.Enabled
-          else VerificationInfo.WithFilter(shouldReport = { _, code -> code != "2339" && code != "2551" }),
+          else VerificationInfo.WithIgnoredCodes("2339", "2551"),
         ),
       ))
       yield("]$endOfLine")
