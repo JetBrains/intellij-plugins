@@ -59,7 +59,7 @@ internal class DartAnalyzeSdkQodanaTest : DartAnalyzeProjectQodanaTestCase() {
 
   @Test
   fun `reports an unusable SDK as a sanity issue`() {
-    executable = DartExecutable.Unusable("/missing/dart-sdk")
+    executable = DartExecutable.Unusable("/missing/dart-sdk", DartExecutable.Reason.NOT_FOUND)
 
     runAnalysis()
 

@@ -8,12 +8,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
+import java.nio.file.attribute.PosixFilePermission
 
 class DartAnalyzeRunnerTest {
   @TempDir
@@ -102,21 +104,25 @@ class DartAnalyzeRunnerTest {
   fun `reports an unavailable executable`() = runBlocking {
     val runner = DartExecutableRunner({ "/missing/dart" }, FakeExecutor())
     val failure = assertThrows(IllegalStateException::class.java) { runBlocking { runner.analyze(tempDirectory) } }
-    assertTrue(failure.message.orEmpty().contains("not executable"))
+    assertTrue(
+      failure.message.orEmpty().contains(
+        "No usable Dart executable was found using '/missing/dart'.",
+      ),
+    )
   }
 
   @Test
   fun `reports missing executable configuration`() = runBlocking {
     val runner = runnerWithoutExecutable { null }
     val failure = assertThrows(IllegalStateException::class.java) { runBlocking { runner.analyze(tempDirectory) } }
-    assertTrue(failure.message.orEmpty().contains("must point to the SDK bin directory"))
+    assertTrue(failure.message.orEmpty().contains("QODANA_FLUTTER_PATH is not set or is blank, and PATH has no Dart executable"))
   }
 
   @Test
   fun `reports a blank executable configuration`() = runBlocking {
     val runner = runnerWithoutExecutable { "  " }
     val failure = assertThrows(IllegalStateException::class.java) { runBlocking { runner.analyze(tempDirectory) } }
-    assertTrue(failure.message.orEmpty().contains("must point to the SDK bin directory"))
+    assertTrue(failure.message.orEmpty().contains("QODANA_FLUTTER_PATH is not set or is blank, and PATH has no Dart executable"))
   }
 
   @Test
@@ -125,7 +131,11 @@ class DartAnalyzeRunnerTest {
 
     val runner = DartExecutableRunner({ sdkDirectory.toString() }, FakeExecutor())
     val failure = assertThrows(IllegalStateException::class.java) { runBlocking { runner.analyze(sdkDirectory) } }
-    assertTrue(failure.message.orEmpty().contains("not executable"))
+    assertTrue(
+      failure.message.orEmpty().contains(
+        "No usable Dart executable was found using '$sdkDirectory'.",
+      ),
+    )
   }
 
   @Test
@@ -138,12 +148,24 @@ class DartAnalyzeRunnerTest {
         return false
       }
     }) {
-      assertEquals(DartExecutable.Unusable(path), configuredExecutableResolver({ path }).resolve("dart", SystemInfo.isWindows))
+      assertEquals(
+        DartExecutable.Unusable(path, DartExecutable.Reason.INVALID_PATH),
+        configuredExecutableResolver({ path }).resolve("dart", SystemInfo.isWindows),
+      )
     }
 
     val failure = assertInstanceOf(InvalidPathException::class.java, loggedException)
     assertEquals(path, failure.input)
     assertTrue(failure.stackTrace.isNotEmpty())
+  }
+
+  @Test
+  fun `reports an invalid executable path clearly`() = runBlocking {
+    val runner = DartExecutableRunner({ "dart-sdk/invalid\u0000/dart" }, FakeExecutor())
+    val failure = assertThrows(IllegalStateException::class.java) { runBlocking { runner.analyze(tempDirectory) } }
+
+    assertTrue(failure.message.orEmpty().contains("The configured Dart path"))
+    assertTrue(failure.message.orEmpty().contains("contains a valid path"))
   }
 
   @Test
@@ -154,6 +176,78 @@ class DartAnalyzeRunnerTest {
     val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
 
     assertEquals(DartExecutable.Available(dartExecutable), resolver.resolve("dart", SystemInfo.isWindows))
+  }
+
+  @Test
+  fun `resolves Dart in bin of the configured SDK root`() {
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
+    val binDirectory = Files.createDirectory(sdkDirectory.resolve("bin"))
+    val dartExecutableName = if (SystemInfo.isWindows) "dart.exe" else "dart"
+    val dartExecutable = Files.createFile(binDirectory.resolve(dartExecutableName))
+    val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
+
+    assertEquals(DartExecutable.Available(dartExecutable), resolver.resolve("dart", SystemInfo.isWindows))
+  }
+
+  @Test
+  fun `prefers the configured directory before its bin directory`() {
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
+    val binDirectory = Files.createDirectory(sdkDirectory.resolve("bin"))
+    val dartInRoot = Files.createFile(sdkDirectory.resolve("dart"))
+    Files.createFile(binDirectory.resolve("dart"))
+    val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
+
+    assertEquals(DartExecutable.Available(dartInRoot), resolver.resolve("dart", false))
+  }
+
+  @Test
+  fun `reports an existing Dart file without execute permission`() = runBlocking {
+    assumeFalse(SystemInfo.isWindows)
+    val dartExecutable = createNonExecutableFile(tempDirectory.resolve("dart"))
+    val runner = DartExecutableRunner({ dartExecutable.toString() }, FakeExecutor())
+
+    val failure = assertThrows(IllegalStateException::class.java) { runBlocking { runner.analyze(tempDirectory) } }
+
+    assertTrue(failure.message.orEmpty().contains("The Dart executable at '$dartExecutable' is not executable"))
+    assertTrue(failure.message.orEmpty().contains("Check that it has execute permission"))
+  }
+
+  @Test
+  fun `finds the executable candidate after a non executable candidate`() {
+    assumeFalse(SystemInfo.isWindows)
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
+    val binDirectory = Files.createDirectory(sdkDirectory.resolve("bin"))
+    createNonExecutableFile(sdkDirectory.resolve("dart"))
+    val dartInBin = createExecutableFile(binDirectory.resolve("dart"))
+    val resolver = configuredExecutableResolver({ sdkDirectory.toString() })
+
+    assertEquals(DartExecutable.Available(dartInBin), resolver.resolve("dart", false))
+  }
+
+  @Test
+  fun `reports a non executable Dart file in an SDK bin directory`() {
+    assumeFalse(SystemInfo.isWindows)
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
+    val binDirectory = Files.createDirectory(sdkDirectory.resolve("bin"))
+    val dartInBin = createNonExecutableFile(binDirectory.resolve("dart"))
+
+    assertEquals(
+      DartExecutable.Unusable(dartInBin.toString(), DartExecutable.Reason.NOT_EXECUTABLE),
+      configuredExecutableResolver({ sdkDirectory.toString() }).resolve("dart", false),
+    )
+  }
+
+  @Test
+  fun `uses filesystem execute permissions for SDK root bin and executable paths`() {
+    assumeFalse(SystemInfo.isWindows)
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
+    val binDirectory = Files.createDirectory(sdkDirectory.resolve("bin"))
+    createNonExecutableFile(sdkDirectory.resolve("dart"))
+    val dartInBin = createExecutableFile(binDirectory.resolve("dart"))
+
+    assertEquals(DartExecutable.Available(dartInBin), configuredExecutableResolver({ sdkDirectory.toString() }).resolve("dart", false))
+    assertEquals(DartExecutable.Available(dartInBin), configuredExecutableResolver({ binDirectory.toString() }).resolve("dart", false))
+    assertEquals(DartExecutable.Available(dartInBin), configuredExecutableResolver({ dartInBin.toString() }).resolve("dart", false))
   }
 
   @Test
@@ -175,13 +269,27 @@ class DartAnalyzeRunnerTest {
     val sdkDirectory = Files.createDirectory(tempDirectory.resolve("dart-sdk"))
     val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
 
-    assertEquals(DartExecutable.Unusable(sdkDirectory.toString()), resolver.resolve("dart", true))
+    assertEquals(
+      DartExecutable.Unusable(sdkDirectory.toString(), DartExecutable.Reason.NOT_FOUND),
+      resolver.resolve("dart", true),
+    )
     val dartExecutable = Files.createFile(sdkDirectory.resolve("dart.exe"))
     assertEquals(DartExecutable.Available(dartExecutable), resolver.resolve("dart", true))
     val dartBatchFile = Files.createFile(sdkDirectory.resolve("dart.bat"))
     assertEquals(DartExecutable.Available(dartBatchFile), resolver.resolve("dart", true))
     assertEquals(listOf("dart.bat", "dart.exe"), executableNames("dart", true))
     assertEquals(listOf("dart"), executableNames("dart", false))
+  }
+
+  @Test
+  fun `resolves a Windows Dart batch wrapper in the Flutter bin directory first`() {
+    val sdkDirectory = Files.createDirectory(tempDirectory.resolve("flutter-sdk"))
+    val binDirectory = Files.createDirectory(sdkDirectory.resolve("bin"))
+    Files.createFile(binDirectory.resolve("dart.exe"))
+    val dartBatchFile = Files.createFile(binDirectory.resolve("dart.bat"))
+    val resolver = configuredExecutableResolver({ sdkDirectory.toString() }) { Files.isRegularFile(it) }
+
+    assertEquals(DartExecutable.Available(dartBatchFile), resolver.resolve("dart", true))
   }
 
   @Test
@@ -207,6 +315,24 @@ class DartAnalyzeRunnerTest {
     FakeExecutor(),
     configuredExecutableResolver(executablePath, pathExecutableResolver = { null }),
   )
+
+  private fun createNonExecutableFile(path: Path): Path {
+    val file = Files.createFile(path)
+    Files.setPosixFilePermissions(
+      file,
+      setOf(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.GROUP_READ, PosixFilePermission.OTHERS_READ),
+    )
+    return file
+  }
+
+  private fun createExecutableFile(path: Path): Path {
+    val file = Files.createFile(path)
+    Files.setPosixFilePermissions(
+      file,
+      setOf(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE),
+    )
+    return file
+  }
 
   private val availableExecutableResolver = DartExecutableResolver { executableName, _ ->
     DartExecutable.Available(Path.of(executableName))
