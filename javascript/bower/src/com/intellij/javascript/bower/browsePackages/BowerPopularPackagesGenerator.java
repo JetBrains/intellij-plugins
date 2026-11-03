@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public final class BowerPopularPackagesGenerator {
-  public static void main(String[] args) throws IOException {
+  static void main() throws IOException {
     List<BowerPackageBasicInfo> infos = BowerPackageSearcher.doFindPackagesByPrefix(null, "", 30);
     File output = FileUtil.createTempFile("bower-popular-packages-", ".json", false);
     writePackages(infos, output);
