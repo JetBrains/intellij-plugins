@@ -22,7 +22,6 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -65,17 +64,15 @@ internal open class DartAnalyzeGlobalInspection(
     problemDescriptionsProcessor: ProblemDescriptionsProcessor,
   ) {
     val projectPath = Path.of(globalContext.project.basePath ?: return)
-    val analysisDirectory = scope.analysisDirectory()
-    if (analysisDirectory == null) {
+    if (!scope.containsDartFiles()) {
       LOG.info("Skipping Dart analysis: no in-scope Dart files were found")
       return
     }
 
-    val directoryPath: @NlsSafe String = analysisDirectory.toQodanaLogPath(projectPath)
     val runner = runnerFactory.create()
     val sdkFailure = runBlockingCancellable { runner.checkSdk(projectPath) }
     if (sdkFailure != null) {
-      LOG.warn("Dart SDK check failed for '$directoryPath': ${sdkFailure.message}; other inspections will continue")
+      LOG.warn("Dart SDK check failed for the project directory: ${sdkFailure.message}; other inspections will continue")
       registerDartProblem(sdkFailure, projectPath, manager, globalContext, problemDescriptionsProcessor, sanityFailure = true)
       return
     }
@@ -83,16 +80,16 @@ internal open class DartAnalyzeGlobalInspection(
     job.totalAmount = 1
 
     try {
-      LOG.info("Analyzing Dart project at '$directoryPath'")
-      val result = runBlockingCancellable { runner.analyze(analysisDirectory) }
+      LOG.info("Analyzing the Dart project directory")
+      val result = runBlockingCancellable { runner.analyze(projectPath) }
       result.problems.forEach { problem ->
-        collectProblem(problem, analysisDirectory, manager, globalContext, problemDescriptionsProcessor)
+        collectProblem(problem, projectPath, manager, globalContext, problemDescriptionsProcessor)
       }
       runReadActionBlocking {
         super.runInspection(scope, manager, globalContext, problemDescriptionsProcessor)
       }
-      LOG.info("Finished analyzing Dart project at '$directoryPath'")
-      globalContext.incrementJobDoneAmount(job, directoryPath)
+      LOG.info("Finished analyzing the Dart project directory")
+      globalContext.incrementJobDoneAmount(job, ".")
     }
     finally {
       problemsByReference.clear()
@@ -195,13 +192,6 @@ internal fun registerDartProblem(
 
 internal fun AnalysisScope.containsDartFiles(): Boolean = runReadActionBlocking {
   FilenameIndex.getAllFilesByExt(project, "dart", toSearchScope() as GlobalSearchScope).isNotEmpty()
-}
-
-internal fun AnalysisScope.analysisDirectory(): Path? = runReadActionBlocking {
-  val projectPath = Path.of(project.basePath ?: return@runReadActionBlocking null)
-  val files = FilenameIndex.getAllFilesByExt(project, "dart", toSearchScope() as GlobalSearchScope)
-    .filter { file -> projectPath.relativize(file.toNioPath()).parent?.none { it.toString().startsWith(".") } != false }
-  VfsUtil.getCommonAncestor(files.mapNotNull { it.parent })?.toNioPath()
 }
 
 @Suppress("HardCodedStringLiteral")

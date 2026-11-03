@@ -6,7 +6,7 @@
       "severity": "WARNING",
       "type": "STATIC_WARNING",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": { "offset": 20, "line": 2, "column": 7 },
           "end": { "offset": 28, "line": 2, "column": 15 }
@@ -20,7 +20,7 @@
       "severity": "INFO",
       "type": "LINT",
       "location": {
-        "file": "main.dart",
+        "file": "lib/main.dart",
         "range": {
           "start": { "offset": 20, "line": 2, "column": 7 },
           "end": { "offset": 28, "line": 2, "column": 15 }

@@ -11,7 +11,7 @@
               },
               "level": "error",
               "exception": {
-                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$/lib': Failed to run dart analyze: Unable to start Dart: \"quoted\" \\path\nsecond line\r\t\u0001\nCaused by: java.io.IOException: Unable to start Dart: \"quoted\" \\path\nsecond line\r\t\u0001\n"
+                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$': Failed to run dart analyze: Unable to start Dart: \"quoted\" \\path\nsecond line\r\t\u0001\nCaused by: java.io.IOException: Unable to start Dart: \"quoted\" \\path\nsecond line\r\t\u0001\n"
               },
               "properties": {
                 "toolId": "DartAnalyze",

@@ -11,7 +11,7 @@
               },
               "level": "error",
               "exception": {
-                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$/lib': dart analyze exited with code 3: Analyzer failed\n"
+                "message": "java.lang.IllegalStateException: Dart module '$PROJECT_DIR$': dart analyze exited with code 3: Analyzer failed\n"
               },
               "properties": {
                 "toolId": "DartAnalyze",
