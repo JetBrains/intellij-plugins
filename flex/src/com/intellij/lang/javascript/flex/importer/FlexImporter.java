@@ -22,7 +22,7 @@ public final class FlexImporter {
   private static final int SWF_MAGIC = 67 | 87 << 8 | 83 << 16;
   private static final int SWF_MAGIC2 = 70 | 87 << 8 | 83 << 16;
 
-  public static void main(String[] args) throws IOException {
+  static void main(String[] args) throws IOException {
     if (args.length < 1) {
       System.out.print("FlexImporter\nusage:\nFlexImporter <filename>");
     }
