@@ -1,22 +1,9 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.mdx` start
 content_module_jar(module = ":mdx")
-
-dev_dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.mdx.shared",
-        "intellij.mdx.react",
-        "intellij.mdx.backend",
-        "intellij.mdx.frontend",
-        "intellij.mdx.frontend.split",
-    ],
-    main_module = "intellij.mdx",
-)
 ### auto-generated section `dev intellij.mdx` end
 
 ### auto-generated section `build intellij.mdx` start
@@ -39,7 +26,6 @@ jvm_library(
 exports_files(
     [
         "intellij.mdx.iml",
-        "src/main/resources/META-INF/plugin.xml",
         "src/main/resources/intellij.mdx.xml",
     ],
     visibility = ["//visibility:public"],

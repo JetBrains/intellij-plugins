@@ -1,0 +1,43 @@
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.mdx.plugin` start
+dev_dist_plugin(
+    content_modules = [
+        # do not sort,
+        "intellij.mdx",
+        "intellij.mdx.shared",
+        "intellij.mdx.react",
+        "intellij.mdx.backend",
+        "intellij.mdx.frontend",
+        "intellij.mdx.frontend.split",
+    ],
+    main_module = "intellij.mdx.plugin",
+)
+### auto-generated section `dev intellij.mdx.plugin` end
+
+### auto-generated section `build intellij.mdx.plugin` start
+jvm_library(
+    name = "plugin",
+    srcs = glob(
+        [],
+        allow_empty = True,
+    ),
+    module_name = "intellij.mdx.plugin",
+    resource_strip_prefix = "resources",
+    resources = glob(
+        ["resources/**/*"],
+    ),
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `build intellij.mdx.plugin` end
+
+### auto-generated section `iml intellij.mdx.plugin` start
+exports_files(
+    [
+        "intellij.mdx.plugin.iml",
+        "resources/META-INF/plugin.xml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.mdx.plugin` end
