@@ -270,8 +270,6 @@ private class BinaryFileGlobalInspectionTool : GlobalInspectionTool() {
 
 /** A copy of the Android Lint descriptor for a binary file. It has no text range and line 0. */
 private class BinaryFileProblemDescriptor(private val file: PsiFile) : ProblemDescriptor {
-  private var group: ProblemGroup? = null
-
   override fun getPsiElement(): PsiElement = file
 
   override fun getStartElement(): PsiElement = file
@@ -288,15 +286,13 @@ private class BinaryFileProblemDescriptor(private val file: PsiFile) : ProblemDe
 
   override fun setTextAttributes(key: TextAttributesKey?) {}
 
-  override fun getProblemGroup(): ProblemGroup? = group
+  override fun getProblemGroup(): ProblemGroup? = null
 
-  override fun setProblemGroup(problemGroup: ProblemGroup?) {
-    group = problemGroup
-  }
+  override fun setProblemGroup(problemGroup: ProblemGroup?) {}
 
   override fun showTooltip(): Boolean = false
 
   override fun getDescriptionTemplate(): String = "Binary file problem"
 
-  override fun getFixes(): Array<QuickFix<*>> = arrayOf(AddCommentQuickFix())
+  override fun getFixes(): Array<QuickFix<*>> = QuickFix.EMPTY_ARRAY
 }
