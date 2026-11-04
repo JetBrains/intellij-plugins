@@ -113,6 +113,100 @@ class QodanaYamlTest : LightPlatformCodeInsightFixture4TestCase() {
   }
 
   @Test
+  fun `test inspection completion for profile group inspections`() {
+    setupYamlSample("""
+      profile:
+        groups:
+          - groupId: MyGroup
+            inspections:
+              - Sanity<caret>
+    """.trimIndent())
+
+    checkCompletionVariantsContain("Sanity1", "Sanity2", "Sanity3", "Sanity4", "Sanity5")
+  }
+
+  @Test
+  fun `test inspection completion for profile inspections`() {
+    setupYamlSample("""
+      profile:
+        inspections:
+          - inspection: Sanity<caret>
+            enabled: true
+    """.trimIndent())
+
+    checkCompletionVariantsContain("Sanity1", "Sanity2", "Sanity3", "Sanity4", "Sanity5")
+  }
+
+  @Test
+  fun `test group completion for profile inspections`() {
+    setupYamlSample("""
+      profile:
+        groups:
+          - groupId: MyGroup
+            inspections:
+              - Sanity1
+        inspections:
+          - group: <caret>
+            enabled: true
+    """.trimIndent())
+
+    checkCompletionVariantsContain("ALL", "GLOBAL", "LOCAL", "MyGroup", "category:Group", "category:Group/Sanity", "category:Kotlin/Start")
+  }
+
+  @Test
+  fun `test group completion for profile group groups`() {
+    setupYamlSample("""
+      profile:
+        groups:
+          - groupId: MyGroup
+            groups:
+              - <caret>
+    """.trimIndent())
+
+    checkCompletionVariantsContain("ALL", "MyGroup", "category:Java", "category:Java/Start")
+  }
+
+  @Test
+  fun `test category completion inserts the value in quotes`() {
+    setupYamlSample("""
+      profile:
+        inspections:
+          - group: category:Kotlin/S<caret>
+    """.trimIndent())
+    myFixture.completeBasic()
+
+    myFixture.checkResult(
+      """
+      profile:
+        inspections:
+          - group: "category:Kotlin/Start"<caret>
+      """.trimIndent()
+    )
+  }
+
+  @Test
+  fun `test category completion keeps the quotes of a quoted value`() {
+    setupYamlSample("""
+      profile:
+        groups:
+          - groupId: MyGroup
+            groups:
+              - 'category:Kotlin/S<caret>'
+    """.trimIndent())
+    myFixture.completeBasic()
+
+    myFixture.checkResult(
+      """
+      profile:
+        groups:
+          - groupId: MyGroup
+            groups:
+              - 'category:Kotlin/Start<caret>'
+      """.trimIndent()
+    )
+  }
+
+  @Test
   fun `test path completion`() {
     myFixture.createFile("file1.kt", "")
     myFixture.createFile("file2.kt", "")

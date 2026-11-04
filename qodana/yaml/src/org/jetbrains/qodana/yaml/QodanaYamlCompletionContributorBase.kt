@@ -3,6 +3,7 @@ package org.jetbrains.qodana.yaml
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.progress.runBlockingCancellable
@@ -16,9 +17,10 @@ abstract class QodanaYamlCompletionContributorBase : CompletionContributor() {
     val element = parameters.position.parent
     if (!isQodanaYaml(parameters.originalFile) || element !is YAMLScalar) return
     val key = fullYamlKey(element)
+    val resultSet = result.withPrefixMatcher(element.textValue.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED))
     runBlockingCancellable {
       variantsForKey(key, element.containingFile as YAMLFile, element.textValue)
-        .forEach(result::addElement)
+        .forEach(resultSet::addElement)
     }
   }
 }

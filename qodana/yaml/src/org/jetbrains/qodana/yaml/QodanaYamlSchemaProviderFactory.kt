@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.yaml
 
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -10,11 +11,11 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YML_CONFIG_FILENAME
 
-const val QODANA_YAML_SCHEMA_RESOURCE = "/schemas/qodana-yaml-schema.json"
+const val QODANA_YAML_SCHEMA_RESOURCE: String = "/schemas/qodana-yaml-schema.json"
 
 private val QODANA_CONFIG_FILE_NAMES = listOf(QODANA_YAML_CONFIG_FILENAME, QODANA_YML_CONFIG_FILENAME)
 
-internal class QodanaYamlSchemaProviderFactory : JsonSchemaProviderFactory {
+internal class QodanaYamlSchemaProviderFactory : JsonSchemaProviderFactory, DumbAware {
   override fun getProviders(project: Project): List<JsonSchemaFileProvider> {
     return listOf(QodanaYamlSchemaProvider())
   }
