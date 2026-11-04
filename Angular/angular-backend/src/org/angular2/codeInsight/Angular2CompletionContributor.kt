@@ -32,14 +32,12 @@ import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.ecmascript6.types.OverloadStrictness
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.modules.imports.JSCompletionInsertHandlerFactory
-import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.JSStatement
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
@@ -206,21 +204,31 @@ class Angular2CompletionContributor : CompletionContributor() {
               else
                 NG_PRIVATE_VARIABLE_PRIORITY).priorityValue.toDouble()))
           }
-          val transformMembers = ArrayList(match.transformMembers)
-          if (!transformMembers.isEmpty() && actualType != null) {
-            transformMembers.sortWith(
-              Comparator
-                .comparingInt<JSElement> { if (it is TypeScriptFunction && isNullOrUndefinedType(it.returnType)) 1 else 0 }
-                .thenComparingInt { if (it is TypeScriptFunction && it.isOverloadDeclaration) 0 else 1 })
-            val transformTypes = transformMembers
-              .asSequence()
-              .mapNotNull { transform ->
-                // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2NgModuleImportQuickFixesTest#testLowercasePipeCompletion
-                (transform as? JSTypeOwner)?.jsType?.substitute(parameters.originalFile)
-                  ?.asSafely<JSFunctionType>()?.let { Pair(transform, it) }
-              }
-              .toMap()
 
+          val transformTypes = match.entityJsType
+            ?.asRecordType(parameters.originalFile)
+            ?.properties
+            ?.asSequence()
+            ?.filter { Angular2EntitiesProvider.TRANSFORM_METHOD == it.memberName }
+            ?.flatMap { signature ->
+              signature.jsType
+                ?.asRecordType()
+                ?.callSignatures
+                ?.mapNotNull {
+                  it.functionType.sourceElement?.let {  src -> Pair(src, it.functionType)}
+                }
+              ?: emptyList()
+            }
+            ?.sortedWith(
+              Comparator
+                .comparingInt<Pair<PsiElement, JSFunctionType>> { (val first, val second) ->
+                  if (first is TypeScriptFunction && isNullOrUndefinedType(second.returnType)) 1 else 0
+                }
+                .thenComparingInt { if (it.first.let { src -> src is TypeScriptFunction && src.isOverloadDeclaration }) 0 else 1 }
+            )
+            ?.toMap()
+
+          if (!transformTypes.isNullOrEmpty() && actualType != null) {
             val converted2Original = transformTypes.entries.associateBy({ toTypeWithOneParam(it.value) }, { it.key })
             val resolveResults = JSTypeSignatureChooser(
               parameters.position, listOf(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
@@ -264,7 +272,8 @@ class Angular2CompletionContributor : CompletionContributor() {
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
               && enclosingVarDeclaration != element
               && !isLetReferenceBeforeDeclaration(ref, element)
-              && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, JSLookupContext(parameters.originalFile)).tailAndType)) {
+              && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element,
+                                                                                           JSLookupContext(parameters.originalFile)).tailAndType)) {
             localNames.add(name)
             result.consume(JSCompletionUtil.withJSLookupPriority(
               JSLookupUtilImpl.createLookupElement(element, name)

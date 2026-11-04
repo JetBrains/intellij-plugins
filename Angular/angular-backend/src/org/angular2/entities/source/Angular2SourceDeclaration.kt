@@ -1,6 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSPrimitiveLiteralType
@@ -16,9 +18,8 @@ abstract class Angular2SourceDeclaration(decorator: ES6Decorator, implicitElemen
   override val isStandalone: Boolean
     get() = getCachedValue {
       val property = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.STANDALONE_PROP)
-      // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2HighlightingTest#testIonic8 and
-      // Angular2CompilerFlagsTest#testStrictInputAccessModifiersAbsent
-      val type = property?.jsType
+      // Since standalone property needs to be a boolean literal, we can use stub-safe type eval here
+      val type = property?.getJSType(JSTypeEngineMode.StubSafe)
       val result = type.asSafely<JSPrimitiveLiteralType<*>>()?.literal?.asSafely<Boolean>()
                    ?: Angular2EntityUtils.isStandaloneDefault(decorator)
       CachedValueProvider.Result.create(result, decorator)

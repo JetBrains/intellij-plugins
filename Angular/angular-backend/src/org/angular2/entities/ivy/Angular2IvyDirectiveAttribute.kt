@@ -1,6 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.ivy
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSType
@@ -18,9 +20,8 @@ class Angular2IvyDirectiveAttribute internal constructor(
   private val mySource: JSTypeDeclaration,
 ) : Angular2DirectiveAttribute {
 
-  // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2IvyModelTest#testPureIvyConstructorAttribute
   override val type: JSType
-    get() = withTypeEvaluationLocation(mySource) { mySource.jsType }
+    get() = withTypeEvaluationLocation(mySource) { mySource.getJSType(JSTypeEngineMode.Service) ?: mySource.jsType }
 
   override val sourceElement: PsiElement
     get() = mySource
