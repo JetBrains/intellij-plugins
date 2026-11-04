@@ -41,9 +41,8 @@ class TftplTemplateLiveTemplateTest {
   }
 
   private fun doTest(editorText: String, expected: String): Unit = timeoutRunBlocking {
+    myFixture.configureByText("test.tftpl", editorText)
     withContext(Dispatchers.EDT) {
-      myFixture.configureByText("test.tftpl", editorText)
-
       val editor = myFixture.editor
 
       ListTemplatesAction().actionPerformedImpl(myFixture.project, editor)

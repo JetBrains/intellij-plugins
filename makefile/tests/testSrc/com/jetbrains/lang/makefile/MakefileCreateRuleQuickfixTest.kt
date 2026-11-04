@@ -33,8 +33,8 @@ class MakefileCreateRuleQuickfixTest {
   }
 
   fun doTest(): Unit = timeoutRunBlocking {
+    myFixture.configureByFile("$basePath/$testName.mk")
     withContext(Dispatchers.EDT) {
-      myFixture.configureByFile("$basePath/$testName.mk")
       val intention = myFixture.findSingleIntention(MakefileLangBundle.message("intention.name.create.rule"))
       myFixture.launchAction(intention)
       myFixture.checkResultByFile("$basePath/$testName.gold.mk")

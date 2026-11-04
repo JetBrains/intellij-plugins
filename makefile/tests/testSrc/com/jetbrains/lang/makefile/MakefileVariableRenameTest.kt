@@ -37,8 +37,8 @@ class MakefileVariableRenameTest {
   fun testVarSimpleAssignmentTypes(): Unit = doTest("NEW_NAME")
 
   private fun doTest(newName: String): Unit = timeoutRunBlocking {
+    myFixture.configureByFile("$basePath/$testName.mk")
     withContext(Dispatchers.EDT) {
-      myFixture.configureByFile("$basePath/$testName.mk")
       myFixture.renameElementAtCaret(newName)
       myFixture.checkResultByFile("$basePath/$testName.gold.mk")
     }

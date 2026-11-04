@@ -1,6 +1,7 @@
 package com.intellij.terraform.template
 
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.platform.testFramework.assertion.collectionAssertion.CollectionAssertions.assertContainsUnordered
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
@@ -60,14 +61,14 @@ class TftplHighlightingTest {
       considerAsTemplateIntention!!.invoke(myFixture.project, myFixture.editor, myFixture.file)
 
       PsiDocumentManager.getInstance(myFixture.project).reparseFiles(listOf(myFixture.file.virtualFile), true)
-      myFixture.checkResult("""
-        %{if condition}
-          console.log("Hello world!")
-          debugger
-        %{endif}
-      """.trimIndent())
-
-      assertContainsUnordered(listOf("JSON", "TFTPL"), myFixture.file.viewProvider.allFiles.map { it.language.id })
     }
+    myFixture.checkResult("""
+      %{if condition}
+        console.log("Hello world!")
+        debugger
+      %{endif}
+    """.trimIndent())
+
+    assertContainsUnordered(listOf("JSON", "TFTPL"), readAction { myFixture.file.viewProvider.allFiles.map { it.language.id } })
   }
 }
