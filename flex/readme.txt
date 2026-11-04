@@ -26,7 +26,7 @@ Prerequisites:
          [IDEA Installation]/plugins/JavaScriptLanguage/lib/*.jar
          [IDEA Installation]/plugins/maven/lib/*.jar
          [IDEA Installation]/plugins/properties/lib/*.jar
-         [IDEA Installation]/plugins/uml/lib/*.jar
+         [IDEA Installation]/plugins/diagram/lib/*.jar
          [IDEA Installation]/plugins/w3validators/lib/*.jar
 
   2.5. Open Sources tab of the Plugin SDK and add path to the cloned intellij-community repository. After some scanning IDE will find all src folders - accept them. To have IntelliJ IDEA sources matching the IntelliJ IDEA installation it is recommended to checkout tag with the name equal to the IntelliJ IDEA build number, for example 'git checkout idea/142.4675.3'.
