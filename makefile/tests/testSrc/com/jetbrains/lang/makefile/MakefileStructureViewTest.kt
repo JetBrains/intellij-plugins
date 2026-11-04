@@ -4,12 +4,14 @@ import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsigh
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.StructureViewComponentTestUtil
+import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 
 @TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/makefile/tests/testData")
 class MakefileStructureViewTest {
   private val projectFixture = codeInsightProjectFixture()
   private val myFixture by codeInsightFixture(projectFixture)
@@ -19,7 +21,6 @@ class MakefileStructureViewTest {
   @BeforeEach
   fun setUp(testInfo: TestInfo) {
     testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
-    myFixture.testDataPath = BASE_TEST_DATA_PATH
   }
 
   @Test

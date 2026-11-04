@@ -3,6 +3,7 @@ package com.jetbrains.lang.makefile
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
 import com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection
 import org.junit.jupiter.api.BeforeEach
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 
 @TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/makefile/tests/testData")
 class MakefileInspectionsTest {
   private val projectFixture = codeInsightProjectFixture()
   private val myFixture by codeInsightFixture(projectFixture)
@@ -22,7 +24,6 @@ class MakefileInspectionsTest {
   @BeforeEach
   fun setUp(testInfo: TestInfo) {
     testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
-    myFixture.testDataPath = BASE_TEST_DATA_PATH
     myFixture.enableInspections(MakefileUnresolvedPrerequisiteInspection::class.java)
   }
 

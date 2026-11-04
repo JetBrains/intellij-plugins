@@ -1,21 +1,16 @@
 package com.intellij.terraform.template
 
-import com.intellij.openapi.application.PathManager
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
+import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/terraform/terraform-template/test-data/folding")
 class TftplFoldingTest {
   private val projectFixture = codeInsightProjectFixture()
   private val myFixture by codeInsightFixture(projectFixture)
-
-  @BeforeEach
-  fun setUp() {
-    myFixture.testDataPath = PathManager.getHomePath() + "/contrib/terraform/terraform-template/test-data/folding"
-  }
 
   @Test
   fun testIfFolding() {

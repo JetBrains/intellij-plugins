@@ -5,6 +5,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.testFramework.EditorTestUtil
+import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ import java.nio.file.Paths
  * @see MakefileCodeBlockSupportHandler
  */
 @TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/makefile/tests/testData/highlighting/codeBlocks")
 @TestMethodOrder(MethodOrderer.MethodName::class)
 class MakefileCodeBlockSupportHandlerTest {
   private val projectFixture = codeInsightProjectFixture()
@@ -30,7 +32,6 @@ class MakefileCodeBlockSupportHandlerTest {
   @BeforeEach
   fun before(testInfo: TestInfo) {
     testName = testInfo.testMethod.get().name
-    myFixture.testDataPath = Paths.get(BASE_TEST_DATA_PATH).resolve("highlighting").resolve("codeBlocks").toString()
     myFixture.setReadEditorMarkupModel(true)
   }
 

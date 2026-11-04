@@ -7,6 +7,7 @@ import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.junit5.TestApplication
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 
 @TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/makefile/tests/testData")
 class MakefileFindUsagesTest {
   private val projectFixture = codeInsightProjectFixture()
   private val myFixture by codeInsightFixture(projectFixture)
@@ -24,7 +26,6 @@ class MakefileFindUsagesTest {
   @BeforeEach
   fun setUp(testInfo: TestInfo) {
     testName = PlatformTestUtil.getTestName(testInfo.testMethod.get().name, true)
-    myFixture.testDataPath = BASE_TEST_DATA_PATH
   }
 
   @Test
