@@ -31,8 +31,11 @@ The final SARIF report identifies each diagnostic with a derived rule such as `d
   Flutter projects use the same Dart command.
 - Qodana scope and inspection exclusions control which diagnostics reach the report.
   An incremental scan analyzes the project directory but reports only results within its scope.
-- Dart packages can store source files in root `bin/`. Qodana includes it only when the default exclusions are not customized.
-  The plugin restores the built-in exclusions after the project closes.
+- Dart packages can store source files in root `bin/`.
+  A root `.analysisignore` file replaces the default exclusions.
+  During Qodana configuration, the plugin checks active exclusions for root `bin/`.
+  It warns and preserves the settings when `.analysisignore` or customized defaults exclude `bin/`.
+  Otherwise, it removes `/bin/` from built-in exclusions before analysis and restores them after the project closes.
 - Preserve diagnostic severity, message, correction text, and source location.
 - Accept a nonzero analyzer exit code when the output contains valid diagnostics.
   Report SDK check failures as `DartAnalyzeSanity` issues, while other inspections continue.
@@ -90,7 +93,7 @@ Source files are under `src/org/jetbrains/qodana/dart/`.
 | `DartAnalyzeGlobalInspection.kt` | Check the scope, run analysis, and register diagnostics with derived rule IDs. |
 | `DartAnalyzeSanityInspection.kt` | Check the SDK and report SDK failures. |
 | `DartAnalyzeGlobalOutputConsumer.kt` | Register derived rules and consume the exported XML results. |
-| `QodanaIncludeDartBinDirectory.kt` | Include the root `bin/` directory for Dart packages and restore the built-in exclusions after the run. |
+| `QodanaIncludeDartBinDirectory.kt` | Temporarily include the root `bin/` directory for Dart packages. |
 
 ## Verification
 
