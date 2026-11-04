@@ -3,6 +3,7 @@ package org.angular2.web.scopes
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
+import com.intellij.javascript.JSTypeEngineEvaluation.withStubSafeBuiltInTypeEngine
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.javascript.web.js.WebJSTypesUtil
@@ -91,7 +92,15 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       }
     }
 
-    override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    /**
+     * The template transpiler uses these symbols, so the scope makes no service request.
+     * It reads the declared DOM types with the stub-safe engine.
+     * Then the linked declarations come from the standard library of the current service, which can evaluate their types.
+     */
+    override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>): Unit =
+      withStubSafeBuiltInTypeEngine { doInitialize(consumer, cacheDependencies) }
+
+    private fun doInitialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
       val templateFile = dataHolder
       val tagNamespace = key.first
       val tagName = key.second

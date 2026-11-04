@@ -1,5 +1,6 @@
 package org.angular2.web.scopes
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSArgumentList
@@ -46,22 +47,24 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
-    val jsType =
-      dataHolder.findProperty(TYPE_PROP)
-        ?.getJSType(JSTypeEngineMode.Service)
-      ?: dataHolder.context
-        ?.let { if (it is JSArgumentList) it.context else it }
-        ?.asSafely<JSCallExpression>()
-        ?.takeIf { getFunctionNameFromIndex(it) == CREATE_COMPONENT_FUN }
-        ?.let {
-          AstLoadingFilter.forceAllowTreeLoading<Array<JSExpression>, Throwable>(it.containingFile) {
-            it.arguments
+    // The template transpiler uses these bindings, so the type comes from a program without Kolar.
+    val cls = forceTSKotlinTypeEngine(disableKolar = true) {
+      val jsType =
+        dataHolder.findProperty(TYPE_PROP)
+          ?.getJSType(JSTypeEngineMode.Service)
+        ?: dataHolder.context
+          ?.let { if (it is JSArgumentList) it.context else it }
+          ?.asSafely<JSCallExpression>()
+          ?.takeIf { getFunctionNameFromIndex(it) == CREATE_COMPONENT_FUN }
+          ?.let {
+            AstLoadingFilter.forceAllowTreeLoading<Array<JSExpression>, Throwable>(it.containingFile) {
+              it.arguments
+            }
           }
-        }
-        ?.getOrNull(0)
-        ?.let { JSResolveUtil.getElementJSType(it) }
-
-    val cls = jsType?.substitute()?.sourceElement as? TypeScriptClass
+          ?.getOrNull(0)
+          ?.let { JSResolveUtil.getElementJSType(it) }
+      jsType?.substitute()?.sourceElement as? TypeScriptClass
+    }
     val directive = Angular2EntitiesProvider.getDirective(cls)
                     ?: return
     directive.inputs.forEach(consumer)

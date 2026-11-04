@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
@@ -310,8 +311,12 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?.stubSafeCallArguments
         ?.firstOrNull()
 
+    /** The kind of the directive of [clazz]. The template transpiler uses it, so its types come from a program without Kolar. */
     @JvmStatic
-    fun getDirectiveKindNoCache(clazz: TypeScriptClass, selector: Angular2DirectiveSelector): Angular2DirectiveKind {
+    fun getDirectiveKindNoCache(clazz: TypeScriptClass, selector: Angular2DirectiveSelector): Angular2DirectiveKind =
+      forceTSKotlinTypeEngine(disableKolar = true) { computeDirectiveKindWithTSKotlin(clazz, selector) }
+
+    private fun computeDirectiveKindWithTSKotlin(clazz: TypeScriptClass, selector: Angular2DirectiveSelector): Angular2DirectiveKind {
       JSTypeEvaluationLocationProvider.assertLocationIsSet()
       val allNgTemplateSelectors = selector.simpleSelectors.all { it.elementName == ELEMENT_NG_TEMPLATE }
       if (allNgTemplateSelectors) {
@@ -325,8 +330,9 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         if (aClass is TypeScriptClass) {
           anyNgTemplateContextGuard = anyNgTemplateContextGuard
                                       || aClass.members.any { it.name == Angular2ControlFlowBuilder.NG_TEMPLATE_CONTEXT_GUARD }
-          result = getDirectiveKindFromConstructors(aClass, clazz, anyNgTemplateContextGuard) +
-                   getDirectiveKindFromFields(aClass, clazz, anyNgTemplateContextGuard)
+
+          result = getDirectiveKindFromConstructors(aClass, anyNgTemplateContextGuard) +
+                   getDirectiveKindFromFields(aClass, anyNgTemplateContextGuard)
         }
         result == null
       }
@@ -336,29 +342,29 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
 
     private fun getDirectiveKindFromConstructors(
       aClass: TypeScriptClass,
-      clazz: TypeScriptClass,
       anyNgTemplateContextGuard: Boolean,
     ): Angular2DirectiveKind? =
       aClass.constructors
         .mapNotNull { it.parameterList }
         .mapNotNull { paramList ->
-          processJSTypeOwnersList(paramList.parameters.toList(), clazz, anyNgTemplateContextGuard)
+          processJSTypeOwnersList(paramList.parameters.toList(), anyNgTemplateContextGuard)
         }
         .reduceOrNull { acc, kind -> acc + kind }
 
     private fun getDirectiveKindFromFields(
       aClass: TypeScriptClass,
-      clazz: TypeScriptClass,
       anyNgTemplateContextGuard: Boolean,
     ): Angular2DirectiveKind? =
       processJSTypeOwnersList(
-        aClass.fields.filter { it.initializerOrStub?.asSafely<JSCallExpression>()?.let { getFunctionNameFromIndex(it) } == INJECT_FUN },
-        clazz, anyNgTemplateContextGuard
+        aClass.fields.filter {
+          it.initializerOrStub?.asSafely<JSCallExpression>()
+            ?.let { call -> getFunctionNameFromIndex(call) } == INJECT_FUN
+        },
+        anyNgTemplateContextGuard
       )
 
     private fun processJSTypeOwnersList(
       list: List<JSTypeDeclarationOwner>,
-      clazz: TypeScriptClass,
       anyNgTemplateContextGuard: Boolean,
     ): Angular2DirectiveKind? {
       var hasElementRef = false
@@ -366,10 +372,13 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       var hasViewContainerRef = false
       var isTemplateRefOptional = false
       list.forEach {
-        val typeText = it.getJSType(JSTypeEngineMode.Service)
-                         ?.let { type -> if (type is TypeScriptCompilerType || type is JSWidenType) type.substitute(clazz) else type }
-                         ?.typeText
-                       ?: return@forEach
+        // A declared type keeps its name also when it does not resolve, so it does not need a service.
+        val type = if (it.typeElement != null)
+          it.getJSType(JSTypeEngineMode.StubSafe)
+        else
+          it.getJSType(JSTypeEngineMode.Service)
+            ?.let { type -> if (type is TypeScriptCompilerType || type is JSWidenType) type.substitute() else type }
+        val typeText = type?.typeText ?: return@forEach
         when {
           typeText.contains(ELEMENT_REF) -> hasElementRef = true
           typeText.contains(VIEW_CONTAINER_REF) -> hasViewContainerRef = true

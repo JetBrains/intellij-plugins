@@ -76,7 +76,7 @@ abstract class Angular2TestCase(
   enum class TypeScriptServiceKind(val annotationClass: KClass<out Annotation>, val skipTestAnnotationClass: KClass<out Annotation>) {
     None(TestNoService::class, SkipNoService::class),
     TsNode(TestTsNode::class, SkipTsNode::class),
-    TsGoKotlin(TestTsKotlin::class, SkipTsKotlin::class),
+    TsKotlin(TestTsKotlin::class, SkipTsKotlin::class),
     TsGoProxy(TestTsGoProxy::class, SkipTsGoProxy::class),
   }
 
@@ -87,7 +87,7 @@ abstract class Angular2TestCase(
   private val expectedServerClass: KClass<out TypeScriptService> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     when (serviceKind) {
       TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
-      TypeScriptServiceKind.TsGoKotlin -> TypeScriptGoLspService::class
+      TypeScriptServiceKind.TsKotlin -> TypeScriptGoLspService::class
       TypeScriptServiceKind.TsGoProxy -> TypeScriptGoLspService::class
       TypeScriptServiceKind.None -> Angular2TypeScriptService::class
     }
@@ -112,7 +112,7 @@ abstract class Angular2TestCase(
 
   override val defaultDirName: String get() {
     if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
+        || serviceKind == TypeScriptServiceKind.TsKotlin) {
       val tsGoDirName = "$testName.tsgo"
       if (File("$testDataPath/$tsGoDirName").exists())
         return tsGoDirName
@@ -122,7 +122,7 @@ abstract class Angular2TestCase(
 
   override fun getDefaultConfigureFileName(extension: String): String {
     if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
+        || serviceKind == TypeScriptServiceKind.TsKotlin) {
       val tsgoConfigureFileName = "$testName.tsgo.$extension"
       if (File("$testDataPath/$tsgoConfigureFileName").exists())
         return tsgoConfigureFileName
@@ -133,7 +133,7 @@ abstract class Angular2TestCase(
   override fun getGoldFileName(forcedGoldFileName: String?, testFileExt: String): String {
     val goldFileName = super.getGoldFileName(forcedGoldFileName, testFileExt)
     if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
+        || serviceKind == TypeScriptServiceKind.TsKotlin) {
       val lastIndex = goldFileName.lastIndexOf('.')
       val tsGoGoldFileName = "${goldFileName.substring(0, lastIndex)}.tsgo${goldFileName.substring(lastIndex)}"
       if (File("$testDataPath/$tsGoGoldFileName").exists())
@@ -144,7 +144,7 @@ abstract class Angular2TestCase(
 
   override fun getCodeCompletionExpectedItemsFileNameInfix(prefix: String, suffix: String): String {
     if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
+        || serviceKind == TypeScriptServiceKind.TsKotlin) {
       val tsGoItemsFileName = "${prefix}.tsgo${suffix}"
       if (File("$testDataPath/$tsGoItemsFileName").exists())
         return ".tsgo"
@@ -170,7 +170,7 @@ abstract class Angular2TestCase(
     configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(
       myFixture,
-      tsKotlin = serviceKind == TypeScriptServiceKind.TsGoKotlin,
+      tsKotlin = serviceKind == TypeScriptServiceKind.TsKotlin,
     ) {
       it::class == expectedServerClass
     }
@@ -182,7 +182,7 @@ abstract class Angular2TestCase(
           waitEmptyServiceQueueForService(service)
         }
       }
-      TypeScriptServiceKind.TsGoKotlin,
+      TypeScriptServiceKind.TsKotlin,
       TypeScriptServiceKind.TsGoProxy,
         -> {
         triggerLspServerInit(project, TypeScriptGoLspIntegrationProvider::class.java,

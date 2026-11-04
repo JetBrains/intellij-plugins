@@ -1,10 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.javascript.typeEngine.getTypeofTSType
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -157,11 +157,13 @@ object Angular2EntityUtils {
               directiveDef = outerProperty.parentOfType<ES6Decorator>()
             }
             else {
-              directiveDef = literal.findProperty(DIRECTIVE_PROP)
-                ?.getJSType(JSTypeEngineMode.Service)
-                ?.substitute()
-                ?.sourceElement
-                ?.asSafely<TypeScriptClass>()
+              directiveDef = forceTSKotlinTypeEngine(disableKolar = true) {
+                literal.findProperty(DIRECTIVE_PROP)
+                  ?.getJSType(JSTypeEngineMode.Service)
+                  ?.substitute()
+                  ?.sourceElement
+                  ?.asSafely<TypeScriptClass>()
+              }
             }
           }
           else -> return null
@@ -359,9 +361,18 @@ object Angular2EntityUtils {
   fun isStandaloneDefault(context: PsiElement): Boolean =
     Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_19)
 
+  /**
+   * True when [clz] has the static member `ngAcceptInputType_[name]`.
+   * The template transpiler uses it, so the type comes from a program without Kolar.
+   */
+  fun hasAcceptInputType(clz: TypeScriptClass?, name: String): Boolean =
+    clz != null && forceTSKotlinTypeEngine(clz, disableKolar = true) {
+      clz.getTypeofTSType()?.getProperty(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
+    } != null
+
   fun jsTypeFromAcceptInputType(clz: TypeScriptClass?, name: String): JSType? =
     clz?.let {
-      withTypeEvaluationLocation(it) {
+      forceTSKotlinTypeEngine(clz, disableKolar = true) {
         it.getTypeofTSType()
           ?.getProperty(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
           ?.getType()

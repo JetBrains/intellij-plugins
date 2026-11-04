@@ -1,8 +1,7 @@
 package org.angular2.lang.expr.service.tcb
 
-import com.intellij.javascript.JSTypeEngineEvaluation
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSStatement
@@ -66,11 +65,9 @@ object Angular2TranspiledDirectiveFileBuilder {
 
   fun getTranspiledDirectiveFile(directiveFile: PsiFile): TranspiledDirectiveFile? =
     CachedValuesManager.getCachedValue(directiveFile) {
-      CachedValueProvider.Result.create(withTypeEvaluationLocation(directiveFile) {
+      CachedValueProvider.Result.create(forceTSKotlinTypeEngine(directiveFile, disableKolar = true) {
         getDirectiveFileCache(directiveFile)?.let {
-          JSTypeEngineEvaluation.forceBuiltInTypeEngine {
-            buildTranspiledDirectiveFile(directiveFile, it)
-          }
+          buildTranspiledDirectiveFile(directiveFile, it)
         }
       }, PsiModificationTracker.MODIFICATION_COUNT)
     }

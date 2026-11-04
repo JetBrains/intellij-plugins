@@ -1,6 +1,7 @@
 package org.angular2.entities.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.javascript.web.js.WebJSResolveUtil
@@ -262,7 +263,9 @@ object Angular2SourceUtil {
     val alias = aliasLiteral?.stubSafeStringValue
     return Angular2PropertyInfo(
       alias ?: name,
-      expr.findProperty(Angular2DecoratorUtil.REQUIRED_PROP)?.getJSType(JSTypeEngineMode.Service)?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
+      expr.findProperty(Angular2DecoratorUtil.REQUIRED_PROP)
+        ?.let { it.getJSType(JSTypeEngineMode.StubSafe) }
+        ?.asSafely<JSBooleanLiteralTypeImpl>()?.literal == true,
       expr,
       aliasLiteral,
       declarationRange = if (alias != null) TextRange(1, 1 + alias.length) else null,

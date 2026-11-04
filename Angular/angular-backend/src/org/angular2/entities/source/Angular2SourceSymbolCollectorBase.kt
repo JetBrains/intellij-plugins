@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -48,9 +49,10 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
         collect(variable.initializer)
       }
 
-  private fun collect(value: PsiElement?): Result<R> {
+  /** The entity model and the template transpiler use the result, so the types come from TSKotlin. */
+  private fun collect(value: PsiElement?): Result<R> = forceTSKotlinTypeEngine(source, disableKolar = true) {
     if (value == null) {
-      return createResult(false, setOf(source))
+      return@forceTSKotlinTypeEngine createResult(false, setOf(source))
     }
     val visited = HashSet<PsiElement>()
     processCacheDependency(source)
@@ -73,7 +75,7 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
         resolveQueue.addAll(children.map { it to isForwardRef })
       }
     }
-    return createResult(isFullyResolved, dependencies)
+    createResult(isFullyResolved, dependencies)
   }
 
   protected abstract fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>): Result<R>

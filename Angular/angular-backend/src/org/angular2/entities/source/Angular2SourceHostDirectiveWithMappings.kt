@@ -1,6 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.util.CachedValueProvider
@@ -32,12 +35,14 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
     get() =
       definition.let { def ->
         CachedValuesManager.getCachedValue(def) {
-          // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks Angular2HighlightingTest#testHostDirectiveWithInheritance
-          val directive = def.findProperty(Angular2DecoratorUtil.DIRECTIVE_PROP)
-            ?.jsType
-            ?.substitute()
-            ?.sourceElement
-            ?.asSafely<TypeScriptClass>()
+          // The template transpiler uses the host directives, so the type comes from a program without Kolar.
+          val directive = forceTSKotlinTypeEngine(def, disableKolar = true) {
+            def.findProperty(Angular2DecoratorUtil.DIRECTIVE_PROP)
+              ?.getJSType(JSTypeEngineMode.Service)
+              ?.substitute()
+              ?.sourceElement
+              ?.asSafely<TypeScriptClass>()
+          }
             ?.let { Angular2EntitiesProvider.getDirective(it) }
           CachedValueProvider.Result.create(
             Pair(directive, calculateProperties(directive, def)),

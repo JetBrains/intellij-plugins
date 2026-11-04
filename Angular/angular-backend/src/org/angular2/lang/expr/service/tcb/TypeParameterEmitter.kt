@@ -1,5 +1,7 @@
 package org.angular2.lang.expr.service.tcb
 
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
@@ -62,7 +64,7 @@ internal class TypeParameterEmitter(private val typeParameters: Array<TypeScript
   //}
 
   private fun resolveTypeReference(type: TypeScriptSingleType): JSType? {
-    return type.jsType
+    return type.getJSType(JSTypeEngineMode.Service) ?: type.jsType
     //val target = ts.isIdentifier(type.typeName) ? type.typeName : type.typeName.right
     //val declaration = this.reflector.getDeclarationOfIdentifier(target)
     //

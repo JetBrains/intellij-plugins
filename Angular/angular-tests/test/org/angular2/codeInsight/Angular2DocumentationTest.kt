@@ -207,7 +207,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   private fun CodeInsightTestFixture.calculateFileSuffix(): String {
     if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsGoKotlin) {
+        || serviceKind == TypeScriptServiceKind.TsKotlin) {
       val expectedFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file)
                            .virtualFile.nameWithoutExtension + ".expected.tsgo.html"
       if (File("$testDataPath/$expectedFile").exists())

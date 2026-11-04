@@ -1,6 +1,9 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
+import com.intellij.javascript.typeEngine.JSTypeEngineMode
+import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifierAlias
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
@@ -8,8 +11,10 @@ import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSConditionalExpression
 import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSFunctionExpression
+import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSRecordType
@@ -26,19 +31,15 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTupleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType
-import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFunctionCachingVisitor
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.psi.impl.JSFunctionBaseImpl
-import com.intellij.lang.javascript.psi.impl.JSFunctionCachedDataBuilder
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.SmartList
@@ -184,21 +185,8 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       }
 
       private fun collectFunctionReturningArrayItems(function: JSFunction) {
-        val type = function.returnType
-        if (JSTypeUtils.isArrayLikeType(type)) {
-          // None of the required information is stubbed here
-          AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(function.containingFile
-          ) {
-            function.acceptChildren(object : JSElementVisitor() {
-              override fun visitJSReturnStatement(node: JSReturnStatement) {
-                addIfNotNull(result, node.expression)
-              }
-
-              override fun visitJSStatement(node: JSStatement) {
-                node.acceptChildren(this)
-              }
-            })
-          }
+        if (getReturnTypes(function).any { JSTypeUtils.isArrayLikeType(it) }) {
+          result.addAll(getReturnedExpressions(function))
         }
       }
 
@@ -254,62 +242,67 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
     return tryCast(Angular2EntitiesProvider.getEntity(element), myAcceptableEntityClass)
   }
 
-  private fun resolveFunctionReturnType(function: JSFunction) {
-    val visitedTypes = HashSet<JSResolvedTypeId>()
-    var lookingForModule = myAcceptNgModuleWithProviders
+  /** The template transpiler uses the resolved entities, so the types come from a program without Kolar. */
+  private fun resolveFunctionReturnType(function: JSFunction): Unit = forceTSKotlinTypeEngine(disableKolar = true) {
     var resolvedClazz: JSClass? = null
-    var type = function.returnType
-    while (type != null
-           && type !is JSAnyType
-           && visitedTypes.add(type.resolvedTypeId)) {
-      val recordType = NotNullLazyValue.createValue<JSRecordType> { type!!.asRecordType(location) }
-      type.sourceElement
-        ?.let { processCacheDependency(it) }
-      if (lookingForModule) { // see https://angular.io/guide/migration-module-with-providers
-        // Ivy syntax
-        if (type is JSGenericTypeImpl
-            && type.type is JSTypeImpl
-            && MODULE_WITH_PROVIDERS_CLASS == type.type.typeText) {
-          val argument = type.arguments.firstOrNull()
-          if (argument != null && argument !is JSAnyType) {
-            type = argument
+    var type: JSType? = null
+    for (returnType in getReturnTypes(function)) {
+      val visitedTypes = HashSet<JSResolvedTypeId>()
+      var lookingForModule = myAcceptNgModuleWithProviders
+      type = returnType
+      while (type != null) {
+        // A type from the service, for example from TSKotlin, gets its source element from substitution.
+        if (type is TypeScriptCompilerType) type = type.substitute()
+        if (type is JSAnyType || !visitedTypes.add(type.resolvedTypeId)) break
+        val recordType = NotNullLazyValue.createValue<JSRecordType> { type!!.asRecordType(location) }
+        type.sourceElement
+          ?.let { processCacheDependency(it) }
+        if (lookingForModule) { // see https://angular.io/guide/migration-module-with-providers
+          // Ivy syntax
+          if (type is JSGenericTypeImpl
+              && type.type is JSTypeImpl
+              && MODULE_WITH_PROVIDERS_CLASS == type.type.typeText) {
+            val argument = type.arguments.firstOrNull()
+            if (argument != null && argument !is JSAnyType) {
+              type = argument
+              lookingForModule = false
+              continue
+            }
+          }
+          // pre-Ivy syntax
+          val ngModuleSignature = recordType.value.findPropertySignature(NG_MODULE_PROP)
+          if (ngModuleSignature != null) {
+            type = evaluateModuleWithProvidersType(ngModuleSignature, function)
             lookingForModule = false
             continue
           }
         }
-        // pre-Ivy syntax
-        val ngModuleSignature = recordType.value.findPropertySignature(NG_MODULE_PROP)
-        if (ngModuleSignature != null) {
-          type = evaluateModuleWithProvidersType(ngModuleSignature, type.source)
-          lookingForModule = false
-          continue
-        }
-      }
-      val sourceElement = type.sourceElement
-      if (sourceElement is TypeScriptSingleType) {
-        val expression = AstLoadingFilter.forceAllowTreeLoading<JSReferenceExpression, RuntimeException>(sourceElement.containingFile) {
-          sourceElement.referenceExpression
-        }
-        if (expression != null) {
-          resolvedClazz = expression.resolve() as? JSClass
-          val entity = resolvedClazz?.let { getAcceptableEntity(it) }
-          if (entity != null && resolvedClazz != null) {
-            processCacheDependency(resolvedClazz)
-            processAcceptableEntity(entity)
-            return
+        val sourceElement = type.sourceElement
+        if (sourceElement is TypeScriptSingleType) {
+          val expression = AstLoadingFilter.forceAllowTreeLoading<JSReferenceExpression, RuntimeException>(sourceElement.containingFile) {
+            sourceElement.referenceExpression
+          }
+          if (expression != null) {
+            resolvedClazz = expression.resolve() as? JSClass
+            val entity = resolvedClazz?.let { getAcceptableEntity(it) }
+            if (entity != null) {
+              processCacheDependency(resolvedClazz)
+              processAcceptableEntity(entity)
+              return@forceTSKotlinTypeEngine
+            }
           }
         }
-      }
-      else if (sourceElement is TypeScriptClass) {
-        resolvedClazz = sourceElement
-        val entity = getAcceptableEntity(resolvedClazz)
-        if (entity != null) {
-          processCacheDependency(resolvedClazz)
-          processAcceptableEntity(entity)
-          return
+        else if (sourceElement is TypeScriptClass) {
+          resolvedClazz = sourceElement
+          val entity = getAcceptableEntity(resolvedClazz)
+          if (entity != null) {
+            processCacheDependency(resolvedClazz)
+            processAcceptableEntity(entity)
+            return@forceTSKotlinTypeEngine
+          }
         }
+        type = recordType.value.callSignatures.find { it.hasNew() }?.returnType
       }
-      type = recordType.value.callSignatures.find { it.hasNew() }?.returnType
     }
     // Fallback to search in metadata
     if (myAcceptNgModuleWithProviders) {
@@ -326,13 +319,13 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
             processCacheDependency(tsClass)
             @Suppress("UNCHECKED_CAST")
             processAcceptableEntity(ivyModule as T)
-            return
+            return@forceTSKotlinTypeEngine
           }
         }
 
         @Suppress("UNCHECKED_CAST")
         processAcceptableEntity(metadataModule as T)
-        return
+        return@forceTSKotlinTypeEngine
       }
     }
     if (resolvedClazz != null && type !is JSAnyType) {
@@ -343,9 +336,13 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
     }
   }
 
+  /**
+   * The type of the module of a `ModuleWithProviders` result of [function].
+   * The type `ModuleWithProviders<any>` does not name the module, so then the types of the returned expressions name it.
+   */
   private fun evaluateModuleWithProvidersType(
     ngModuleSignature: JSRecordType.PropertySignature,
-    functionTypeSource: JSTypeSource,
+    function: JSFunction,
   ): JSType? {
     val result = ngModuleSignature.jsType
     if (result !is JSGenericTypeImpl) return result
@@ -353,19 +350,13 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
     val args: List<JSType> = result.arguments
     if (args.size != 1 || args[0] !is JSAnyType)
       return result
-    val function: JSFunctionBaseImpl<*> = functionTypeSource.sourceElement?.context as? JSFunctionBaseImpl<*>
-                                          ?: return result
 
-    val evaluatedReturnType = CachedValuesManager.getCachedValue(function) {
-      val cachedData = JSFunctionCachedDataBuilder()
-      val nestedFuns = SmartList<JSFunction>()
-      val cachedDataEvaluator = TypeScriptFunctionCachingVisitor(function, cachedData, nestedFuns)
-      AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(function.containingFile) {
-        cachedDataEvaluator.visitElement(function.node)
-      }
-      CachedValueProvider.Result.create(cachedDataEvaluator.returnTypeFromEvaluated, function)
+    return getReturnedExpressions(function).firstNotNullOfOrNull { expression ->
+      expression.getJSType(JSTypeEngineMode.Service)
+        ?.asRecordType(location)
+        ?.findPropertySignature(NG_MODULE_PROP)
+        ?.jsType
     }
-    return evaluatedReturnType?.asRecordType(location)?.findPropertySignature(NG_MODULE_PROP)?.jsType
   }
 
   private fun resolveFunctionValue(function: Angular2MetadataFunction): Angular2MetadataModule? {
@@ -373,4 +364,36 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       ?.findMember(NG_MODULE_PROP)?.asSafely<Angular2MetadataReference>()
       ?.resolve() as? Angular2MetadataModule
   }
+}
+
+/**
+ * The return types of the call signatures of [function], from the service-powered type engine.
+ * The caller decides on the program, for example with [forceTSKotlinTypeEngine].
+ */
+private fun getReturnTypes(function: JSFunction): List<JSType> {
+  val type = function.getJSType(JSTypeEngineMode.Service) ?: return emptyList()
+  val returnTypes = if (type is JSFunctionType)
+    listOfNotNull(type.returnType)
+  else
+    type.asRecordType(function).callSignatures.mapNotNull { it.returnType }
+  // A type from the service, for example from TSKotlin, gets its source element and its shape from substitution.
+  return returnTypes.map { if (it is TypeScriptCompilerType) it.substitute() else it }
+}
+
+/** The expressions of the `return` statements of [function], without the statements of nested functions. */
+private fun getReturnedExpressions(function: JSFunction): List<JSExpression> {
+  val result = SmartList<JSExpression>()
+  // None of the required information is stubbed here
+  AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(function.containingFile) {
+    function.acceptChildren(object : JSElementVisitor() {
+      override fun visitJSReturnStatement(node: JSReturnStatement) {
+        addIfNotNull(result, node.expression)
+      }
+
+      override fun visitJSStatement(node: JSStatement) {
+        node.acceptChildren(this)
+      }
+    })
+  }
+  return result
 }

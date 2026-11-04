@@ -338,10 +338,6 @@ internal class TmplDirectiveMetadata(
     get() =
       (directive as? Angular2ClassBasedDirective)?.typeScriptClass
 
-  val entityJsType: JSType?
-    get() =
-      typeScriptClass?.possiblyGenericJsType ?: directive.entityJsType
-
   val isGeneric: Boolean
     get() =
       typeScriptClass?.typeParameters?.isNotEmpty() == true

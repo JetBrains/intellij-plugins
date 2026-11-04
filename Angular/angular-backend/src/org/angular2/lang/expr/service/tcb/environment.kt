@@ -2,6 +2,7 @@ package org.angular2.lang.expr.service.tcb
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.javascript.typeEngine.getTypeofTSType
 import com.intellij.lang.ecmascript6.actions.JSImportDescriptorBuilder
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
@@ -10,6 +11,7 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6ImportHandler
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProviderSupport.Companion.instance
 import com.intellij.lang.javascript.modules.JSImportPlaceInfo
 import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
@@ -340,11 +342,10 @@ internal class Environment(
           append(">")
         }
 
-        val coercedInputs = cls.staticJSType.asRecordType(cls)
-          .properties
-          .mapNotNullTo(LinkedHashSet()) { prop ->
-            prop.memberName.takeIf { it.startsWith(NG_ACCEPT_INPUT_TYPE_PREFIX) }
-              ?.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length)
+        val classType = withTypeEvaluationLocation(cls) { cls.getTypeofTSType() }
+        val coercedInputs = directive.bindings.inputs
+          .mapNotNullTo(LinkedHashSet()) { input ->
+            input.fieldName?.takeIf { classType?.getProperty(NG_ACCEPT_INPUT_TYPE_PREFIX + it) != null }
           }
 
         val plainInputs = mutableListOf<String>()

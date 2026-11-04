@@ -1,12 +1,12 @@
 package org.angular2.entities
 
+import com.intellij.javascript.JSTypeEngineEvaluation.forceTSKotlinTypeEngine
 import com.intellij.javascript.typeEngine.JSTypeEngineMode
 import com.intellij.javascript.typeEngine.getJSType
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 interface Angular2ClassBasedDirectiveProperty : Angular2DirectiveProperty {
@@ -17,12 +17,7 @@ interface Angular2ClassBasedDirectiveProperty : Angular2DirectiveProperty {
     get() = null
 
   override val isCoerced: Boolean
-    get() = fieldName?.let { fieldName ->
-      owner
-        ?.staticJSType
-        ?.asRecordType(owner)
-        ?.findPropertySignature(NG_ACCEPT_INPUT_TYPE_PREFIX + fieldName)
-    } != null
+    get() = fieldName?.let { Angular2EntityUtils.hasAcceptInputType(owner, it) } == true
             || objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP) != null
 
   override val type: JSType?
@@ -31,11 +26,14 @@ interface Angular2ClassBasedDirectiveProperty : Angular2DirectiveProperty {
     else
       super.type
 
+  /** The template transpiler uses this type, so it comes from a program without Kolar. */
   override val transformParameterType: JSType?
-    get() = objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)
-      ?.getJSType(JSTypeEngineMode.Service)
-      ?.asRecordType(owner)
-      ?.callSignatures
-      ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.isNotEmpty() }?.get(0) }
-      ?.inferredType
+    get() = forceTSKotlinTypeEngine(disableKolar = true) {
+      objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)
+        ?.getJSType(JSTypeEngineMode.Service)
+        ?.asRecordType(owner)
+        ?.callSignatures
+        ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.isNotEmpty() }?.get(0) }
+        ?.inferredType
+    }
 }
