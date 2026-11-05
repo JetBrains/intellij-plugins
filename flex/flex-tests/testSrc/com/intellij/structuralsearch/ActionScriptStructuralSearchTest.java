@@ -4,11 +4,16 @@ package com.intellij.structuralsearch;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.testFramework.junit5.TestApplication;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestApplication
 public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase {
 
   @NotNull
@@ -29,6 +34,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     doTest(source, pattern, expectedOccurrences, ActionScriptFileType.INSTANCE);
   }
 
+  @Test
   public void testActionScriptVarInJSFile() {
     String s = """
       var x, y, z;
@@ -39,10 +45,12 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     doTest(s, "var '_a+;", 0, ActionScriptFileType.INSTANCE, JavaScriptSupportLoader.JAVASCRIPT);
   }
 
+  @Test
   public void testAsInterface() {
     doActionScriptTest("interface A { function aba(); }", "aba", 1);
   }
 
+  @Test
   public void testMalformedPatterns() {
     doMalformedPatternTest("class var");
     doMalformedPatternTest("{");
@@ -61,6 +69,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     } catch (MalformedPatternException ignore) {}
   }
 
+  @Test
   public void testCustomAttributes() {
     final String source = """
       package {
@@ -76,6 +85,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     doActionScriptTest(source, " [Embed(source=\"$a$\")]", 1);
   }
 
+  @Test
   public void testInMxml() throws IOException {
     doTestByFile("Script.mxml", "var $i$ = $val$", 2, ActionScriptFileType.INSTANCE);
     doTestByFile("Script.mxml", "for (var i = 0; i < n; i++) $exp$;", 1, ActionScriptFileType.INSTANCE);
@@ -85,6 +95,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     // todo: test AS in XML attribute values
   }
 
+  @Test
   public void testAsFunc() throws IOException {
     doTestByFile("class.as", "$a$+$b$", 1);
     doTestByFile("class.as", "function $name$('_param*) { '_st*; }", 2, ActionScriptFileType.INSTANCE);
@@ -98,6 +109,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     doTestByFile("class.as", "private static function sum('_param*) { '_st*; }", 0, ActionScriptFileType.INSTANCE);
   }
 
+  @Test
   public void testStringLiteralInActionScript() {
     doActionScriptTest("""
                          package {
@@ -107,6 +119,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
                          }""", "\"$str$\"", 1);
   }
 
+  @Test
   public void testClasses() {
     String pattern = "class $name$ {}";
     doActionScriptTest("""
@@ -148,6 +161,7 @@ public class ActionScriptStructuralSearchTest extends JSStructuralSearchTestBase
     doActionScriptTest(c1, "class $name$ implements $i$ {}", 1);
   }
 
+  @Test
   public void testTypes() {
     String as = """
       class Foo {
