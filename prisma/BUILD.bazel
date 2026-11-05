@@ -1,7 +1,10 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.prisma` start
 filegroup(
@@ -27,6 +30,12 @@ dev_dist_plugin(
 )
 ### auto-generated section `dev intellij.prisma` end
 
+pkg_files(
+    name = "language_server_resources",
+    srcs = glob(["gen-resources/language-server/**"]),
+    strip_prefix = strip_prefix.from_pkg("gen-resources"),
+)
+
 ### auto-generated section `build intellij.prisma` start
 create_kotlinc_options(
     name = "custom_prisma",
@@ -39,7 +48,7 @@ create_kotlinc_options(
     x_context_parameters = True,
 )
 
-jvm_library(
+ij_plugin_module(
     name = "prisma",
     srcs = glob(
         [
@@ -53,6 +62,8 @@ jvm_library(
     ),
     kotlinc_opts = ":custom_prisma",
     module_name = "intellij.prisma",
+    # manually written attribute
+    non_classpath_data = [":language_server_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -98,6 +109,14 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.prisma` end
+
+### auto-generated section `plugin intellij.prisma` start
+ij_plugin(
+    name = "prisma_plugin",
+    descriptor_module = ":prisma_plugin_module",
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.prisma` end
 
 ### auto-generated section `iml intellij.prisma` start
 exports_files(
