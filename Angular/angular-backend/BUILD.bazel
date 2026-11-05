@@ -1,5 +1,6 @@
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.angular.backend` start
 content_module_jar(module = ":angular-backend")
@@ -15,6 +16,22 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev intellij.angular.backend` end
+
+# used from org.angular2.cli.SchematicsLoader class
+pkg_files(
+    name = "ngCli_resources",
+    srcs = glob(["gen-resources/ngCli/**"]),
+    strip_prefix = strip_prefix.from_pkg("gen-resources"),
+    visibility = ["//contrib/Angular/angular-plugin:__pkg__"],
+)
+
+# used from org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol class
+pkg_files(
+    name = "angular_service_resources",
+    srcs = glob(["gen-resources/angular-service/**"]),
+    strip_prefix = strip_prefix.from_pkg("gen-resources"),
+    visibility = ["//contrib/Angular/angular-plugin:__pkg__"],
+)
 
 ### auto-generated section `build intellij.angular.backend` start
 jvm_library(
