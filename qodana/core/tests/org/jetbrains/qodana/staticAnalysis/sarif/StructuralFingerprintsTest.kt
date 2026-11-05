@@ -14,7 +14,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.EnclosingScopeIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ExtractionAndRefactorTolerantIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.MoveAndRefactorTolerantIndicator
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ShiftTolerantEquality
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ShiftTolerantIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
@@ -29,32 +29,32 @@ class StructuralFingerprintsTest {
 
   @Test
   fun `shift tolerant key and version`() {
-    assertEquals(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, ShiftTolerantEquality.name)
-    assertEquals(1, ShiftTolerantEquality.version)
+    assertEquals(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, ShiftTolerantIndicator.name)
+    assertEquals(1, ShiftTolerantIndicator.version)
   }
 
   @Test
   fun `shift tolerant is deterministic`() {
     val a = result()
     val b = result()
-    assertEquals(ShiftTolerantEquality.calculate(a), ShiftTolerantEquality.calculate(b))
+    assertEquals(ShiftTolerantIndicator.calculate(a), ShiftTolerantIndicator.calculate(b))
   }
 
   @Test
   fun `shift tolerant ignores line and column shifts`() {
     val original = result(startLine = 10, startColumn = 5)
     val shifted = result(startLine = 42, startColumn = 17)
-    assertEquals(ShiftTolerantEquality.calculate(original), ShiftTolerantEquality.calculate(shifted))
+    assertEquals(ShiftTolerantIndicator.calculate(original), ShiftTolerantIndicator.calculate(shifted))
   }
 
   @Test
   fun `shift tolerant reacts to content changes`() {
     val base = result()
-    assertNotEquals(ShiftTolerantEquality.calculate(base), ShiftTolerantEquality.calculate(result(ruleId = "Other")))
-    assertNotEquals(ShiftTolerantEquality.calculate(base), ShiftTolerantEquality.calculate(result(additionalData = "other")))
-    assertNotEquals(ShiftTolerantEquality.calculate(base), ShiftTolerantEquality.calculate(result(level = Level.ERROR)))
-    assertNotEquals(ShiftTolerantEquality.calculate(base), ShiftTolerantEquality.calculate(result(charLength = 99)))
-    assertNotEquals(ShiftTolerantEquality.calculate(base), ShiftTolerantEquality.calculate(result(snippet = "other()")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(ruleId = "Other")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(message = "other")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(level = Level.ERROR)))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(charLength = 99)))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(snippet = "other()")))
   }
 
   @Test
@@ -157,8 +157,13 @@ class StructuralFingerprintsTest {
     assertNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
   }
 
-  private fun signals(astShape: String? = null, scopeName: String? = null, scopeType: String? = null): StructuralFingerprintSignals =
-    StructuralFingerprintSignals(astShape, scopeName, scopeType)
+  private fun signals(
+    astShape: String? = null,
+    scopeName: String? = null,
+    scopeType: String? = null,
+    astSnippet: String? = null,
+  ): StructuralFingerprintSignals =
+    StructuralFingerprintSignals(astShape, scopeName, scopeType, astSnippet)
 
   private fun result(
     ruleId: String = "IgnoreResultOfCall",

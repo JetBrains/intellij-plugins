@@ -50,6 +50,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-codeinsight",
         "//plugins/JavaScriptLanguage/javascript-coverage",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/js-test-common:javascript-testing",
     ],
 )
 

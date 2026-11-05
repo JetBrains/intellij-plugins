@@ -41,13 +41,14 @@ internal fun Result.fingerprintOf(calculator: FingerprintCalculator): String? =
 fun Result.withPartialFingerprints(): Result = apply {
   addFingerprints(BaselineEqualityV1, BaselineEqualityV2)
   if (areStructuralFingerprintsEnabled) {
-    addFingerprints(ShiftTolerantEquality)
+    addFingerprints(ShiftTolerantIndicator)
   }
 }
 
 fun Result.addStructuralFingerprints(signals: StructuralFingerprintSignals): Result = apply {
   val prints = partialFingerprints ?: VersionedMap()
   for (calculator in listOf(
+    ScopeAndShapeTolerantIndicator,
     ExtractionAndRefactorTolerantIndicator,
     MoveAndRefactorTolerantIndicator,
     EnclosingScopeIndicator,
