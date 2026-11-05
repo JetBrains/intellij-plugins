@@ -18,7 +18,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaPsiStructuralFingerprintsProvider
 
 private const val BDD_TEST_PATH_SEPARATOR = " > "
-private const val COMMONJS_EXPORTS = "exports"
 
 class JsPsiStructuralFingerprintsProvider : QodanaPsiStructuralFingerprintsProvider {
   override fun isCodeBlock(element: PsiElement): Boolean = element is JSBlockStatement
@@ -54,9 +53,6 @@ class JsPsiStructuralFingerprintsProvider : QodanaPsiStructuralFingerprintsProvi
 
   /** JS wraps an expression in parentheses, so a step skips them. */
   override fun bindingWalkParent(element: PsiElement): PsiElement? = JSUtils.getParentSkipParentheses(element)
-
-  /** Every CommonJS module assigns `exports`, so the name would match across files. */
-  override fun isGenericScopeName(name: String): Boolean = name == COMMONJS_EXPORTS
 
   /** A plain name, not a qualified one, to match what the other languages report. */
   override fun declaredName(element: PsiElement): String? = when (element) {

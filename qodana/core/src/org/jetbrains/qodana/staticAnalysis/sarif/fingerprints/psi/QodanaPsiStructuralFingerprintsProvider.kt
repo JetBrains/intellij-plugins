@@ -49,9 +49,6 @@ interface QodanaPsiStructuralFingerprintsProvider {
   /** A label for an anonymous [scope], for example `Holder` for a Kotlin `init { }`. */
   fun anonymousScopeName(scope: PsiElement): String? = null
 
-  /** A name that identifies no scope, such as `exports` in a CommonJS module. The walk passes it by. */
-  fun isGenericScopeName(name: String): Boolean = false
-
   /** The name that [element] declares, for example a variable or the target of an assignment. */
   fun declaredName(element: PsiElement): String? = null
 
