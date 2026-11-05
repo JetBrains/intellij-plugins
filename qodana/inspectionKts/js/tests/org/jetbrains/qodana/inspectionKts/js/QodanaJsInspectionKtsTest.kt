@@ -24,6 +24,7 @@ import kotlin.io.path.writeText
 // The contract with Qodana CLI, spelled out to pin the names.
 private const val INTERNAL_INSPECTIONS_KTS_DIR_PROPERTY = "qodana.internal.inspections.kts.dir"
 private const val INTERNAL_INSPECTIONS_RESULTS_KEY = "qodana.internal.results"
+private const val INTERNAL_INSPECTIONS_ID_PREFIX = "qodana.internal."
 
 @TestDataPath($$"$CONTENT_ROOT/../test-data/QodanaJsInspectionKtsTest")
 class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
@@ -114,6 +115,31 @@ class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
   }
 
   @Test
+  fun `testInternal inspection does not clash with project one of same id`(): Unit = QodanaTestCase.runTest {
+    val inspectionKtsTemplate = InspectionKtsTemplate.Provider.templates().first { it.uiDescriptor.id == JsInspectionKtsTemplateProvider.ID }
+    val filename = "my-js-inspection"
+    val inspectionKtsContent = inspectionKtsTemplate.templateContent.invoke(filename)
+
+    withInspectionKtsFile(qodanaConfig.projectPath, filename, inspectionKtsContent) {
+      withInternalInspectionKtsFile(filename, inspectionKtsContent) {
+        updateQodanaConfig {
+          it.copy(
+            profile = QodanaProfileConfig.named("qodana.single:MyJsInspection"),
+          )
+        }
+        reinstantiateInspectionRelatedServices(project, testRootDisposable)
+        reinstantiateKtsServices(project, testRootDisposable)
+
+        runAnalysis()
+      }
+    }
+
+    val run = manager.sarifRun
+    assertEquals(List(3) { "MyJsInspection" }, run.results.orEmpty().map { it.ruleId })
+    assertOnlyInternalResults(run)
+  }
+
+  @Test
   fun `testInternal inspection compilation failure does not break analysis`(): Unit = QodanaTestCase.runTest {
     withInternalInspectionKtsFile("broken", "this is not kotlin") {
       updateQodanaConfig {
@@ -145,12 +171,13 @@ class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
 }
 
 private fun assertOnlyInternalResults(run: Run) {
-  assertFalse(run.results.orEmpty().any { it.ruleId == "MyJsInspection" })
+  val internalId = INTERNAL_INSPECTIONS_ID_PREFIX + "MyJsInspection"
+  assertFalse(run.results.orEmpty().any { it.ruleId == internalId })
   val rules = (listOfNotNull(run.tool.driver) + run.tool.extensions.orEmpty()).flatMap { it.rules.orEmpty() }
-  assertFalse(rules.any { it.id == "MyJsInspection" })
+  assertFalse(rules.any { it.id == internalId })
   val internalResults = run.properties?.get(INTERNAL_INSPECTIONS_RESULTS_KEY) as? List<*>
   // The same three problems in App.js that `testInspection works in flexinspect subdir` reports.
-  assertEquals(List(3) { "MyJsInspection" }, internalResults.orEmpty().map { (it as Result).ruleId })
+  assertEquals(List(3) { internalId }, internalResults.orEmpty().map { (it as Result).ruleId })
 }
 
 @OptIn(ExperimentalPathApi::class)

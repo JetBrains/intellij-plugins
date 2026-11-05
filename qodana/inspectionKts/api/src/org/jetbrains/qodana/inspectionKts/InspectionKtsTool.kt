@@ -24,9 +24,10 @@ import org.jetbrains.qodana.inspectionKts.api.LocalKtsInspectionTool
 
 internal const val INSPECTIONS_KTS_GROUP_NAME = "FlexInspect"
 
+/** The tool of this inspection, whose short name is [id] prefixed with [idPrefix]. */
 @Suppress("FunctionName") // named in such way to not expose to .inspection.kts clients
 @ApiStatus.Internal
-fun InspectionKts.__asTool__(exceptionReporter: (Exception) -> Unit): InspectionProfileEntry {
+fun InspectionKts.__asTool__(idPrefix: String = "", exceptionReporter: (Exception) -> Unit): InspectionProfileEntry {
   fun loggingExceptions(action: () -> Unit) {
     try {
       action.invoke()
@@ -49,7 +50,7 @@ fun InspectionKts.__asTool__(exceptionReporter: (Exception) -> Unit): Inspection
 
         override fun getDefaultLevel(): HighlightDisplayLevel = level
 
-        override fun getShortName(): String = this@__asTool__.id
+        override fun getShortName(): String = idPrefix + this@__asTool__.id
 
         override fun getDisplayName(): String = name
 
@@ -90,7 +91,7 @@ fun InspectionKts.__asTool__(exceptionReporter: (Exception) -> Unit): Inspection
 
         override fun getDefaultLevel(): HighlightDisplayLevel = level
 
-        override fun getShortName(): String = id
+        override fun getShortName(): String = idPrefix + id
 
         override fun getDisplayName(): String = name
 

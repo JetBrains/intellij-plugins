@@ -156,7 +156,9 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
 
     val internalDirectory = internalInspectionsKtsDirectory() ?: return flowOf(emptySet())
     val inspectionFiles = inspectionFilesFlow(internalDirectory)
-    return compiledInspectionsFilesFlow(inspectionFiles) { file -> compileFile(file, INTERNAL_INSPECTIONS_PROVIDER_NAME) }
+    return compiledInspectionsFilesFlow(inspectionFiles) { file ->
+      compileFile(file, INTERNAL_INSPECTIONS_PROVIDER_NAME, INTERNAL_INSPECTIONS_ID_PREFIX)
+    }
   }
 
   private fun inspectionFilesFlow(scriptDirectory: Path): Flow<Set<Path>> {
@@ -265,7 +267,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
 
   suspend fun doCompileInspectionKtsFile(file: Path): InspectionKtsFileStatus = compileFile(file, FLEX_INSPECT_PROVIDER_NAME)
 
-  private suspend fun compileFile(file: Path, providerName: String): InspectionKtsFileStatus {
+  private suspend fun compileFile(file: Path, providerName: String, idPrefix: String = ""): InspectionKtsFileStatus {
     val errorLogger = inspectionKtsErrorLogManager.Logger(file)
     val bta = InspectionKtsBtaCompiler.EP_NAME.extensionList.firstOrNull { it.isEnabled() }
     val result = if (bta != null) {
@@ -280,7 +282,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
       }
       is InspectionKtsCompilationResult.Compiled -> {
         try {
-          compiledStatus(file, result, errorLogger, providerName)
+          compiledStatus(file, result, errorLogger, providerName, idPrefix)
         }
         catch (ce: CancellationException) {
           throw ce
@@ -300,6 +302,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
     compiled: InspectionKtsCompilationResult.Compiled,
     errorLogger: InspectionKtsErrorLogManager.Logger,
     providerName: String,
+    idPrefix: String,
   ): InspectionKtsFileStatus {
     val exceptionDuringAnalysisFlow = MutableStateFlow<Exception?>(null)
     val exceptionReporter: (Exception) -> Unit = { exception ->
@@ -309,7 +312,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
       }
     }
     val descriptors = compiled.inspections.mapTo(LinkedHashSet()) {
-      DynamicInspectionDescriptor.fromTool(it.__asTool__(exceptionReporter), providerName)
+      DynamicInspectionDescriptor.fromTool(it.__asTool__(idPrefix, exceptionReporter), providerName)
     }
     val inspections = CompiledInspectionKtsInspections(descriptors, compiled.customData, compiled.keepAlive)
     return InspectionKtsFileStatus.Compiled(

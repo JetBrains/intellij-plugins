@@ -18,6 +18,12 @@ internal const val INTERNAL_INSPECTIONS_KTS_DIR_PROPERTY: String = "qodana.inter
 internal const val INTERNAL_INSPECTIONS_PROVIDER_NAME: String = "FlexInspectInternal"
 
 /**
+ * Prefixes the ids of the internal inspections, so that they clash with no other inspection: Qodana disables the internal ids in
+ * all its groups but the internal one.
+ */
+internal const val INTERNAL_INSPECTIONS_ID_PREFIX: String = "qodana.internal."
+
+/**
  * Registers the inspections of [INTERNAL_INSPECTIONS_KTS_DIR_PROPERTY], which [KtsInternalInspectionsProvider] names to Qodana as
  * internal ones. Files that failed to compile are left out silently.
  */
