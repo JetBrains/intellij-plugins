@@ -6,8 +6,8 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.rethrowControlFlowException
 import com.intellij.util.net.PlatformHttpClient
-import com.intellij.diagnostic.rethrowControlFlowException
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.cloud.api.IjQDCloudClient
 import org.jetbrains.qodana.cloudclient.asSuccess
@@ -130,7 +130,8 @@ internal fun httpBaseline(host: String, qodanaToken: String, toolName: String): 
 
   // The client must stay open until the body is read to the end, so the whole copy runs in this block.
   return PlatformHttpClient.client().use { client ->
-    val response = PlatformHttpClient.response(client, request, HttpResponse.BodyHandlers.ofInputStream())
+    @Suppress("DEPRECATION", "removal")
+    val response = PlatformHttpClient.checkResponse(client.send(request, HttpResponse.BodyHandlers.ofInputStream()))
     if (response.statusCode() == HttpURLConnection.HTTP_NO_CONTENT) {
       LOG.info("Qodana Cloud keeps no baseline for the project")
       return@use null
