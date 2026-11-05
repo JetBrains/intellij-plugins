@@ -1,6 +1,9 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.prettierJS` start
 filegroup(
@@ -30,8 +33,15 @@ dev_dist_plugin(
 )
 ### auto-generated section `dev intellij.prettierJS` end
 
+# used from com.intellij.prettierjs.PrettierUtil class
+pkg_files(
+    name = "prettierLanguageService_resources",
+    srcs = glob(["gen/prettierLanguageService/**"]),
+    strip_prefix = strip_prefix.from_pkg("gen"),
+)
+
 ### auto-generated section `build intellij.prettierJS` start
-jvm_library(
+ij_plugin_module(
     name = "prettierJS",
     srcs = glob(
         [
@@ -42,6 +52,8 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.prettierJS",
+    # manually written attribute
+    non_classpath_data = [":prettierLanguageService_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -86,6 +98,15 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.prettierJS` end
+
+### auto-generated section `plugin intellij.prettierJS` start
+ij_plugin(
+    name = "prettierJS_plugin",
+    descriptor_module = ":prettierJS_plugin_module",
+    content_modules = ["//contrib/prettierJS/prettierJS-eslint:eslint"],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.prettierJS` end
 
 ### auto-generated section `iml intellij.prettierJS` start
 exports_files(
