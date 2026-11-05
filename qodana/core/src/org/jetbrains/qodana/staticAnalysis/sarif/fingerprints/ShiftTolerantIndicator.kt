@@ -16,7 +16,7 @@ internal data object ShiftTolerantIndicator : FingerprintCalculator {
   override fun calculate(result: Result): String = Hashing.fingerprint2011().hash { hasher ->
     hasher.put(result.ruleId)
     hasher.put(result.level.value())
-    hasher.put(result.message?.text)
+    hasher.put(result.properties?.get(BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA)?.hashCode())
     result.locations.forEachNotNull { location ->
       val physical = location.physicalLocation
 

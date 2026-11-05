@@ -44,6 +44,11 @@ class StructuralFingerprintsTest {
   }
 
   @Test
+  fun `shift tolerant ignores the message text`() {
+    assertEquals(ShiftTolerantIndicator.calculate(result()), ShiftTolerantIndicator.calculate(result(message = "other")))
+  }
+
+  @Test
   fun `shift tolerant ignores line and column shifts`() {
     val original = result(startLine = 10, startColumn = 5)
     val shifted = result(startLine = 42, startColumn = 17)
@@ -54,7 +59,7 @@ class StructuralFingerprintsTest {
   fun `shift tolerant reacts to content changes`() {
     val base = result()
     assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(ruleId = "Other")))
-    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(message = "other")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(additionalData = "x")))
     assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(level = Level.ERROR)))
     assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(charLength = 99)))
     assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(snippet = "other()")))
@@ -147,20 +152,19 @@ class StructuralFingerprintsTest {
     assertNotNull(prints.get(BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNotNull(prints.get(BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNotNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
-    // shift-tolerant is off by default
-    assertNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
+    assertNotNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
 
     assertNull(result.properties)
   }
 
   @Test
-  fun `pipeline emits only equality indicators by default`() {
+  fun `pipeline without structural signals emits equality and shift tolerant indicators`() {
     val result = result().withPartialFingerprints()
 
     val prints = result.partialFingerprints!!
     assertNotNull(prints.get(BaselineCalculation.EQUAL_INDICATOR, 1))
     assertNotNull(prints.get(BaselineCalculation.EQUAL_INDICATOR, 2))
-    assertNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
+    assertNotNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
     assertNull(prints.get(BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNull(prints.get(BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
