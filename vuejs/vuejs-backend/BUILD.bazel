@@ -1,6 +1,7 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.vuejs.backend` start
 content_module_jar(module = ":backend")
@@ -16,6 +17,22 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `dev intellij.vuejs.backend` end
+
+# used from org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerPackageDescriptor class
+pkg_files(
+    name = "vue_language_tools_resources",
+    srcs = glob(["vue-language-tools/**"]),
+    strip_prefix = strip_prefix.from_pkg(),
+    visibility = ["//contrib/vuejs/vuejs-plugin:__pkg__"],
+)
+
+# used from org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceProtocol class
+pkg_files(
+    name = "vue_service_resources",
+    srcs = glob(["vue-service/**"]),
+    strip_prefix = strip_prefix.from_pkg(),
+    visibility = ["//contrib/vuejs/vuejs-plugin:__pkg__"],
+)
 
 ### auto-generated section `build intellij.vuejs.backend` start
 create_kotlinc_options(

@@ -1,5 +1,6 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
-load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.vuejs.plugin` start
 dev_dist_plugin(
@@ -43,13 +44,18 @@ dev_dist_plugin(
 ### auto-generated section `dev intellij.vuejs.plugin` end
 
 ### auto-generated section `build intellij.vuejs.plugin` start
-jvm_library(
+ij_plugin_module(
     name = "plugin",
     srcs = glob(
         [],
         allow_empty = True,
     ),
     module_name = "intellij.vuejs.plugin",
+    # manually written attribute
+    non_classpath_data = [
+        "//contrib/vuejs/vuejs-backend:vue_language_tools_resources",
+        "//contrib/vuejs/vuejs-backend:vue_service_resources",
+    ],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -69,6 +75,26 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.vuejs.plugin` end
+
+### auto-generated section `plugin intellij.vuejs.plugin` start
+ij_plugin(
+    name = "plugin_plugin",
+    descriptor_module = ":plugin_plugin_module",
+    content_modules = [
+        # do not sort,
+        "//contrib/vuejs/vuejs-prettier:prettier",
+        "//contrib/vuejs/vuejs-copyright:copyright",
+        "//contrib/vuejs/vuejs-debugger:debugger",
+        "//contrib/vuejs/vuejs-markdown:markdown",
+        "//contrib/vuejs/vue-free:free",
+        "//contrib/vuejs/vuejs-common:common",
+        "//contrib/vuejs/vuejs-backend:backend",
+        "//contrib/vuejs/vuejs-eslint:eslint",
+        "//contrib/vuejs/vuejs-webpack:webpack",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.vuejs.plugin` end
 
 ### auto-generated section `iml intellij.vuejs.plugin` start
 exports_files(
