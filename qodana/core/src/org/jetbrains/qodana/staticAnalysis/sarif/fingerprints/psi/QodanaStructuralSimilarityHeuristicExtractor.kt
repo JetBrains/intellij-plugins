@@ -28,19 +28,23 @@ object PsiSignalExtractor {
 
   /**
    * Single walk up the PSI tree producing:
-   * - **enclosingScopeName**: nearest enclosing function-like declaration name (via [QodanaPsiStructuralFingerprintsProvider.isFunctionDeclaration])
-   * - **enclosingScopeType**: type of the nearest enclosing function-like statement.
+   * - **enclosingScopeName**: name of the nearest enclosing function-like declaration that has a name
+   *   (via [QodanaPsiStructuralFingerprintsProvider.isFunctionDeclaration])
+   * - **enclosingScopeType**: type of that same declaration.
    */
-  private fun extractEnclosingScopeNameAndType(element: PsiElement, provider: QodanaPsiStructuralFingerprintsProvider?): EnclosingScopeNameAndType {
+  private fun extractEnclosingScopeNameAndType(
+    element: PsiElement,
+    provider: QodanaPsiStructuralFingerprintsProvider?,
+  ): EnclosingScopeNameAndType {
     if (provider == null) return EnclosingScopeNameAndType.EMPTY
-    val enclosingScope = generateSequence(element) { it.parent }
-      .takeWhile { it !is PsiFile }
-      .firstOrNull { provider.isFunctionDeclaration(it) }
 
-    return EnclosingScopeNameAndType(
-      (enclosingScope as? PsiNamedElement)?.name,
-      enclosingScope?.let { elementTypeName(it) }
-    )
+    val (scope, name) = generateSequence(element) { it.parent }
+      .takeWhile { it !is PsiFile }
+      .filter { provider.isFunctionDeclaration(it) }
+      .firstNotNullOfOrNull { scope -> elementName(scope)?.let { scope to it } }
+      ?: return EnclosingScopeNameAndType.EMPTY
+
+    return EnclosingScopeNameAndType(name, elementTypeName(scope))
   }
 
   /**
@@ -101,6 +105,10 @@ object PsiSignalExtractor {
   /** Leaf tokens like `{`, `}`, `;` that carry no structural information. */
   private fun isLeafPunctuation(element: PsiElement): Boolean =
     element.children.isEmpty() && element.textLength <= 1
+
+  /** The declared name of [element], or null when it has none, like an anonymous JS callback or a PHP closure. */
+  private fun elementName(element: PsiElement): String? =
+    (element as? PsiNamedElement)?.name?.takeIf(String::isNotBlank)
 
   private fun elementTypeName(element: PsiElement): String? =
     PsiUtilCore.getElementType(element)?.toString()
