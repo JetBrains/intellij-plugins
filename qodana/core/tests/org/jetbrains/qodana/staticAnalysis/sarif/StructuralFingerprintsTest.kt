@@ -20,11 +20,14 @@ import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ScopeAndShapeToler
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ShiftTolerantIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Unit coverage for the structural / shift-tolerant fingerprint indicators and the [withPartialFingerprints] pipeline. */
@@ -152,22 +155,37 @@ class StructuralFingerprintsTest {
     assertNotNull(prints.get(BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNotNull(prints.get(BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNotNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
-    assertNotNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
+    // shift-tolerant is off by default outside the QDJVM and QDJS linters
+    assertNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
 
     assertNull(result.properties)
   }
 
   @Test
-  fun `pipeline without structural signals emits equality and shift tolerant indicators`() {
+  fun `pipeline emits only equality indicators by default`() {
     val result = result().withPartialFingerprints()
 
     val prints = result.partialFingerprints!!
     assertNotNull(prints.get(BaselineCalculation.EQUAL_INDICATOR, 1))
     assertNotNull(prints.get(BaselineCalculation.EQUAL_INDICATOR, 2))
-    assertNotNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
+    assertNull(prints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1))
     assertNull(prints.get(BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNull(prints.get(BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1))
     assertNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
+  }
+
+  @Test
+  fun `structural fingerprints are on by default only for the QDJVM and QDJS linters`() {
+    assertTrue(areStructuralFingerprintsEnabled(property = null, productCode = "QDJVM"))
+    assertTrue(areStructuralFingerprintsEnabled(property = null, productCode = "QDJS"))
+    assertFalse(areStructuralFingerprintsEnabled(property = null, productCode = "QDPY"))
+    assertFalse(areStructuralFingerprintsEnabled(property = null, productCode = null))
+  }
+
+  @Test
+  fun `the property overrides the default of the linter`() {
+    assertTrue(areStructuralFingerprintsEnabled(property = "true", productCode = "QDPY"))
+    assertFalse(areStructuralFingerprintsEnabled(property = "false", productCode = "QDJVM"))
   }
 
   @Test
