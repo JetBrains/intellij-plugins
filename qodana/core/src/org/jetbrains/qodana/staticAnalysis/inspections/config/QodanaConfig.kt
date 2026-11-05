@@ -48,11 +48,15 @@ private const val EMBEDDED_GIT_IGNORE_EXCLUDE: String = "embedded.gitignore"
 
 const val COVERAGE_OUTPUT_DIR: String = "coverage"
 
+/**
+ * Excludes, whatever the profile, what Qodana and its tools keep in a project but is never project code: Qodana's output, the default
+ * Edict state, and FlexInspect scripts, which are inspections themselves (the rest of `inspections` stays in scope).
+ */
 internal val QODANA_EXCLUDE_SCOPE_MODIFIER: GlobalExcludeScopeModifier = GlobalExcludeScopeModifier(
   InspectScope(
     name = "embedded.qodana",
-    paths = listOf(".qodana"),
-    patterns = emptyList(),
+    paths = listOf(".qodana", ".edict"),
+    patterns = listOf("file:inspections//*.inspection.kts"),
   )
 )
 

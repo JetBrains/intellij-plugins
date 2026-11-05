@@ -5,16 +5,19 @@ import com.intellij.codeInspection.ex.Tools
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.scope.packageSet.NamedScope
 import com.intellij.psi.search.scope.packageSet.NamedScopeManager
+import com.intellij.psi.search.scope.packageSet.PackageSetBase
 import com.intellij.testFramework.VfsTestUtil
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.DEFAULT_EXCLUDE_SCOPE_MODIFIER
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_EXCLUDE_SCOPE_MODIFIER
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
@@ -39,8 +42,10 @@ class QodanaInspectionScopesIntegrationTest : QodanaTestCase() {
 
   override fun tearDown() {
     try {
-      runBlocking {
-        inspectionContext.closeQodanaContext()
+      if (::inspectionContext.isInitialized) {
+        runBlocking {
+          inspectionContext.closeQodanaContext()
+        }
       }
       NamedScopeManager.getInstance(project).scopes = scopes
     }
@@ -218,6 +223,25 @@ class QodanaInspectionScopesIntegrationTest : QodanaTestCase() {
     assertContainsElements(wrappersByFile(dummyPsiFile()).map { it.shortName }, *inspections)
   }
 
+  @Test
+  fun `exclude edict state directory`() {
+    val inspections = arrayOf("UNUSED_IMPORT", "HardCodedStringLiteral", "JavaReflectionInvocation")
+    val wrappersByFile = provideTest(inspectionsInProfile = inspections)
+
+    assertEmpty(wrappersByFile(dummyPsiFile(".edict")))
+    assertContainsElements(wrappersByFile(dummyPsiFile("edict")).map { it.shortName }, *inspections)
+  }
+
+  @Test
+  fun `exclude flexinspect scripts of the project inspections directory only`() {
+    // `file:` patterns match paths relative to the content root, which is the project root in a real project.
+    assertTrue(isEmbeddedExclude("inspections/my-rule.inspection.kts"))
+    assertTrue(isEmbeddedExclude("inspections/js/my-rule.inspection.kts"))
+    assertFalse(isEmbeddedExclude("inspections/Helper.kt"))
+    assertFalse(isEmbeddedExclude("src/inspections/my-rule.inspection.kts"))
+    assertFalse(isEmbeddedExclude("build.gradle.kts"))
+  }
+
   private fun provideTest(
     excludedInspections: Map<String, List<String>> = emptyMap(),
     includedInspections: Map<String, List<String>> = emptyMap(),
@@ -279,6 +303,14 @@ class QodanaInspectionScopesIntegrationTest : QodanaTestCase() {
       override fun getVirtualFile() = virtualFile
       override fun getFileType() = virtualFile.fileType
     }
+  }
+
+  /** Whether the always-applied exclusion covers a file at [relativePath] of the content root. */
+  private fun isEmbeddedExclude(relativePath: String): Boolean {
+    val contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(getSourceRoot())!!
+    val file = VfsTestUtil.createFile(contentRoot, relativePath, "")
+    val scope = QODANA_EXCLUDE_SCOPE_MODIFIER.scope.getProfileScope(Path.of(getSourceRoot().path)) as PackageSetBase
+    return scope.contains(file, project, null)
   }
 
   private fun initializeTools(context: QodanaGlobalInspectionContext): MutableList<Tools> {
