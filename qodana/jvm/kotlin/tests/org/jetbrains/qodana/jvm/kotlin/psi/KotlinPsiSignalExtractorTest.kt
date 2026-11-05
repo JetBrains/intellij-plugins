@@ -1,17 +1,21 @@
 package org.jetbrains.qodana.jvm.kotlin.psi
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiSignalExtractor
 
 /**
  * Verifies [PsiSignalExtractor] over real Kotlin PSI.
  *
- * Kotlin reaches an unnamed scope by two different routes, and both must fall through to the enclosing
- * named function: a lambda is not a [org.jetbrains.kotlin.psi.KtNamedFunction] at all, while an anonymous
- * `fun() {}` is one that has no name.
+ * Kotlin reaches an unnamed scope by two routes. A lambda is a `KtLambdaExpression`, and an anonymous
+ * `fun() {}` is a [org.jetbrains.kotlin.psi.KtNamedFunction] with no name. Either one takes the name of the
+ * property that holds it. With no property, the walk continues to the enclosing named function.
  */
 class KotlinPsiSignalExtractorTest : BasePlatformTestCase() {
 
@@ -55,8 +59,8 @@ class KotlinPsiSignalExtractorTest : BasePlatformTestCase() {
     "handler",
   )
 
-  /** An anonymous `fun() {}` is a declaration with no name, so it is skipped and the walk continues outward. */
-  fun testAnonymousFunctionInsideNamedFunctionReportsFunction() = assertScope(
+  /** An anonymous `fun() {}` has no name, so the property that holds it labels the scope. */
+  fun testAnonymousFunctionInsideNamedFunctionReportsProperty() = assertScope(
     """
     fun handler() {
       val inner = fun() {
@@ -67,32 +71,197 @@ class KotlinPsiSignalExtractorTest : BasePlatformTestCase() {
       inner()
     }
     """,
-    "handler",
+    "inner",
   )
 
-  /**
-   * A lambda assigned to a top-level `val`. Unlike JS, Kotlin PSI does not name the lambda after the
-   * property that holds it, and no named ancestor is left, so no scope signal is produced.
-   */
-  fun testLambdaAssignedToTopLevelValReportsNoScope() = assertNoScope(
+  /** A lambda held by a top-level `val`. The property labels the scope, as it does in JS. */
+  fun testLambdaAssignedToTopLevelValReportsProperty() = assertScope(
     """
     val a = {
       if (x != y) {
         report()
       }
     }
-    """
+    """,
+    "a",
   )
 
-  /** The same for an anonymous `fun() {}` assigned to a top-level `val`. */
-  fun testAnonymousFunctionAssignedToTopLevelValReportsNoScope() = assertNoScope(
+  /** The same for an anonymous `fun() {}` held by a top-level `val`. */
+  fun testAnonymousFunctionAssignedToTopLevelValReportsProperty() = assertScope(
     """
     val a = fun() {
       if (x != y) {
         report()
       }
     }
+    """,
+    "a",
+  )
+
+  /** A trailing-lambda call with no binding and no named ancestor. Nothing can label this scope. */
+  fun testUnboundLambdaReportsNoScope() = assertNoScope(
     """
+    items.forEach {
+      if (x != y) {
+        report()
+      }
+    }
+    """
+  )
+
+  /** A top-level property initializer sits in no scope at all. A property in a class would report the class. */
+  fun testTopLevelPropertyReportsNoScope() = assertNoScope(
+    """
+    val a = if (x != y) 1 else 2
+    """
+  )
+
+  // --- astShape. A lambda is a scope now, so it is also a boundary of the astShape walk. ---
+
+  /** A statement in a lambda block. The block was always a boundary, so the shape does not change. */
+  fun testAstShapeOfStatementInLambdaBlock() = assertSig<KtCallExpression>(
+    """
+    fun handler() {
+      items.forEach {
+        report()
+      }
+    }
+    """,
+    "CALL_EXPRESSION(REFERENCE_EXPRESSION(IDENTIFIER),VALUE_ARGUMENT_LIST)  [scope=handler:FUNCTION]",
+    text = "report()",
+  )
+
+  /** The lambda itself. It is a scope now, so it reports its own shape at depth 1. */
+  fun testAstShapeOfLambdaItself() = assertSig<KtLambdaExpression>(
+    """
+    val a = {
+      report()
+    }
+    """,
+    "LAMBDA_EXPRESSION(FUNCTION_LITERAL)  [scope=a:LAMBDA_EXPRESSION]",
+  )
+
+  /** The body of a lambda. The walk stops under the lambda instead of leaving it. */
+  fun testAstShapeOfLambdaBody() = assertSig<KtBlockExpression>(
+    """
+    val a = {
+      report()
+    }
+    """,
+    "FUNCTION_LITERAL(BLOCK(CALL_EXPRESSION))  [scope=a:LAMBDA_EXPRESSION]",
+  )
+
+  /** A lambda argument with no property. The shape is the lambda, and the scope is the outer function. */
+  fun testAstShapeOfLambdaArgument() = assertSig<KtLambdaExpression>(
+    """
+    fun handler() {
+      items.forEach {
+        report()
+      }
+    }
+    """,
+    "LAMBDA_EXPRESSION(FUNCTION_LITERAL)  [scope=handler:FUNCTION]",
+  )
+
+  /** Pins `astShape` with the scope, in the format `astShape  [scope=name:type]`. */
+  private inline fun <reified T : PsiElement> assertSig(code: String, expected: String, text: String? = null) {
+    val file = myFixture.configureByText("sample.kt", code.trimIndent())
+    val candidates = PsiTreeUtil.findChildrenOfType(file, T::class.java)
+    val element = if (text == null) candidates.firstOrNull() else candidates.firstOrNull { it.text == text }
+    assertNotNull("no ${T::class.simpleName}" + (text?.let { " with text '$it'" } ?: ""), element)
+
+    val signals = PsiSignalExtractor.extractSignals(element!!)
+    assertEquals(expected, "${signals.astShape ?: "-"}  [scope=${signals.enclosingScopeName ?: "-"}:${signals.enclosingScopeType ?: "-"}]")
+  }
+
+  // --- An accessor and a constructor are scopes too, so a member names them instead of the class. ---
+
+  /** A getter with a block body. The property names the scope, never the class that holds it. */
+  fun testGetterReportsProperty() = assertSig<KtIfExpression>(
+    """
+    class Holder {
+      val value: Int
+        get() {
+          if (x != y) {
+            report()
+          }
+          return 1
+        }
+    }
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN(BLOCK))  [scope=value:PROPERTY_ACCESSOR]",
+  )
+
+  /** The same for an expression-bodied getter. */
+  fun testExpressionGetterReportsProperty() = assertSig<KtIfExpression>(
+    """
+    class Holder {
+      val value: Int get() = if (x != y) 1 else 2
+    }
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN,else,ELSE)  [scope=value:PROPERTY_ACCESSOR]",
+  )
+
+  /** A setter reports the same property. A getter and a setter of one property share the scope. */
+  fun testSetterReportsProperty() = assertSig<KtIfExpression>(
+    """
+    class Holder {
+      var value: Int = 0
+        set(v) {
+          if (x != y) {
+            report()
+          }
+        }
+    }
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN(BLOCK))  [scope=value:PROPERTY_ACCESSOR]",
+  )
+
+  /** A secondary constructor carries the name of its class, with its own element type. */
+  fun testSecondaryConstructorReportsClass() = assertSig<KtIfExpression>(
+    """
+    class Holder {
+      constructor(a: Int) {
+        if (x != y) {
+          report()
+        }
+      }
+    }
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN(BLOCK))  [scope=Holder:SECONDARY_CONSTRUCTOR]",
+  )
+
+  /** An `init { }` block takes the class name, and its element type keeps it apart from the class body. */
+  fun testInitBlockReportsClassWithItsOwnType() = assertSig<KtIfExpression>(
+    """
+    class Holder {
+      init {
+        if (x != y) {
+          report()
+        }
+      }
+    }
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN(BLOCK))  [scope=Holder:CLASS_INITIALIZER]",
+  )
+
+  /** A lambda in a default value of the primary constructor stops at the constructor, not at the class. */
+  fun testLambdaInPrimaryConstructorDefaultReportsConstructor() = assertSig<KtIfExpression>(
+    """
+    class Holder(val f: () -> Int = { if (x != y) 1 else 2 })
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN,else,ELSE)  [scope=Holder:PRIMARY_CONSTRUCTOR]",
+  )
+
+  /** A lambda in a getter stops at the accessor, so it reports the property, as the getter body does. */
+  fun testLambdaInGetterReportsProperty() = assertSig<KtIfExpression>(
+    """
+    class Holder {
+      val value: Int
+        get() = items.map { if (x != y) 1 else 2 }.first()
+    }
+    """,
+    "IF(if,CONDITION(BINARY_EXPRESSION),THEN,else,ELSE)  [scope=value:PROPERTY_ACCESSOR]",
   )
 
   private fun assertScope(code: String, expectedName: String) {

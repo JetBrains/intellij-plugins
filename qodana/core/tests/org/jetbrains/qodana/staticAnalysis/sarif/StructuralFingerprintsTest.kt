@@ -4,16 +4,19 @@ import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.ArtifactContent
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Location
+import com.jetbrains.qodana.sarif.model.LogicalLocation
 import com.jetbrains.qodana.sarif.model.Message
 import com.jetbrains.qodana.sarif.model.PhysicalLocation
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Region
 import com.jetbrains.qodana.sarif.model.Level
 import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.VersionedMap
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.EnclosingScopeIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ExtractionAndRefactorTolerantIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.MoveAndRefactorTolerantIndicator
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ScopeAndShapeTolerantIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.ShiftTolerantIndicator
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.addStructuralFingerprints
@@ -90,10 +93,16 @@ class StructuralFingerprintsTest {
     assertEquals(1, MoveAndRefactorTolerantIndicator.version)
   }
 
+  /**
+   * The guard needs both signals. A problem at the top level of a file has a shape but no scope, so it gets
+   * no move-tolerant hash at all.
+   */
   @Test
-  fun `move tolerant needs shape or scope`() {
+  fun `move tolerant needs both shape and scope`() {
     assertNull(MoveAndRefactorTolerantIndicator.calculate(result(), signals()))
-    assertNotNull(MoveAndRefactorTolerantIndicator.calculate(result(), signals(astShape = "IF_STATEMENT(BLOCK)")))
+    assertNull(MoveAndRefactorTolerantIndicator.calculate(result(), signals(astShape = "IF_STATEMENT(BLOCK)")))
+    assertNull(MoveAndRefactorTolerantIndicator.calculate(result(), signals(scopeName = "foo")))
+    assertNotNull(MoveAndRefactorTolerantIndicator.calculate(result(), signals(astShape = "IF_STATEMENT(BLOCK)", scopeName = "foo")))
   }
 
   @Test
@@ -157,13 +166,119 @@ class StructuralFingerprintsTest {
     assertNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
   }
 
+  @Test
+  fun `scope and shape key and version`() {
+    assertEquals("scopeAndShapeTolerantIndicator", ScopeAndShapeTolerantIndicator.name)
+    assertEquals(1, ScopeAndShapeTolerantIndicator.version)
+  }
+
+  /** It reads only the problem element type, so the shape and the scope do not make it answer. */
+  @Test
+  fun `scope and shape needs the problem element type`() {
+    assertNull(ScopeAndShapeTolerantIndicator.calculate(result(), signals()))
+    assertNull(ScopeAndShapeTolerantIndicator.calculate(result(), signals(astShape = "IF_STATEMENT(BLOCK)", scopeName = "foo")))
+    assertNotNull(ScopeAndShapeTolerantIndicator.calculate(result(), signals(problemElementType = "IF_STATEMENT")))
+  }
+
+  @Test
+  fun `scope and shape reacts to element type and filename`() {
+    val calc = ScopeAndShapeTolerantIndicator
+    val base = calc.calculate(result(uri = "src/A.java"), signals(problemElementType = "IF_STATEMENT"))
+
+    val otherType = calc.calculate(result(uri = "src/A.java"), signals(problemElementType = "FOR_STATEMENT"))
+    assertNotEquals(base, otherType)
+
+    val movedFile = calc.calculate(result(uri = "src/moved/B.java"), signals(problemElementType = "IF_STATEMENT"))
+    assertNotEquals(base, movedFile)
+  }
+
+  /**
+   * A problem at the top level of a file. The three indicators that need a scope stay absent, and only the
+   * one that reads the problem element type answers.
+   */
+  @Test
+  fun `pipeline skips the scope indicators for a top level problem`() {
+    val result = result()
+      .withPartialFingerprints()
+      .addStructuralFingerprints(signals(astShape = "IF_STATEMENT(BLOCK)", problemElementType = "IF_STATEMENT"))
+
+    val prints = result.partialFingerprints!!
+    assertNull(prints.get(BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR, 1))
+    assertNull(prints.get(BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR, 1))
+    assertNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
+    assertNotNull(prints.get(ScopeAndShapeTolerantIndicator.name, 1))
+  }
+
+  /**
+   * A baseline matcher reads a hash at the version it asks for. So the shift-tolerant hash must sit at
+   * version 1, and a shifted rerun of the same problem must find the baseline value there.
+   */
+  @Test
+  fun `shift tolerant matches a baseline at its own version`() {
+    val baseline = result(startLine = 10, startColumn = 5)
+    val rerun = result(startLine = 42, startColumn = 17)
+
+    val baselinePrints = VersionedMap<String>().apply {
+      put(ShiftTolerantIndicator.name, ShiftTolerantIndicator.version, ShiftTolerantIndicator.calculate(baseline))
+    }
+
+    assertEquals(
+      ShiftTolerantIndicator.calculate(rerun),
+      baselinePrints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 1),
+    )
+    assertNull(
+      "a version bump would hide the hash from a baseline written at version 1",
+      baselinePrints.get(BaselineCalculation.SHIFT_TOLERANT_INDICATOR, 2),
+    )
+  }
+
+  /** The remaining inputs of the shift-tolerant hash: the file it points at and the base id of that file. */
+  @Test
+  fun `shift tolerant reacts to the location`() {
+    val base = result()
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(uri = "src/Other.java")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(result(uriBaseId = "TESTROOT")))
+  }
+
+  /**
+   * A result with a logical location and no physical one. The hash reads the logical name and kind, so a
+   * problem without a file still gets a stable value that reacts to its own inputs.
+   */
+  @Test
+  fun `shift tolerant reads a logical location`() {
+    val base = logicalResult(name = "com.foo.Bar.baz", kind = "function")
+
+    assertEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(logicalResult(name = "com.foo.Bar.baz", kind = "function")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(logicalResult(name = "com.foo.Bar.qux", kind = "function")))
+    assertNotEquals(ShiftTolerantIndicator.calculate(base), ShiftTolerantIndicator.calculate(logicalResult(name = "com.foo.Bar.baz", kind = "member")))
+  }
+
+  /**
+   * The indicator is coarse on purpose. Inside one file it reads only the rule and the problem element type,
+   * so two problems of one rule on the same kind of element collide. Only `additionalFingerprintData`
+   * separates them.
+   */
+  @Test
+  fun `scope and shape collides inside one file`() {
+    val calc = ScopeAndShapeTolerantIndicator
+    val first = calc.calculate(result(uri = "src/A.java", startLine = 10), signals(problemElementType = "IF_STATEMENT"))
+    val second = calc.calculate(result(uri = "src/A.java", startLine = 99), signals(problemElementType = "IF_STATEMENT"))
+    assertEquals("two problems of one rule on one element kind share the hash", first, second)
+
+    val otherRule = calc.calculate(result(uri = "src/A.java", ruleId = "Other"), signals(problemElementType = "IF_STATEMENT"))
+    assertNotEquals(first, otherRule)
+
+    val withData = calc.calculate(result(uri = "src/A.java", additionalData = "x"), signals(problemElementType = "IF_STATEMENT"))
+    assertNotEquals(first, withData)
+  }
+
   private fun signals(
     astShape: String? = null,
     scopeName: String? = null,
     scopeType: String? = null,
-    astSnippet: String? = null,
+    problemElementType: String? = null,
   ): StructuralFingerprintSignals =
-    StructuralFingerprintSignals(astShape, scopeName, scopeType, astSnippet)
+    StructuralFingerprintSignals(astShape, scopeName, scopeType, problemElementType)
 
   private fun result(
     ruleId: String = "IgnoreResultOfCall",
@@ -175,20 +290,29 @@ class StructuralFingerprintsTest {
     charLength: Int = 7,
     snippet: String = "execute()",
     additionalData: String? = null,
+    uriBaseId: String = "SRCROOT",
   ): Result =
     Result()
       .withRuleId(ruleId)
       .withMessage(Message().withText(message))
       .withLevel(level)
-      .withLocations(listOf(location(uri, startLine, startColumn, charLength, snippet)))
+      .withLocations(listOf(location(uri, startLine, startColumn, charLength, snippet, uriBaseId)))
       .apply {
         additionalData?.let { withProperties(PropertyBag().apply { put(BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA, it) }) }
       }
 
-  private fun location(uri: String, startLine: Int, startColumn: Int, charLength: Int, snippet: String): Location =
+  /** A result whose location is logical, so the hash takes the other branch of the walk over locations. */
+  private fun logicalResult(name: String, kind: String): Result =
+    Result()
+      .withRuleId("IgnoreResultOfCall")
+      .withMessage(Message().withText("Result of method call ignored"))
+      .withLevel(Level.WARNING)
+      .withLocations(listOf(Location().withLogicalLocations(setOf(LogicalLocation().withName(name).withKind(kind)))))
+
+  private fun location(uri: String, startLine: Int, startColumn: Int, charLength: Int, snippet: String, uriBaseId: String): Location =
     Location().withPhysicalLocation(
       PhysicalLocation()
-        .withArtifactLocation(ArtifactLocation().withUri(uri).withUriBaseId("SRCROOT"))
+        .withArtifactLocation(ArtifactLocation().withUri(uri).withUriBaseId(uriBaseId))
         .withRegion(
           Region()
             .withStartLine(startLine)

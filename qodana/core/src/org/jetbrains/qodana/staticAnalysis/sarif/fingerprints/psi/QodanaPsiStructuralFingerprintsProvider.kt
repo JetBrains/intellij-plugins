@@ -37,13 +37,28 @@ interface QodanaPsiStructuralFingerprintsProvider {
   /** Class-like declarations: classes, interfaces, structs, enums, type specs. */
   fun isClassDeclaration(element: PsiElement): Boolean = false
 
-  /** Function-like declarations: methods, functions, constructors. */
+  /**
+   * Function-like declarations: a method, a function, a constructor, a property accessor, an initializer and
+   * an anonymous function. Each language decides which of these it has.
+   */
   fun isFunctionDeclaration(element: PsiElement): Boolean = false
 
-  /** A contextual label for an anonymous [scope], taken from the nearest binding around it. */
+  /** Any scope: a function-like or a class-like declaration. */
+  fun isScope(element: PsiElement): Boolean = isFunctionDeclaration(element) || isClassDeclaration(element)
+
+  /** A label for an anonymous [scope], for example `Holder` for a Kotlin `init { }`. */
   fun anonymousScopeName(scope: PsiElement): String? = null
 
-  /** A boundary that a serializeEnclosingElement walk stops under: file, block container, or class/function declaration. */
+  /** A name that identifies no scope, such as `exports` in a CommonJS module. The walk passes it by. */
+  fun isGenericScopeName(name: String): Boolean = false
+
+  /** The name that [element] declares, for example a variable or the target of an assignment. */
+  fun declaredName(element: PsiElement): String? = null
+
+  /** One step outward for the binding walk. Override it to skip a wrapper such as a parenthesis. */
+  fun bindingWalkParent(element: PsiElement): PsiElement? = element.parent
+
+  /** A boundary that a serializeEnclosingElement walk stops under: a file, a block container or a scope. */
   fun isEnclosingScope(element: PsiElement): Boolean =
-    element is PsiFile || isBlockContainer(element) || isFunctionDeclaration(element) || isClassDeclaration(element)
+    element is PsiFile || isBlockContainer(element) || isScope(element)
 }

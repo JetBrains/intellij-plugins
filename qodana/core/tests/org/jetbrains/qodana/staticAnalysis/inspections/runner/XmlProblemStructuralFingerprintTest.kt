@@ -18,6 +18,7 @@ class XmlProblemStructuralFingerprintTest : BasePlatformTestCase() {
         astShape = "CALL_EXPRESSION(REFERENCE_EXPRESSION,VALUE_ARGUMENT_LIST)",
         enclosingScopeName = "handleInput",
         enclosingScopeType = "FUN",
+        problemElementType = "CALL_EXPRESSION",
       ),
     )
     val database = QodanaToolResultDatabase.create(FileUtil.createTempDirectory(getTestName(false), null, true).toPath())
