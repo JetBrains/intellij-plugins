@@ -16,7 +16,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.GlobalOutputConsumer
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile.QodanaProfileState
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerprintSignals
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiSignalExtractor
 import java.nio.file.Path
 
@@ -62,8 +61,6 @@ class QodanaProblemConsumer(
   }
 
   private fun getStructuralSignals(descriptor: CommonProblemDescriptor): StructuralFingerprintSignals? {
-    if (!areStructuralFingerprintsEnabled) return null
-
     val baseDescriptor = descriptor as? ProblemDescriptorBase ?: return null
 
     return runReadActionBlocking {

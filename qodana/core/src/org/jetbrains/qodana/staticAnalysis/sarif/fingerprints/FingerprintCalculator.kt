@@ -3,14 +3,6 @@ package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.VersionedMap
 
-/**
- * Enables the structural baseline-matching indicators (shift-tolerant + structural) on top of the
- * always-present equality indicators. Off by default.
- * Set `-Dqodana.structural.fingerprints=true` for the internal usage.
- */
-internal val areStructuralFingerprintsEnabled: Boolean =
-  System.getProperty("qodana.structural.fingerprints")?.toBoolean() ?: false
-
 internal sealed interface FingerprintCalculator {
   val name: String
   val version: Int
@@ -39,10 +31,7 @@ internal fun Result.fingerprintOf(calculator: FingerprintCalculator): String? =
   partialFingerprints?.get(calculator.name, calculator.version)
 
 fun Result.withPartialFingerprints(): Result = apply {
-  addFingerprints(BaselineEqualityV1, BaselineEqualityV2)
-  if (areStructuralFingerprintsEnabled) {
-    addFingerprints(ShiftTolerantIndicator)
-  }
+  addFingerprints(BaselineEqualityV1, BaselineEqualityV2, ShiftTolerantIndicator)
 }
 
 fun Result.addStructuralFingerprints(signals: StructuralFingerprintSignals): Result = apply {
