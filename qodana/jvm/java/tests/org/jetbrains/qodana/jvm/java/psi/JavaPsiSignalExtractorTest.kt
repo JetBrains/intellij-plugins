@@ -129,7 +129,8 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
   // lambdas / anonymous
   fun testLambdaExpr() = assertSig<PsiLambdaExpression>("class Foo { Runnable r = () -> sink(); void sink(){} }", "FIELD(TYPE(JAVA_CODE_REFERENCE),LAMBDA_EXPRESSION(PARAMETER_LIST,ARROW,METHOD_CALL_EXPRESSION))  [scope=-:-]")
   fun testLambdaBlockStmt() = assertSig<PsiExpressionStatement>("class Foo { Runnable r = () -> { sink(); }; void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]", text = "sink();")
-  fun testAnonymousClass() = assertSig<PsiAnonymousClass>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "ANONYMOUS_CLASS(JAVA_CODE_REFERENCE,EXPRESSION_LIST,METHOD)  [scope=-:-]")
+  fun testStmtInLambdaInsideMethod() = assertSig<PsiExpressionStatement>("class Foo { void bar() { Runnable r = () -> { sink(); }; } void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "sink();")
+  fun testAnonymousClass() =assertSig<PsiAnonymousClass>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "ANONYMOUS_CLASS(JAVA_CODE_REFERENCE,EXPRESSION_LIST,METHOD)  [scope=-:-]")
   fun testStmtInAnonymous() = assertSig<PsiExpressionStatement>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=toString:METHOD]", text = "sink();")
 
   // array / new / ternary

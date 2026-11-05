@@ -191,6 +191,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
         "//plugins/JavaScriptLanguage/javascript-coverage",
         "//plugins/JavaScriptLanguage/javascript-coverage:javascript-coverage_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
         "//contrib/qodana/coverage:coverage-tests",
         "//contrib/qodana/coverage:coverage-tests_test_lib",
         "//contrib/qodana:qodana-core-tests",
