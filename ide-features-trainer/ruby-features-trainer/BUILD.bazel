@@ -79,9 +79,9 @@ jvm_library(
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@community//plugins/ide-features-trainer:featuresTrainer",
-        "@community//platform/testFramework",
         "@community//plugins/ide-features-trainer:featuresTrainer-tests_test_lib",
-        "@community//libraries/junit4",
+        "@community//platform/testFramework/junit5",
+        "@community//libraries/junit6",
         "@community//platform/scratch/plugin",
     ],
 )

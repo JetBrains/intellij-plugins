@@ -1,10 +1,9 @@
 package org.jetbrains.ruby.ift
 
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import com.intellij.testFramework.junit5.TestApplication
 import training.simple.LessonsAndTipsIntegrationTest
 
-@RunWith(JUnit4::class)
+@TestApplication
 internal class RubyLessonsAndTipsIntegrationTest : LessonsAndTipsIntegrationTest() {
   override val languageId = "ruby"
   override val languageSupport = RubyLangSupport()
