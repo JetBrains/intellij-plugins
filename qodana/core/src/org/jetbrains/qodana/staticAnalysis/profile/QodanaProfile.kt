@@ -11,6 +11,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
+import org.jetbrains.qodana.util.InternalInspectionsProvider
 import java.util.concurrent.ConcurrentHashMap
 
 private const val EFFECTIVE_PROFILE_NAME = "qodana.effective.profile"
@@ -19,7 +20,7 @@ private const val EFFECTIVE_PROFILE_NAME = "qodana.effective.profile"
  * The Qodana profile determines on which files the inspections are run.
  *
  * The profile mainly consists of a [MainInspectionGroup], which covers most of the inspections.
- * There may be additional inspection groups such as [PromoInspectionGroup] and [SanityInspectionGroup].
+ * There may be additional inspection groups such as [PromoInspectionGroup], [SanityInspectionGroup] and [InternalInspectionGroup].
  *
  * Each of these inspection groups provides its own [InspectionProfileImpl].
  * The combination of these inspection profiles determines which inspections are run,
@@ -43,12 +44,13 @@ class QodanaProfile(
       promo: Boolean
     ): QodanaProfile {
       val addDefaultExclude = mainInspectionProfile.isRecommendedOrStarter
+      val internalIds = InternalInspectionsProvider.internalInspectionIds(project)
 
       val inspectionGroups = mutableListOf<NamedInspectionGroup>()
 
       if (sanity) {
         val sanityProfileName = System.getProperty("qodana.sanity.profile.name", "qodana.sanity")
-        val sanityProfile = inspectionProfileLoader.loadProfileByName(sanityProfileName)
+        val sanityProfile = inspectionProfileLoader.loadProfileByName(sanityProfileName)?.withoutInspections(internalIds, project)
         if (sanityProfile != null) {
           inspectionGroups.add(SanityInspectionGroup("sanity", sanityProfile).applyConfig(config, project, addDefaultExclude))
           LOG.info("The '$sanityProfileName' profile is configured for sanity checks")
@@ -60,7 +62,7 @@ class QodanaProfile(
 
       if (promo) {
         val promoProfileName = System.getProperty("qodana.promo.profile.name", "qodana.recommended")
-        val promoProfile = inspectionProfileLoader.loadProfileByName(promoProfileName)
+        val promoProfile = inspectionProfileLoader.loadProfileByName(promoProfileName)?.withoutInspections(internalIds, project)
         if (promoProfile != null) {
           inspectionGroups.add(PromoInspectionGroup("promo", promoProfile).applyConfig(config, project, addDefaultExclude))
           LOG.info("The '$promoProfileName' profile is configured for promo checks")
@@ -70,7 +72,14 @@ class QodanaProfile(
         }
       }
 
-      val userGroup = MainInspectionGroup(mainInspectionProfile).applyConfig(config, project, addDefaultExclude)
+      val internalGroup = InternalInspectionGroup.create(project, internalIds)
+      if (internalGroup != null) {
+        inspectionGroups.add(internalGroup.applyConfig(config, project, addDefaultExclude))
+        LOG.info("Internal inspections are configured: ${internalGroup.profile.tools.filter { it.isEnabled }.map { it.shortName }}")
+      }
+
+      val userProfile = mainInspectionProfile.withoutInspections(internalIds, project)
+      val userGroup = MainInspectionGroup(userProfile).applyConfig(config, project, addDefaultExclude)
 
       return QodanaProfile(userGroup, inspectionGroups, project, config.license.type)
     }
@@ -92,6 +101,10 @@ class QodanaProfile(
       }
     }
   }
+
+  /** The ids of the inspections whose results stay out of the report, see [InternalInspectionGroup]. */
+  val internalInspectionIds: Set<String> =
+    idToEffectiveGroup.filterValues { it is InternalInspectionGroup }.keys
 
   val effectiveProfile : QodanaInspectionProfile by lazy {
     val effectiveProfile = QodanaInspectionProfile.newWithDisabledTools(EFFECTIVE_PROFILE_NAME, QodanaInspectionProfileManager.getInstance(project))

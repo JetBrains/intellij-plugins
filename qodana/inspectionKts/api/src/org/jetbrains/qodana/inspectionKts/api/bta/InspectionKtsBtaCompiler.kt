@@ -2,9 +2,8 @@ package org.jetbrains.qodana.inspectionKts.api.bta
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.inspectionKts.InspectionKtsErrorLogManager
-import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
+import org.jetbrains.qodana.inspectionKts.InspectionKtsCompilationResult
 import java.nio.file.Path
 
 interface InspectionKtsBtaCompiler {
@@ -15,8 +14,7 @@ interface InspectionKtsBtaCompiler {
     file: Path,
     errorLogger: InspectionKtsErrorLogManager.Logger,
     classLoader: ClassLoader,
-    scope: CoroutineScope,
-  ): InspectionKtsFileStatus
+  ): InspectionKtsCompilationResult
 
   companion object {
     val EP_NAME: ExtensionPointName<InspectionKtsBtaCompiler> =

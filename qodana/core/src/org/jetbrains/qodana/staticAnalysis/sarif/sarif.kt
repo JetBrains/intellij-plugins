@@ -241,7 +241,9 @@ suspend fun fillComponents(tool: Tool, qodanaProfile: QodanaProfile) {
   val taxonomy = InspectionsTaxonomy()
   val components = mutableMapOf<String, ToolComponent>()
   // The tool order decides the taxonomy indices, and `profile.tools` comes from a concurrent map, so keep it stable.
-  qodanaProfile.mainGroup.profile.tools.sortedBy { it.shortName }.forEach { tools ->
+  // Internal inspections stay out of the report, their rules included.
+  val reportedTools = qodanaProfile.mainGroup.profile.tools.filter { it.shortName !in qodanaProfile.internalInspectionIds }
+  reportedTools.sortedBy { it.shortName }.forEach { tools ->
     val defaultToolWrapper = tools.getInspectionTool(null)
     val pluginId = defaultToolWrapper.extension?.pluginDescriptor?.pluginId?.idString
     val pluginVersion = defaultToolWrapper.extension?.pluginDescriptor?.version

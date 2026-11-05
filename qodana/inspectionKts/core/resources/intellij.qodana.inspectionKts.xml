@@ -33,6 +33,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.core.KtsDynamicInspectionsProvider"/>
+    <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.core.KtsInternalDynamicInspectionsProvider"/>
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsEventsCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsMetricsCollector"/>
     <projectService serviceImplementation="org.jetbrains.qodana.inspectionKts.core.InspectionKtsSettings"
@@ -65,6 +66,7 @@
 
   <extensions defaultExtensionNs="org.intellij.qodana">
     <dynamicInspectionsInitializer implementation="org.jetbrains.qodana.inspectionKts.core.InspectionKtsProfileInitializer"/>
+    <internalInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.core.KtsInternalInspectionsProvider"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
     <templates.provider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>

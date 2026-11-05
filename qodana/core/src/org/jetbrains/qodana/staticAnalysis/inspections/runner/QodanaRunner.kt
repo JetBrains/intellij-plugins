@@ -29,6 +29,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.metrics.CodeQualityMetric
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.MetricAggregator
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.results.MetricResult
+import org.jetbrains.qodana.staticAnalysis.profile.INTERNAL_INSPECTIONS_RESULTS_KEY
+import org.jetbrains.qodana.staticAnalysis.profile.INTERNAL_INSPECTION_GROUP_NAME
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.sarif.resultsFlowByGroup
@@ -91,6 +93,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       sarifRun.run {
         storeSanityResults(this, scriptResult)
         storePromoResults(this, scriptResult)
+        storeInternalResults(this, scriptResult)
         storeCoverageData(this, scriptResult)
         storeMetricsData(this, scriptResult)
       }
@@ -193,6 +196,16 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     val promoResults = resultsByInspectionGroup("promo", scriptResult)
     if (!promoResults.isNullOrEmpty()) {
       properties[PROMO_RESULTS_KEY] = promoResults
+    }
+  }
+
+  private suspend fun storeInternalResults(
+    run: Run,
+    scriptResult: QodanaScriptResult,
+  ) {
+    val internalResults = resultsByInspectionGroup(INTERNAL_INSPECTION_GROUP_NAME, scriptResult)
+    if (!internalResults.isNullOrEmpty()) {
+      run.properties!![INTERNAL_INSPECTIONS_RESULTS_KEY] = internalResults
     }
   }
 

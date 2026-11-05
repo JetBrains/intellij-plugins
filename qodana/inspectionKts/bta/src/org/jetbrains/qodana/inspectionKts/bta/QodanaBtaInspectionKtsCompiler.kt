@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.inspectionKts.bta
 
-import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.coroutineToIndicator
@@ -8,13 +7,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.yield
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
@@ -29,17 +25,13 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.jvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsInspections
 import org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessorFactory
-import org.jetbrains.qodana.inspectionKts.CompiledInspectionsKtsData
-import org.jetbrains.qodana.inspectionKts.FLEX_INSPECT_PROVIDER_NAME
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
-import org.jetbrains.qodana.inspectionKts.__asTool__
 import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.InspectionKtsClassLoader
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
 import org.jetbrains.qodana.inspectionKts.InspectionKtsErrorLogManager
-import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
+import org.jetbrains.qodana.inspectionKts.InspectionKtsCompilationResult
 import org.jetbrains.qodana.inspectionKts.api.InspectionKts
 import org.jetbrains.qodana.inspectionKts.api.bta.InspectionKtsBtaCompiler
 import org.jetbrains.qodana.inspectionKts.getDocumentByNioPath
@@ -75,8 +67,8 @@ private val KOTLIN_SCRIPT_RUNTIME_ARTIFACTS: Array<String> = arrayOf("kotlin-std
  * BTA-backed implementation of [InspectionKtsBtaCompiler]. Compiles a `.inspection.kts` file via the
  * Kotlin Build Tools API instead of the legacy `IdeScriptEngine` (JSR223 REPL) path.
  *
- * Mirrors the legacy compile path's post-compile pipeline (post-processor lookup + casts +
- * descriptor wrapping) so both paths produce equivalent [InspectionKtsFileStatus] values.
+ * Mirrors the legacy compile path's post-compile pipeline (post-processor lookup + casts) so both
+ * paths produce equivalent [InspectionKtsCompilationResult] values.
  * Selection between this path and the legacy path happens in `KtsInspectionsManager` (core module),
  * gated by the [USE_BTA_REGISTRY_KEY] registry flag.
  */
@@ -88,15 +80,8 @@ class QodanaBtaInspectionKtsCompiler : InspectionKtsBtaCompiler {
     file: Path,
     errorLogger: InspectionKtsErrorLogManager.Logger,
     classLoader: ClassLoader,
-    scope: CoroutineScope,
-  ): InspectionKtsFileStatus = compileInspectionKtsFileViaBta(project, file, errorLogger, classLoader, scope)
+  ): InspectionKtsCompilationResult = compileInspectionKtsFileViaBta(project, file, errorLogger, classLoader)
 }
-
-private data class BtaInspectionKtsResultData(
-  val inspections: Set<DynamicInspectionDescriptor>,
-  val userData: Set<CompiledInspectionsKtsData>,
-  val keepAlive: ClassLoader?,
-)
 
 @OptIn(ExperimentalBuildToolsApi::class, ExperimentalCompilerArgument::class)
 private suspend fun compileInspectionKtsFileViaBta(
@@ -104,13 +89,10 @@ private suspend fun compileInspectionKtsFileViaBta(
   file: Path,
   errorLogger: InspectionKtsErrorLogManager.Logger,
   classLoader: ClassLoader,
-  scope: CoroutineScope,
-): InspectionKtsFileStatus {
+): InspectionKtsCompilationResult {
   waitWhenProjectTrusted(project)
 
   LOG.debug("BTA compilation started: $file")
-
-  val exceptionDuringAnalysisFlow = MutableStateFlow<Exception?>(null)
 
   val scriptText = getDocumentByNioPath(file)?.text ?: runInterruptible(IO) { file.readText() }
   val scriptContentHash = scriptText.hashCode()
@@ -118,7 +100,7 @@ private suspend fun compileInspectionKtsFileViaBta(
   val scriptTextWithDefaultImports = defaultImports.joinToString("") { "import $it\n" } + scriptText
   val scriptCompileClasspath = buildInspectionScriptCompileClasspath(classLoader)
 
-  val dynamicInspectionData: BtaInspectionKtsResultData = try {
+  val compiled: InspectionKtsCompilationResult.Compiled = try {
     val rawResult = coroutineScope {
       val resultDeferred = async(IO) {
         withBackgroundProgress(project, InspectionKtsBundle.message("compiling.kts.file", file.name), true) {
@@ -132,10 +114,10 @@ private suspend fun compileInspectionKtsFileViaBta(
         resultDeferred.await()
       } catch (ce: CancellationException) {
         if (this.coroutineContext.job.isCancelled) throw ce
-        return@coroutineScope InspectionKtsFileStatus.Cancelled(file)
+        return@coroutineScope InspectionKtsCompilationResult.Cancelled
       }
     }
-    if (rawResult is InspectionKtsFileStatus.Cancelled) {
+    if (rawResult is InspectionKtsCompilationResult.Cancelled) {
       LOG.debug("BTA compilation cancelled: $file")
       return rawResult
     }
@@ -144,23 +126,13 @@ private suspend fun compileInspectionKtsFileViaBta(
 
     val processor = CompiledInspectionKtsPostProcessorFactory.getProcessor(outcome.result)
     if (processor == null) {
-      val inspectionsKts: Sequence<InspectionKts> = extractInspectionKtsResults(outcome.result).asSequence()
-      val dynamicInspectionsDescriptor = inspectionsKts.map {
-        val inspectionTool = it.__asTool__(exceptionReporter = { exception ->
-          scope.launch {
-            errorLogger.logException(exception)
-            exceptionDuringAnalysisFlow.value = exception
-          }
-        })
-        DynamicInspectionDescriptor.fromTool(inspectionTool, FLEX_INSPECT_PROVIDER_NAME)
-      }
-      val set = dynamicInspectionsDescriptor.toSet()
-      BtaInspectionKtsResultData(set, emptySet(), outcome.keepAlive)
+      val inspectionsKts = extractInspectionKtsResults(outcome.result)
+      InspectionKtsCompilationResult.Compiled(inspectionsKts, emptySet(), scriptContentHash, outcome.keepAlive)
     }
     else {
       val inspectionsKtsData = processor.process(project, file)
                                ?: error("Failed to process inspection data with ${processor.javaClass.name} processor")
-      BtaInspectionKtsResultData(emptySet(), setOf(inspectionsKtsData), outcome.keepAlive)
+      InspectionKtsCompilationResult.Compiled(emptyList(), setOf(inspectionsKtsData), scriptContentHash, outcome.keepAlive)
     }
   }
   catch (ce: CancellationException) {
@@ -169,7 +141,7 @@ private suspend fun compileInspectionKtsFileViaBta(
   catch (e: Exception) {
     LOG.warn("Failed to compile $file via BTA", e)
     errorLogger.logException(e)
-    return InspectionKtsFileStatus.Error(e, errorLogger, scriptContentHash, isOutdated = false, file)
+    return InspectionKtsCompilationResult.Error(e, scriptContentHash)
   }
 
   // BTA path doesn't hold an IdeScriptEngine reference, so the compiling URLClassLoader (and its
@@ -177,9 +149,8 @@ private suspend fun compileInspectionKtsFileViaBta(
   // already-compiled inspections from other files that load classes lazily. Retain it via
   // `keepAlive` for as long as these inspections stay registered; the temp output dir is freed
   // only once that classloader is unreachable (see the Cleaner in `BtaCompiledScriptExecutor.execute`).
-  val compiled = CompiledInspectionKtsInspections(dynamicInspectionData.inspections, dynamicInspectionData.userData, dynamicInspectionData.keepAlive)
   LOG.debug("BTA compilation completed: $file")
-  return InspectionKtsFileStatus.Compiled(compiled, exceptionDuringAnalysisFlow, errorLogger, scriptContentHash, isOutdated = false, file)
+  return compiled
 }
 
 @OptIn(ExperimentalBuildToolsApi::class, ExperimentalCompilerArgument::class, ExperimentalPathApi::class)

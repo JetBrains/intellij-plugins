@@ -82,6 +82,8 @@ jvm_library(
         "@community//platform/util/coroutines",
         "@community//platform/util-ex",
         "//contrib/qodana:qodana-core-tests_test_lib",
+        "//contrib/qodana/sarif",
+        "@community//platform/analysis-api:analysis",
     ],
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.js.tests` end

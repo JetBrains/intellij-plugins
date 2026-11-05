@@ -7,10 +7,12 @@ import com.intellij.codeInspection.ex.DynamicInspectionDescriptor
 import com.intellij.codeInspection.ex.DynamicInspectionsProvider
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.application
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,6 +20,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -36,13 +39,17 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.annotations.ApiStatus.Internal
+import org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsInspections
 import org.jetbrains.qodana.inspectionKts.FLEX_INSPECT_PROVIDER_NAME
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
 import org.jetbrains.qodana.inspectionKts.InspectionKtsClassLoader
+import org.jetbrains.qodana.inspectionKts.InspectionKtsCompilationResult
 import org.jetbrains.qodana.inspectionKts.InspectionKtsErrorLogManager
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
+import org.jetbrains.qodana.inspectionKts.__asTool__
 import org.jetbrains.qodana.inspectionKts.api.bta.InspectionKtsBtaCompiler
 import org.jetbrains.qodana.inspectionKts.getDocumentByNioPath
 import org.jetbrains.qodana.util.appearedFilePath
@@ -52,6 +59,8 @@ import org.jetbrains.qodana.util.vfsChangesMapFlow
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
+
+private val LOG = logger<KtsInspectionsManager>()
 
 const val FORCE_DISABLE_INSPECTION_KTS: String = "inspection.kts.disabled"
 
@@ -64,21 +73,25 @@ const val INSPECTIONS_KTS_DIRECTORY: String = "inspections"
 
 internal class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
   override fun inspections(project: Project): Flow<Set<DynamicInspectionDescriptor>> {
-    return KtsInspectionsManager.getInstance(project).ktsInspectionsFlow
-      .filterNotNull()
-      .mapNotNull {  statuses ->
-        val isCompiling = statuses.any { it is InspectionKtsFileStatus.Compiling }
-        if (isCompiling && application.isHeadlessEnvironment) {
-          return@mapNotNull null
-        }
-        statuses
-          .filterIsInstance<InspectionKtsFileStatus.Compiled>()
-          .flatMap { compiled -> compiled.inspections.inspections }
-          .toSet()
-      }
+    return KtsInspectionsManager.getInstance(project).ktsInspectionsFlow.compiledInspectionsFlow()
   }
 
   override fun name(): String = FLEX_INSPECT_PROVIDER_NAME
+}
+
+/** The inspections of the compiled files, emitted in headless mode only once no file is compiling any more. */
+internal fun Flow<Set<InspectionKtsFileStatus>?>.compiledInspectionsFlow(): Flow<Set<DynamicInspectionDescriptor>> {
+  return filterNotNull()
+    .mapNotNull {  statuses ->
+      val isCompiling = statuses.any { it is InspectionKtsFileStatus.Compiling }
+      if (isCompiling && application.isHeadlessEnvironment) {
+        return@mapNotNull null
+      }
+      statuses
+        .filterIsInstance<InspectionKtsFileStatus.Compiled>()
+        .flatMap { compiled -> compiled.inspections.inspections }
+        .toSet()
+    }
 }
 
 internal val Project.projectScope: CoroutineScope get() = this.service<KtsInspectionsManager>().scope
@@ -103,8 +116,20 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
 
   @get:Internal
   val ktsInspectionsFlow: StateFlow<Set<InspectionKtsFileStatus>?> by lazy {
-    inspectionKtsFlow()
-      .onEmpty { emit(emptySet()) }
+    inspectionKtsFlow().asStatusesStateFlow()
+  }
+
+  /**
+   * The statuses of the files in [INTERNAL_INSPECTIONS_KTS_DIR_PROPERTY], whose inspections are registered as internal ones by
+   * [KtsInternalDynamicInspectionsProvider]. They stay out of [ktsInspectionsFlow], and so out of FlexInspect's reports and statistics.
+   */
+  @get:Internal
+  val internalKtsInspectionsFlow: StateFlow<Set<InspectionKtsFileStatus>?> by lazy {
+    internalInspectionKtsFlow().asStatusesStateFlow()
+  }
+
+  private fun Flow<Set<InspectionKtsFileStatus>>.asStatusesStateFlow(): StateFlow<Set<InspectionKtsFileStatus>?> {
+    return onEmpty { emit(emptySet()) }
       .flowOn(Dispatchers.Default)
       .stateIn(scope, SharingStarted.Lazily, null)
   }
@@ -121,7 +146,17 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
     val projectDirectory = project.basePath?.let { Path.of(it) } ?: project.guessProjectDir()?.toNioPath() ?: return flowOf(emptySet())
 
     val inspectionFiles = inspectionFilesFlow(scriptDirectory = projectDirectory.resolve(INSPECTIONS_KTS_DIRECTORY))
-    return compiledInspectionsFilesFlow(inspectionFiles)
+    return compiledInspectionsFilesFlow(inspectionFiles, ::doCompileInspectionKtsFile)
+  }
+
+  private fun internalInspectionKtsFlow(): Flow<Set<InspectionKtsFileStatus>> {
+    if (!isInspectionKtsEnabled()) {
+      return emptyFlow()
+    }
+
+    val internalDirectory = internalInspectionsKtsDirectory() ?: return flowOf(emptySet())
+    val inspectionFiles = inspectionFilesFlow(internalDirectory)
+    return compiledInspectionsFilesFlow(inspectionFiles) { file -> compileFile(file, INTERNAL_INSPECTIONS_PROVIDER_NAME) }
   }
 
   private fun inspectionFilesFlow(scriptDirectory: Path): Flow<Set<Path>> {
@@ -162,13 +197,16 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
     }.distinctUntilChanged()
   }
 
-  private fun compiledInspectionsFilesFlow(inspectionFilesFlow: Flow<Set<Path>>): Flow<Set<InspectionKtsFileStatus>> {
+  private fun compiledInspectionsFilesFlow(
+    inspectionFilesFlow: Flow<Set<Path>>,
+    compile: suspend (Path) -> InspectionKtsFileStatus,
+  ): Flow<Set<InspectionKtsFileStatus>> {
     val alreadyPresentFiles = mutableMapOf<Path, Flow<InspectionKtsFileStatus>>()
     return inspectionFilesFlow.flatMapLatest { currentFiles ->
       alreadyPresentFiles.keys.removeIf { it !in currentFiles }
       for (file in currentFiles) {
         alreadyPresentFiles.computeIfAbsent(file) {
-          compiledInspectionFileFlow(it)
+          compiledInspectionFileFlow(it, compile)
         }
       }
 
@@ -178,7 +216,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private fun compiledInspectionFileFlow(file: Path): Flow<InspectionKtsFileStatus> {
+  private fun compiledInspectionFileFlow(file: Path, compile: suspend (Path) -> InspectionKtsFileStatus): Flow<InspectionKtsFileStatus> {
     var status: InspectionKtsFileStatus? = null
     return flow {
       val currentStatus = status
@@ -186,7 +224,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
         emit(currentStatus)
       } else {
         emit(InspectionKtsFileStatus.Compiling(file))
-        val newStatus = doCompileInspectionKtsFile(file)
+        val newStatus = compile(file)
         status = newStatus
         emit(newStatus)
       }
@@ -197,7 +235,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
             CompiledInspectionSignal.Recompile -> {
               status = null
               emit(InspectionKtsFileStatus.Compiling(file))
-              val newStatus = doCompileInspectionKtsFile(file)
+              val newStatus = compile(file)
               status = newStatus
               emit(newStatus)
             }
@@ -225,14 +263,58 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
     }.distinctUntilChanged()
   }
 
-  suspend fun doCompileInspectionKtsFile(file: Path): InspectionKtsFileStatus {
+  suspend fun doCompileInspectionKtsFile(file: Path): InspectionKtsFileStatus = compileFile(file, FLEX_INSPECT_PROVIDER_NAME)
+
+  private suspend fun compileFile(file: Path, providerName: String): InspectionKtsFileStatus {
     val errorLogger = inspectionKtsErrorLogManager.Logger(file)
     val bta = InspectionKtsBtaCompiler.EP_NAME.extensionList.firstOrNull { it.isEnabled() }
-    return if (bta != null) {
-      bta.compile(project, file, errorLogger, inspectionKtsClassLoader, scope)
+    val result = if (bta != null) {
+      bta.compile(project, file, errorLogger, inspectionKtsClassLoader)
     } else {
       compileInspectionKtsFile(project, file, errorLogger, inspectionKtsClassLoader)
     }
+    return when (result) {
+      is InspectionKtsCompilationResult.Cancelled -> InspectionKtsFileStatus.Cancelled(file)
+      is InspectionKtsCompilationResult.Error -> {
+        InspectionKtsFileStatus.Error(result.exception, errorLogger, result.scriptContentHash, isOutdated = false, file)
+      }
+      is InspectionKtsCompilationResult.Compiled -> {
+        try {
+          compiledStatus(file, result, errorLogger, providerName)
+        }
+        catch (ce: CancellationException) {
+          throw ce
+        }
+        catch (e: Exception) {
+          LOG.warn("Failed to create inspections of $file", e)
+          errorLogger.logException(e)
+          InspectionKtsFileStatus.Error(e, errorLogger, result.scriptContentHash, isOutdated = false, file)
+        }
+      }
+    }
+  }
+
+  /** Turns the inspections returned by the script into tools, whose exceptions during analysis go to [errorLogger]. */
+  private fun compiledStatus(
+    file: Path,
+    compiled: InspectionKtsCompilationResult.Compiled,
+    errorLogger: InspectionKtsErrorLogManager.Logger,
+    providerName: String,
+  ): InspectionKtsFileStatus {
+    val exceptionDuringAnalysisFlow = MutableStateFlow<Exception?>(null)
+    val exceptionReporter: (Exception) -> Unit = { exception ->
+      scope.launch {
+        errorLogger.logException(exception)
+        exceptionDuringAnalysisFlow.value = exception
+      }
+    }
+    val descriptors = compiled.inspections.mapTo(LinkedHashSet()) {
+      DynamicInspectionDescriptor.fromTool(it.__asTool__(exceptionReporter), providerName)
+    }
+    val inspections = CompiledInspectionKtsInspections(descriptors, compiled.customData, compiled.keepAlive)
+    return InspectionKtsFileStatus.Compiled(
+      inspections, exceptionDuringAnalysisFlow, errorLogger, compiled.scriptContentHash, isOutdated = false, file
+    )
   }
 
   private suspend fun signalsAfterInitialCompilation(file: Path): Flow<CompiledInspectionSignal> {
