@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.js.psi
 
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder
+import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSAssignmentExpression
 import com.intellij.lang.javascript.psi.JSBlockStatement
@@ -14,8 +15,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaPsiStructuralFingerprintsProvider
+
+private const val TEST_PATH_SEPARATOR = " > "
+private const val COMMONJS_EXPORTS = "exports"
 
 class JsPsiStructuralFingerprintsProvider : QodanaPsiStructuralFingerprintsProvider {
   override fun isCodeBlock(element: PsiElement): Boolean = element is JSBlockStatement
@@ -25,35 +28,39 @@ class JsPsiStructuralFingerprintsProvider : QodanaPsiStructuralFingerprintsProvi
   override fun isClassDeclaration(element: PsiElement): Boolean = element is JSClass
   override fun isFunctionDeclaration(element: PsiElement): Boolean = element is JSFunction
 
-  /** A label for an anonymous function: the title of the test around it, else the nearest binding. */
-  override fun anonymousScopeName(scope: PsiElement): String? = testTitle(scope) ?: bindingName(scope)
+  override fun anonymousScopeName(scope: PsiElement): String? = testTitle(scope)
 
   /**
-   * The title of the test or the suite that holds [scope], for example `case` in `it("case", () => {})`.
+   * The full path of the test whose callback is [scope], for example `suite > case` in
+   * `describe("suite", () => it("case", () => {}))`.
    *
-   * Reuses the IDE test structure, so the recognised callees stay in one place. It covers `describe`, `it`,
-   * `test`, the `x`/`f` forms and the `.skip`, `.only` and `.each` modifiers.
+   * It covers `describe`, `it`, `test`, the `x`/`f` forms and the `.skip`, `.only` and `.each` modifiers,
+   * because the IDE test structure holds the recognised callees. The title must be a quoted literal, and a
+   * template literal keeps its source text.
    */
   private fun testTitle(scope: PsiElement): String? {
+    // Check the shape of the call first. The test structure is built per file, so it costs more.
+    val call = (scope.parent as? JSArgumentList)?.parent as? JSCallExpression ?: return null
+    val title = call.arguments.firstOrNull()
+    if (title !is JSLiteralExpression || !title.isQuotedLiteral) return null
+
     val jsFile = scope.containingFile as? JSFile ?: return null
     val path = JasmineFileStructureBuilder.getInstance()
       .fetchCachedTestFileStructure(jsFile)
       .findTestElementPath(scope.textRange) ?: return null
+    if (path.testElement !== call) return null
 
-    val title = (path.testElement as? JSCallExpression)?.arguments?.firstOrNull()
-    if (title !is JSLiteralExpression || !title.isStringLiteral) return null
-
-    return path.allNames.lastOrNull()?.takeIf(String::isNotBlank)
+    return path.allNames.joinToString(TEST_PATH_SEPARATOR)
   }
 
-  /** The nearest binding around an anonymous function, for example `Nu` in `Nu = (() => {})()`. */
-  private fun bindingName(scope: PsiElement): String? =
-    generateSequence(JSUtils.getParentSkipParentheses(scope)) { JSUtils.getParentSkipParentheses(it) }
-      .takeWhile { it !is PsiFile && !isFunctionDeclaration(it) }
-      .firstNotNullOfOrNull { declaredName(it) }
+  /** JS wraps an expression in parentheses, so a step skips them. */
+  override fun bindingWalkParent(element: PsiElement): PsiElement? = JSUtils.getParentSkipParentheses(element)
 
-  /** The name a binding declares. A plain name, not a qualified one, to match what the other languages report. */
-  private fun declaredName(element: PsiElement): String? = when (element) {
+  /** Every CommonJS module assigns `exports`, so the name would match across files. */
+  override fun isGenericScopeName(name: String): Boolean = name == COMMONJS_EXPORTS
+
+  /** A plain name, not a qualified one, to match what the other languages report. */
+  override fun declaredName(element: PsiElement): String? = when (element) {
     is JSQualifiedNamedElement -> element.name
     is JSAssignmentExpression -> element.definitionExpression?.name
     else -> null

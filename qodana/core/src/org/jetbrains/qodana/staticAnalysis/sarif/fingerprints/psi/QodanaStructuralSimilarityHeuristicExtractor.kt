@@ -23,15 +23,21 @@ object PsiSignalExtractor {
     val provider = QodanaPsiStructuralFingerprintsProvider.forLanguage(element.language)
     val (enclosingScopeName, enclosingScopeType) = extractEnclosingScopeNameAndType(element, provider)
     val astShape = serializeEnclosingElement(element, provider)
-    val astSnippet = elementTypeName(element)?.takeUnless { it.isEmpty() } ?: ""
-    return StructuralFingerprintSignals(astShape, enclosingScopeName, enclosingScopeType, astSnippet)
+    val problemElementType = elementTypeName(element)?.ifEmpty { null }
+    return StructuralFingerprintSignals(astShape, enclosingScopeName, enclosingScopeType, problemElementType)
   }
 
   /**
    * Single walk up the PSI tree producing:
-   * - **enclosingScopeName**: name of the nearest enclosing function-like declaration that yields a name
-   *   (via [QodanaPsiStructuralFingerprintsProvider.isFunctionDeclaration])
-   * - **enclosingScopeType**: type of that same declaration.
+   * - **enclosingScopeName**: name of the nearest enclosing scope that yields a name
+   * - **enclosingScopeType**: type of that same scope.
+   *
+   * A scope is a function-like or a class-like declaration. So a problem in a class body, an interface or a
+   * TypeScript type alias also gets a name. The nearest scope wins, whichever kind it is.
+   *
+   * A scope that yields no name is skipped, and the walk continues outward. An anonymous function therefore
+   * reports the label that [QodanaPsiStructuralFingerprintsProvider.anonymousScopeName] derives, or the name
+   * of a scope further out.
    */
   private fun extractEnclosingScopeNameAndType(
     element: PsiElement,
@@ -39,16 +45,30 @@ object PsiSignalExtractor {
   ): EnclosingScopeNameAndType {
     if (provider == null) return EnclosingScopeNameAndType.EMPTY
 
-    val (scope, name) = generateSequence(element) { it.parent }
+    return generateSequence(element) { it.parent }
       .takeWhile { it !is PsiFile }
-      .filter { provider.isFunctionDeclaration(it) }
-      .firstNotNullOfOrNull { scope -> (
-          elementName(scope) ?: provider.anonymousScopeName(scope)?.takeIf(String::isNotBlank)
-        )?.let { scope to it } }
-      ?: return EnclosingScopeNameAndType.EMPTY
-
-    return EnclosingScopeNameAndType(name, elementTypeName(scope))
+      .filter(provider::isScope)
+      .firstNotNullOfOrNull { scope ->
+        scopeName(scope, provider)?.let { EnclosingScopeNameAndType(it, elementTypeName(scope)) }
+      }
+      ?: EnclosingScopeNameAndType.EMPTY
   }
+
+  /** The declared name of [scope], else a label from the provider, else the nearest binding around it. */
+  private fun scopeName(scope: PsiElement, provider: QodanaPsiStructuralFingerprintsProvider): String? =
+    elementName(scope).usable(provider)
+    ?: provider.anonymousScopeName(scope).usable(provider)
+    ?: bindingName(scope, provider)
+
+  /**
+   * The nearest binding around an anonymous [scope], for example `r` in `Runnable r = () -> { }`.
+   *
+   * The walk passes any expression, statement or block, and stops at the next scope.
+   */
+  private fun bindingName(scope: PsiElement, provider: QodanaPsiStructuralFingerprintsProvider): String? =
+    generateSequence(provider.bindingWalkParent(scope)) { provider.bindingWalkParent(it) }
+      .takeWhile { it !is PsiFile && !provider.isScope(it) }
+      .firstNotNullOfOrNull { provider.declaredName(it).usable(provider) }
 
   /**
    * Walk up the PSI tree from [element] (up to [AST_SHAPE_DEPTH] levels) to find the
@@ -70,7 +90,7 @@ object PsiSignalExtractor {
     repeat(maxDepth) {
       val parent = current.parent
 
-      if (parent == null || provider.isFunctionDeclaration(current) || provider.isClassDeclaration(current)) {
+      if (parent == null || provider.isScope(current)) {
         return serializeTree(current, DIRECT_PSI_ELEMENT_ONLY_DEPTH)
       }
 
@@ -110,8 +130,11 @@ object PsiSignalExtractor {
     element.children.isEmpty() && element.textLength <= 1
 
   /** The declared name of [element], or null when it has none, like an anonymous JS callback or a PHP closure. */
-  private fun elementName(element: PsiElement): String? =
-    (element as? PsiNamedElement)?.name?.takeIf(String::isNotBlank)
+  private fun elementName(element: PsiElement): String? = (element as? PsiNamedElement)?.name
+
+  /** A name is usable as a scope name when it is not blank and identifies a scope. */
+  private fun String?.usable(provider: QodanaPsiStructuralFingerprintsProvider): String? =
+    this?.takeIf { it.isNotBlank() && !provider.isGenericScopeName(it) }
 
   private fun elementTypeName(element: PsiElement): String? =
     PsiUtilCore.getElementType(element)?.toString()

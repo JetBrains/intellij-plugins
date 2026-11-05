@@ -2,6 +2,8 @@ package org.jetbrains.qodana.js.psi
 
 import com.intellij.lang.javascript.psi.JSExpressionStatement
 import com.intellij.lang.javascript.psi.JSIfStatement
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -130,8 +132,11 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
     "onRequest:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
-  /** The inner `it` owns the callback, so its title names the scope. The outer `describe` is never reached. */
-  fun testDescribeAndItReportInnerTitle() = assertScope(
+  /**
+   * The inner `it` owns the callback, and the name is the whole path. A bare `case` repeats across files,
+   * and the extraction-tolerant hash mixes in no file name.
+   */
+  fun testDescribeAndItReportTheFullPath() = assertScope(
     """
     describe('suite', () => {
       it('case', () => {
@@ -141,7 +146,7 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
       })
     })
     """,
-    "case:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+    "suite > case:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
   /** Top-level code has no function ancestor at all, so the walk runs out at the file. */
@@ -382,10 +387,10 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
   )
 
   /**
-   * An interpolated title is not a quoted literal, so the rule rejects it. Its text changes whenever the
-   * interpolation is edited, which would make the fingerprint churn.
+   * An interpolated title keeps its source text. The interpolation is not evaluated, so one call site always
+   * gives one name, and the title still separates the sibling cases of the suite.
    */
-  fun testInterpolatedTitleIsRejected() = assertScope(
+  fun testInterpolatedTitleReportsSourceText() = assertScope(
     $$"""
     function setupSuite() {
       it(`renders ${name}`, () => {
@@ -395,7 +400,354 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
       })
     }
     """,
+    $$"renders ${name}:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * The reported case: a parameterised title inside a shared `runTests` function. The title must win, because
+   * `runTests` holds every case of the suite and cannot separate them.
+   */
+  fun testParameterisedTitleBeatsSharedTestFunction() = assertScopeAt<JSReferenceExpression>(
+    $$"""
+    function runTests(ctx) {
+      it(`should handle maximumDiskCacheSize ${maximumDiskCacheSize}`, async () => {
+        const opts = { headers: { accept: 'image/webp' } }
+
+        const res = await fetchViaHTTP(
+          ctx.appPort,
+          '/_next/image',
+          opts
+        )
+      })
+    }
+    """,
+    text = "ctx.appPort",
+    expected = $$"should handle maximumDiskCacheSize ${maximumDiskCacheSize}:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * The reported file shape: a suite calls one shared `runTests` that holds many cases. Each case must report
+   * its own title. Before this rule every case of the suite reported `runTests`, so they shared one scope.
+   *
+   * The structure builder walks a function declaration where it stands, so the cases register under the
+   * suite even though the call to `runTests` comes later.
+   */
+  fun testEachCaseOfASharedTestFunctionReportsItsOwnTitle() = assertScopesOfAllIfs(
+    $$"""
+    describe('image optimizer', () => {
+      function runTests(ctx) {
+        it(`should handle maximumDiskCacheSize ${maximumDiskCacheSize}`, async () => {
+          const res = await fetchViaHTTP(ctx.appPort, '/_next/image')
+          if (res.status !== 200) {
+            report()
+          }
+        })
+
+        it('should maintain the ETag header', async () => {
+          const res = await fetchViaHTTP(ctx.appPort, '/_next/image')
+          if (res.headers.get('etag') !== etag) {
+            report()
+          }
+        })
+      }
+
+      runTests(ctx)
+    })
+    """,
+    $$"image optimizer > should handle maximumDiskCacheSize ${maximumDiskCacheSize}:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+    "image optimizer > should maintain the ETag header:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * The same shape with `runTests` declared outside the suite, which is the more common form. The cases
+   * register with no parent suite, so `allNames` holds the title alone. The answer does not change.
+   */
+  fun testSharedTestFunctionOutsideTheSuiteReportsEachTitle() = assertScopesOfAllIfs(
+    $$"""
+    function runTests(ctx) {
+      it(`should handle maximumDiskCacheSize ${maximumDiskCacheSize}`, async () => {
+        const res = await fetchViaHTTP(ctx.appPort, '/_next/image')
+        if (res.status !== 200) {
+          report()
+        }
+      })
+
+      it('should set the Cache-Control header', async () => {
+        const res = await fetchViaHTTP(ctx.appPort, '/_next/image')
+        if (res.headers.get('cache-control') !== expected) {
+          report()
+        }
+      })
+    }
+
+    describe('image optimizer', () => {
+      runTests(ctx)
+    })
+    """,
+    $$"should handle maximumDiskCacheSize ${maximumDiskCacheSize}:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+    "should set the Cache-Control header:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * A computed title gives no title at all. `name` is the name of a variable, not a title, and every case of
+   * a `for` loop over the titles would collapse onto it. The walk falls through to the enclosing function.
+   */
+  fun testComputedTitleReportsEnclosingFunction() = assertScope(
+    """
+    function setupSuite() {
+      it(name, () => {
+        if (a !== b) {
+          report()
+        }
+      })
+    }
+    """,
     "setupSuite:JS:TYPESCRIPT_FUNCTION",
+  )
+
+  // --- A class-like declaration is a scope too, so a type or an interface body gets a name. ---
+
+  /** The reported case: a problem on a property of a TypeScript type alias. */
+  fun testTypeAliasReportsItsName() = assertScopeAt<TypeScriptPropertySignature>(
+    """
+    type RunTestsCtx = {
+      next: NextInstance
+      w: number
+      nextConfigImages?: Partial<import('next').NextConfig['images']>
+    }
+    """,
+    text = "next: NextInstance",
+    expected = "RunTestsCtx:JS:TYPESCRIPT_TYPE_ALIAS",
+  )
+
+  /** An interface body behaves the same way. */
+  fun testInterfaceReportsItsName() = assertScopeAt<TypeScriptPropertySignature>(
+    """
+    interface RunTestsCtx {
+      next: NextInstance
+    }
+    """,
+    text = "next: NextInstance",
+    expected = "RunTestsCtx:JS:TYPESCRIPT_INTERFACE",
+  )
+
+  /** A method still wins over the class that holds it, because it is the nearer scope. */
+  fun testMethodWinsOverEnclosingClass() = assertScope(
+    """
+    class Router {
+      handle() {
+        if (a !== b) {
+          report()
+        }
+      }
+    }
+    """,
+    "handle:JS:TYPESCRIPT_FUNCTION",
+  )
+
+  /** A function that a `const` holds keeps its own name inside a test. The platform names it, not our rule. */
+  fun testNamedConstInsideTestReportsConst() = assertScope(
+    """
+    it('x', () => {
+      const handler = () => {
+        if (a !== b) { report() }
+      }
+      return handler
+    })
+    """,
+    "handler:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * A callback with no binding inside a test. The title rule rejects it, because it is not an argument of the
+   * test call. The walk then leaves it and reaches the callback of the test, which carries the title.
+   */
+  fun testUnboundCallbackInsideTestReportsTitle() = assertScope(
+    """
+    it('x', () => {
+      arr.map(a => {
+        if (a !== b) { report() }
+      })
+    })
+    """,
+    "x:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * A binding nearer than the test wins. The title of a test describes its own callback, not every function
+   * that the callback holds. Before the argument check, this case reported `x`.
+   */
+  fun testCloserBindingInsideTestBeatsTitle() = assertScope(
+    """
+    it('x', () => {
+      var inner = tt(() => {
+        if (a !== b) { report() }
+      })
+      return inner
+    })
+    """,
+    "inner:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /**
+   * The binding walk stops at the class, so the callback takes no name from outside it. The anonymous class
+   * is the next scope, it has no name either, and its own binding walk answers `outer`.
+   */
+  fun testCallbackInClassExtendsReportsOuterBinding() = assertScope(
+    """
+    var outer = class extends tt(() => {
+      if (a !== b) { report() }
+    }) {
+    }
+    """,
+    "outer:JS:TYPESCRIPT_CLASS_EXPRESSION",
+  )
+
+  /** The walk stops at the class, so the enclosing class names the scope, never the variable outside it. */
+  fun testCallbackInClassMemberReportsClass() = assertScope(
+    """
+    var outer = {
+      inner: class Holder {
+        static [tt(() => { if (a !== b) { report() } })] = 1
+      }
+    }
+    """,
+    "Holder:JS:TYPESCRIPT_CLASS_EXPRESSION",
+  )
+
+  /**
+   * Two files with the same test title. Both report that title, so `enclosingScopeName` alone cannot tell
+   * them apart. A fingerprint that must separate them has to mix in the file name.
+   */
+  fun testSameTitleInTwoFilesReportsTheSameName() {
+    val body = """
+      it('case', () => {
+        if (a !== b) {
+          report()
+        }
+      })
+    """.trimIndent()
+
+    val first = myFixture.addFileToProject("first.test.ts", body)
+    val second = myFixture.addFileToProject("second.test.ts", body)
+
+    val scopes = listOf(first, second).map { file ->
+      val ifStatement = PsiTreeUtil.findChildOfType(file, JSIfStatement::class.java)!!
+      val signals = PsiSignalExtractor.extractSignals(ifStatement)
+      "${signals.enclosingScopeName}:${signals.enclosingScopeType}"
+    }
+
+    assertEquals(listOf("case:JS:TYPESCRIPT_FUNCTION_EXPRESSION", "case:JS:TYPESCRIPT_FUNCTION_EXPRESSION"), scopes)
+  }
+
+  /**
+   * The same title under two different suites. The path separates them, so a generic title such as
+   * `renders correctly` no longer collapses two files onto one scope name.
+   */
+  fun testSameTitleUnderTwoSuitesReportsDifferentNames() {
+    fun body(suite: String) = """
+      describe('$suite', () => {
+        it('renders correctly', () => {
+          if (a !== b) {
+            report()
+          }
+        })
+      })
+    """.trimIndent()
+
+    val first = myFixture.addFileToProject("suite-a.test.ts", body("header"))
+    val second = myFixture.addFileToProject("suite-b.test.ts", body("footer"))
+
+    val scopes = listOf(first, second).map { file ->
+      val ifStatement = PsiTreeUtil.findChildOfType(file, JSIfStatement::class.java)!!
+      PsiSignalExtractor.extractSignals(ifStatement).enclosingScopeName
+    }
+
+    assertEquals(listOf("header > renders correctly", "footer > renders correctly"), scopes)
+  }
+
+  // --- `exports` names no scope. Every CommonJS module assigns it, so it would match across files. ---
+
+  /** The CommonJS default export, as an arrow. */
+  fun testModuleExportsArrowReportsNoScope() = assertNoScope(
+    """
+    module.exports = () => {
+      if (a !== b) {
+        report()
+      }
+    }
+    """
+  )
+
+  /** The same as a function expression. Here the platform supplies the name, not the binding walk. */
+  fun testModuleExportsFunctionReportsNoScope() = assertNoScope(
+    """
+    module.exports = function () {
+      if (a !== b) {
+        report()
+      }
+    }
+    """
+  )
+
+  /** A bare `exports` assignment behaves the same way. */
+  fun testBareExportsReportsNoScope() = assertNoScope(
+    """
+    exports = () => {
+      if (a !== b) {
+        report()
+      }
+    }
+    """
+  )
+
+  /** A callback inside the export call. Here the binding walk is the path that must drop the name. */
+  fun testCallbackUnderModuleExportsReportsNoScope() = assertNoScope(
+    """
+    module.exports = tt(() => {
+      if (a !== b) {
+        report()
+      }
+    })
+    """
+  )
+
+  /** A chained binding. The walk passes `exports` and reaches the `const` behind it. */
+  fun testChainedBindingThroughExportsReportsConst() = assertScope(
+    """
+    const x = module.exports = () => {
+      if (a !== b) {
+        report()
+      }
+    }
+    """,
+    "x:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /** A named export keeps its name. Only the bare `exports` is dropped. */
+  fun testNamedExportReportsItsName() = assertScope(
+    """
+    exports.handler = () => {
+      if (a !== b) {
+        report()
+      }
+    }
+    """,
+    "handler:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+  )
+
+  /** A field on `this` keeps its name. A common field name still collides, and that is not handled. */
+  fun testThisFieldReportsItsName() = assertScope(
+    """
+    function Ctor() {
+      this.x = () => {
+        if (a !== b) {
+          report()
+        }
+      }
+    }
+    """,
+    "x:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
   /** Asserts the whole scope signal as `name:type`, so every case also pins the type. */
@@ -412,6 +764,16 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
     assertNull("scope name was '${signals.enclosingScopeName}'", signals.enclosingScopeName)
     assertNull("the type must not outlive the name", signals.enclosingScopeType)
     assertNotNull("the AST shape is still produced", signals.astShape)
+  }
+
+  /** Asserts the scope of every `if` of the snippet, in source order. Pins that two cases differ. */
+  private fun assertScopesOfAllIfs(code: String, vararg expected: String) {
+    val file = myFixture.configureByText("sample.ts", code.trimIndent())
+    val scopes = PsiTreeUtil.findChildrenOfType(file, JSIfStatement::class.java)
+      .map { PsiSignalExtractor.extractSignals(it) }
+      .map { "${it.enclosingScopeName}:${it.enclosingScopeType}" }
+
+    assertEquals(expected.toList(), scopes)
   }
 
   /** Asserts the scope at the [T] whose text equals [text], for a snippet that holds no `if`. */
