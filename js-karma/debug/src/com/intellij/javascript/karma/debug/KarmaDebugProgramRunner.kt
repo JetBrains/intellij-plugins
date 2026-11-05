@@ -19,8 +19,6 @@ import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.execution.ui.layout.LayoutAttractionPolicy
 import com.intellij.execution.ui.layout.LayoutViewOptions
-import com.intellij.ide.browsers.BrowserFamily
-import com.intellij.ide.browsers.BrowserSettings
 import com.intellij.ide.browsers.WebBrowserManager
 import com.intellij.javascript.debugger.DebuggableFileFinder
 import com.intellij.javascript.debugger.JSDebugTabLayouter
@@ -35,12 +33,8 @@ import com.intellij.javascript.karma.server.KarmaServer
 import com.intellij.javascript.karma.server.KarmaServerLogComponent
 import com.intellij.javascript.karma.util.KarmaUtil
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.options.ShowSettingsUtil
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ManagingFS
@@ -62,8 +56,6 @@ import org.jetbrains.debugger.connection.VmConnection
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.nio.charset.StandardCharsets
-import javax.swing.event.HyperlinkEvent
-import javax.swing.event.HyperlinkListener
 
 internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
   override fun getRunnerId(): String = "KarmaJavaScriptTestRunnerDebug"
@@ -81,32 +73,17 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           consoleView.karmaServer.onPortBound { ExecutionUtil.restartIfActive(it) }
         })
       }
-      val debuggableWebBrowser = Handler.getChromeInfo(environment.project)
+      val debuggableWebBrowser = Handler.getChromeInfo()
       return@thenAsync debuggableWebBrowser.debugEngine.prepareDebugger(environment.project, debuggableWebBrowser.webBrowser).then {
         Handler.createDescriptor(environment, executionResult, consoleView, debuggableWebBrowser)
       }
     }
   }
 
-  private class ChromeRequiredException(private val project: Project): ExecutionException(message()), HyperlinkListener {
-    override fun hyperlinkUpdate(e: HyperlinkEvent) {
-      if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(project, BrowserSettings::class.java)
-      }
-    }
-
-    companion object {
-      fun message(): @NlsContexts.DialogMessage String {
-        return KarmaBundle.message("debug.debugging_available_in_chrome_only.dialog.message",
-                                   HtmlChunk.link("", BrowserSettings().displayName).toString())
-      }
-    }
-  }
-
   private object Handler { // not a companion object to load less bytecode simultaneously with KarmaDebugProgramRunner
     @Throws(ExecutionException::class)
-    fun getChromeInfo(project: Project): DebuggableWebBrowser {
-      val browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME) ?: throw ChromeRequiredException(project)
+    fun getChromeInfo(): DebuggableWebBrowser {
+      val browser = WebBrowserManager.getInstance().chromiumBasedBrowser
       return DebuggableWebBrowser.create(browser) ?: throw ExecutionException(
         KarmaBundle.message("debug.cannot_find_chrome.dialog.message"))
     }
