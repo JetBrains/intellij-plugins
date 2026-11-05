@@ -1,6 +1,9 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.tslint` start
 filegroup(
@@ -26,8 +29,15 @@ dev_dist_plugin(
 )
 ### auto-generated section `dev intellij.tslint` end
 
+# used from com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService class
+pkg_files(
+    name = "js_resources",
+    srcs = glob(["gen/js/**"]),
+    strip_prefix = strip_prefix.from_pkg("gen"),
+)
+
 ### auto-generated section `build intellij.tslint` start
-jvm_library(
+ij_plugin_module(
     name = "tslint",
     srcs = glob(
         [
@@ -38,6 +48,8 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.tslint",
+    # manually written attribute
+    non_classpath_data = [":js_resources"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -75,6 +87,14 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.tslint` end
+
+### auto-generated section `plugin intellij.tslint` start
+ij_plugin(
+    name = "tslint_plugin",
+    descriptor_module = ":tslint_plugin_module",
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.tslint` end
 
 ### auto-generated section `iml intellij.tslint` start
 exports_files(
