@@ -2,7 +2,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.ide.plugins.ContentModuleDescriptor
-import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
+import com.intellij.ide.plugins.PluginDependencyAnalysis
 import com.intellij.ide.plugins.PluginMainDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.PluginModuleDescriptor
@@ -10,6 +10,8 @@ import com.intellij.ide.plugins.PluginModuleId
 import com.intellij.ide.plugins.PluginSet
 import com.intellij.ide.plugins.ResolvedPluginSet
 import com.intellij.ide.plugins.getMainDescriptor
+import com.intellij.ide.plugins.resolveReference
+import com.intellij.ide.plugins.sequenceStrictDependencies
 import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.application.ex.ApplicationManagerEx
@@ -87,38 +89,14 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     val pluginSet = PluginManagerCore.getPluginSet()
     val resolvedPluginSet = pluginSet.resolvedPluginSet
     val pluginIds = pluginSet.enabledPlugins.map { it.pluginId.idString }
-    val toProcess = ArrayDeque<IdeaPluginDescriptorImpl>()
-    for (idString in included) {
+    val descriptors = included.mapNotNull { idString ->
       val descriptor = pluginSet.findIncludedDescriptor(idString)
       if (descriptor == null) {
         LOG.error("Can't find enabled plugin or content module for id '$idString'")
-        continue
       }
-      toProcess.add(descriptor)
+      descriptor
     }
-
-    val processed = mutableSetOf<IdeaPluginDescriptorImpl>()
-    val include = linkedSetOf<PluginMainDescriptor>()
-
-    while (toProcess.isNotEmpty()) {
-      val descriptor = toProcess.removeFirst()
-      if (!processed.add(descriptor)) continue
-
-      include.add(descriptor.getMainDescriptor())
-      if (descriptor is PluginMainDescriptor) {
-        for (contentModule in descriptor.contentModules) {
-          if (contentModule.moduleLoadingRule.required && resolvedPluginSet.isResolved(contentModule)) {
-            toProcess.add(contentModule)
-          }
-        }
-      }
-      if (descriptor is ContentModuleDescriptor) {
-        toProcess.add(descriptor.parent)
-      }
-      for (dependency in resolvedPluginSet.getDirectResolvedDependencies(descriptor)) {
-        toProcess.add(dependency)
-      }
-    }
+    val include = getRequiredPlugins(resolvedPluginSet, descriptors)
 
     println("=====INCLUDED=======")
 
@@ -141,10 +119,39 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
              .filterIsInstance<ContentModuleDescriptor>()
              .firstOrNull { it.moduleId.name == idString }
   }
+}
 
-  private fun ResolvedPluginSet.isResolved(descriptor: IdeaPluginDescriptorImpl): Boolean {
-    return descriptor in sortedResolvedDescriptors
+internal fun getRequiredPlugins(
+  resolvedPluginSet: ResolvedPluginSet,
+  descriptors: Collection<PluginModuleDescriptor>,
+): Set<PluginMainDescriptor> {
+  val toProcess = ArrayDeque(descriptors)
+  val processed = mutableSetOf<PluginModuleDescriptor>()
+  val include = linkedSetOf<PluginMainDescriptor>()
+  val candidateSet = resolvedPluginSet.candidateSet
+
+  while (toProcess.isNotEmpty()) {
+    val descriptor = toProcess.removeFirst()
+    if (!processed.add(descriptor)) continue
+
+    include.add(descriptor.getMainDescriptor())
+    if (descriptor is PluginMainDescriptor) {
+      for (contentModule in descriptor.contentModules) {
+        if (contentModule.moduleLoadingRule.required && contentModule in resolvedPluginSet.sortedResolvedDescriptors) {
+          toProcess.add(contentModule)
+        }
+      }
+    }
+    if (descriptor is ContentModuleDescriptor) {
+      toProcess.add(descriptor.parent)
+    }
+    val dependencies = PluginDependencyAnalysis.sequenceStrictDependencies(descriptor) +
+                       resolvedPluginSet.initContext.provideCompatibilityDependencies(descriptor, candidateSet)
+    for (dependency in dependencies) {
+      candidateSet.resolveReference(dependency)?.let(toProcess::add)
+    }
   }
+  return include
 }
 
 internal fun getRequiredPluginIds(
