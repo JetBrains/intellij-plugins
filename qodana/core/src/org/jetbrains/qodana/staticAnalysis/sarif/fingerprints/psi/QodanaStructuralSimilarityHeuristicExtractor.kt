@@ -56,8 +56,8 @@ object PsiSignalExtractor {
 
   /** The declared name of [scope], else a label from the provider, else the nearest binding around it. */
   private fun scopeName(scope: PsiElement, provider: QodanaPsiStructuralFingerprintsProvider): String? =
-    elementName(scope).usable(provider)
-    ?: provider.anonymousScopeName(scope).usable(provider)
+    elementName(scope)?.ifBlank { null }
+    ?: provider.anonymousScopeName(scope)?.ifBlank { null }
     ?: bindingName(scope, provider)
 
   /**
@@ -68,7 +68,7 @@ object PsiSignalExtractor {
   private fun bindingName(scope: PsiElement, provider: QodanaPsiStructuralFingerprintsProvider): String? =
     generateSequence(provider.bindingWalkParent(scope)) { provider.bindingWalkParent(it) }
       .takeWhile { it !is PsiFile && !provider.isScope(it) }
-      .firstNotNullOfOrNull { provider.declaredName(it).usable(provider) }
+      .firstNotNullOfOrNull { provider.declaredName(it)?.ifBlank { null } }
 
   /**
    * Walk up the PSI tree from [element] (up to [AST_SHAPE_DEPTH] levels) to find the
@@ -131,10 +131,6 @@ object PsiSignalExtractor {
 
   /** The declared name of [element], or null when it has none, like an anonymous JS callback or a PHP closure. */
   private fun elementName(element: PsiElement): String? = (element as? PsiNamedElement)?.name
-
-  /** A name is usable as a scope name when it is not blank and identifies a scope. */
-  private fun String?.usable(provider: QodanaPsiStructuralFingerprintsProvider): String? =
-    this?.takeIf { it.isNotBlank() && !provider.isGenericScopeName(it) }
 
   private fun elementTypeName(element: PsiElement): String? =
     PsiUtilCore.getElementType(element)?.toString()

@@ -666,54 +666,58 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
     assertEquals(listOf("header > renders correctly", "footer > renders correctly"), scopes)
   }
 
-  // --- `exports` names no scope. Every CommonJS module assigns it, so it would match across files. ---
+  // --- A CommonJS export reports `exports` like any other binding. A collision across files is not handled. ---
 
   /** The CommonJS default export, as an arrow. */
-  fun testModuleExportsArrowReportsNoScope() = assertNoScope(
+  fun testModuleExportsArrowReportsExports() = assertScope(
     """
     module.exports = () => {
       if (a !== b) {
         report()
       }
     }
-    """
+    """,
+    "exports:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
   /** The same as a function expression. Here the platform supplies the name, not the binding walk. */
-  fun testModuleExportsFunctionReportsNoScope() = assertNoScope(
+  fun testModuleExportsFunctionReportsExports() = assertScope(
     """
     module.exports = function () {
       if (a !== b) {
         report()
       }
     }
-    """
+    """,
+    "exports:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
   /** A bare `exports` assignment behaves the same way. */
-  fun testBareExportsReportsNoScope() = assertNoScope(
+  fun testBareExportsReportsExports() = assertScope(
     """
     exports = () => {
       if (a !== b) {
         report()
       }
     }
-    """
+    """,
+    "exports:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
-  /** A callback inside the export call. Here the binding walk is the path that must drop the name. */
-  fun testCallbackUnderModuleExportsReportsNoScope() = assertNoScope(
+  /** A callback inside the export call. The binding walk reaches the export assignment. */
+  fun testCallbackUnderModuleExportsReportsExports() = assertScope(
     """
     module.exports = tt(() => {
       if (a !== b) {
         report()
       }
     })
-    """
+    """,
+    "exports:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
-  /** A chained binding. The walk passes `exports` and reaches the `const` behind it. */
-  fun testChainedBindingThroughExportsReportsConst() = assertScope(
+  /** A chained binding. The walk stops at the nearest binding, which is the export assignment. */
+  fun testChainedBindingThroughExportsReportsExports() = assertScope(
     """
     const x = module.exports = () => {
       if (a !== b) {
@@ -721,10 +725,10 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
       }
     }
     """,
-    "x:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
+    "exports:JS:TYPESCRIPT_FUNCTION_EXPRESSION",
   )
 
-  /** A named export keeps its name. Only the bare `exports` is dropped. */
+  /** A named export reports its own name, not `exports`. */
   fun testNamedExportReportsItsName() = assertScope(
     """
     exports.handler = () => {
