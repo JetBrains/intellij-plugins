@@ -2,21 +2,23 @@
 package com.intellij.flex.codeInsight
 
 import com.intellij.flex.util.FlexTestUtils
-import com.intellij.lang.Language
 import com.intellij.lang.javascript.flex.FlexSupportLoader
-import com.jetbrains.clones.CommonDuplicateTest
+import com.intellij.testFramework.junit5.TestApplication
+import com.jetbrains.clones.commonDuplicateDetectionFixture
+import org.junit.jupiter.api.Test
 
-class ActionScriptCloneDetectionTest : CommonDuplicateTest() {
+@TestApplication
+class ActionScriptCloneDetectionTest {
 
-  override val language: Language get() = FlexSupportLoader.ECMA_SCRIPT_L4
+  private val duplicates by commonDuplicateDetectionFixture(FlexSupportLoader.ECMA_SCRIPT_L4, FlexTestUtils.getTestDataPath("clones/"))
 
-  override fun getTestDataPath(): String = FlexTestUtils.getTestDataPath("clones/")
-
+  @Test
   fun testSimpleClass() {
-    doTest("SimpleClass.as", 2, true, true, false)
+    duplicates.doTest("SimpleClass.as", 2, true, true, false)
   }
 
+  @Test
   fun testImplementsNormalization() {
-    doTest("ImplementsNormalization.as", 2, true, true, false)
+    duplicates.doTest("ImplementsNormalization.as", 2, true, true, false)
   }
 }
