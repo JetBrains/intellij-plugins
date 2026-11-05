@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.js.psi
 
-import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder as BddTestStructureBuilder
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSAssignmentExpression
@@ -17,7 +17,7 @@ import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.psi.PsiElement
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.QodanaPsiStructuralFingerprintsProvider
 
-private const val TEST_PATH_SEPARATOR = " > "
+private const val BDD_TEST_PATH_SEPARATOR = " > "
 private const val COMMONJS_EXPORTS = "exports"
 
 class JsPsiStructuralFingerprintsProvider : QodanaPsiStructuralFingerprintsProvider {
@@ -28,29 +28,28 @@ class JsPsiStructuralFingerprintsProvider : QodanaPsiStructuralFingerprintsProvi
   override fun isClassDeclaration(element: PsiElement): Boolean = element is JSClass
   override fun isFunctionDeclaration(element: PsiElement): Boolean = element is JSFunction
 
-  override fun anonymousScopeName(scope: PsiElement): String? = testTitle(scope)
-
   /**
-   * The full path of the test whose callback is [scope], for example `suite > case` in
+   * The path of the BDD-style test whose callback is [scope], for example `suite > case` in
    * `describe("suite", () => it("case", () => {}))`.
    *
-   * It covers `describe`, `it`, `test`, the `x`/`f` forms and the `.skip`, `.only` and `.each` modifiers,
-   * because the IDE test structure holds the recognised callees. The title must be a quoted literal, and a
+   * A BDD-style test has no name, only the title of its `describe`, `it` or `test` call.
+   * [BddTestStructureBuilder] finds these calls. It is an alias of `JasmineFileStructureBuilder`, which covers
+   * Jasmine, Mocha, Jest, Vitest and Playwright despite its name. The title must be a quoted literal, and a
    * template literal keeps its source text.
    */
-  private fun testTitle(scope: PsiElement): String? {
+  override fun anonymousScopeName(scope: PsiElement): String? {
     // Check the shape of the call first. The test structure is built per file, so it costs more.
     val call = (scope.parent as? JSArgumentList)?.parent as? JSCallExpression ?: return null
     val title = call.arguments.firstOrNull()
     if (title !is JSLiteralExpression || !title.isQuotedLiteral) return null
 
     val jsFile = scope.containingFile as? JSFile ?: return null
-    val path = JasmineFileStructureBuilder.getInstance()
+    val path = BddTestStructureBuilder.getInstance()
       .fetchCachedTestFileStructure(jsFile)
       .findTestElementPath(scope.textRange) ?: return null
     if (path.testElement !== call) return null
 
-    return path.allNames.joinToString(TEST_PATH_SEPARATOR)
+    return path.allNames.joinToString(BDD_TEST_PATH_SEPARATOR)
   }
 
   /** JS wraps an expression in parentheses, so a step skips them. */
