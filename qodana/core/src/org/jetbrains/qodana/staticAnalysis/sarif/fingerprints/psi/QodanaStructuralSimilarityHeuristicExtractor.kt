@@ -23,12 +23,13 @@ object PsiSignalExtractor {
     val provider = QodanaPsiStructuralFingerprintsProvider.forLanguage(element.language)
     val (enclosingScopeName, enclosingScopeType) = extractEnclosingScopeNameAndType(element, provider)
     val astShape = serializeEnclosingElement(element, provider)
-    return StructuralFingerprintSignals(astShape, enclosingScopeName, enclosingScopeType)
+    val astSnippet = elementTypeName(element)?.takeUnless { it.isEmpty() } ?: ""
+    return StructuralFingerprintSignals(astShape, enclosingScopeName, enclosingScopeType, astSnippet)
   }
 
   /**
    * Single walk up the PSI tree producing:
-   * - **enclosingScopeName**: name of the nearest enclosing function-like declaration that has a name
+   * - **enclosingScopeName**: name of the nearest enclosing function-like declaration that yields a name
    *   (via [QodanaPsiStructuralFingerprintsProvider.isFunctionDeclaration])
    * - **enclosingScopeType**: type of that same declaration.
    */
@@ -41,7 +42,9 @@ object PsiSignalExtractor {
     val (scope, name) = generateSequence(element) { it.parent }
       .takeWhile { it !is PsiFile }
       .filter { provider.isFunctionDeclaration(it) }
-      .firstNotNullOfOrNull { scope -> elementName(scope)?.let { scope to it } }
+      .firstNotNullOfOrNull { scope -> (
+          elementName(scope) ?: provider.anonymousScopeName(scope)?.takeIf(String::isNotBlank)
+        )?.let { scope to it } }
       ?: return EnclosingScopeNameAndType.EMPTY
 
     return EnclosingScopeNameAndType(name, elementTypeName(scope))

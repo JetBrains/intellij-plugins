@@ -40,6 +40,9 @@ interface QodanaPsiStructuralFingerprintsProvider {
   /** Function-like declarations: methods, functions, constructors. */
   fun isFunctionDeclaration(element: PsiElement): Boolean = false
 
+  /** A contextual label for an anonymous [scope], taken from the nearest binding around it. */
+  fun anonymousScopeName(scope: PsiElement): String? = null
+
   /** A boundary that a serializeEnclosingElement walk stops under: file, block container, or class/function declaration. */
   fun isEnclosingScope(element: PsiElement): Boolean =
     element is PsiFile || isBlockContainer(element) || isFunctionDeclaration(element) || isClassDeclaration(element)

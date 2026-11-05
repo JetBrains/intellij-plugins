@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints
 import com.google.common.hash.Hashing
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.EXTRACTION_AND_REFACTOR_TOLERANT_INDICATOR
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.MOVE_AND_REFACTOR_TOLERANT_INDICATOR
+import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.SCOPE_AND_SHAPE_TOLERANT_INDICATOR
 import com.jetbrains.qodana.sarif.model.Result
 
 /** PSI-derived signals extracted during problem consumption and fed directly to the structural fingerprint calculators */
@@ -10,6 +11,7 @@ data class StructuralFingerprintSignals(
   val astShape: String?,
   val enclosingScopeName: String?,
   val enclosingScopeType: String?,
+  val astSnippet: String?,
 )
 
 /** Structural fingerprint tolerant to function extraction/file renamings and refactorings */
@@ -29,8 +31,19 @@ internal data object MoveAndRefactorTolerantIndicator : StructuralFingerprintCal
   override val version: Int = 1
 
   override fun calculate(result: Result, signals: StructuralFingerprintSignals): String? {
-    if (signals.astShape == null && signals.enclosingScopeName == null) return null
+    if (signals.astShape == null || signals.enclosingScopeName == null) return null
     return structuralFingerprint(result, signals.astShape, extras = listOf(result.fileName(), signals.enclosingScopeName))
+  }
+}
+
+/** Structural fingerprint tolerant to moving files and refactorings inside the same file and func */
+internal data object ScopeAndShapeTolerantIndicator : StructuralFingerprintCalculator {
+  override val name: String = SCOPE_AND_SHAPE_TOLERANT_INDICATOR
+  override val version: Int = 1
+
+  override fun calculate(result: Result, signals: StructuralFingerprintSignals): String? {
+    if (signals.astSnippet == null) return null
+    return structuralFingerprint(result, signals.astSnippet, extras = listOf(result.fileName()))
   }
 }
 

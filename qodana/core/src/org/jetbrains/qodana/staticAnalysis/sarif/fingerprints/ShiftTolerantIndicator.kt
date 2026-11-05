@@ -7,7 +7,7 @@ import com.jetbrains.qodana.sarif.model.Result
 /**
  * This is a useful hash for results in a run whose line and/or column positions have shifted.
  */
-internal data object ShiftTolerantEquality : FingerprintCalculator {
+internal data object ShiftTolerantIndicator : FingerprintCalculator {
   override val name: String
     get() = BaselineCalculation.SHIFT_TOLERANT_INDICATOR
   override val version: Int
@@ -16,7 +16,7 @@ internal data object ShiftTolerantEquality : FingerprintCalculator {
   override fun calculate(result: Result): String = Hashing.fingerprint2011().hash { hasher ->
     hasher.put(result.ruleId)
     hasher.put(result.level.value())
-    hasher.put(result.properties?.get(BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA)?.hashCode())
+    hasher.put(result.message?.text)
     result.locations.forEachNotNull { location ->
       val physical = location.physicalLocation
 

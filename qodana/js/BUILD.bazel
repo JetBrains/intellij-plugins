@@ -53,6 +53,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-common",
         "//plugins/JavaScriptLanguage/javascript-coverage",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/js-test-common:javascript-testing",
     ],
 )
 ### auto-generated section `build intellij.qodana.js` end
