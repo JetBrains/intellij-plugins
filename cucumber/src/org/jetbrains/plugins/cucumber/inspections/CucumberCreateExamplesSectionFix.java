@@ -24,7 +24,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTableRow;
 import org.jetbrains.plugins.cucumber.psi.GherkinUtil;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,8 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
 
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl)descriptor.getPsiElement();
+    // Any scenario: it becomes an outline once the Examples block is added.
+    final PsiElement outline = descriptor.getPsiElement();
 
     final GherkinFile featureFile = (GherkinFile)outline.getContainingFile();
 
