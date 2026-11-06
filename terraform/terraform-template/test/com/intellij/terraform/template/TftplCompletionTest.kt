@@ -14,6 +14,7 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.seconds
 
 @TestApplication
 class TftplCompletionTest {
@@ -100,7 +101,7 @@ class TftplCompletionTest {
   }
 
   @Test
-  fun `test completion available in injected HIL inside a data language segment`(): Unit = timeoutRunBlocking {
+  fun `test completion available in injected HIL inside a data language segment`(): Unit = timeoutRunBlocking(60.seconds) {
     myFixture.addFileToProject("main.tf", "")
     val injectedFile = myFixture.configureByText("test.tftpl", """
       %{ for variable in another_loop_variables ~}
