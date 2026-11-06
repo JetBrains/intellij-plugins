@@ -14,6 +14,8 @@
 
   <content namespace="jetbrains">
     <module name="intellij.flex.css"/>
+    <module name="intellij.flex.jps" loading="embedded"/>
+    <module name="intellij.flex.shared" loading="embedded"/>
   </content>
 
   <extensionPoints>
@@ -110,7 +112,7 @@
 
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
-    <compileServer.plugin classpath="flex-jps.jar;flex-shared.jar"/>
+    <compileServer.plugin classpath="intellij.flex.jps.jar;intellij.flex.shared.jar"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>
     <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>

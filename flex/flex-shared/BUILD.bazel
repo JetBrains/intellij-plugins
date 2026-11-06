@@ -1,4 +1,9 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.flex.shared` start
+content_module_jar(module = ":shared")
+### auto-generated section `dev intellij.flex.shared` end
 
 ### auto-generated section `build intellij.flex.shared` start
 jvm_library(
@@ -38,6 +43,7 @@ exports_files(
     [
         "intellij.flex.shared.iml",
         "resources/com/intellij/flex/model/bc/flex-compiler-options.xml",
+        "resources/intellij.flex.shared.xml",
     ],
     visibility = ["//visibility:public"],
 )

@@ -1,4 +1,9 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.flex.jps` start
+content_module_jar(module = ":jps")
+### auto-generated section `dev intellij.flex.jps` end
 
 ### auto-generated section `build intellij.flex.jps` start
 jvm_library(
@@ -35,6 +40,7 @@ jvm_library(
 exports_files(
     [
         "intellij.flex.jps.iml",
+        "resources/intellij.flex.jps.xml",
     ],
     visibility = ["//visibility:public"],
 )
