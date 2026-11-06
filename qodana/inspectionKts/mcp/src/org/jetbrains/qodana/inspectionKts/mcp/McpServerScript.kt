@@ -58,6 +58,7 @@ internal class McpServerScript(
       messageReporter.reportMessage(1, "MCP server is running on port ${mcpServer.port}:")
       messageReporter.reportMessage(1, "  - SSE endpoint: ${mcpServer.serverSseUrl}")
       messageReporter.reportMessage(1, "  - Streamable HTTP endpoint: ${mcpServer.serverStreamUrl}")
+      messageReporter.reportMessage(1, "  - Send the header ${mcpServer.getGlobalAuthToken().first} with the token in ${mcpServer.globalAuthTokenFile}")
       messageReporter.reportMessage(1, "Terminate the process to stop the server and close the project")
       // The script never finishes on its own: it holds the project open until the qodana run is cancelled
       awaitCancellation()
