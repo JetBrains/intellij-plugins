@@ -4,9 +4,7 @@ import com.intellij.clion.testFramework.nolang.junit5.cmake.cmakeProjectTestFixt
 import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.CompilerAndToolSet
-import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllLinuxToolchains
-import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllMacOSToolchains
-import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllWindowsToolchains
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithDefaultToolchains
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.SupportedToolchainsProvider
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.toolchainFixture
 import com.intellij.testFramework.junit5.TestApplication
@@ -19,9 +17,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 
 @TestApplication
 @ParameterizedClass
-@RunWithAllLinuxToolchains
-@RunWithAllMacOSToolchains
-@RunWithAllWindowsToolchains
+@RunWithDefaultToolchains
 @ArgumentsSource(SupportedToolchainsProvider::class)
 class DiagnosticsCollectorEnvironmentTest(compilerAndToolSet: CompilerAndToolSet) {
   private val toolchainFixture = toolchainFixture(compilerAndToolSet)

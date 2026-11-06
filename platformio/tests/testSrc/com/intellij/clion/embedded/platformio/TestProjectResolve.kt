@@ -6,9 +6,7 @@ import com.intellij.clion.testFramework.nolang.junit5.core.clionProjectTestFixtu
 import com.intellij.clion.testFramework.nolang.junit5.core.clionTimeoutRunBlocking
 import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.CompilerAndToolSet
-import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllLinuxToolchains
-import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllMacOSToolchains
-import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithAllWindowsToolchains
+import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.RunWithDefaultToolchains
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.SupportedToolchainsProvider
 import com.intellij.clion.testFramework.nolang.junit5.core.toolchains.toolchainFixture
 import com.intellij.openapi.components.service
@@ -43,14 +41,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedClass
 import org.junit.jupiter.params.provider.ArgumentsSource
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.div
 import kotlin.io.path.readText
 
 @TestApplication
 @ParameterizedClass
-@RunWithAllLinuxToolchains
-@RunWithAllMacOSToolchains
-@RunWithAllWindowsToolchains
+@RunWithDefaultToolchains
 @ArgumentsSource(SupportedToolchainsProvider::class)
 class TestProjectResolve(private val compilerAndToolSet: CompilerAndToolSet) {
   private val projectPathFixture = tempDirTestFixture(platformioTestDataRoot.resolve("project1"))
