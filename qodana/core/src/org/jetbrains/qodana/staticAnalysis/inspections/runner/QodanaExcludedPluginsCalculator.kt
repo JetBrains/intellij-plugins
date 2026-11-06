@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.ide.plugins.ContentModuleDescriptor
 import com.intellij.ide.plugins.PluginDependencyAnalysis
+import com.intellij.ide.plugins.PluginInitializationContext
 import com.intellij.ide.plugins.PluginMainDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.PluginModuleDescriptor
@@ -129,6 +130,14 @@ internal fun getRequiredPlugins(
   val processed = mutableSetOf<PluginModuleDescriptor>()
   val include = linkedSetOf<PluginMainDescriptor>()
   val candidateSet = resolvedPluginSet.candidateSet
+  val resolvedDescriptors = resolvedPluginSet.sortedResolvedDescriptors
+  val remainingCandidates = object : PluginInitializationContext.RemainingCandidatesView {
+    override fun resolvePluginId(id: PluginId): PluginModuleDescriptor? =
+      candidateSet.resolvePluginId(id)?.takeIf { it in resolvedDescriptors }
+
+    override fun resolveContentModuleId(id: PluginModuleId): ContentModuleDescriptor? =
+      candidateSet.resolveContentModuleId(id)?.takeIf { it in resolvedDescriptors }
+  }
 
   while (toProcess.isNotEmpty()) {
     val descriptor = toProcess.removeFirst()
@@ -137,7 +146,7 @@ internal fun getRequiredPlugins(
     include.add(descriptor.getMainDescriptor())
     if (descriptor is PluginMainDescriptor) {
       for (contentModule in descriptor.contentModules) {
-        if (contentModule.moduleLoadingRule.required && contentModule in resolvedPluginSet.sortedResolvedDescriptors) {
+        if (contentModule.moduleLoadingRule.required && contentModule in resolvedDescriptors) {
           toProcess.add(contentModule)
         }
       }
@@ -146,7 +155,8 @@ internal fun getRequiredPlugins(
       toProcess.add(descriptor.parent)
     }
     val dependencies = PluginDependencyAnalysis.sequenceStrictDependencies(descriptor) +
-                       resolvedPluginSet.initContext.provideCompatibilityDependencies(descriptor, candidateSet)
+                       resolvedPluginSet.initContext.provideCompatibilityDependencies(descriptor, candidateSet) +
+                       resolvedPluginSet.initContext.provideCompatibilityDependenciesForRemainingCandidates(descriptor, remainingCandidates)
     for (dependency in dependencies) {
       candidateSet.resolveReference(dependency)?.let(toProcess::add)
     }
