@@ -26,6 +26,7 @@ groups:
     inspections:
       - lua-assert-arguments-swapped
       - lua-assert-with-boolean-literal-message
+      - lua-assignment-to-undeclared-global
       - lua-call-result-check-tests-other-variable
       - lua-call-status-overwritten-unchecked
       - lua-concat-binds-tighter-than-or-default
@@ -36,12 +37,10 @@ groups:
       - lua-duplicate-table-bracket-key
       - lua-duplicate-table-key
       - lua-elseif-branch-identical-to-previous
-      - lua-empty-control-block
       - lua-error-level-argument-not-a-number
       - lua-error-with-printf-placeholders
       - lua-error-without-level-in-argument-check
       - lua-explicit-global-table-access
-      - lua-fd-leak
       - lua-file-permissions-restricted-after-write
       - lua-file-write-result-ignored
       - lua-find-single-dot-pattern
@@ -52,6 +51,7 @@ groups:
       - lua-gc-metamethod-must-precede-setmetatable
       - lua-gettext-underscore-loop-shadowing
       - lua-gsub-replacement-capture-index-out-of-range
+      - lua-gsub-extra-return-in-tail-position
       - lua-incompatible-bitwise-mask-comparison
       - lua-length-as-condition
       - lua-lfs-dir-not-closed
@@ -63,7 +63,6 @@ groups:
       - lua-nil-test-and-type-test
       - lua-no-and-or-conditional-with-a-false-middle
       - lua-no-pattern-modifier-after-a-capture-group
-      - lua-no-removed-stdlib-api-when-targeting-lua-5-2-or-newer
       - lua-nonexistent-string-method
       - lua-not-before-equality-comparison
       - lua-not-check-after-table-default
