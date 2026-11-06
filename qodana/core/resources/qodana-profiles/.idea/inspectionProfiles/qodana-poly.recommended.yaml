@@ -9,17 +9,15 @@ groups:
     inspections:
       - lua-accumulate-string-pieces-in-a-table-not-with-concat-in-a-loop
       - lua-always-truthy-call-as-condition
-      - lua-assignment-to-undeclared-global
+      - lua-empty-control-block
+      - lua-fd-leak
       - lua-block-local-used-after-block
       - lua-byte-truncation-with-ellipsis
-      - lua-cjson-decode-of-request-body-unprotected
       - lua-client-framing-header-forwarded-to-outbound-request
       - lua-comparison-with-table-constructor
-      - lua-coroutine-resume-status-unchecked
       - lua-error-message-never-read
       - lua-ffi-copy-string-into-exact-length-buffer
       - lua-global-assignment-overwrites-builtin
-      - lua-gsub-extra-return-in-tail-position
       - lua-gsub-nonliteral-replacement-not-escaped
       - lua-load-error-not-captured
       - lua-luasec-certificate-verification-not-enabled
