@@ -45,6 +45,6 @@
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.core" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.io" scope="RUNTIME" />
-    <orderEntry type="module" module-name="intellij.rustrover.light.base" />
+    <orderEntry type="module" module-name="intellij.rustrover.baseline.common" />
   </component>
 </module>

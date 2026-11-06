@@ -56,7 +56,7 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/ide-core",
-        "//rustrover/light/base",
+        "//rustrover/light/base:rustrover-baseline-common",
     ],
 )
 ### auto-generated section `build intellij.qodana.rust` end
