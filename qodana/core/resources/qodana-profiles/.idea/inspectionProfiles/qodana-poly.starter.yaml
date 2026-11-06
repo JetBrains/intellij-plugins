@@ -106,7 +106,6 @@ groups:
       - LuaConstantLogicalOperand
   - groupId: LuaStarterRmlInspections
     inspections:
-      - OpenGrepConstantFunctionResult
       - OpenGrepUnusedValue
       - OpenGrepUnusedVariable
       - OpenGrepVariableNotRead
