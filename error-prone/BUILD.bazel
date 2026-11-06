@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -47,6 +48,15 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.errorProne` end
+
+### auto-generated section `plugin intellij.errorProne` start
+ij_plugin(
+    name = "error-prone_plugin",
+    descriptor_module = ":error-prone",
+    content_modules = ["//contrib/error-prone/jps-plugin:errorProne-jps"],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.errorProne` end
 
 ### auto-generated section `iml intellij.errorProne` start
 exports_files(
