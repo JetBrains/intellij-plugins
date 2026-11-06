@@ -2,68 +2,141 @@ baseProfile: "empty"
 name: "qodana.starter"
 
 include:
-  - "qodana-poly.recommended.yaml"
+  - "qodana.pqc.groups.yaml"
+
+groups:
+  - groupId: QodanaOpengrepInspections
+    groups:
+      - "category:OpenGrep"
+  - groupId: LuaOpengrepRules
+    groups:
+      - "category:OpenGrep/Lua"
+  - groupId: LuaRmlInspections
+    inspections:
+      - OpenGrepConstantCondition
+      - OpenGrepConstantFunctionResult
+      - OpenGrepConstantParameter
+      - OpenGrepNilDereference
+      - OpenGrepUnreachableCode
+      - OpenGrepUnusedParameter
+      - OpenGrepUnusedValue
+      - OpenGrepUnusedVariable
+      - OpenGrepVariableNotRead
+  - groupId: LuaStarterOpengrepRules
+    inspections:
+      - lua-assert-arguments-swapped
+      - lua-assert-with-boolean-literal-message
+      - lua-call-result-check-tests-other-variable
+      - lua-call-status-overwritten-unchecked
+      - lua-concat-binds-tighter-than-or-default
+      - lua-connect-result-ignored
+      - lua-cors-request-origin-reflected
+      - lua-division-by-zero-literal
+      - lua-duplicate-elseif-condition
+      - lua-duplicate-table-bracket-key
+      - lua-duplicate-table-key
+      - lua-elseif-branch-identical-to-previous
+      - lua-empty-control-block
+      - lua-error-level-argument-not-a-number
+      - lua-error-with-printf-placeholders
+      - lua-error-without-level-in-argument-check
+      - lua-explicit-global-table-access
+      - lua-fd-leak
+      - lua-file-permissions-restricted-after-write
+      - lua-file-write-result-ignored
+      - lua-find-single-dot-pattern
+      - lua-format-invalid-conversion
+      - lua-format-q-with-boolean
+      - lua-format-too-few-arguments
+      - lua-format-too-many-arguments
+      - lua-gc-metamethod-must-precede-setmetatable
+      - lua-gettext-underscore-loop-shadowing
+      - lua-gsub-replacement-capture-index-out-of-range
+      - lua-incompatible-bitwise-mask-comparison
+      - lua-length-as-condition
+      - lua-lfs-dir-not-closed
+      - lua-loop-body-never-repeats
+      - lua-luci-untrusted-data-in-cbi-markup
+      - lua-math-function-removed-in-lua-5-4
+      - lua-missing-argument
+      - lua-nan-test-through-tostring
+      - lua-nil-test-and-type-test
+      - lua-no-and-or-conditional-with-a-false-middle
+      - lua-no-pattern-modifier-after-a-capture-group
+      - lua-no-removed-stdlib-api-when-targeting-lua-5-2-or-newer
+      - lua-nonexistent-string-method
+      - lua-not-before-equality-comparison
+      - lua-not-check-after-table-default
+      - lua-optional-table-parameter-indexed-before-its-default
+      - lua-or-with-truthy-literal-operand
+      - lua-os-tmpname-with-suffix
+      - lua-pairs-traversal-must-not-add-keys
+      - lua-pattern-backslash-escape
+      - lua-pattern-class-range-mixes-character-kinds
+      - lua-pattern-percent-w-for-identifier
+      - lua-pattern-regex-alternation
+      - lua-pattern-unbalanced-parenthesis
+      - lua-pattern-unescaped-literal-dot
+      - lua-plain-find-with-escaped-pattern
+      - lua-redundant-and-or-same-operand
+      - lua-redundant-return
+      - lua-request-arg-or-header-used-as-string
+      - lua-request-body-data-without-file-fallback
+      - lua-request-host-in-absolute-url
+      - lua-request-origin-reflected-in-cors-header
+      - lua-self-assignment
+      - lua-self-comparison-equality-non-nan
+      - lua-self-used-outside-a-method
+      - lua-string-call-instead-of-concatenation
+      - lua-subrequest-body-used-without-truncated-check
+      - lua-suspicious-numeric-for-range
+      - lua-table-insert-at-length-plus-one
+      - lua-table-insert-front-in-loop
+      - lua-table-remove-in-ipairs-loop
+      - lua-table-sort-comparator-must-be-a-strict-order
+      - lua-too-many-arguments-to-local-function
+      - lua-tostring-or-dead-fallback
+      - lua-type-compared-with-invalid-name
+      - lua-unused-local-function
+      - lua-unused-local-require
+      - lua-utf8-codes-on-unvalidated-string
+      - lua-weak-cipher-configuration
+  - groupId: LuaStarterPsiInspections
+    inspections:
+      - LuaConstantLogicalOperand
+  - groupId: LuaStarterRmlInspections
+    inspections:
+      - OpenGrepConstantFunctionResult
+      - OpenGrepUnusedValue
+      - OpenGrepUnusedVariable
+      - OpenGrepVariableNotRead
 
 inspections:
+  - group: QodanaOpengrepInspections
+    enabled: true
   - group: LuaOpengrepRules
     enabled: false
-  - inspection: lua-unchecked-nil-returning-result-dereferenced
-    enabled: true
-  - inspection: lua-assignment-to-undeclared-global
-    enabled: true
-  - inspection: lua-request-data-in-os-command
-    enabled: true
-  - inspection: lua-index-into-nil-returning-stdlib-call
-    enabled: true
-  - inspection: lua-gsub-nonliteral-replacement-not-escaped
-    enabled: true
-  - inspection: lua-not-before-equality-comparison
-    enabled: true
-  - inspection: lua_fd_leak
-    enabled: true
-  - inspection: no-and-or-conditional-with-a-false-middle
-    enabled: true
-  - inspection: lua-luci-untrusted-data-in-cbi-markup
-    enabled: true
-  - inspection: lua-os-command-built-by-concatenation
-    enabled: true
-  - inspection: lua-byte-truncation-with-ellipsis
-    enabled: true
-  - inspection: lua-socket-http-request-unprotected
-    enabled: true
-  - inspection: lua-error-message-never-read
-    enabled: true
-  - inspection: lua-tls-verification-off-by-default-in-schema
-    enabled: true
-  - inspection: lua-type-call-on-comparison
-    enabled: true
-  - inspection: pairs-traversal-must-not-add-keys
-    enabled: true
-  - inspection: lua-string-literal-as-assert-condition
-    enabled: true
-  - inspection: lua-or-with-truthy-literal-operand
-    enabled: true
-  - inspection: lua-self-used-outside-a-method
-    enabled: true
-  - inspection: lua-then-branch-local-used-in-else-branch
-    enabled: true
-  - inspection: lua-cors-request-origin-reflected
-    enabled: true
-  - inspection: lua-pattern-unescaped-hyphen-in-literal-text
-    enabled: true
-  - inspection: lua-format-too-many-arguments
-    enabled: true
-  - inspection: lua-table-remove-in-ipairs-loop
-    enabled: true
-  - inspection: lua-percent-q-as-shell-quote
-    enabled: true
-  - inspection: lua-pattern-class-range-mixes-character-kinds
-    enabled: true
-  - inspection: lua-request-data-loaded-as-code
-    enabled: true
-  - inspection: lua-concat-binds-tighter-than-or-default
-    enabled: true
-  - inspection: lua-method-receiver-passed-again
-    enabled: true
-  - inspection: LuaUnusedLocal
+  - group: LuaRmlInspections
     enabled: false
+  - inspection: DartAnalyze
+    enabled: true
+  - group: AllPqcInspections
+    enabled: false
+  - group: PqcMinLevel1
+    enabled: true
+  - group: LuaStarterOpengrepRules
+    enabled: true
+  - group: LuaStarterPsiInspections
+    enabled: true
+  - group: LuaStarterRmlInspections
+    enabled: true
+  - group: ALL
+    ignore:
+      - "vendor/**"
+      - "**/node_modules/**"
+      - "dist/**"
+      - "build/**"
+      - "tests/**"
+      - "test/**"
+      - "spec/**"
+      - "scope#$gitignore" # $gitignore scope available only in qodana execution
