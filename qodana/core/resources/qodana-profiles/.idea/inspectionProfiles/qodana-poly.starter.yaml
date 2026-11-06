@@ -108,6 +108,7 @@ groups:
       - OpenGrepUnusedValue
       - OpenGrepUnusedVariable
       - OpenGrepVariableNotRead
+      - OpenGrepConstantFunctionResult
 
 inspections:
   - group: QodanaOpengrepInspections
