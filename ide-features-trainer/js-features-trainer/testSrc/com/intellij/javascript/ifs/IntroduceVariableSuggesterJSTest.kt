@@ -1,7 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.ifs
 
-import junit.framework.TestCase
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import training.featuresSuggester.FeatureSuggesterTestUtils.copyCurrentSelection
 import training.featuresSuggester.FeatureSuggesterTestUtils.cutBetweenLogicalPositions
 import training.featuresSuggester.FeatureSuggesterTestUtils.deleteSymbolAtCaret
@@ -11,15 +13,15 @@ import training.featuresSuggester.FeatureSuggesterTestUtils.pasteFromClipboard
 import training.featuresSuggester.FeatureSuggesterTestUtils.selectBetweenLogicalPositions
 import training.featuresSuggester.FeatureSuggesterTestUtils.testInvokeLater
 import training.featuresSuggester.FeatureSuggesterTestUtils.typeAndCommit
-import training.featuresSuggester.IntroduceVariableSuggesterTest
 import training.featuresSuggester.NoSuggestion
+import training.featuresSuggester.featureSuggesterFixture
 
-class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
-  override val testingCodeFileName = "JavaScriptCodeExample.js"
+@TestApplication
+class IntroduceVariableSuggesterJSTest {
+  private val suggester by featureSuggesterFixture(JsSuggestersTestUtils.testDataPath, "JavaScriptCodeExample.js", "Introduce variable")
 
-  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
-
-  override fun `testIntroduce expression from IF and get suggestion`() {
+  @Test
+  fun `testIntroduce expression from IF and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       cutBetweenLogicalPositions(lineStartIndex = 20, columnStartIndex = 23, lineEndIndex = 20, columnEndIndex = 46)
       insertNewLineAt(20, 8)
@@ -34,7 +36,8 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
     }
   }
 
-  override fun `testIntroduce full expression from method call and get suggestion`() {
+  @Test
+  fun `testIntroduce full expression from method call and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       cutBetweenLogicalPositions(lineStartIndex = 21, columnStartIndex = 24, lineEndIndex = 21, columnEndIndex = 63)
       insertNewLineAt(21, 12)
@@ -49,7 +52,8 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
     }
   }
 
-  override fun `testIntroduce part of expression from method call and get suggestion`() {
+  @Test
+  fun `testIntroduce part of expression from method call and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       cutBetweenLogicalPositions(lineStartIndex = 21, columnStartIndex = 33, lineEndIndex = 21, columnEndIndex = 24)
       insertNewLineAt(21, 12)
@@ -64,7 +68,8 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
     }
   }
 
-  override fun `testIntroduce part of string expression from method call and get suggestion`() {
+  @Test
+  fun `testIntroduce part of string expression from method call and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       cutBetweenLogicalPositions(lineStartIndex = 62, columnStartIndex = 30, lineEndIndex = 62, columnEndIndex = 15)
       insertNewLineAt(62, 8)
@@ -79,7 +84,8 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
     }
   }
 
-  override fun `testIntroduce full expression from return statement and get suggestion`() {
+  @Test
+  fun `testIntroduce full expression from return statement and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       cutBetweenLogicalPositions(lineStartIndex = 63, columnStartIndex = 15, lineEndIndex = 63, columnEndIndex = 51)
       insertNewLineAt(63, 8)
@@ -94,7 +100,8 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
     }
   }
 
-  override fun `testIntroduce expression from method body using copy and backspace and get suggestion`() {
+  @Test
+  fun `testIntroduce expression from method body using copy and backspace and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       selectBetweenLogicalPositions(
         lineStartIndex = 37,
@@ -125,7 +132,8 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
   /**
    * This case must throw suggestion but not working now
    */
-  fun `testIntroduce part of string declaration expression and don't get suggestion`() {
+  @Test
+  fun `testIntroduce part of string declaration expression and don't get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       cutBetweenLogicalPositions(lineStartIndex = 61, columnStartIndex = 24, lineEndIndex = 61, columnEndIndex = 37)
       insertNewLineAt(61, 8)
@@ -136,7 +144,7 @@ class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
     }
 
     testInvokeLater(project) {
-      TestCase.assertTrue(expectedSuggestion is NoSuggestion)
+      assertTrue(expectedSuggestion is NoSuggestion)
     }
   }
 }

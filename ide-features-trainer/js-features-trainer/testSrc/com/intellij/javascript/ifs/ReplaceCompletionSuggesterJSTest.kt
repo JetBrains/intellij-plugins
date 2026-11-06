@@ -1,7 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.ifs
 
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import training.featuresSuggester.FeatureSuggesterTestUtils.chooseCompletionItem
+import training.featuresSuggester.FeatureSuggesterTestUtils.deleteAndTypeDot
 import training.featuresSuggester.FeatureSuggesterTestUtils.deleteTextBetweenLogicalPositions
 import training.featuresSuggester.FeatureSuggesterTestUtils.invokeCodeCompletion
 import training.featuresSuggester.FeatureSuggesterTestUtils.moveCaretToLogicalPosition
@@ -9,14 +13,14 @@ import training.featuresSuggester.FeatureSuggesterTestUtils.testInvokeLater
 import training.featuresSuggester.FeatureSuggesterTestUtils.typeAndCommit
 import training.featuresSuggester.FeatureSuggesterTestUtils.typeDelete
 import training.featuresSuggester.NoSuggestion
-import training.featuresSuggester.ReplaceCompletionSuggesterTest
+import training.featuresSuggester.featureSuggesterFixture
 
-class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
-  override val testingCodeFileName = "JavaScriptCodeExample.js"
+@TestApplication
+class ReplaceCompletionSuggesterJSTest {
+  private val suggester by featureSuggesterFixture(JsSuggestersTestUtils.testDataPath, "JavaScriptCodeExample.js", "Completion with replace")
 
-  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
-
-  override fun `testDelete and type dot, complete method call, remove previous identifier and get suggestion`() {
+  @Test
+  fun `testDelete and type dot, complete method call, remove previous identifier and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(24, 21)
       deleteAndTypeDot()
@@ -30,7 +34,8 @@ class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
     }
   }
 
-  override fun `testCall completion, complete method call, remove previous identifier and get suggestion`() {
+  @Test
+  fun `testCall completion, complete method call, remove previous identifier and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(72, 53)
       val variants = invokeCodeCompletion() ?: error("Not found lookup elements")
@@ -48,7 +53,8 @@ class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
     }
   }
 
-  override fun `testCall completion, complete with method call, add parameter to method call, remove previous identifier and get suggestion`() {
+  @Test
+  fun `testCall completion, complete with method call, add parameter to method call, remove previous identifier and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(72, 53)
       val variants = invokeCodeCompletion() ?: error("Not found lookup elements")
@@ -67,7 +73,8 @@ class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
     }
   }
 
-  override fun `testCall completion, complete with property, remove previous identifier and get suggestion`() {
+  @Test
+  fun `testCall completion, complete with property, remove previous identifier and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(72, 26)
       val variants = invokeCodeCompletion() ?: error("Not found lookup elements")
@@ -80,7 +87,8 @@ class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
     }
   }
 
-  override fun `testCall completion inside arguments list, complete method call, remove previous identifier and get suggestion`() {
+  @Test
+  fun `testCall completion inside arguments list, complete method call, remove previous identifier and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(72, 84)
       val variants = invokeCodeCompletion() ?: error("Not found lookup elements")
@@ -93,7 +101,8 @@ class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
     }
   }
 
-  override fun `testCall completion, type additional characters, complete, remove previous identifier and get suggestion`() {
+  @Test
+  fun `testCall completion, type additional characters, complete, remove previous identifier and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(72, 26)
       invokeCodeCompletion()
@@ -108,7 +117,8 @@ class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
     }
   }
 
-  override fun `testCall completion, complete method call, remove another equal identifier and don't get suggestion`() {
+  @Test
+  fun `testCall completion, complete method call, remove another equal identifier and don't get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(72, 53)
       val variants = invokeCodeCompletion() ?: error("Not found lookup elements")

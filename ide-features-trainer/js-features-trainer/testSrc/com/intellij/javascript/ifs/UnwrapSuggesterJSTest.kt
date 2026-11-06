@@ -1,7 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.ifs
 
-import junit.framework.TestCase
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import training.featuresSuggester.FeatureSuggesterTestUtils.deleteSymbolAtCaret
 import training.featuresSuggester.FeatureSuggesterTestUtils.insertNewLineAt
 import training.featuresSuggester.FeatureSuggesterTestUtils.moveCaretToLogicalPosition
@@ -9,14 +11,14 @@ import training.featuresSuggester.FeatureSuggesterTestUtils.selectBetweenLogical
 import training.featuresSuggester.FeatureSuggesterTestUtils.testInvokeLater
 import training.featuresSuggester.FeatureSuggesterTestUtils.typeAndCommit
 import training.featuresSuggester.NoSuggestion
-import training.featuresSuggester.UnwrapSuggesterTest
+import training.featuresSuggester.featureSuggesterFixture
 
-class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
-  override val testingCodeFileName: String = "JavaScriptCodeExample.js"
+@TestApplication
+class UnwrapSuggesterJSTest {
+  private val suggester by featureSuggesterFixture(JsSuggestersTestUtils.testDataPath, "JavaScriptCodeExample.js", "Unwrap")
 
-  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
-
-  override fun `testUnwrap IF statement and get suggestion`() {
+  @Test
+  fun `testUnwrap IF statement and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       moveCaretToLogicalPosition(22, 9)
       deleteSymbolAtCaret()
@@ -29,7 +31,8 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
   }
 
-  override fun `testUnwrap one-line IF and get suggestion`() {
+  @Test
+  fun `testUnwrap one-line IF and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       selectBetweenLogicalPositions(
         lineStartIndex = 56,
@@ -47,7 +50,8 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
   }
 
-  override fun `testUnwrap IF with deleting multiline selection and get suggestion`() {
+  @Test
+  fun `testUnwrap IF with deleting multiline selection and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       selectBetweenLogicalPositions(lineStartIndex = 19, columnStartIndex = 22, lineEndIndex = 21, columnEndIndex = 5)
       deleteSymbolAtCaret()
@@ -60,7 +64,8 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
   }
 
-  override fun `testUnwrap FOR and get suggestion`() {
+  @Test
+  fun `testUnwrap FOR and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       selectBetweenLogicalPositions(lineStartIndex = 47, columnStartIndex = 36, lineEndIndex = 47, columnEndIndex = 8)
       deleteSymbolAtCaret()
@@ -73,7 +78,8 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
   }
 
-  override fun `testUnwrap WHILE and get suggestion`() {
+  @Test
+  fun `testUnwrap WHILE and get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       selectBetweenLogicalPositions(lineStartIndex = 52, columnStartIndex = 22, lineEndIndex = 52, columnEndIndex = 0)
       deleteSymbolAtCaret()
@@ -86,7 +92,8 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
   }
 
-  override fun `testUnwrap commented IF and don't get suggestion`() {
+  @Test
+  fun `testUnwrap commented IF and don't get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       insertNewLineAt(46, 8)
       typeAndCommit(
@@ -107,11 +114,12 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
 
     testInvokeLater(project) {
-      TestCase.assertTrue(expectedSuggestion is NoSuggestion)
+      assertTrue(expectedSuggestion is NoSuggestion)
     }
   }
 
-  override fun `testUnwrap IF written in string block and don't get suggestion`() {
+  @Test
+  fun `testUnwrap IF written in string block and don't get suggestion`(): Unit = suggester.runTest {
     with(myFixture) {
       insertNewLineAt(46, 8)
       typeAndCommit(
@@ -132,7 +140,7 @@ class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
     }
 
     testInvokeLater(project) {
-      TestCase.assertTrue(expectedSuggestion is NoSuggestion)
+      assertTrue(expectedSuggestion is NoSuggestion)
     }
   }
 }
