@@ -2,48 +2,60 @@ baseProfile: "empty"
 name: "qodana.recommended"
 
 include:
-  - "qodana.pqc.groups.yaml"
+  - "qodana-poly.starter.yaml"
 
 groups:
-  - groupId: QodanaOpengrepInspections
-    groups:
-      - "category:OpenGrep"
-  - groupId: LuaOpengrepRules
-    groups:
-      - "category:OpenGrep/Lua"
-  - groupId: LuaPluginRules
+  - groupId: LuaRecommendedOpengrepRules
     inspections:
-      - LuaConstantLogicalOperand
-      - LuaDuplicateCondition
-      - LuaDuplicateTableKey
-      - LuaSelfAssignment
-      - LuaUnreachableCode
+      - lua-accumulate-string-pieces-in-a-table-not-with-concat-in-a-loop
+      - lua-always-truthy-call-as-condition
+      - lua-assignment-to-undeclared-global
+      - lua-block-local-used-after-block
+      - lua-byte-truncation-with-ellipsis
+      - lua-cjson-decode-of-request-body-unprotected
+      - lua-client-framing-header-forwarded-to-outbound-request
+      - lua-comparison-with-table-constructor
+      - lua-coroutine-resume-status-unchecked
+      - lua-error-message-never-read
+      - lua-ffi-copy-string-into-exact-length-buffer
+      - lua-global-assignment-overwrites-builtin
+      - lua-gsub-extra-return-in-tail-position
+      - lua-gsub-nonliteral-replacement-not-escaped
+      - lua-load-error-not-captured
+      - lua-luasec-certificate-verification-not-enabled
+      - lua-luasec-handshake-without-hostname-check
+      - lua-luv-handle-never-closed
+      - lua-magic-number-in-comparison
+      - lua-method-called-with-dot-on-self
+      - lua-ngx-log-with-printf-placeholders
+      - lua-ngx-req-args-truncation-flag-ignored
+      - lua-ngx-timer-result-ignored
+      - lua-os-command-built-by-concatenation
+      - lua-pattern-unescaped-hyphen-in-literal-text
+      - lua-pcall-argument
+      - lua-pcall-result-ignored
+      - lua-request-data-in-os-command
+      - lua-statement-after-unconditional-error
+      - lua-string-literal-as-assert-condition
+      - lua-then-branch-local-used-in-else-branch
+      - lua-tls-certificate-verification-disabled
+      - lua-tls-verification-off-by-default-in-schema
+      - lua-type-call-on-comparison
+      - lua-unchecked-nil-returning-result-dereferenced
+      - lua-use-length-operator-instead-of-len-method
+  - groupId: LuaRecommendedPsiInspections
+    inspections:
       - LuaUnusedLabel
-      - LuaVariableAttribute
-      - LuaRecursiveLocal
-      - LuaSuspiciousForRange
-      - LuaUnusedLocal
+  - groupId: LuaRecommendedRmlInspections
+    inspections:
+      - OpenGrepConstantCondition
+      - OpenGrepConstantParameter
+      - OpenGrepUnusedParameter
 
 inspections:
-  - group: QodanaOpengrepInspections
+  - group: LuaRecommendedOpengrepRules
     enabled: true
-  - inspection: DartAnalyze
+  - group: LuaRecommendedPsiInspections
     enabled: true
-  - group: AllPqcInspections
-    enabled: false
-  - group: PqcMinLevel1
+  - group: LuaRecommendedRmlInspections
     enabled: true
-  - group: LuaOpengrepRules
-    enabled: true
-  - group: LuaPluginRules
-    enabled: true
-  - group: ALL
-    ignore:
-      - "vendor/**"
-      - "**/node_modules/**"
-      - "dist/**"
-      - "build/**"
-      - "tests/**"
-      - "test/**"
-      - "spec/**"
-      - "scope#$gitignore" # $gitignore scope available only in qodana execution
