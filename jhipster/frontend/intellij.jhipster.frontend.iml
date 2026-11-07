@@ -9,6 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.frontend" scope="RUNTIME" />
-    <orderEntry type="module" module-name="intellij.jhipster" />
+    <orderEntry type="module" module-name="intellij.jhipster" scope="RUNTIME" />
   </component>
 </module>

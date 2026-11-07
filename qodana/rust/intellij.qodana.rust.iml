@@ -25,25 +25,25 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-stdlib" level="project" />
-    <orderEntry type="module" module-name="intellij.rustrover" />
+    <orderEntry type="module" module-name="intellij.rustrover" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.rustrover.core" />
     <orderEntry type="module" module-name="intellij.rustrover.common" />
     <orderEntry type="module" module-name="intellij.rustrover.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.rd.core" />
-    <orderEntry type="module" module-name="intellij.libraries.rd.framework" />
+    <orderEntry type="module" module-name="intellij.libraries.rd.framework" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.backend.observation" />
     <orderEntry type="module" module-name="intellij.qodana" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
-    <orderEntry type="module" module-name="intellij.libraries.qodana.sarif" />
+    <orderEntry type="module" module-name="intellij.libraries.qodana.sarif" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.rd.community" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
-    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
-    <orderEntry type="module" module-name="intellij.platform.execution" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.execution" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.core" />
-    <orderEntry type="module" module-name="intellij.libraries.kotlinx.io" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.io" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.rustrover.light.base" />
   </component>
 </module>

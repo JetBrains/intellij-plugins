@@ -12,7 +12,7 @@
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.gauge" />
     <orderEntry type="module" module-name="intellij.maven" />
-    <orderEntry type="module" module-name="intellij.platform.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.concurrency" />
   </component>
 </module>

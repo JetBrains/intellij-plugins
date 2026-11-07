@@ -9,7 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.vuejs.backend" />
-    <orderEntry type="module" module-name="intellij.vuejs.common" />
+    <orderEntry type="module" module-name="intellij.vuejs.common" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlin-stdlib" level="project" />

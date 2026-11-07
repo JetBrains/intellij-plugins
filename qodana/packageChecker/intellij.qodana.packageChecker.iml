@@ -13,6 +13,6 @@
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.qodana" />
-    <orderEntry type="module" module-name="intellij.platform.monolith" />
+    <orderEntry type="module" module-name="intellij.platform.monolith" scope="RUNTIME" />
   </component>
 </module>

@@ -43,6 +43,6 @@
     <orderEntry type="module" module-name="intellij.platform.split.protocol" />
     <orderEntry type="module" module-name="intellij.rd.client" />
     <orderEntry type="module" module-name="intellij.rd.ide.model.generated" />
-    <orderEntry type="module" module-name="intellij.rd.platform" />
+    <orderEntry type="module" module-name="intellij.rd.platform" scope="RUNTIME" />
   </component>
 </module>
