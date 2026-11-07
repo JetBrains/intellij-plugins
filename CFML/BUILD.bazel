@@ -34,6 +34,8 @@ jvm_library(
         # do not sort,
         "//ultimate/platform-ultimate:commercial",
         "//plugins/javaee/web/coverage",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+        "@community//jps/model-api:model",
     ],
     deps = [
         # do not sort,
@@ -72,9 +74,7 @@ jvm_library(
         "@community//xml/xml-parser:parser",
         "@community//platform/execution",
         "@community//platform/consoleView",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//platform/util/concurrency",
-        "@community//jps/model-api:model",
         "@community//platform/testRunner",
     ],
 )

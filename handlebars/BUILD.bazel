@@ -47,6 +47,11 @@ jvm_library(
         exclude = ["resources/**/icon-robots.txt"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/forms_rt:java-guiForms-rt",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -69,9 +74,7 @@ jvm_library(
         "@community//platform/code-style-impl:codeStyle-impl",
         "@community//platform/core-impl",
         "@community//platform/util:util-ui",
-        "@community//platform/forms_rt:java-guiForms-rt",
         "@community//xml/emmet",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
 ### auto-generated section `build intellij.handlebars` end

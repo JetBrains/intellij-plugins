@@ -24,6 +24,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/stream",
+        "//plugins/JavaScriptLanguage/plugin",
+        "//plugins/css",
+    ],
     deps = [
         # do not sort,
         "@community//platform/core-api:core",
@@ -34,15 +40,12 @@ jvm_library(
         "@community//xml/xml-parser:parser",
         "//plugins/JavaScriptLanguage/javascript-parser",
         "@community//xml/xml-psi-api:psi",
-        "@community//libraries/stream",
         "@community//platform/polySymbols/shared:polySymbols",
         "@community//platform/polySymbols/web",
         "@community//xml/xml-psi-impl:psi-impl",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
         "@community//platform/ide-core",
-        "//plugins/JavaScriptLanguage/plugin",
         "@community//platform/editor-ui-api:editor-ui",
-        "//plugins/css",
     ],
 )
 ### auto-generated section `build intellij.vuejs.common` end

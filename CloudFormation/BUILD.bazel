@@ -23,6 +23,12 @@ ij_plugin_module(
         ["src/main/resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//plugins/yaml/backend",
+        "@community//platform/core-ui",
+        "@ultimate_lib//:cloud_formation-cloudformation-meta",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -30,7 +36,6 @@ ij_plugin_module(
         "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/core-impl",
         "@community//platform/indexing-api:indexing",
-        "@community//plugins/yaml/backend",
         "@community//platform/core-api:core",
         "@community//platform/lang-api:lang",
         "@community//plugins/yaml",
@@ -39,8 +44,6 @@ ij_plugin_module(
         "@community//platform/lang-impl",
         "@community//libraries/guava",
         "@community//libraries/xstream",
-        "@community//platform/core-ui",
-        "@ultimate_lib//:cloud_formation-cloudformation-meta",
     ],
 )
 ### auto-generated section `build intellij.cloudFormation` end

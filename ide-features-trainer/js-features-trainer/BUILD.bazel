@@ -23,6 +23,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/xdebugger-api:debugger"],
     deps = [
         # do not sort,
         "//plugins/JavaScriptLanguage/javascript-parser",
@@ -39,7 +40,6 @@ jvm_library(
         "@community//platform/ide-core",
         "@community//platform/analysis-impl",
         "@community//platform/refactoring",
-        "@community//platform/xdebugger-api:debugger",
         "@community//platform/core-ui",
         "@community//platform/core-impl",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",

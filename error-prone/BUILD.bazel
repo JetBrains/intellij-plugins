@@ -25,6 +25,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/guava",
+        "@community//java/java-psi-api:psi",
+    ],
     deps = [
         # do not sort,
         "@community//java/compiler/impl",
@@ -32,10 +37,8 @@ jvm_library(
         "@community//platform/platform-api:ide",
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/ide-core",
-        "@community//libraries/guava",
         "@community//jps/model-api:model",
         "@community//platform/lang-api:lang",
-        "@community//java/java-psi-api:psi",
         "@community//java/java-syntax:syntax",
         "@community//libraries/stream",
         "@community//platform/projectModel-api:projectModel",

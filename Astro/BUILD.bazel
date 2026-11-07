@@ -68,7 +68,11 @@ ij_plugin_module(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["//plugins/JavaScriptLanguage/plugin"],
+    runtime_deps = [
+        # do not sort,
+        "//plugins/JavaScriptLanguage/plugin",
+        "//contrib/postcss/plugin",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -102,7 +106,6 @@ ij_plugin_module(
         "@community//libraries/fastutil",
         "//plugins/JavaScriptLanguage/javascript-backend",
         "@community//platform/code-style-impl:codeStyle-impl",
-        "//contrib/postcss/plugin",
         "//contrib/postcss/paid",
         "@community//platform/lsp",
         "@community//libraries/lsp4j",

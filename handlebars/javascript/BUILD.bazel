@@ -22,10 +22,10 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["//plugins/JavaScriptLanguage/javascript-backend"],
     deps = [
         # do not sort,
         "//contrib/handlebars",
-        "//plugins/JavaScriptLanguage/javascript-backend",
         "@community//platform/core-api:core",
         "@community//platform/ide-core",
         "@lib//:kotlin-stdlib",

@@ -22,10 +22,10 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/platform-util-io:ide-util-io"],
     deps = [
         # do not sort,
         "@community//plugins/terminal",
-        "@community//platform/platform-util-io:ide-util-io",
         "@lib//:kotlin-stdlib",
         "@community//platform/util",
         "@community//platform/core-api:core",

@@ -32,10 +32,14 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
+        "@community//jps/model-api:model",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
-        "@community//libraries/kotlinc/kotlin-compiler-common:libraries-kotlinc-kotlin-compiler-common",
         "@community//libraries/kotlinc/analysis-api:libraries-kotlinc-analysis-api",
         "@community//libraries/kotlinc/symbol-light-classes:libraries-kotlinc-symbol-light-classes",
         "@community//java/openapi:java",
@@ -46,7 +50,6 @@ jvm_library(
         "@community//platform/platform-api:ide",
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/ide-core",
-        "@community//jps/model-api:model",
         "@community//platform/lang-impl",
         "@community//platform/projectModel-api:projectModel",
         "//contrib/qodana",

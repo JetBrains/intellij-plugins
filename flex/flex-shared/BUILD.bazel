@@ -18,6 +18,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//libraries/fastutil"],
     deps = [
         # do not sort,
         "@community//platform/util",
@@ -25,7 +26,6 @@ jvm_library(
         "@community//jps/model-impl",
         "@community//jps/model-serialization",
         "@community//jps/jps-builders:build",
-        "@community//libraries/fastutil",
         "@community//platform/util/jdom",
         "@community//platform/core-api:core",
         "@community//libraries/hash4j",

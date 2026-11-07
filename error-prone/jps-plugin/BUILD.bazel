@@ -19,11 +19,14 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    deps = [
+    runtime_deps = [
         # do not sort,
         "@community//jps/jps-builders:build",
-        "@community//platform/util",
         "@community//platform/util/base",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/util",
         "@community//build:build-javac-rt",
         "@community//libraries/jetbrains/annotations",
         "@community//jps/model-serialization",

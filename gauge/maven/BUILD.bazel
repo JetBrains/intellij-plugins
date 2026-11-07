@@ -22,13 +22,13 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/analysis-api:analysis"],
     deps = [
         # do not sort,
         "@community//platform/core-api:core",
         "@community//platform/projectModel-api:projectModel",
         "//contrib/gauge",
         "@community//plugins/maven",
-        "@community//platform/analysis-api:analysis",
         "@community//platform/util/concurrency",
     ],
 )

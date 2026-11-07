@@ -26,6 +26,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+        "@community//platform/statistics",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -39,8 +44,6 @@ jvm_library(
         "//goland/intellij-go/impl",
         "@community//libraries/guava",
         "//goland/intellij-go/go-frontback",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
-        "@community//platform/statistics",
     ],
 )
 ### auto-generated section `build intellij.protoeditor.go` end

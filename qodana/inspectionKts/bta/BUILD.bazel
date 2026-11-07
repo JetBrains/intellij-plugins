@@ -32,6 +32,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/ide-core",
+        "@community//platform/editor-ui-api:editor-ui",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -42,10 +47,8 @@ jvm_library(
         "@community//platform/analysis-impl",
         "@community//platform/core-api:core",
         "@community//platform/platform-api:ide",
-        "@community//platform/ide-core",
         "@community//platform/util",
         "@community//platform/core-impl",
-        "@community//platform/editor-ui-api:editor-ui",
         "@community//libraries/kotlinx/coroutines/core",
         "@community//platform/progress/shared:ide-progress",
         ":community_libraries_kotlinc_libraries-kotlinc-kotlin-scripting-common_provided",

@@ -55,6 +55,7 @@ ij_plugin_module(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable"],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -81,7 +82,6 @@ ij_plugin_module(
         "@community//json/backend",
         "//plugins/JavaScriptLanguage/javascript-common",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
         "@community//platform/core-impl",
         "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
     ],

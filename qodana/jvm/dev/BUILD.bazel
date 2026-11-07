@@ -22,17 +22,20 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    deps = [
+    runtime_deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+        "//contrib/qodana",
+    ],
+    deps = [
+        # do not sort,
         "@community//java/openapi:java",
         "@community//plugins/dev/intellij.java.dev:java-dev",
         "@community//platform/core-api:core",
         "@community//platform/analysis-api:analysis",
         "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
         "@community//java/java-frontback-psi-api:frontback-psi",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
-        "//contrib/qodana",
     ],
 )
 ### auto-generated section `build intellij.qodana.jvm.dev` end

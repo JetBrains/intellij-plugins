@@ -22,6 +22,15 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//plugins/kotlin/base/resources:kotlin-base-resources",
+        "@community//plugins/kotlin/base/plugin",
+        "@community//plugins/kotlin/base/util",
+        "@community//plugins/kotlin/scripting",
+        "@community//platform/util-class-loader:util-classLoader",
+        "@community//platform/backend/workspace",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -36,14 +45,8 @@ jvm_library(
         "@community//platform/util:util-ui",
         "@community//platform/core-ui",
         "@community//platform/editor-ui-api:editor-ui",
-        "@community//plugins/kotlin/base/resources:kotlin-base-resources",
-        "@community//plugins/kotlin/base/plugin",
-        "@community//plugins/kotlin/base/util",
-        "@community//plugins/kotlin/scripting",
-        "@community//platform/util-class-loader:util-classLoader",
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/ide-core",
-        "@community//platform/backend/workspace",
     ],
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.java` end

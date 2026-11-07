@@ -23,6 +23,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/projectModel-api:projectModel",
+        "@community//java/java-psi-impl:psi-impl",
+        "@community//jps/model-api:model",
+    ],
     deps = [
         # do not sort,
         "//contrib/cucumber:gherkin",
@@ -35,15 +41,12 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/lang-impl",
         "@community//plugins/groovy",
-        "@community//platform/projectModel-api:projectModel",
-        "@community//java/java-psi-impl:psi-impl",
         "@community//java/java-psi-api:psi",
         "@community//java/java-syntax:syntax",
         "@community//platform/usageView",
         "@ultimate_lib//:cucumber-groovy-cucumber-groovy",
         "@community//java/java-impl:impl",
         "//contrib/cucumber-java",
-        "@community//jps/model-api:model",
         ":community_libraries_cucumber-core1_provided",
     ],
 )

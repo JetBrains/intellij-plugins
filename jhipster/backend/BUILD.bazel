@@ -23,9 +23,13 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    deps = [
+    runtime_deps = [
         # do not sort,
         "@community//platform/backend",
+        "@community//jps/model-api:model",
+    ],
+    deps = [
+        # do not sort,
         "//contrib/jhipster",
         "@community//platform/analysis-api:analysis",
         "@community//platform/core-api:core",
@@ -44,7 +48,6 @@ jvm_library(
         "@lib//:kotlin-stdlib",
         "@community//java/java-psi-api:psi",
         "@community//platform/core-impl",
-        "@community//jps/model-api:model",
     ],
 )
 ### auto-generated section `build intellij.jhipster.backend` end

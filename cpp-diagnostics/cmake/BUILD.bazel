@@ -22,6 +22,13 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//libraries/kotlinx/serialization/core",
+        "@community//libraries/kotlinx/serialization/json",
+        "@community//platform/core-api:core",
+        "@community//platform/util/jdom",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -30,13 +37,9 @@ jvm_library(
         "//contrib/cpp-diagnostics/core",
         "//CIDR/clion-toolchains",
         "//CIDR/clion-cmake/core",
-        "@community//libraries/kotlinx/serialization/core",
-        "@community//libraries/kotlinx/serialization/json",
-        "@community//platform/core-api:core",
         "@community//platform/core-impl",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/util",
-        "@community//platform/util/jdom",
     ],
 )
 ### auto-generated section `build intellij.clion.diagnostics.cmake` end

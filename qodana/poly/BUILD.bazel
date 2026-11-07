@@ -23,10 +23,10 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["//contrib/qodana"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
-        "//contrib/qodana",
         "@community//platform/core-api:core",
         "@community//platform/core-impl",
         "@community//platform/util",

@@ -28,6 +28,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["//contrib/qodana/sarif"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -46,7 +47,6 @@ jvm_library(
         "@community//platform/util",
         "@community//platform/util/jdom",
         "//contrib/qodana",
-        "//contrib/qodana/sarif",
     ],
 )
 ### auto-generated section `build intellij.qodana.dart` end

@@ -22,11 +22,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["//contrib/vuejs/vuejs-common:common"],
     deps = [
         # do not sort,
         "@community//platform/util",
         "//contrib/vuejs/vuejs-backend:backend",
-        "//contrib/vuejs/vuejs-common:common",
         "//plugins/webpack",
         "@lib//:kotlin-stdlib",
         "@community//platform/core-api:core",

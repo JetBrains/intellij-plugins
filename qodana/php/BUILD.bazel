@@ -23,6 +23,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/util/jdom"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -38,7 +39,6 @@ jvm_library(
         "//contrib/qodana/coverage",
         "//phpstorm/php-openapi:php",
         "//phpstorm/coverage",
-        "@community//platform/util/jdom",
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
         "@community//libraries/gson",

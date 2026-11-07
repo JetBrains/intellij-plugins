@@ -31,7 +31,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["//CIDR-appcode/appcode/swiftDebugger"],
+    runtime_deps = [
+        # do not sort,
+        "//CIDR-appcode/appcode/swiftDebugger",
+        "//CIDR/cidr-debugger/core",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -44,7 +48,6 @@ jvm_library(
         "@community//platform/ide-core-impl",
         "@community//platform/ide-core",
         "@community//platform/platform-util-io:ide-util-io",
-        "//CIDR/cidr-debugger/core",
         "@community//platform/util/jdom",
         "@community//platform/util:util-ui",
         "//CIDR/cidr-projectModel",

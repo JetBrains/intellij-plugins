@@ -21,6 +21,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//jps/model-api:model",
+        "@community//java/idea-ui:ui",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -33,7 +39,6 @@ jvm_library(
         "@community//platform/platform-impl:ide-impl",
         "@community//platform/editor-ui-ex:editor-ex",
         "@community//platform/indexing-api:indexing",
-        "@community//jps/model-api:model",
         "@community//platform/lang-api:lang",
         "@community//platform/projectModel-api:projectModel",
         "@community//platform/refactoring",
@@ -42,12 +47,10 @@ jvm_library(
         "@community//java/java-psi-impl:psi-impl",
         "@community//java/java-impl:impl",
         "@community//java/java-indexing-api:indexing",
-        "@community//java/idea-ui:ui",
         "@community//platform/core-ui",
         "@community//java/java-impl-refactorings:impl-refactorings",
         "@community//java/java-frontback-psi-api:frontback-psi",
         "@community//libraries/fastutil",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
 ### auto-generated section `build intellij.jboss.drools` end

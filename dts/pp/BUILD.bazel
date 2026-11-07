@@ -24,7 +24,13 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/backend"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/backend",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/code-style-impl:codeStyle-impl",
+        "@community//platform/core-ui",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -34,9 +40,6 @@ jvm_library(
         "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/lang-api:lang",
         "@community//platform/lang-impl",
-        "@community//platform/code-style-api:codeStyle",
-        "@community//platform/code-style-impl:codeStyle-impl",
-        "@community//platform/core-ui",
         "@community//platform/projectModel-api:projectModel",
     ],
 )

@@ -22,14 +22,17 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/ide-core",
+        "//plugins/frameworks/swagger",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@community//platform/core-api:core",
         "@community//platform/platform-api:ide",
-        "@community//platform/ide-core",
         "//contrib/qodana",
-        "//plugins/frameworks/swagger",
     ],
 )
 ### auto-generated section `build intellij.qodana.jvm.swagger` end

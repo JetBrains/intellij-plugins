@@ -23,6 +23,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/dvcs-impl/shared",
+        "@community//platform/vcs-impl",
+        "@community//platform/vcs-impl/shared",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -39,9 +45,6 @@ jvm_library(
         "@community//platform/vcs-api:vcs",
         "@community//platform/dvcs-api:vcs-dvcs",
         "@community//platform/dvcs-impl:vcs-dvcs-impl",
-        "@community//platform/dvcs-impl/shared",
-        "@community//platform/vcs-impl",
-        "@community//platform/vcs-impl/shared",
         "@community//platform/vcs-log/api:vcs-log",
         "@community//platform/vcs-log/impl",
         "@community//plugins/git4idea/backend",

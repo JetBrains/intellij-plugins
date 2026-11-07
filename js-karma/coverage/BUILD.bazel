@@ -22,6 +22,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/util/concurrency",
+    ],
     deps = [
         # do not sort,
         "//contrib/js-karma:karma",
@@ -29,8 +34,6 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-coverage",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
         "//plugins/js-test-common:javascript-testing",
-        "@community//platform/analysis-api:analysis",
-        "@community//platform/util/concurrency",
         "@community//platform/core-api:core",
         "@community//platform/core-impl",
         "@community//plugins/coverage-common:coverage",

@@ -22,11 +22,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/editor-ui-api:editor-ui"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
         "@community//platform/core-api:core",
-        "@community//platform/editor-ui-api:editor-ui",
         "@community//platform/lang-api:lang",
         "@community//libraries/kotlinx/coroutines/core",
         "@community//platform/platform-impl:ide-impl",

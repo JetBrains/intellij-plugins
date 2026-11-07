@@ -43,6 +43,12 @@ ij_plugin_module(
         exclude = ["res/**/icon-robots.txt"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/editor-ui-ex:editor-ex",
+        "@ultimate_lib//:terraform-terraform-metadata",
+        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -54,7 +60,6 @@ ij_plugin_module(
         "@community//platform/macro",
         "@community//platform/forms_rt:java-guiForms-rt",
         "@community//platform/projectModel-api:projectModel",
-        "@community//platform/editor-ui-ex:editor-ex",
         "@community//platform/core-impl",
         "@community//platform/indexing-impl",
         "@community//platform/platform-api:ide",
@@ -67,7 +72,6 @@ ij_plugin_module(
         "@community//platform/execution-impl",
         "@community//libraries/jackson3/jackson:libraries-jackson3",
         "@community//libraries/jackson3/databind",
-        "@ultimate_lib//:terraform-terraform-metadata",
         "@community//platform/usageView-impl",
         "@community//platform/vcs-api:vcs",
         "@community//libraries/guava",
@@ -96,7 +100,6 @@ ij_plugin_module(
         "@community//platform/consoleView",
         "@community//platform/lang-api:lang",
         "@community//platform/structure-view-impl:structureView",
-        "@community//libraries/kotlinx/collections-immutable:libraries-kotlinx-collections-immutable",
     ],
 )
 ### auto-generated section `build intellij.terraform` end

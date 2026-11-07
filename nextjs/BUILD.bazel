@@ -30,6 +30,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/polySymbols/backend",
+        "@community//platform/polySymbols/web",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -44,10 +50,7 @@ jvm_library(
         "@community//platform/projectModel-api:projectModel",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
         "@community//platform/core-ui",
-        "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/polySymbols/shared:polySymbols",
-        "@community//platform/polySymbols/backend",
-        "@community//platform/polySymbols/web",
         "@community//xml/xml-psi-api:psi",
         "@community//platform/execution",
         "@community//platform/consoleView",

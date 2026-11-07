@@ -18,12 +18,12 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = ["@community//jps/model-serialization"],
     deps = [
         # do not sort,
         "//contrib/flex/flex-shared:shared",
         "@community//jps/jps-builders:build",
         "@community//jps/model-api:model",
-        "@community//jps/model-serialization",
         "@community//platform/util/jdom",
         "@community//platform/util",
         "@community//platform/util/base",

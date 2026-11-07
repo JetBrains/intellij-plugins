@@ -22,8 +22,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/platform-frontend:frontend"],
-    deps = ["//contrib/jhipster"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/platform-frontend:frontend",
+        "//contrib/jhipster",
+    ],
 )
 ### auto-generated section `build intellij.jhipster.frontend` end
 

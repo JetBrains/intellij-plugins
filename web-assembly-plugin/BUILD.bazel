@@ -21,6 +21,14 @@ jvm_library(
         ["src/main/resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/execution-impl",
+        "@community//libraries/gson",
+        "@community//platform/core-ui",
+        "@community//platform/platform-util-io:ide-util-io",
+        "@community//platform/util/jdom",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -29,12 +37,7 @@ jvm_library(
         "@community//platform/indexing-api:indexing",
         "@community//platform/lang-api:lang",
         "@community//platform/lang-impl",
-        "@community//platform/execution-impl",
         "@community//platform/core-impl",
-        "@community//libraries/gson",
-        "@community//platform/core-ui",
-        "@community//platform/platform-util-io:ide-util-io",
-        "@community//platform/util/jdom",
     ],
 )
 ### auto-generated section `build intellij.webassembly` end

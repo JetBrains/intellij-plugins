@@ -22,7 +22,11 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = ["//remote-dev/cwm-guest:frontend-split"],
+    runtime_deps = [
+        # do not sort,
+        "//remote-dev/cwm-guest:frontend-split",
+        "//remote-dev/rd-platform",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -38,7 +42,6 @@ jvm_library(
         "//remote-dev/cwm-model-generated:split-protocol",
         "//remote-dev/rd-client",
         "//remote-dev/rd-ide-model-generated",
-        "//remote-dev/rd-platform",
     ],
 )
 ### auto-generated section `build intellij.mdx.frontend.split` end
