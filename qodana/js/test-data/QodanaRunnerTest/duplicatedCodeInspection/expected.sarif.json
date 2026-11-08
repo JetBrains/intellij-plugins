@@ -26,7 +26,7 @@
                   "snippet": {
                     "text": "const strings = [];\n    strings[0] = \"mmm\";\n    strings[1] = \"mmm\";\n    strings[2] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 3,
@@ -60,7 +60,7 @@
                   "snippet": {
                     "text": "const strings = [];\n    strings[0] = \"mmm\";\n    strings[1] = \"mmm\";\n    strings[2] = \"mmm\";\n    strings[3] = \"mmm\";\n    for (let i = 0; i < strings.length; i++) {\n      alert(strings[i]);\n    }"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 14,
@@ -82,15 +82,15 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "d542f15977f50e02",
-            "equalIndicator/v1": "803c1542612aa70af75bacf34ce530b64f9e392f54f452897ad53fe68772ef9a"
+            "equalIndicator/v2": "c234dffd271bdbe1",
+            "equalIndicator/v1": "bf783f20f37e198705ec190b9b094549be222c3e05f44ad4f15eeb97846f394e"
           },
           "properties": {
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
             "problemType": "DUPLICATES",
             "tags": [
-              "ECMAScript 6"
+              "JavaScript"
             ]
           }
         }

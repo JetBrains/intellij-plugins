@@ -539,7 +539,7 @@
                   "snippet": {
                     "text": "module.exports = {"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 1,
@@ -561,15 +561,15 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "e226c83780624546",
-            "equalIndicator/v1": "78c3e639087823a3879714f51c175f9f240d19c66f0a67cc4b39bb5198e7ecb9"
+            "equalIndicator/v2": "2b618efc379c626f",
+            "equalIndicator/v1": "e878880cd42df89f7f193cebacd468234bba5ac3fc69e40f3c2c28b13108835b"
           },
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
             "tags": [
-              "ECMAScript 6"
+              "JavaScript"
             ]
           }
         },

@@ -26,7 +26,7 @@
                   "snippet": {
                     "text": "'use strict';"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 1,
@@ -48,15 +48,15 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "907903cbd09e9e97",
-            "equalIndicator/v1": "b3f24bf8bd6ebb36a9bf691a039377d06e54d5cd21b755a50073c7d3f70ed9d2"
+            "equalIndicator/v2": "16fd97570a735067",
+            "equalIndicator/v1": "b9b32bf7b68d114741a69382b7a247aae9c2749f63e1c60ea2290c52793bc19a"
           },
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
             "tags": [
-              "ECMAScript 6"
+              "JavaScript"
             ]
           }
         },

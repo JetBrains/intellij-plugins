@@ -539,7 +539,7 @@
                   "snippet": {
                     "text": "module.exports = {"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 1,
@@ -561,15 +561,15 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "2baf56d26b5fdbf3",
-            "equalIndicator/v1": "5519c05aa2ac832bc40edb04a1d27138cee16b57457ad4eae19609c14a910671"
+            "equalIndicator/v2": "aa889e0912dc29f7",
+            "equalIndicator/v1": "2a79a985eb1b731d585543d42201ea3da215a9846fd506d465d14ddad1cd0e8a"
           },
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
             "tags": [
-              "ECMAScript 6"
+              "JavaScript"
             ]
           }
         },
@@ -596,7 +596,7 @@
                   "snippet": {
                     "text": "module.exports = {"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 1,
@@ -618,15 +618,15 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "e226c83780624546",
-            "equalIndicator/v1": "78c3e639087823a3879714f51c175f9f240d19c66f0a67cc4b39bb5198e7ecb9"
+            "equalIndicator/v2": "2b618efc379c626f",
+            "equalIndicator/v1": "e878880cd42df89f7f193cebacd468234bba5ac3fc69e40f3c2c28b13108835b"
           },
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
             "tags": [
-              "ECMAScript 6"
+              "JavaScript"
             ]
           }
         },
@@ -881,7 +881,7 @@
                   "snippet": {
                     "text": "module.exports = {"
                   },
-                  "sourceLanguage": "ECMAScript 6"
+                  "sourceLanguage": "JavaScript"
                 },
                 "contextRegion": {
                   "startLine": 1,
@@ -903,15 +903,15 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "19580c9ebc49d379",
-            "equalIndicator/v1": "040ebb9fb82463398e12a905d95bae3ccabf623dfad0b1e1209fa3085db23960"
+            "equalIndicator/v2": "2f40dd80369610f5",
+            "equalIndicator/v1": "0769f9de4029017e9164da60e3b4e3ca77612a7c552165ac1b43d1de7cbfc89d"
           },
           "properties": {
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
             "tags": [
-              "ECMAScript 6"
+              "JavaScript"
             ]
           }
         }
