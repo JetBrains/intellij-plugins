@@ -36,7 +36,7 @@ return (__VLS_ctx.show = !__VLS_ctx.show);
 if (__VLS_ctx.show) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
-__VLS_asFunctionalDirective(__VLS_directives.vMemo, {} as import('vue').ObjectDirective)(null!, { ...__VLS_directiveBindingRestFields, value: ([__VLS_ctx.items.length]) }, null!, null!);
+__VLS_asFunctionalDirective(__VLS_directives.vMemo, {} as import('vue').ObjectDirective)(null!, { ...__VLS_directiveBindingRestFields, value: ([__VLS_ctx.items.length]), }, null!, null!);
 ( __VLS_ctx.items.length );
 }
 // @ts-ignore

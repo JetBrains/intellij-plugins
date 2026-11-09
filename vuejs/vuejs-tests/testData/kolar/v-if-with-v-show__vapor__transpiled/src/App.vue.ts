@@ -43,7 +43,7 @@ return (__VLS_ctx.showShow = !__VLS_ctx.showShow);
 if (__VLS_ctx.showIf) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
-__VLS_asFunctionalDirective(__VLS_directives.vShow, {} as import('vue').ObjectDirective)(null!, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.showShow) }, null!, null!);
+__VLS_asFunctionalDirective(__VLS_directives.vShow, {} as import('vue').ObjectDirective)(null!, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.showShow), }, null!, null!);
 }
 // @ts-ignore
 [showIf,showShow,];

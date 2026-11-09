@@ -23,7 +23,7 @@ for (const [item] of __VLS_vFor((__VLS_ctx.items)!)) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.li, __VLS_intrinsics.li)({
 key: (item),
 });
-__VLS_asFunctionalDirective(__VLS_directives.vOnce, {} as import('vue').ObjectDirective)(null!, { ...__VLS_directiveBindingRestFields,  }, null!, null!);
+__VLS_asFunctionalDirective(__VLS_directives.vOnce, {} as import('vue').ObjectDirective)(null!, { ...__VLS_directiveBindingRestFields, }, null!, null!);
 ( item );
 // @ts-ignore
 [items,];
