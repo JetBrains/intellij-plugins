@@ -121,9 +121,7 @@ data class UseTemplateRef(
 data class ScriptSetupRanges(
   val leadingCommentEndOffset: Int,
   val importSectionEndOffset: Int,
-  val bindings: List<TextRange<*>>,
-  val components: List<TextRange<*>>,
-  val nonFlowingBindings: List<TextRange<*>>,
+  val bindings: Map<String, Int>,
   val defineModel: List<DefineModel>,
   val defineProps: DefineProps?,
   val withDefaults: CallExpression?,
@@ -426,14 +424,11 @@ fun parseScriptSetupRanges(
     visitNode(node, mutableListOf(ast))
   }
 
-  val (bindings, components, nonFlowingBindings) = parseBindingRanges(ast, vueCompilerOptions.extensions)
 
   return ScriptSetupRanges(
     leadingCommentEndOffset = leadingCommentEndOffset,
     importSectionEndOffset = importSectionEndOffset,
-    bindings = bindings,
-    components = components,
-    nonFlowingBindings = nonFlowingBindings,
+    bindings = parseBindings(ast, vueCompilerOptions.extensions),
     defineModel = defineModelList,
     defineProps = defineProps,
     withDefaults = withDefaults,

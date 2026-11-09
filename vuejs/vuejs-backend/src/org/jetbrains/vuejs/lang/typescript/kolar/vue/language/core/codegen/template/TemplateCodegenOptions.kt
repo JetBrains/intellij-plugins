@@ -10,9 +10,9 @@ data class TemplateCodegenOptions(
   val template: IRTemplate,
   val isVapor: Boolean,
   override val scriptLang: String,
-  override val destructuredProps: Set<String>,
-  override val importedComponents: Set<String>,
+  val importedComponents: Set<String>,
   override val setupRefs: Set<String>,
+  override val setupConsts: Set<String>,
   override val setupBindings: Set<String>,
   // Bindings narrowed at least once anywhere in the template/styles; every
   // access of these is emitted with `.value`. Collected by a first codegen pass.

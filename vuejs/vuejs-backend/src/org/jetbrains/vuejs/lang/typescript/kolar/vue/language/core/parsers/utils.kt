@@ -23,37 +23,44 @@ import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpre
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableStatement
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.TextRange
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.forEachNode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingRanges
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 
-fun parseBindingRanges(
+object BindingFlag {
+  const val None: Int = 0
+
+  // Bindings re-asserted per closure by the template codegen (imports, `let`/`var`).
+  const val Variable: Int = 1
+  const val Const: Int = 1 shl 1
+  const val Component: Int = 1 shl 2
+}
+
+fun parseBindings(
   ast: JSEmbeddedContent,
   componentExtensions: List<String>,
-): BindingRanges {
-  val bindings = mutableListOf<TextRange<*>>()
-  val components = mutableListOf<TextRange<*>>()
-  // Bindings re-asserted per closure by the template codegen (imports, `let`/`var`).
-  val nonFlowingBindings = mutableListOf<TextRange<*>>()
+): Map<String, Int> {
+  val bindings = linkedMapOf<String, Int>()
 
   for (node in forEachNode(ast)) {
     if (isVariableStatement(node)) {
-      val isConst = node.varKeyword == JSVarStatement.VarKeyword.CONST
+      val flags = if (node.varKeyword == JSVarStatement.VarKeyword.CONST)
+        BindingFlag.None
+      else
+        BindingFlag.Variable
       for (decl in node.variables) {
-        val ranges = collectBindingRanges(decl.nameIdentifier!!)
-        bindings.addAll(ranges)
-        if (!isConst) {
-          nonFlowingBindings.addAll(ranges)
+        for (name in collectBindingNames(decl.nameIdentifier!!)) {
+          bindings[name] = flags
         }
       }
     }
     else if (isFunctionDeclaration(node)) {
-      node.nameIdentifier?.let { bindings.add(getStartEnd(it)) }
+      node.nameIdentifier?.let { bindings[getNodeText(it)] = BindingFlag.Const }
     }
     else if (isClassDeclaration(node)) {
-      node.nameIdentifier?.let { bindings.add(getStartEnd(it)) }
+      node.nameIdentifier?.let { bindings[getNodeText(it)] = BindingFlag.Const }
     }
     else if (isEnumDeclaration(node)) {
-      node.nameIdentifier?.let { bindings.add(getStartEnd(it)) }
+      node.nameIdentifier?.let { bindings[getNodeText(it)] = BindingFlag.Const }
     }
 
     if (isImportDeclaration(node)) {
@@ -69,11 +76,10 @@ fun parseBindingRanges(
 
         if (defaultImportName != null) {
           if (componentExtensions.any { moduleName.endsWith(it) }) {
-            components.add(getStartEnd(defaultImportName))
+            bindings[getNodeText(defaultImportName)] = BindingFlag.Const or BindingFlag.Component
           }
           else {
-            bindings.add(getStartEnd(defaultImportName))
-            nonFlowingBindings.add(getStartEnd(defaultImportName))
+            bindings[getNodeText(defaultImportName)] = BindingFlag.Variable
           }
         }
 
@@ -88,11 +94,10 @@ fun parseBindingRanges(
             if (specifier.isDefault
                 && componentExtensions.any { moduleName.endsWith(it) }
             ) {
-              components.add(getStartEnd(nameIdentifier))
+              bindings[getNodeText(nameIdentifier)] = BindingFlag.Const or BindingFlag.Component
             }
             else {
-              bindings.add(getStartEnd(nameIdentifier))
-              nonFlowingBindings.add(getStartEnd(nameIdentifier))
+              bindings[getNodeText(nameIdentifier)] = BindingFlag.Variable
             }
           }
         }
@@ -103,25 +108,14 @@ fun parseBindingRanges(
           ?.nameIdentifier
 
         if (namespaceImportName != null) {
-          bindings.add(getStartEnd(namespaceImportName))
-          nonFlowingBindings.add(getStartEnd(namespaceImportName))
+          bindings[getNodeText(namespaceImportName)] = BindingFlag.Variable
         }
       }
     }
   }
 
-  return BindingRanges(
-    bindings = bindings,
-    components = components,
-    nonFlowingBindings = nonFlowingBindings,
-  )
+  return bindings
 }
-
-data class BindingRanges(
-  val bindings: List<TextRange<*>>,
-  val components: List<TextRange<*>>,
-  val nonFlowingBindings: List<TextRange<*>>,
-)
 
 fun getClosestMultiLineCommentRange(
   node: PsiElement,

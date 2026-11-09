@@ -227,7 +227,7 @@ fun generatePropExp(
       ).toList()
       // Keep in sync with the access strategy in interpolation.kt.
       when {
-        options.destructuredProps.contains(propVariableName) || options.importedComponents.contains(propVariableName) -> yieldAll(codes)
+        options.setupConsts.contains(propVariableName) -> yieldAll(codes)
         shouldIdentifierSkipped(ctx, propVariableName) -> yieldAll(codes)
         options.setupRefs.contains(propVariableName) -> {
           yieldAll(codes)

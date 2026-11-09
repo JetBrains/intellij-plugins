@@ -6,9 +6,8 @@ import org.jetbrains.vuejs.config.VueCompilerOptions
 interface CommonCodegenOptions {
   val vueCompilerOptions: VueCompilerOptions
   val scriptLang: String
-  val destructuredProps: Set<String>
-  val importedComponents: Set<String>
   val setupRefs: Set<String>
+  val setupConsts: Set<String>
   val setupBindings: Set<String>
   val dotValueBindings: Set<String>
 }

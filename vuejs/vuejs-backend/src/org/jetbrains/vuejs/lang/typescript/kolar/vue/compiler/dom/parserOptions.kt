@@ -11,3 +11,16 @@ fun isNativeTag(
   isHTMLTag(tag)
   || isSVGTag(tag)
   || isMathMLTag(tag)
+
+
+// https://github.com/vuejs/core/blob/main/packages/compiler-dom/src/parserOptions.ts
+fun isBuiltInComponent(
+  tag: String,
+): Boolean =
+  when (tag) {
+    "Transition", "transition",
+    "TransitionGroup", "transition-group",
+      -> true
+
+    else -> false
+  }

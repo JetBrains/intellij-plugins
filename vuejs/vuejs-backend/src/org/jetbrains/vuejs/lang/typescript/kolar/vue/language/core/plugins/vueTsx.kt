@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.style
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateGenerateResult
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.generateTemplate
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.BindingFlag
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptSetupRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.parseScriptRanges
@@ -80,74 +81,48 @@ private class Codegen(
       ?.let { parseScriptSetupRanges(it.ast, getResolvedOptions()) }
   }
 
+  private val getBindingFlags: () -> Map<String, Int> = computed {
+    val flags = LinkedHashMap(getScriptSetupRanges()?.bindings ?: emptyMap())
+    val scriptRanges = getScriptRanges()
+    if (ir.scriptSetup != null && scriptRanges != null) {
+      for ((name, flag) in scriptRanges.bindings) {
+        if (name !in flags) {
+          flags[name] = flag
+        }
+      }
+    }
+    flags
+  }
+
   val getImportedComponents: () -> Set<String> = computedSet {
     val names = mutableSetOf<String>()
-    val scriptSetupRanges = getScriptSetupRanges()
-    if (ir.scriptSetup != null && scriptSetupRanges != null) {
-      for (range in scriptSetupRanges.components) {
-        names.add(ir.scriptSetup.content.substring(range.start, range.end))
-      }
-      val scriptRange = getScriptRanges()
-      if (ir.script != null && scriptRange != null) {
-        for (range in scriptRange.components) {
-          names.add(ir.script.content.substring(range.start, range.end))
-        }
+    for ((name, flags) in getBindingFlags()) {
+      if (flags and BindingFlag.Component != 0) {
+        names.add(name)
       }
     }
     names
   }
 
-  private val getSetupBindings: () -> Set<String> = computedSet {
-    val names = mutableSetOf<String>()
-    val scriptSetupRanges = getScriptSetupRanges()
-    if (ir.scriptSetup != null && scriptSetupRanges != null) {
-      for (range in scriptSetupRanges.bindings) {
-        names.add(ir.scriptSetup.content.substring(range.start, range.end))
-      }
-      val scriptRanges = getScriptRanges()
-      if (ir.script != null && scriptRanges != null) {
-        for (range in scriptRanges.bindings) {
-          names.add(ir.script.content.substring(range.start, range.end))
-        }
-      }
-    }
-    names
-  }
-
-  private val getNonFlowingBindings: () -> Set<String> = computedSet {
-    val names = mutableSetOf<String>()
-    val scriptSetupRanges = getScriptSetupRanges()
-    if (ir.scriptSetup != null && scriptSetupRanges != null) {
-      for (range in scriptSetupRanges.nonFlowingBindings) {
-        names.add(ir.scriptSetup.content.substring(range.start, range.end))
-      }
-      val scriptRanges = getScriptRanges()
-      if (ir.script != null && scriptRanges != null) {
-        for (range in scriptRanges.nonFlowingBindings) {
-          names.add(ir.script.content.substring(range.start, range.end))
-        }
-      }
-    }
-    names
-  }
+  private val getSetupBindings: () -> Set<String> = computedSet { getBindingFlags().keys.toSet() }
 
   private val getScriptSetupBindings: () -> Set<String> = computedSet {
-    val names = mutableSetOf<String>()
-    val scriptSetupRanges = getScriptSetupRanges()
-    if (ir.scriptSetup != null && scriptSetupRanges != null) {
-      for (range in scriptSetupRanges.bindings) {
-        names.add(ir.scriptSetup.content.substring(range.start, range.end))
-      }
-    }
-    names
+    getScriptSetupRanges()?.bindings?.keys?.toSet() ?: emptySet()
   }
 
-  private val getDestructuredProps: () -> Set<String> = computedSet {
-    val scriptSetupRanges = getScriptSetupRanges()
+  private val getSetupConsts: () -> Set<String> = computedSet {
     val names = mutableSetOf<String>()
-    scriptSetupRanges?.defineProps?.destructured?.keys?.let { names.addAll(it) }
-    val rest = scriptSetupRanges?.defineProps?.destructuredRest
-    if (rest != null) names.add(rest)
+    for ((name, flags) in getBindingFlags()) {
+      if (flags and BindingFlag.Const != 0) {
+        names.add(name)
+      }
+    }
+    val defineProps = getScriptSetupRanges()?.defineProps
+    val destructured = defineProps?.destructured
+    if (destructured != null) {
+      names.addAll(destructured.keys)
+      defineProps.destructuredRest?.let { names.add(it) }
+    }
     names
   }
 
@@ -206,12 +181,14 @@ private class Codegen(
         isVapor = getIsVapor(),
         scriptLang = computeLang(ir),
         componentName = getComponentName(),
-        destructuredProps = getDestructuredProps(),
         importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
+        setupConsts = getSetupConsts(),
         setupBindings = getSetupBindings(),
         dotValueBindings = dotValueBindings,
-        reassertBindings = dotValueBindings.filterTo(mutableSetOf()) { it in getNonFlowingBindings() },
+        reassertBindings = dotValueBindings.filterTo(mutableSetOf()) {
+          (getBindingFlags()[it] ?: 0) and BindingFlag.Variable != 0
+        },
         hasDefineSlots = hasDefineSlots(),
         propsAssignName = getSetupPropsAssignName(),
         slotsAssignName = getSetupSlotsAssignName(),
@@ -227,9 +204,8 @@ private class Codegen(
         vueCompilerOptions = getResolvedOptions(),
         styles = ir.styles,
         scriptLang = computeLang(ir),
-        destructuredProps = getDestructuredProps(),
-        importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
+        setupConsts = getSetupConsts(),
         setupBindings = getSetupBindings(),
         dotValueBindings = dotValueBindings,
       )

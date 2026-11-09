@@ -9,9 +9,8 @@ data class StyleCodegenOptions(
   override val vueCompilerOptions: VueCompilerOptions,
   val styles: List<IRStyle>,
   override val scriptLang: String,
-  override val destructuredProps: Set<String>,
-  override val importedComponents: Set<String>,
   override val setupRefs: Set<String>,
+  override val setupConsts: Set<String>,
   override val setupBindings: Set<String>,
   override val dotValueBindings: Set<String>,
 ) : CommonCodegenOptions

@@ -64,7 +64,7 @@ fun generateInterpolation(
     //   every position; narrowing then works on the `.value` reference chain
     // - other bindings → `__VLS_unwrap` (plain reads keep the original type)
     // - otherwise → `__VLS_ctx.<name>`
-    if (options.destructuredProps.contains(name) || options.importedComponents.contains(name)) {
+    if (options.setupConsts.contains(name)) {
       yield(DataSegment(
         text = name,
         source = block.name,
