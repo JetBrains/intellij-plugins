@@ -5,8 +5,9 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.generateStyleScopedClassReference
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateStyleScopedClasses(
@@ -22,7 +23,6 @@ fun generateStyleScopedClasses(
 
   val visited = mutableSetOf<String>()
   val deferredGenerates = mutableListOf<Sequence<Code>>()
-  yield("// @ts-ignore$newLine")
   yieldAll(generateTypeAlias(names.StyleScopedClasses, options.scriptLang) {
     yield("{}")
     for (style in scopedStyles) {
@@ -41,6 +41,10 @@ fun generateStyleScopedClasses(
       }
     }
   })
+  if (isTsLang(options.scriptLang)) {
+    // avoid TS6196: JSDoc refs don't count as usage; JS @typedefs skip the check
+    yield("void ({} as ${names.StyleScopedClasses})$endOfLine")
+  }
 
   for (generate in deferredGenerates) {
     yieldAll(generate)
