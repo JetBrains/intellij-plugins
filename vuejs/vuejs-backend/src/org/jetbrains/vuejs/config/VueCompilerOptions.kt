@@ -187,6 +187,13 @@ data class VueCompilerOptions(
   val skipTemplateCodegen: Boolean = false,
 
   /**
+   * Since v3.3.8
+   *
+   * Default: false
+   */
+  val vapor: Boolean = false,
+
+  /**
    * Since v2.1.0
    *
    * Default: false

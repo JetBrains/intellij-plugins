@@ -45,6 +45,7 @@ private fun getTemplate(
     lang = "html",
     content = IRContentImpl(file, templateTag),
     ast = RootNodeImpl(templateTag),
+    vapor = templateTag.hasAttribute(VAPOR_ATTRIBUTE_NAME),
   )
 }
 
@@ -74,6 +75,7 @@ private fun getScriptSetup(
     lang = lang(file),
     content = IRContentImpl(file, embeddedContent),
     generic = generic(tag),
+    vapor = tag.hasAttribute(VAPOR_ATTRIBUTE_NAME),
     ast = embeddedContent,
   )
 }

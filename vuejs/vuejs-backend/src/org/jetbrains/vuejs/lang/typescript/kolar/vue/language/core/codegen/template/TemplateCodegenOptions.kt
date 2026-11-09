@@ -8,6 +8,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.commo
 data class TemplateCodegenOptions(
   val vueCompilerOptions: VueCompilerOptions,
   val template: IRTemplate,
+  val isVapor: Boolean,
   override val setupRefs: Set<String>,
   val setupConsts: Set<String>,
   val hasDefineSlots: Boolean = false,

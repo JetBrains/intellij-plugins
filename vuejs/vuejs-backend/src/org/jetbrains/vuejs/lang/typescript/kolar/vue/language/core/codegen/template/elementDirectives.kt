@@ -28,13 +28,24 @@ fun generateElementDirectives(
     val prop = rawProp as? DirectiveNode ?: continue
     if (prop.name == "slot" || prop.name == "on" || prop.name == "model" || prop.name == "bind") continue
     val boundary = yield(Boundary.start(Source("template"), prop.loc.startOffset, codeFeatures.verification))
-    yield("${names.asFunctionalDirective}(")
-    yieldAll(generateIdentifier(options, ctx, prop))
-    yield(", {} as import('${options.vueCompilerOptions.lib}').ObjectDirective)(null!, { ...${names.directiveBindingRestFields}, ")
-    yieldAll(generateArg(options, ctx, prop))
-    yieldAll(generateModifiers(options, ctx, prop))
-    yieldAll(generateValue(options, ctx, prop))
-    yield(" }, null!, null!)")
+    if (options.isVapor && !isBuiltInDirective(prop.name)) {
+      // vapor custom directives receive a value getter instead of a vdom binding object
+      yieldAll(generateIdentifier(options, ctx, prop))
+      yield("(null!, ")
+      yieldAll(generateValue(options, ctx, prop, asBindingProperty = false))
+      yieldAll(generateArg(options, ctx, prop, asBindingProperty = false))
+      yieldAll(generateModifiers(options, ctx, prop, "modifiers", asBindingProperty = false))
+      yield(")")
+    }
+    else {
+      yield("${names.asFunctionalDirective}(")
+      yieldAll(generateIdentifier(options, ctx, prop))
+      yield(", {} as import('${options.vueCompilerOptions.lib}').ObjectDirective)(null!, { ...${names.directiveBindingRestFields}, ")
+      yieldAll(generateArg(options, ctx, prop))
+      yieldAll(generateModifiers(options, ctx, prop))
+      yieldAll(generateValue(options, ctx, prop))
+      yield("}, null!, null!)")
+    }
     yield(boundary.end(prop.loc.endOffset))
     yield(endOfLine)
   }
@@ -73,29 +84,37 @@ private fun generateArg(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
   prop: DirectiveNode,
+  asBindingProperty: Boolean = true,
 ): Sequence<Code> = sequence {
-  val arg = prop.arg as? SimpleExpressionNode ?: return@sequence
-  val startOffset = arg.loc.startOffset + arg.loc.source.indexOf(arg.content)
-  val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
-  yield("arg")
-  yield(boundary.end(startOffset + arg.content.length))
-  yield(": ")
-  if (arg.isStatic) {
-    yieldAll(generateStringLiteralKey(arg.content, startOffset, codeFeatures.all))
+  val arg = prop.arg
+  if (arg is SimpleExpressionNode) {
+    val startOffset = arg.loc.startOffset + arg.loc.source.indexOf(arg.content)
+    if (asBindingProperty) {
+      val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
+      yield("arg")
+      yield(boundary.end(startOffset + arg.content.length))
+      yield(": ")
+    }
+    if (arg.isStatic) {
+      yieldAll(generateStringLiteralKey(arg.content, startOffset, codeFeatures.all))
+    }
+    else {
+      yieldAll(generateInterpolation(
+        options = options,
+        ctx = ctx,
+        block = options.template,
+        data = codeFeatures.all,
+        code = arg.content,
+        start = startOffset,
+        prefix = "(",
+        suffix = ")",
+      ))
+    }
+    yield(", ")
   }
-  else {
-    yieldAll(generateInterpolation(
-      options = options,
-      ctx = ctx,
-      block = options.template,
-      data = codeFeatures.all,
-      code = arg.content,
-      start = startOffset,
-      prefix = "(",
-      suffix = ")",
-    ))
+  else if (!asBindingProperty) {
+    yield("undefined, ")
   }
-  yield(", ")
 }
 
 fun generateModifiers(
@@ -103,31 +122,53 @@ fun generateModifiers(
   ctx: TemplateCodegenContext,
   prop: DirectiveNode,
   propertyName: String = "modifiers",
+  asBindingProperty: Boolean = true,
 ): Sequence<Code> = sequence {
   val modifiers = prop.modifiers
-  if (modifiers.isEmpty()) return@sequence
-  val startOffset = modifiers.first().loc.startOffset - 1
-  val endOffset = modifiers.last().loc.endOffset
-  val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
-  yield(propertyName)
-  yield(boundary.end(endOffset))
-  yield(": { ")
-  for (mod in modifiers) {
-    yieldAll(generateObjectProperty(options, ctx, mod.content, mod.loc.startOffset, codeFeatures.withoutHighlight))
-    yield(": true, ")
+  if (modifiers.isNotEmpty()) {
+    if (asBindingProperty) {
+      val startOffset = modifiers.first().loc.startOffset - 1
+      val endOffset = modifiers.last().loc.endOffset
+      val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
+      yield(propertyName)
+      yield(boundary.end(endOffset))
+      yield(": ")
+    }
+    yield("{ ")
+    for (mod in modifiers) {
+      yieldAll(generateObjectProperty(options, ctx, mod.content, mod.loc.startOffset, codeFeatures.withoutHighlight))
+      yield(": true, ")
+    }
+    yield("}, ")
   }
-  yield("}, ")
+  else if (!asBindingProperty) {
+    yield("undefined, ")
+  }
 }
 
 private fun generateValue(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
   prop: DirectiveNode,
+  asBindingProperty: Boolean = true,
 ): Sequence<Code> = sequence {
-  val exp = prop.exp as? SimpleExpressionNode ?: return@sequence
-  val boundary = yield(Boundary.start(Source("template"), exp.loc.startOffset, codeFeatures.verification))
-  yield("value")
-  yield(boundary.end(exp.loc.endOffset))
-  yield(": ")
-  yieldAll(generatePropExp(options, ctx, prop, exp))
+  val exp = prop.exp
+  if (exp is SimpleExpressionNode) {
+    val boundary = yield(Boundary.start(Source("template"), exp.loc.startOffset, codeFeatures.verification))
+    if (asBindingProperty) {
+      yield("value")
+      yield(boundary.end(exp.loc.endOffset))
+      yield(": ")
+      yieldAll(generatePropExp(options, ctx, prop, exp))
+    }
+    else {
+      yield("() => ")
+      yieldAll(generatePropExp(options, ctx, prop, exp))
+      yield(boundary.end(exp.loc.endOffset))
+    }
+    yield(", ")
+  }
+  else if (!asBindingProperty) {
+    yield("undefined, ")
+  }
 }

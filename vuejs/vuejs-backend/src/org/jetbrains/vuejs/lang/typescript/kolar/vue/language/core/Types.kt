@@ -46,6 +46,7 @@ data class IRTemplate(
   override val lang: String,
   override val content: IRContent,
   val ast: RootNode?,
+  val vapor: Boolean,
 ) : IRBlock
 
 data class IRScript(
@@ -61,6 +62,7 @@ data class IRScriptSetup(
   override val lang: String,
   override val content: IRContent,
   val generic: IRAttr?,
+  val vapor: Boolean,
   override val ast: JSEmbeddedContent,
 ) : IRScriptBlock
 

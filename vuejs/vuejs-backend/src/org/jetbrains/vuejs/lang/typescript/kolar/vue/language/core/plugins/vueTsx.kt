@@ -53,6 +53,10 @@ private class Codegen(
   // parseVueCompilerOptions / CompilerOptionsResolver are not yet implemented in Kotlin.
   private val getResolvedOptions: () -> VueCompilerOptions = { vueCompilerOptions }
 
+  private val getIsVapor: () -> Boolean = computed {
+    getResolvedOptions().vapor || ir.scriptSetup?.vapor == true || ir.template?.vapor == true
+  }
+
   val getScriptRanges: () -> ScriptRanges? = computed {
     ir.script?.takeIf { it.lang in validLangs }
       ?.let { parseScriptRanges(it.ast, getResolvedOptions()) }
@@ -142,6 +146,7 @@ private class Codegen(
       TemplateCodegenOptions(
         vueCompilerOptions = getResolvedOptions(),
         template = template,
+        isVapor = getIsVapor(),
         componentName = getComponentName(),
         setupConsts = getSetupConsts(),
         setupRefs = getSetupRefs(),
