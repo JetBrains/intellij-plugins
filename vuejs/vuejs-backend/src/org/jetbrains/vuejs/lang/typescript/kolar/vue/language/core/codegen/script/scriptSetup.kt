@@ -61,7 +61,7 @@ fun generateGeneric(
       sourceOffset = generic.offset,
       data = codeFeatures.all,
     ))
-    if (!generic.text.endsWith(",")) {
+    if (!generic.text.trimEnd().endsWith(",")) {
       yield(",")
     }
     yield(">")
