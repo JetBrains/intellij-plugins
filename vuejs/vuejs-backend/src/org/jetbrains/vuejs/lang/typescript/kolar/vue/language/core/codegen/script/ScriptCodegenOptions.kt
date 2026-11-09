@@ -13,6 +13,7 @@ data class ScriptCodegenOptions(
   val script: IRScript?,
   val scriptSetup: IRScriptSetup?,
   val fileName: String,
+  val scriptLang: String,
   val scriptRanges: ScriptRanges?,
   val scriptSetupRanges: ScriptSetupRanges?,
   val templateAndStyleTypes: Set<String>,

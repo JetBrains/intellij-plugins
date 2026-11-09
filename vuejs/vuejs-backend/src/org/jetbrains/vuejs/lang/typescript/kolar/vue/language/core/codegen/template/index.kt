@@ -11,6 +11,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeF
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypedVar
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
@@ -63,30 +65,32 @@ private fun generateWorker(
   yieldAll(generateSlotsType(options, ctx))
   yieldAll(generateInheritedAttrsType(options, ctx))
   yieldAll(generateTemplateRefsType(options, ctx))
-  yieldAll(generateRootElType(ctx))
+  yieldAll(generateRootElType(options, ctx))
 
   if (ctx.dollarVars.isNotEmpty()) {
-    yield("var ${names.dollars}!: {$newLine")
-    if ("\$slots" in ctx.dollarVars) {
-      val type = if (names.Slots in ctx.generatedTypes) names.Slots else "{}"
-      yield("\$slots: $type$endOfLine")
-    }
-    if ("\$attrs" in ctx.dollarVars) {
-      yield("\$attrs: import('${vueCompilerOptions.lib}').ComponentPublicInstance['\$attrs']")
-      if (names.InheritedAttrs in ctx.generatedTypes) {
-        yield(" & ${names.InheritedAttrs}")
+    yieldAll(generateTypedVar("var", names.dollars, options.scriptLang) {
+      yield("{$newLine")
+      if ("\$slots" in ctx.dollarVars) {
+        val type = if (names.Slots in ctx.generatedTypes) names.Slots else "{}"
+        yield("\$slots: $type$endOfLine")
       }
-      yield(endOfLine)
-    }
-    if ("\$refs" in ctx.dollarVars) {
-      val type = if (names.TemplateRefs in ctx.generatedTypes) names.TemplateRefs else "{}"
-      yield("\$refs: $type$endOfLine")
-    }
-    if ("\$el" in ctx.dollarVars) {
-      val type = if (names.RootEl in ctx.generatedTypes) names.RootEl else "any"
-      yield("\$el: $type$endOfLine")
-    }
-    yield("} & { [K in keyof import('${vueCompilerOptions.lib}').ComponentPublicInstance]: unknown }$endOfLine")
+      if ("\$attrs" in ctx.dollarVars) {
+        yield("\$attrs: import('${vueCompilerOptions.lib}').ComponentPublicInstance['\$attrs']")
+        if (names.InheritedAttrs in ctx.generatedTypes) {
+          yield(" & ${names.InheritedAttrs}")
+        }
+        yield(endOfLine)
+      }
+      if ("\$refs" in ctx.dollarVars) {
+        val type = if (names.TemplateRefs in ctx.generatedTypes) names.TemplateRefs else "{}"
+        yield("\$refs: $type$endOfLine")
+      }
+      if ("\$el" in ctx.dollarVars) {
+        val type = if (names.RootEl in ctx.generatedTypes) names.RootEl else "any"
+        yield("\$el: $type$endOfLine")
+      }
+      yield("} & { [K in keyof import('${vueCompilerOptions.lib}').ComponentPublicInstance]: unknown }")
+    })
   }
 
   yieldAll(scope.end())
@@ -105,28 +109,29 @@ private fun generateSlotsType(
 
   ctx.generatedTypes.add(names.Slots)
 
-  yield("type ${names.Slots} = {}")
-  for ((expVar, propsVar) in ctx.dynamicSlots) {
-    yield("$newLine& { [K in NonNullable<typeof $expVar>]?: (props: typeof $propsVar) => any }")
-  }
-  for (slot in ctx.slots) {
-    yield("$newLine& { ")
-    if (slot.name.isNotEmpty() && slot.offset != null) {
-      yieldAll(generateObjectProperty(options, ctx, slot.name, slot.offset, codeFeatures.navigation))
+  yieldAll(generateTypeAlias(names.Slots, options.scriptLang) {
+    yield("{}")
+    for ((expVar, propsVar) in ctx.dynamicSlots) {
+      yield("$newLine& { [K in NonNullable<typeof $expVar>]?: (props: typeof $propsVar) => any }")
     }
-    else {
-      val boundary = yield(Boundary.start(
-        Source("template"),
-        slot.tagRange.first,
-        slot.tagRange.second,
-        codeFeatures.navigation,
-      ))
-      yield("default")
-      yield(boundary.end())
+    for (slot in ctx.slots) {
+      yield("$newLine& { ")
+      if (slot.name.isNotEmpty() && slot.offset != null) {
+        yieldAll(generateObjectProperty(options, ctx, slot.name, slot.offset, codeFeatures.navigation))
+      }
+      else {
+        val boundary = yield(Boundary.start(
+          Source("template"),
+          slot.tagRange.first,
+          slot.tagRange.second,
+          codeFeatures.navigation,
+        ))
+        yield("default")
+        yield(boundary.end())
+      }
+      yield("?: (props: typeof ${slot.propsVar}) => any }")
     }
-    yield("?: (props: typeof ${slot.propsVar}) => any }")
-  }
-  yield(endOfLine)
+  })
 }
 
 private fun generateInheritedAttrsType(
@@ -137,41 +142,53 @@ private fun generateInheritedAttrsType(
   ctx.generatedTypes.add(names.InheritedAttrs)
 
   val type = ctx.inheritedAttrVars.joinToString(" & ") { "typeof $it" }
-  yield("type ${names.InheritedAttrs} = ${
-    if (options.vueCompilerOptions.checkRequiredFallthroughAttributes) type else "Partial<$type>"
-  }")
-  yield(endOfLine)
+  yieldAll(generateTypeAlias(names.InheritedAttrs, options.scriptLang) {
+    yield(if (options.vueCompilerOptions.checkRequiredFallthroughAttributes) type else "Partial<$type>")
+  })
 }
 
 private fun generateTemplateRefsType(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
 ): Sequence<Code> = sequence {
-  if (ctx.templateRefs.isEmpty()) return@sequence
+  if (
+    ctx.templateRefs.isEmpty()
+    || !(
+      options.vueCompilerOptions.inferTemplateDollarRefs
+      || options.vueCompilerOptions.inferComponentDollarRefs
+      || options.setupRefs.isNotEmpty()
+    )
+  ) {
+    return@sequence
+  }
   ctx.generatedTypes.add(names.TemplateRefs)
 
-  yield("type ${names.TemplateRefs} = {}")
-  for ((name, refs) in ctx.templateRefs) {
-    yield("$newLine& ")
-    if (refs.size >= 2) yield("(")
-    for ((i, ref) in refs.withIndex()) {
-      if (i > 0) yield(" | ")
-      yield("{ ")
-      yieldAll(generateObjectProperty(options, ctx, name, ref.offset, codeFeatures.navigation))
-      yield(": ${ref.typeExp} }")
+  yieldAll(generateTypeAlias(names.TemplateRefs, options.scriptLang) {
+    yield("{}")
+    for ((name, refs) in ctx.templateRefs) {
+      yield("$newLine& ")
+      if (refs.size >= 2) yield("(")
+      for ((i, ref) in refs.withIndex()) {
+        if (i > 0) yield(" | ")
+        yield("{ ")
+        yieldAll(generateObjectProperty(options, ctx, name, ref.offset, codeFeatures.navigation))
+        yield(": ${ref.typeExp} }")
+      }
+      if (refs.size >= 2) yield(")")
     }
-    if (refs.size >= 2) yield(")")
-  }
-  yield(endOfLine)
+  })
 }
 
-private fun generateRootElType(ctx: TemplateCodegenContext): Sequence<Code> = sequence {
+private fun generateRootElType(
+  options: TemplateCodegenOptions,
+  ctx: TemplateCodegenContext,
+): Sequence<Code> = sequence {
   if (ctx.singleRootElTypes.isEmpty() || null in ctx.singleRootNodes) return@sequence
   ctx.generatedTypes.add(names.RootEl)
 
-  yield("type ${names.RootEl} = ")
-  for (type in ctx.singleRootElTypes) {
-    yield("$newLine| $type")
-  }
-  yield(endOfLine)
+  yieldAll(generateTypeAlias(names.RootEl, options.scriptLang) {
+    for (type in ctx.singleRootElTypes) {
+      yield("$newLine| $type")
+    }
+  })
 }

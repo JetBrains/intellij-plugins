@@ -11,12 +11,16 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeF
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.CodeTransform
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCodeWithTransforms
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypedVar
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.insert
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.replace
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.DefineModel
@@ -195,6 +199,13 @@ fun generateSetupFunction(
         names.Slots,
       )
     )
+    if (defineSlots.name == null) {
+      transforms.add(insert(defineSlots.statement.end) {
+        sequence {
+          yield("${newLine}void ${names.slots}${endOfLine}")
+        }
+      })
+    }
   }
   scriptSetupRanges.defineExpose?.let { defineExpose ->
     val typeArg = defineExpose.typeArg
@@ -239,53 +250,90 @@ fun generateSetupFunction(
   }
   if (options.vueCompilerOptions.inferTemplateDollarAttrs) {
     for (useAttrs in scriptSetupRanges.useAttrs) {
-      transforms.add(insert(useAttrs.callExp.start) { sequence { yield("(") } })
-      transforms.add(insert(useAttrs.callExp.end) { sequence { yield(" as typeof ${names.dollars}.\$attrs)") } })
+      val type = "typeof ${names.dollars}.\$attrs"
+      transforms.add(insert(useAttrs.callExp.start) {
+        sequence { yield(if (isTsLang(options.scriptLang)) "(" else "/** @type {$type} */ (") }
+      })
+      transforms.add(insert(useAttrs.callExp.end) {
+        sequence { yield(if (isTsLang(options.scriptLang)) " as $type)" else ")") }
+      })
     }
   }
   for (useCssModule in scriptSetupRanges.useCssModule) {
-    transforms.add(insert(useCssModule.callExp.start) { sequence { yield("(") } })
     val type = if (options.templateAndStyleTypes.contains(names.StyleModules)) names.StyleModules else "{}"
     val cssArg = useCssModule.arg
     if (cssArg != null) {
-      transforms.add(insert(useCssModule.callExp.end) {
+      transforms.add(insert(useCssModule.callExp.start) {
         sequence {
-          yield(" as Omit<${type}, '\$style'>[")
-          yieldAll(generateSfcBlockSection(scriptSetup, cssArg.start, cssArg.end, codeFeatures.withoutSemantic))
-          yield("])")
+          if (isTsLang(options.scriptLang)) {
+            yield("(")
+          }
+          else {
+            yield("/** @type {Omit<${type}, '\$style'>[")
+            yieldAll(generateSfcBlockSection(scriptSetup, cssArg.start, cssArg.end, codeFeatures.withoutSemantic))
+            yield("]} */ (")
+          }
         }
       })
-      transforms.add(replace(cssArg.start, cssArg.end) { sequence { yield("{} as any") } })
-    }
-    else {
       transforms.add(insert(useCssModule.callExp.end) {
         sequence {
-          yield(" as ${type}[")
-          val boundary = yield(Boundary.start(
-            scriptSetup.name,
-            useCssModule.exp.start,
-            useCssModule.exp.end,
-            codeFeatures.verification,
-          ))
-          yield("'\$style'")
-          yield(boundary.end())
-          yield("])")
+          if (isTsLang(options.scriptLang)) {
+            yield(" as Omit<${type}, '\$style'>[")
+            yieldAll(generateSfcBlockSection(scriptSetup, cssArg.start, cssArg.end, codeFeatures.withoutSemantic))
+            yield("])")
+          }
+          else {
+            yield(")")
+          }
+        }
+      })
+      transforms.add(replace(cssArg.start, cssArg.end) { sequence { yield(asType("any", options.scriptLang)) } })
+    }
+    else {
+      transforms.add(insert(useCssModule.callExp.start) {
+        sequence { yield(if (isTsLang(options.scriptLang)) "(" else "/** @type {${type}['\$style']} */ (") }
+      })
+      transforms.add(insert(useCssModule.callExp.end) {
+        sequence {
+          if (isTsLang(options.scriptLang)) {
+            yield(" as ${type}[")
+            val boundary = yield(Boundary.start(
+              scriptSetup.name,
+              useCssModule.exp.start,
+              useCssModule.exp.end,
+              codeFeatures.verification,
+            ))
+            yield("'\$style'")
+            yield(boundary.end())
+            yield("])")
+          }
+          else {
+            yield(")")
+          }
         }
       })
     }
   }
   if (options.vueCompilerOptions.inferTemplateDollarSlots) {
     for (useSlots in scriptSetupRanges.useSlots) {
-      transforms.add(insert(useSlots.callExp.start) { sequence { yield("(") } })
-      transforms.add(insert(useSlots.callExp.end) { sequence { yield(" as typeof ${names.dollars}.\$slots)") } })
+      val type = "typeof ${names.dollars}.\$slots"
+      transforms.add(insert(useSlots.callExp.start) {
+        sequence { yield(if (isTsLang(options.scriptLang)) "(" else "/** @type {$type} */ (") }
+      })
+      transforms.add(insert(useSlots.callExp.end) {
+        sequence { yield(if (isTsLang(options.scriptLang)) " as $type)" else ")") }
+      })
     }
   }
   for (useTemplateRef in scriptSetupRanges.useTemplateRef) {
-    transforms.add(insert(useTemplateRef.callExp.start) { sequence { yield("(") } })
     val refArg = useTemplateRef.arg
-    transforms.add(insert(useTemplateRef.callExp.end) {
+    transforms.add(insert(useTemplateRef.callExp.start) {
       sequence {
-        yield(" as Readonly<import('${options.vueCompilerOptions.lib}').ShallowRef<")
+        if (isTsLang(options.scriptLang)) {
+          yield("(")
+          return@sequence
+        }
+        yield("/** @type {Readonly<import('${options.vueCompilerOptions.lib}').ShallowRef<")
         if (refArg != null) {
           yield(names.TemplateRefs)
           yield("[")
@@ -295,11 +343,31 @@ fun generateSetupFunction(
         else {
           yield("unknown")
         }
-        yield(" | null>>)")
+        yield(" | null>>} */ (")
+      }
+    })
+    transforms.add(insert(useTemplateRef.callExp.end) {
+      sequence {
+        if (isTsLang(options.scriptLang)) {
+          yield(" as Readonly<import('${options.vueCompilerOptions.lib}').ShallowRef<")
+          if (refArg != null) {
+            yield(names.TemplateRefs)
+            yield("[")
+            yieldAll(generateSfcBlockSection(scriptSetup, refArg.start, refArg.end, codeFeatures.withoutSemantic))
+            yield("]")
+          }
+          else {
+            yield("unknown")
+          }
+          yield(" | null>>)")
+        }
+        else {
+          yield(")")
+        }
       }
     })
     refArg?.let { ra ->
-      transforms.add(replace(ra.start, ra.end) { sequence { yield("{} as any") } })
+      transforms.add(replace(ra.start, ra.end) { sequence { yield(asType("any", options.scriptLang)) } })
     }
   }
 
@@ -308,8 +376,7 @@ fun generateSetupFunction(
     scriptSetup.content.endOffset,
     transforms,
   ) { start, end -> generateSfcBlockSection(scriptSetup, start, end, codeFeatures.all) })
-  yieldAll(generateMacros(options))
-  yieldAll(generateModels(scriptSetup, scriptSetupRanges))
+  yieldAll(generateModels(options, scriptSetup, scriptSetupRanges))
   yieldAll(generatePublicProps(options, ctx, scriptSetup, scriptSetupRanges))
   yieldAll(body)
 
@@ -319,7 +386,8 @@ fun generateSetupFunction(
       yieldAll(generateComponent(options, ctx, scriptSetup, scriptSetupRanges))
       yield(endOfLine)
       yieldAll(output)
-      yield("{} as ${ctx.localTypes.WithSlots}<typeof ${names.base}, ${names.Slots}>${endOfLine}")
+      yield(asType("${ctx.localTypes.WithSlots}<typeof ${names.base}, ${names.Slots}>", options.scriptLang))
+      yield(endOfLine)
     }
     else {
       yieldAll(output)
@@ -329,18 +397,27 @@ fun generateSetupFunction(
   }
 }
 
-private fun generateMacros(
+// An `import` (rather than `declare const`) keeps the macros resolvable in JS
+// virtual files, where type-only declarations are syntax errors. Imports hoist,
+// so this can be emitted after all user content: leading directives stay ahead
+// of any statement, and the import-section/content junction stays intact.
+fun generateMacros(
   options: ScriptCodegenOptions,
 ): Sequence<Code> = sequence {
   if (options.vueCompilerOptions.target >= 3.3) {
-    yield("// @ts-ignore${newLine}")
-    yield("declare const { ")
+    var emitted = false
     for (macro in listOf("defineProps", "defineSlots", "defineEmits", "defineExpose", "defineModel", "defineOptions", "withDefaults")) {
       if (!options.setupBindings.contains(macro)) {
+        if (!emitted) {
+          yield("// @ts-ignore${newLine}import { ")
+          emitted = true
+        }
         yield("$macro, ")
       }
     }
-    yield("}: typeof import('${options.vueCompilerOptions.lib}')${endOfLine}")
+    if (emitted) {
+      yield("} from '${options.vueCompilerOptions.lib}'${endOfLine}")
+    }
   }
 }
 
@@ -434,6 +511,7 @@ private fun generatePublicProps(
       codeFeatures.navigation,
     ))
     yield(endOfLine)
+    yield("void ${names.defaults}${endOfLine}")
   }
 
   val propTypes = mutableListOf<String>()
@@ -446,8 +524,14 @@ private fun generatePublicProps(
   if (scriptSetupRanges.defineModel.isNotEmpty()) {
     propTypes.add(names.ModelProps)
   }
-  if (propTypes.isNotEmpty()) {
-    yield("type ${names.PublicProps} = ${propTypes.joinToString(" & ")}${endOfLine}")
+  val target = options.vueCompilerOptions.target
+  val used = scriptSetup.generic != null
+             || target < 3.6
+             || (target >= 3.5 && scriptSetupRanges.defineProps?.arg == null)
+  if (propTypes.isNotEmpty() && used) {
+    yieldAll(generateTypeAlias(names.PublicProps, options.scriptLang) {
+      yield(propTypes.joinToString(" & "))
+    })
     ctx.generatedTypes.add(names.PublicProps)
   }
 }
@@ -458,6 +542,7 @@ private fun hasSlotsType(
   options.scriptSetupRanges?.defineSlots != null || options.templateAndStyleTypes.contains(names.Slots)
 
 private fun generateModels(
+  options: ScriptCodegenOptions,
   scriptSetup: IRScriptSetup,
   scriptSetupRanges: ScriptSetupRanges,
 ): Sequence<Code> = sequence {
@@ -493,7 +578,7 @@ private fun generateModels(
       },${newLine}")
     }
 
-    propCodes.add(generateModelProp(scriptSetup, defineModel, propName, modelType))
+    propCodes.add(generateModelProp(options, scriptSetup, defineModel, propName, modelType))
     emitCodes.add(generateModelEmit(defineModel, propName, modelType))
   }
 
@@ -503,30 +588,41 @@ private fun generateModels(
       yield(code)
     }
     yield("}${endOfLine}")
+    yield("void ${names.defaultModels}${endOfLine}")
   }
 
-  yield("type ${names.ModelProps} = {${newLine}")
-  for (codes in propCodes) {
-    yieldAll(codes)
-  }
-  yield("}${endOfLine}")
+  yieldAll(generateTypeAlias(names.ModelProps, options.scriptLang) {
+    yield("{${newLine}")
+    for (codes in propCodes) {
+      yieldAll(codes)
+    }
+    yield("}")
+  })
 
-  yield("type ${names.ModelEmit} = {${newLine}")
-  for (codes in emitCodes) {
-    yieldAll(codes)
-  }
-  yield("}${endOfLine}")
+  yieldAll(generateTypeAlias(names.ModelEmit, options.scriptLang) {
+    yield("{${newLine}")
+    for (codes in emitCodes) {
+      yieldAll(codes)
+    }
+    yield("}")
+  })
 
-  yield("let ${names.modelEmit}!: ${names.ShortEmits}<${names.ModelEmit}>${endOfLine}")
+  // avoid `defineModel<...>()` to prevent JS AST issues
+  yieldAll(generateTypedVar("let", names.modelEmit, options.scriptLang) {
+    yield("${names.ShortEmits}<${names.ModelEmit}>")
+  })
 }
 
 private fun generateModelProp(
+  options: ScriptCodegenOptions,
   scriptSetup: IRScriptSetup,
   defineModel: DefineModel,
   propName: String,
   modelType: String,
 ): Sequence<Code> = sequence {
-  if (defineModel.comments != null) {
+  // In JS the alias body lives inside a JSDoc comment; user comments could
+  // contain `*/` and terminate it early, so they are dropped.
+  if (defineModel.comments != null && isTsLang(options.scriptLang)) {
     yield(scriptSetup.content.substring(defineModel.comments.start, defineModel.comments.end))
     yield(newLine)
   }

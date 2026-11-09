@@ -79,7 +79,7 @@ fun generateInterpolation(
         sourceOffset = start + offset,
         data = data,
       ))
-      yield(".value")
+      yield(DataSegment(".value", block.name, start + offset, codeFeatures.verification))
     }
     else if (options.setupBindings.contains(name)) {
       // First pass records narrowing accesses here; the second pass emits from dotValueBindings.
@@ -91,7 +91,7 @@ fun generateInterpolation(
           sourceOffset = start + offset,
           data = identifierData,
         ))
-        yield(".value")
+        yield(DataSegment(".value", block.name, start + offset, codeFeatures.verification))
       }
       else {
         // `new __VLS_unwrap(Foo)()` parses as `new (__VLS_unwrap(Foo)())`,
@@ -106,7 +106,7 @@ fun generateInterpolation(
           sourceOffset = start + offset,
           data = identifierData,
         ))
-        yield(", ${getRefBrandArgument(options.vueCompilerOptions)})")
+        yield(", ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})")
         if (isNewOperand) {
           yield(")")
         }

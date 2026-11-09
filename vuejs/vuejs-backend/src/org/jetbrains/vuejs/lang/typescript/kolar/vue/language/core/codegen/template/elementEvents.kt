@@ -21,10 +21,12 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endsWithSemicolon
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypedVar
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.statements
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.getUnwrappedExpression
@@ -90,12 +92,23 @@ fun generateElementEvents(
   if (definitions.isEmpty()) return@sequence
 
   val emitsVar = ctx.getInternalVariable()
-  yield("let $emitsVar!: ${names.ResolveEmits}<typeof $componentOriginalVar, typeof ${getCtxVar()}.emit>$endOfLine")
+  yieldAll(generateTypedVar("let", emitsVar, options.scriptLang) {
+    yield("${names.ResolveEmits}<typeof $componentOriginalVar, typeof ${getCtxVar()}.emit>")
+  })
 
   for ((propPrefix, emitPrefix, propName, emitName, items) in definitions.values) {
-    yield("const ${ctx.getInternalVariable()}: ${names.ResolveEvent}<typeof ${getPropsVar()}, typeof $emitsVar, '$propName', '$emitName', '${
+    val eventVar = ctx.getInternalVariable()
+    val eventType = "${
+      if (options.vueCompilerOptions.checkUnknownEvents) "" else "Record<string, unknown> & "
+    }Partial<${names.ResolveEvent}<typeof ${getPropsVar()}, typeof $emitsVar, '$propName', '$emitName', '${
       camelize(emitName)
-    }'> = {$newLine")
+    }'>>"
+    if (isTsLang(options.scriptLang)) {
+      yield("const $eventVar: $eventType = {$newLine")
+    }
+    else {
+      yield("/** @type {$eventType} */${newLine}const $eventVar = {$newLine")
+    }
     for ((prop, source, offset) in items) {
       if (prop.name == "on") {
         yield("/** @type {typeof $emitsVar.")
@@ -114,6 +127,7 @@ fun generateElementEvents(
       yield(",$newLine")
     }
     yield("}$endOfLine")
+    yield("void $eventVar$endOfLine")
   }
 }
 
@@ -173,6 +187,7 @@ fun generateEventExpression(
       val accessMark = ctx.accessLog.size
       val codes = interpolation.toList()
 
+      yield("// @ts-ignore$newLine")
       yield("(...[\$event]) => {$newLine")
       yieldAll(generateReasserts(options, ctx, accessMark))
       yieldAll(ctx.generateConditionGuards())
@@ -223,6 +238,7 @@ fun generateModelEventExpression(
       start = exp.loc.startOffset,
       inNarrowing = true,
     ).toList()
+    yield("// @ts-ignore$newLine")
     yield("(...[\$event]) => {$newLine")
     yieldAll(generateReasserts(options, ctx, accessMark))
     yieldAll(ctx.generateConditionGuards())
@@ -257,7 +273,7 @@ private fun generateReasserts(
     }
   }
   for (name in reasserts) {
-    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions)})$endOfLine")
+    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})$endOfLine")
   }
 }
 

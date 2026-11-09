@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.picomatch.isMatch
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.AttributeNode
@@ -19,6 +20,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeF
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.createVBindShorthandInlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateUnicode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
@@ -53,7 +55,7 @@ fun generateElementProps(
         yield("},")
       }
       else {
-        yield("...{ '${camelize("on-" + propArg.loc.source)}': {} as any },")
+        yield("...{ '${camelize("on-" + propArg.loc.source)}': ${asType("any", options.scriptLang)} },")
       }
       yield(newLine)
     }
@@ -229,18 +231,18 @@ fun generatePropExp(
         shouldIdentifierSkipped(ctx, propVariableName) -> yieldAll(codes)
         options.setupRefs.contains(propVariableName) -> {
           yieldAll(codes)
-          yield(".value")
+          yield(DataSegment(".value", Source("template"), exp.loc.startOffset, codeFeatures.verification))
         }
         options.setupBindings.contains(propVariableName) -> {
           ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
           if (options.dotValueBindings.contains(propVariableName)) {
             yieldAll(codes)
-            yield(".value")
+            yield(DataSegment(".value", Source("template"), exp.loc.startOffset, codeFeatures.verification))
           }
           else {
             yield("${names.unwrap}(")
             yieldAll(codes)
-            yield(", ${getRefBrandArgument(options.vueCompilerOptions)})")
+            yield(", ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})")
           }
         }
         else -> {

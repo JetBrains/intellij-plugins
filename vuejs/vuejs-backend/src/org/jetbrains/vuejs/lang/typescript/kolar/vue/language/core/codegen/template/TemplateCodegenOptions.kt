@@ -9,6 +9,7 @@ data class TemplateCodegenOptions(
   override val vueCompilerOptions: VueCompilerOptions,
   val template: IRTemplate,
   val isVapor: Boolean,
+  override val scriptLang: String,
   override val destructuredProps: Set<String>,
   override val importedComponents: Set<String>,
   override val setupRefs: Set<String>,

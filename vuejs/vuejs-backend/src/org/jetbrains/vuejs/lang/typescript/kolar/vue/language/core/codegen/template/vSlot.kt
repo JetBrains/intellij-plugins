@@ -18,6 +18,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.statements
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
@@ -69,7 +70,7 @@ fun generateVSlot(
     yield("default")
     yield(boundary.end())
   }
-  yield(": $slotVar } = $ctxVar.slots!$endOfLine")
+  yield(": $slotVar } = ${names.nonNull}($ctxVar.slots)$endOfLine")
 
   val scope = ctx.scope()
   val exp = slotDir?.exp
@@ -89,7 +90,8 @@ fun generateVSlot(
       isStatic = arg.isStatic
     }
     if (isStatic && arg == null) {
-      yield("$ctxVar.slots!['")
+      yield("// @ts-ignore$newLine")
+      yield("${names.nonNull}($ctxVar.slots)['")
       val prefixLen = when {
         slotDir.loc.source.startsWith("#") -> "#".length
         slotDir.loc.source.startsWith("v-slot:") -> "v-slot:".length
@@ -157,7 +159,7 @@ private fun generateSlotParameters(
 
   yield("const [")
   yieldAll(interpolation)
-  yield("] = ${names.vSlot}($slotVar!")
+  yield("] = ${names.vSlot}(${names.nonNull}($slotVar)")
 
   if (types.any { it != null }) {
     yield(", ")
@@ -178,7 +180,7 @@ private fun generateSlotParameters(
         yield("_, ")
       }
     }
-    yield(") => [] as any")
+    yield(if (isTsLang(options.scriptLang)) ") => [] as any" else ") => /** @type {any} */ ([])")
     yield(boundary.end())
   }
   yield(")$endOfLine")

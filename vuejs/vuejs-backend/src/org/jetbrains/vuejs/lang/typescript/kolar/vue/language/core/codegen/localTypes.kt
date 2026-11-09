@@ -4,12 +4,16 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 class LocalTypesGenerator(
   vueCompilerOptions: VueCompilerOptions,
+  lang: String,
 ) {
   private val used = linkedSetOf<String>()
+  private val isTs = isTsLang(lang)
 
   private inner class Helper(
     val helperName: String,
@@ -25,31 +29,49 @@ class LocalTypesGenerator(
   }
 
   private val prettifyLocal = Helper("__VLS_PrettifyLocal") {
-    "type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {}$endOfLine"
+    if (isTs)
+      "type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {}$endOfLine"
+    else
+      jsTypedef(
+        "T",
+        "__VLS_PrettifyLocal",
+        "(T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {}",
+      )
   }
 
   private val withDefaults = Helper("__VLS_WithDefaults") {
-    """
+    if (isTs)
+      """
 type __VLS_WithDefaults<P, D> = {
 	[K in keyof Pick<P, keyof P>]: K extends keyof D
 		? ${prettifyLocal.name}<P[K] & { default: D[K] }>
 		: P[K]
 };
 """.trimStart()
+    else
+      jsTypedef(
+        "P, D",
+        "__VLS_WithDefaults",
+        "{ [K in keyof Pick<P, keyof P>]: K extends keyof D ? ${prettifyLocal.name}<P[K] & { default: D[K] }> : P[K] }",
+      )
   }
 
   private val withSlots = Helper("__VLS_WithSlots") {
-    """
+    if (isTs)
+      """
 type __VLS_WithSlots<T, S> = T & {
 	new(): {
 		${'$'}slots: S;
 	}
 };
 """.trimStart()
+    else
+      jsTypedef("T, S", "__VLS_WithSlots", "T & { new(): { ${'$'}slots: S; } }")
   }
 
   private val propsChildren = Helper("__VLS_PropsChildren") {
-    """
+    if (isTs)
+      """
 type __VLS_PropsChildren<S> = {
 	[K in keyof (
 		boolean extends (
@@ -64,20 +86,38 @@ type __VLS_PropsChildren<S> = {
 	)]?: S;
 };
 """.trimStart()
+    // The single-line form lets the preceding @ts-ignore cover the whole typedef,
+    // mirroring the inline @ts-ignore guards of the TS form.
+    else
+      "// @ts-ignore$newLine/** @template S @typedef {{ [K in keyof (boolean extends (JSX.ElementChildrenAttribute extends never ? true : false) ? never : JSX.ElementChildrenAttribute)]?: S; }} __VLS_PropsChildren */$newLine"
   }
 
   private val typePropsToOption = Helper("__VLS_TypePropsToOption") {
-    """
+    if (isTs)
+      """
 type __VLS_TypePropsToOption<T> = {
 	[K in keyof T]-?: {} extends Pick<T, K>
 		? { type: import('${vueCompilerOptions.lib}').PropType<Required<T>[K]> }
 		: { type: import('${vueCompilerOptions.lib}').PropType<T[K]>, required: true }
 };
 """.trimStart()
+    else
+      jsTypedef(
+        "T",
+        "__VLS_TypePropsToOption",
+        "{ [K in keyof T]-?: {} extends Pick<T, K> ? { type: import('${vueCompilerOptions.lib}').PropType<Required<T>[K]> } : { type: import('${vueCompilerOptions.lib}').PropType<T[K]>, required: true } }",
+      )
   }
 
   private val omitIndexSignature = Helper("__VLS_OmitIndexSignature") {
-    "type __VLS_OmitIndexSignature<T> = { [K in keyof T as {} extends Record<K, unknown> ? never : K]: T[K]; }$endOfLine"
+    if (isTs)
+      "type __VLS_OmitIndexSignature<T> = { [K in keyof T as {} extends Record<K, unknown> ? never : K]: T[K]; }$endOfLine"
+    else
+      jsTypedef(
+        "T",
+        "__VLS_OmitIndexSignature",
+        "{ [K in keyof T as {} extends Record<K, unknown> ? never : K]: T[K] }",
+      )
   }
 
   private val helpers: Map<String, Helper> =
@@ -104,4 +144,7 @@ type __VLS_TypePropsToOption<T> = {
 
     used.clear()
   }
+
+  private fun jsTypedef(params: String, name: String, body: String): String =
+    "/**$newLine * @template $params$newLine * @typedef {$body} $name$newLine */$newLine"
 }

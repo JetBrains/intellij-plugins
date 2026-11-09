@@ -9,6 +9,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeF
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
@@ -21,35 +22,37 @@ fun generateStyleModules(
 
   ctx.generatedTypes.add(names.StyleModules)
 
-  yield("type ${names.StyleModules} = {$newLine")
-  for (style in styleModules) {
-    when (val module = style.module) {
-      is IRAttr.Present -> yield("\$style")
-      is IRAttr.WithText -> yield(DataSegment(
-        text = module.text,
-        source = Source("main"),
-        sourceOffset = module.offset,
-        data = codeFeatures.navigation,
-      ))
-      null -> Unit
+  yieldAll(generateTypeAlias(names.StyleModules, options.scriptLang) {
+    yield("{$newLine")
+    for (style in styleModules) {
+      when (val module = style.module) {
+        is IRAttr.Present -> yield("\$style")
+        is IRAttr.WithText -> yield(DataSegment(
+          text = module.text,
+          source = Source("main"),
+          sourceOffset = module.offset,
+          data = codeFeatures.navigation,
+        ))
+        null -> Unit
+      }
+      yield(": ")
+      if (!options.vueCompilerOptions.strictCssModules) {
+        yield("Record<string, string> & ")
+      }
+      yield("${names.PrettifyGlobal}<{}")
+      if (options.vueCompilerOptions.resolveStyleImports) {
+        yieldAll(generateStyleImports(style))
+      }
+      for ((text, offset) in style.classNames) {
+        yieldAll(generateClassProperty(
+          source = style.name,
+          classNameWithDot = text,
+          offset = offset,
+          propertyType = "string",
+        ))
+      }
+      yield(">$endOfLine")
     }
-    yield(": ")
-    if (!options.vueCompilerOptions.strictCssModules) {
-      yield("Record<string, string> & ")
-    }
-    yield("${names.PrettifyGlobal}<{}")
-    if (options.vueCompilerOptions.resolveStyleImports) {
-      yieldAll(generateStyleImports(style))
-    }
-    for ((text, offset) in style.classNames) {
-      yieldAll(generateClassProperty(
-        source = style.name,
-        classNameWithDot = text,
-        offset = offset,
-        propertyType = "string",
-      ))
-    }
-    yield(">$endOfLine")
-  }
-  yield("}$endOfLine")
+    yield("}")
+  })
 }

@@ -6,7 +6,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptSetup
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateIntersectMerge
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSpreadMerge
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
@@ -32,11 +32,11 @@ fun generateComponent(
   val vueCompilerOptions = options.vueCompilerOptions
   if (vueCompilerOptions.target >= 3.5 && vueCompilerOptions.inferComponentDollarRefs
       && options.templateAndStyleTypes.contains(names.TemplateRefs)) {
-    yield("__typeRefs: {} as ${names.TemplateRefs},${newLine}")
+    yield("__typeRefs: ${asType(names.TemplateRefs, options.scriptLang)},${newLine}")
   }
   if (vueCompilerOptions.target >= 3.5 && vueCompilerOptions.inferComponentDollarEl
       && options.templateAndStyleTypes.contains(names.RootEl)) {
-    yield("__typeEl: {} as ${names.RootEl},${newLine}")
+    yield("__typeEl: ${asType(names.RootEl, options.scriptLang)},${newLine}")
   }
   yield("})")
 }
@@ -52,14 +52,12 @@ private fun generateEmitsOption(
   else emptyList()
 
   val runtimeCodes = if (typeCodes.isEmpty()) {
-    generateRuntimeEmitsOption(scriptSetupRanges)
+    generateRuntimeEmitsOption(options, scriptSetupRanges)
   }
   else emptyList()
 
   if (typeCodes.isNotEmpty()) {
-    yield("__typeEmits: {} as ")
-    yieldAll(generateIntersectMerge(typeCodes))
-    yield(",${newLine}")
+    yield("__typeEmits: ${asType(typeCodes.joinToString(" & ") { it.text }, options.scriptLang)},${newLine}")
   }
   else if (runtimeCodes.isNotEmpty()) {
     yield("emits: ")
@@ -76,13 +74,14 @@ private fun generateTypeEmitsOption(
 }.map(::StringSegment)
 
 private fun generateRuntimeEmitsOption(
+  options: ScriptCodegenOptions,
   scriptSetupRanges: ScriptSetupRanges,
 ): List<Code> = buildList {
   if (scriptSetupRanges.defineModel.isNotEmpty()) {
-    add("{} as ${names.NormalizeEmits}<typeof ${names.modelEmit}>")
+    add(asType("${names.NormalizeEmits}<typeof ${names.modelEmit}>", options.scriptLang))
   }
   scriptSetupRanges.defineEmits?.let { defineEmits ->
-    add("{} as ${names.NormalizeEmits}<typeof ${defineEmits.name ?: names.emit}>")
+    add(asType("${names.NormalizeEmits}<typeof ${defineEmits.name ?: names.emit}>", options.scriptLang))
   }
 }.map(::StringSegment)
 
@@ -129,10 +128,10 @@ private fun generateTypePropsOption(
       "Omit<${names.InheritedAttrs}, keyof ${names.EmitProps}>"
     else
       names.InheritedAttrs
-    yield("{} as $attrsType")
+    yield(asType(attrsType, options.scriptLang))
   }
   if (ctx.generatedTypes.contains(names.PublicProps)) {
-    yield("{} as ${names.PublicProps}")
+    yield(asType(names.PublicProps, options.scriptLang))
   }
 }
 
@@ -150,14 +149,14 @@ private fun generateRuntimePropsOption(
       names.InheritedAttrs
     val propsType = "${ctx.localTypes.TypePropsToOption}<${names.PickNotAny}" +
                     "<${ctx.localTypes.OmitIndexSignature}<$attrsType>, {}>>"
-    yield("{} as $propsType")
+    yield(asType(propsType, options.scriptLang))
   }
   if (ctx.generatedTypes.contains(names.PublicProps) && options.vueCompilerOptions.target < 3.6) {
     var propsType = "${ctx.localTypes.TypePropsToOption}<${names.PublicProps}>"
     if (scriptSetupRanges.withDefaults?.arg != null) {
       propsType = "${ctx.localTypes.WithDefaults}<$propsType, typeof ${names.defaults}>"
     }
-    yield("{} as $propsType")
+    yield(asType(propsType, options.scriptLang))
   }
   scriptSetupRanges.defineProps?.arg?.let { arg ->
     yieldAll(generateSfcBlockSection(scriptSetup, arg.start, arg.end, codeFeatures.navigation))

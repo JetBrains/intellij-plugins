@@ -5,7 +5,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.generateStyleScopedClassReference
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateStyleScopedClasses(
@@ -21,23 +22,25 @@ fun generateStyleScopedClasses(
 
   val visited = mutableSetOf<String>()
   val deferredGenerates = mutableListOf<Sequence<Code>>()
-  yield("type ${names.StyleScopedClasses} = {}")
-  for (style in scopedStyles) {
-    if (resolveStyleImports) {
-      yieldAll(generateStyleImports(style))
-    }
-    for (className in style.classNames) {
-      if (visited.add(className.text)) {
-        yieldAll(generateClassProperty(style.name, className.text, className.offset, "boolean"))
+  yield("// @ts-ignore$newLine")
+  yieldAll(generateTypeAlias(names.StyleScopedClasses, options.scriptLang) {
+    yield("{}")
+    for (style in scopedStyles) {
+      if (resolveStyleImports) {
+        yieldAll(generateStyleImports(style))
       }
-      else {
-        deferredGenerates.add(
-          generateStyleScopedClassReference(style, className.text.drop(1), className.offset + 1),
-        )
+      for (className in style.classNames) {
+        if (visited.add(className.text)) {
+          yieldAll(generateClassProperty(style.name, className.text, className.offset, "boolean"))
+        }
+        else {
+          deferredGenerates.add(
+            generateStyleScopedClassReference(style, className.text.drop(1), className.offset + 1),
+          )
+        }
       }
     }
-  }
-  yield(endOfLine)
+  })
 
   for (generate in deferredGenerates) {
     yieldAll(generate)

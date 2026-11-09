@@ -8,6 +8,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.commo
 data class StyleCodegenOptions(
   override val vueCompilerOptions: VueCompilerOptions,
   val styles: List<IRStyle>,
+  override val scriptLang: String,
   override val destructuredProps: Set<String>,
   override val importedComponents: Set<String>,
   override val setupRefs: Set<String>,

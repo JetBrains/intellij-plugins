@@ -21,6 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypedVar
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getElementTagOffsets
@@ -127,22 +128,24 @@ fun generateComponent(
       yield(endOfLine)
     }
     else {
-      yield("let $componentVar!: ${names.WithComponent}<'$tag', ${names.LocalComponents}, ${names.GlobalComponents}")
-      yield(if (originalNames.contains(options.componentName)) ", typeof ${names.export}" else ", void")
-      for (name in originalNames) {
-        yield(", '$name'")
-      }
-      yield(">[")
-      yieldAll(generateStringLiteralKey(
-        tag,
-        startTagOffset,
-        VueCodeInformation(
-          semantic = SemanticInfo.WithOptions(shouldHighlight = { false }),
-          verification = if (options.vueCompilerOptions.checkUnknownComponents) VerificationInfo.Enabled
-          else VerificationInfo.WithIgnoredCodes("2339", "2551"),
-        ),
-      ))
-      yield("]$endOfLine")
+      yieldAll(generateTypedVar("let", componentVar, options.scriptLang) {
+        yield("${names.WithComponent}<'$tag', ${names.LocalComponents}, ${names.GlobalComponents}")
+        yield(if (originalNames.contains(options.componentName)) ", typeof ${names.export}" else ", void")
+        for (name in originalNames) {
+          yield(", '$name'")
+        }
+        yield(">[")
+        yieldAll(generateStringLiteralKey(
+          tag,
+          startTagOffset,
+          VueCodeInformation(
+            semantic = SemanticInfo.WithOptions(shouldHighlight = { false }),
+            verification = if (options.vueCompilerOptions.checkUnknownComponents) VerificationInfo.Enabled
+            else VerificationInfo.WithIgnoredCodes("2339", "2551"),
+          ),
+        ))
+        yield("]")
+      })
 
       if (identifierRE.matches(camelize(tag))) {
         // navigation support
@@ -192,7 +195,8 @@ fun generateComponent(
 
   yield("// @ts-ignore$newLine")
   yield("const $functionalVar = ${if (options.vueCompilerOptions.checkUnknownProps) names.asFunctionalComponent0 else names.asFunctionalComponent1}($componentVar, new $componentVar({$newLine")
-  yield(propsStr)
+  yield("// @ts-ignore$newLine")
+  yield(propsStr.replace("\n", " "))
   yield("}))$endOfLine")
 
   yield("const ")
@@ -259,11 +263,13 @@ fun generateComponent(
   val templateRef = getTemplateRef(node)
   val isSingleRoot = node in ctx.singleRootNodes
                      && !options.vueCompilerOptions.fallthroughComponentNames.contains(hyphenateTag(tag))
+  val inferRootEl = ctx.dollarVars.contains("\$el") || options.vueCompilerOptions.inferComponentDollarEl
 
-  if (templateRef != null || isSingleRoot) {
+  if (templateRef != null || (isSingleRoot && inferRootEl)) {
     val componentInstanceVar = ctx.getInternalVariable()
-    yield("var $componentInstanceVar!: Parameters<NonNullable<typeof ${getCtxVar()}['expose']>>[0]")
-    yield(endOfLine)
+    yieldAll(generateTypedVar("var", componentInstanceVar, options.scriptLang) {
+      yield("Parameters<NonNullable<typeof ${getCtxVar()}['expose']>>[0]")
+    })
 
     if (templateRef != null) {
       var typeExp = "typeof ${ctx.getHoistVariable(componentInstanceVar)} | null"
@@ -272,7 +278,7 @@ fun generateComponent(
       }
       ctx.addTemplateRef(templateRef.first, typeExp, templateRef.second)
     }
-    if (isSingleRoot) {
+    if (isSingleRoot && inferRootEl) {
       ctx.singleRootElTypes.add("NonNullable<typeof $componentInstanceVar>['\$el']")
     }
   }
@@ -296,10 +302,14 @@ fun generateComponent(
   }
 
   if (isCtxVarUsed) {
-    yield("var $ctxVar!: ${names.ExtractComponentContext}<typeof $componentVar, typeof $vnodeVar>$endOfLine")
+    yieldAll(generateTypedVar("var", ctxVar, options.scriptLang) {
+      yield("${names.ExtractComponentContext}<typeof $componentVar, typeof $vnodeVar>")
+    })
   }
   if (isPropsVarUsed) {
-    yield("var $propsVar!: ${names.ExtractComponentProps}<typeof $componentVar, typeof $vnodeVar>$endOfLine")
+    yieldAll(generateTypedVar("var", propsVar, options.scriptLang) {
+      yield("${names.ExtractComponentProps}<typeof $componentVar, typeof $vnodeVar>")
+    })
   }
   ctx.components.removeLast()
 }
@@ -364,7 +374,9 @@ fun generateElement(
     }
     ctx.addTemplateRef(templateRef.first, typeExp, templateRef.second)
   }
-  if (node in ctx.singleRootNodes) {
+  if (
+    node in ctx.singleRootNodes && (ctx.dollarVars.contains("\$el") || options.vueCompilerOptions.inferComponentDollarEl)
+  ) {
     ctx.singleRootElTypes.add("${names.Elements}['${node.tag}']")
   }
 

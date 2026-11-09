@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.getTypeScriptAST
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collectBindingNames
@@ -114,12 +115,12 @@ fun generateVFor(
   }
   yield("] of ")
   if (sourceAlias != null) {
-    yield("${names.vFor}(")
+    yield("${names.vFor}(${names.nonNull}(")
     yield(sourceAlias)
-    yield("!)") // #3102
+    yield("))") // #3102
   }
   else {
-    yield("{} as any")
+    yield(asType("any", options.scriptLang))
   }
   yield(") {$newLine")
 

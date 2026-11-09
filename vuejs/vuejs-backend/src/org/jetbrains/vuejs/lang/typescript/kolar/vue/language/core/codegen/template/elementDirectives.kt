@@ -12,9 +12,11 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInform
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateStringLiteralKey
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.isBuiltInDirective
@@ -36,7 +38,7 @@ fun generateElementDirectives(
     if (options.isVapor && !isBuiltInDirective(prop.name)) {
       // vapor custom directives receive a value getter instead of a vdom binding object
       yieldAll(generateIdentifier(options, ctx, prop))
-      yield("(null!, ")
+      yield("(${names.nonNull}(null), ")
       yieldAll(generateValue(options, ctx, prop, asBindingProperty = false))
       yieldAll(generateArg(options, ctx, prop, asBindingProperty = false))
       yieldAll(generateModifiers(options, ctx, prop, "modifiers", asBindingProperty = false))
@@ -45,11 +47,17 @@ fun generateElementDirectives(
     else {
       yield("${names.asFunctionalDirective}(")
       yieldAll(generateIdentifier(options, ctx, prop))
-      yield(", {} as import('${options.vueCompilerOptions.lib}').ObjectDirective)(null!, { ...${names.directiveBindingRestFields}, ")
+      yield(", ${
+        asType("import('${options.vueCompilerOptions.lib}').ObjectDirective", options.scriptLang)
+      })(${names.nonNull}(null), { ...${names.directiveBindingRestFields}, ")
       yieldAll(generateArg(options, ctx, prop))
       yieldAll(generateModifiers(options, ctx, prop))
       yieldAll(generateValue(options, ctx, prop))
-      yield("}, null!, null!)")
+      // Vue invokes hooks with all four arguments regardless of the declared
+      // arity. The excess-argument error (TS2554) lands on the first extra
+      // argument, so the synthetic trailing args get their own @ts-ignore'd
+      // line; when the arity matches, the binding above is checked as usual.
+      yield("},${newLine}// @ts-ignore${newLine}null, null)")
     }
     yield(boundary.end())
     yield(endOfLine)

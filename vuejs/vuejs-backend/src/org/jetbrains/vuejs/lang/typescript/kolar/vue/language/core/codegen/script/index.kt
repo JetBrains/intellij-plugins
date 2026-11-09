@@ -15,14 +15,13 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.Inlay
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptExportDefault
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.ScriptRanges
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
-
-private val exportExpression = "{} as typeof ${names.export}"
 
 class ScriptGenerateResult(
   val codes: List<Code>,
@@ -47,6 +46,7 @@ private fun generateWorker(
   val scriptSetupRanges = options.scriptSetupRanges
   val vueCompilerOptions = options.vueCompilerOptions
   val fileName = options.fileName
+  val exportExpression = asType("typeof ${names.export}", options.scriptLang)
 
   yieldAll(generateGlobalTypesReference(vueCompilerOptions, fileName))
 
@@ -91,7 +91,7 @@ private fun generateWorker(
     val exportDefault = scriptRanges.exportDefault
     if (exportDefault != null) {
       selfType = names.self
-      yieldAll(generateScriptWithExportDefault(ctx, script, scriptRanges, exportDefault, vueCompilerOptions, selfType))
+      yieldAll(generateScriptWithExportDefault(ctx, script, scriptRanges, exportDefault, vueCompilerOptions, selfType, exportExpression))
     }
     else {
       yieldAll(generateSfcBlockSection(script, script.content.startOffset, script.content.endOffset, codeFeatures.all))
@@ -160,6 +160,7 @@ private fun generateWorker(
         exportDefault,
         vueCompilerOptions,
         names.export,
+        exportExpression,
         generateTemplate(options, names.export),
       ))
     }
@@ -173,6 +174,12 @@ private fun generateWorker(
   }
 
   yieldAll(ctx.localTypes.generate())
+
+  // The <script src> branch never embeds the script setup content, so no
+  // macro references can appear and the import would be unused.
+  if (scriptSetup != null && scriptSetupRanges != null && script?.src !is IRAttr.WithText) {
+    yieldAll(generateMacros(options))
+  }
 }
 
 private fun generateScriptWithExportDefault(
@@ -182,6 +189,7 @@ private fun generateScriptWithExportDefault(
   exportDefault: ScriptExportDefault,
   vueCompilerOptions: VueCompilerOptions,
   varName: String,
+  exportExpression: String,
   templateGenerator: Sequence<Code>? = null,
 ): Sequence<Code> = sequence {
   val componentOptions = scriptRanges.exportDefault?.options

@@ -29,6 +29,17 @@ private val validLangs = setOf("js", "jsx", "ts", "tsx")
 
 private val localDirectiveRE = Regex("^v[A-Z]")
 
+private fun computeLang(ir: IR): String {
+  var lang = ir.scriptSetup?.lang ?: ir.script?.lang
+  if (ir.script != null && ir.scriptSetup != null) {
+    lang = if (ir.scriptSetup.lang != "js") ir.scriptSetup.lang else ir.script.lang
+  }
+  if (lang != null && lang in validLangs) {
+    return lang
+  }
+  return "ts"
+}
+
 class VueTsxPlugin(
   vueCompilerOptions: VueCompilerOptions,
 ) : VueLanguagePlugin(vueCompilerOptions) {
@@ -193,6 +204,7 @@ private class Codegen(
         vueCompilerOptions = getResolvedOptions(),
         template = template,
         isVapor = getIsVapor(),
+        scriptLang = computeLang(ir),
         componentName = getComponentName(),
         destructuredProps = getDestructuredProps(),
         importedComponents = getImportedComponents(),
@@ -214,6 +226,7 @@ private class Codegen(
       StyleCodegenOptions(
         vueCompilerOptions = getResolvedOptions(),
         styles = ir.styles,
+        scriptLang = computeLang(ir),
         destructuredProps = getDestructuredProps(),
         importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
@@ -283,6 +296,7 @@ private class Codegen(
         fileName = fileName,
         script = ir.script,
         scriptSetup = ir.scriptSetup,
+        scriptLang = computeLang(ir),
         setupBindings = getScriptSetupBindings(),
         localComponents = getLocalComponents(),
         localDirectives = getLocalDirectives(),

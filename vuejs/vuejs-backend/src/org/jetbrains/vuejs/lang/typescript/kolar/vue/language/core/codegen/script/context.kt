@@ -15,6 +15,6 @@ fun createScriptCodegenContext(
 ): ScriptCodegenContext =
   ScriptCodegenContext(
     generatedTypes = mutableSetOf(),
-    localTypes = LocalTypesGenerator(options.vueCompilerOptions),
+    localTypes = LocalTypesGenerator(options.vueCompilerOptions, options.scriptLang),
     inlayHints = mutableListOf(),
   )

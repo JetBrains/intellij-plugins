@@ -20,6 +20,59 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 private val commentDirectiveRE: Regex =
   Regex("""^<!--\s*@vue-(?<name>[-\w]+)\b(?<content>[\s\S]*)-->${'$'}""")
 
+// Reserved words can never be auto-imported bindings, and emitting them as
+// bare array elements is a syntax error (#5267: `[class,]`).
+private val reservedWords = setOf(
+  "arguments",
+  "await",
+  "break",
+  "case",
+  "catch",
+  "class",
+  "const",
+  "continue",
+  "debugger",
+  "default",
+  "delete",
+  "do",
+  "else",
+  "enum",
+  "eval",
+  "export",
+  "extends",
+  "false",
+  "finally",
+  "for",
+  "function",
+  "if",
+  "implements",
+  "import",
+  "in",
+  "instanceof",
+  "interface",
+  "let",
+  "new",
+  "null",
+  "package",
+  "private",
+  "protected",
+  "public",
+  "return",
+  "static",
+  "super",
+  "switch",
+  "this",
+  "throw",
+  "true",
+  "try",
+  "typeof",
+  "var",
+  "void",
+  "while",
+  "with",
+  "yield",
+)
+
 class TemplateCodegenContext {
   private var variableId = 0
   private val hoistVars = mutableMapOf<String, String>()
@@ -249,9 +302,11 @@ class TemplateCodegenContext {
     yield("[")
     for ((varName, map) in contextAccesses) {
       for ((source, offsets) in map) {
-        for (offset in offsets) {
-          yield(DataSegment(varName, source, offset, codeFeatures.importCompletionOnly))
-          yield(",")
+        if (varName !in reservedWords) {
+          for (offset in offsets) {
+            yield(DataSegment(varName, source, offset, codeFeatures.importCompletionOnly))
+            yield(",")
+          }
         }
         offsets.clear()
       }

@@ -50,6 +50,7 @@ object names {
   const val asFunctionalSlot: String = "__VLS_asFunctionalSlot"
   const val directiveBindingRestFields: String = "__VLS_directiveBindingRestFields"
   const val functionalComponentArgsRest: String = "__VLS_functionalComponentArgsRest"
+  const val nonNull: String = "__VLS_nonNull"
   const val omit: String = "__VLS_omit"
   const val tryAsConstant: String = "__VLS_tryAsConstant"
   const val unwrap: String = "__VLS_unwrap"

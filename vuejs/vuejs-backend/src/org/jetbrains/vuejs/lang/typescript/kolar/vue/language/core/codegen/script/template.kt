@@ -5,10 +5,14 @@ import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSpreadMerge
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypedVar
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateTemplate(
@@ -19,8 +23,11 @@ fun generateTemplate(
   yieldAll(generateTemplateComponents(options))
   yieldAll(generateTemplateDirectives(options))
 
+  yield("void ${names.ctx}, ${names.components}, ${names.intrinsics}, ${names.directives}${endOfLine}")
+
   for (name in options.dotValueBindings) {
-    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions)})${endOfLine}")
+    yield("// @ts-ignore${newLine}")
+    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})${endOfLine}")
   }
 
   if (options.templateAndStyleCodes.isNotEmpty()) {
@@ -34,6 +41,7 @@ private fun generateTemplateCtx(
 ): Sequence<Code> = sequence {
   val vueCompilerOptions = options.vueCompilerOptions
   val scriptSetupRanges = options.scriptSetupRanges
+  val scriptLang = options.scriptLang
 
   val exps = mutableListOf<Code>()
   val emitTypes = mutableListOf<String>()
@@ -43,13 +51,13 @@ private fun generateTemplateCtx(
     exps.add(StringSegment("globalThis"))
   }
   if (selfType != null) {
-    exps.add(StringSegment("{} as InstanceType<${names.PickNotAny}<typeof $selfType, new () => {}>>"))
+    exps.add(StringSegment(asType("InstanceType<${names.PickNotAny}<typeof $selfType, new () => {}>>", scriptLang)))
   }
   else {
-    exps.add(StringSegment("{} as import('${vueCompilerOptions.lib}').ComponentPublicInstance"))
+    exps.add(StringSegment(asType("import('${vueCompilerOptions.lib}').ComponentPublicInstance", scriptLang)))
   }
   if (options.templateAndStyleTypes.contains(names.StyleModules)) {
-    exps.add(StringSegment("{} as ${names.StyleModules}"))
+    exps.add(StringSegment(asType(names.StyleModules, scriptLang)))
   }
 
   scriptSetupRanges?.defineEmits?.let { defineEmits ->
@@ -59,8 +67,10 @@ private fun generateTemplateCtx(
     emitTypes.add("typeof ${names.modelEmit}")
   }
   if (emitTypes.isNotEmpty()) {
-    yield("type ${names.EmitProps} = ${names.EmitsToProps}<${names.NormalizeEmits}<${emitTypes.joinToString(" & ")}>>${endOfLine}")
-    exps.add(StringSegment("{} as { \$emit: ${emitTypes.joinToString(" & ")} }"))
+    yieldAll(generateTypeAlias(names.EmitProps, scriptLang) {
+      yield("${names.EmitsToProps}<${names.NormalizeEmits}<${emitTypes.joinToString(" & ")}>>")
+    })
+    exps.add(StringSegment(asType("{ \$emit: ${emitTypes.joinToString(" & ")} }", scriptLang)))
   }
 
   scriptSetupRanges?.defineProps?.let { defineProps ->
@@ -73,8 +83,8 @@ private fun generateTemplateCtx(
     propTypes.add(names.EmitProps)
   }
   if (propTypes.isNotEmpty()) {
-    exps.add(StringSegment("{} as { \$props: ${propTypes.joinToString(" & ")} }"))
-    exps.add(StringSegment("{} as ${propTypes.joinToString(" & ")}"))
+    exps.add(StringSegment(asType("{ \$props: ${propTypes.joinToString(" & ")} }", scriptLang)))
+    exps.add(StringSegment(asType(propTypes.joinToString(" & "), scriptLang)))
   }
 
   yield("const ${names.ctx} = ")
@@ -100,20 +110,28 @@ private fun generateTemplateComponents(
     }
   }
 
-  yield("type ${names.LocalComponents} = ${if (types.isEmpty()) "{}" else types.joinToString(" & ")}${endOfLine}")
-  yield("type ${names.GlobalComponents} = ${
-    if (vueCompilerOptions.target >= 3.5)
-      "import('${vueCompilerOptions.lib}').GlobalComponents"
-    else
-      "import('${vueCompilerOptions.lib}').GlobalComponents & Pick<typeof import('${vueCompilerOptions.lib}'), 'Transition' | 'TransitionGroup' | 'KeepAlive' | 'Suspense' | 'Teleport'>"
-  }${endOfLine}")
-  yield("let ${names.components}!: ${names.LocalComponents} & ${names.GlobalComponents}${endOfLine}")
-  yield("let ${names.intrinsics}!: ${
-    if (vueCompilerOptions.target >= 3.3)
-      "import('${vueCompilerOptions.lib}/jsx-runtime').JSX.IntrinsicElements"
-    else
-      "globalThis.JSX.IntrinsicElements"
-  }${endOfLine}")
+  yieldAll(generateTypeAlias(names.LocalComponents, options.scriptLang) {
+    yield(if (types.isEmpty()) "{}" else types.joinToString(" & "))
+  })
+  yieldAll(generateTypeAlias(names.GlobalComponents, options.scriptLang) {
+    yield(
+      if (vueCompilerOptions.target >= 3.5)
+        "import('${vueCompilerOptions.lib}').GlobalComponents"
+      else
+        "import('${vueCompilerOptions.lib}').GlobalComponents & Pick<typeof import('${vueCompilerOptions.lib}'), 'Transition' | 'TransitionGroup' | 'KeepAlive' | 'Suspense' | 'Teleport'>"
+    )
+  })
+  yieldAll(generateTypedVar("let", names.components, options.scriptLang) {
+    yield("${names.LocalComponents} & ${names.GlobalComponents}")
+  })
+  yieldAll(generateTypedVar("let", names.intrinsics, options.scriptLang) {
+    yield(
+      if (vueCompilerOptions.target >= 3.3)
+        "import('${vueCompilerOptions.lib}/jsx-runtime').JSX.IntrinsicElements"
+      else
+        "globalThis.JSX.IntrinsicElements"
+    )
+  })
 }
 
 private fun generateTemplateDirectives(
@@ -134,8 +152,12 @@ private fun generateTemplateDirectives(
     }
   }
 
-  yield("type ${names.LocalDirectives} = ${if (types.isEmpty()) "{}" else types.joinToString(" & ")}${endOfLine}")
-  yield("let ${names.directives}!: ${names.LocalDirectives} & import('${vueCompilerOptions.lib}').GlobalDirectives${endOfLine}")
+  yieldAll(generateTypeAlias(names.LocalDirectives, options.scriptLang) {
+    yield(if (types.isEmpty()) "{}" else types.joinToString(" & "))
+  })
+  yieldAll(generateTypedVar("let", names.directives, options.scriptLang) {
+    yield("${names.LocalDirectives} & import('${vueCompilerOptions.lib}').GlobalDirectives")
+  })
 }
 
 private fun generateExposedType(lib: String, bindings: Set<String>): String =

@@ -18,16 +18,62 @@ import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRScriptBlock
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 const val newLine: String = "\n"
 const val endOfLine: String = ";\n"
 val identifierRE: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
 
+fun isTsLang(lang: String): Boolean =
+  lang == "ts" || lang == "tsx"
+
+// `{} as T` in TS; `/** @type {T} */ ({})` in JS. The JSDoc cast keeps the
+// same assertion semantics under checkJs, and requires no type-only syntax.
+fun asType(type: String, lang: String): String =
+  if (isTsLang(lang)) "{} as $type" else "/** @type {$type} */ ({})"
+
+// `let name!: T;` in TS; `var name = /** @type {T} */ ({});` in JS.
+fun generateTypedVar(
+  kind: String,
+  name: String,
+  lang: String,
+  type: suspend SequenceScope<Code>.() -> Unit,
+): Sequence<Code> = sequence {
+  if (isTsLang(lang)) {
+    yield("$kind $name!: ")
+    type()
+    yield(endOfLine)
+  }
+  else {
+    yield("var $name = /** @type {")
+    type()
+    yield("} */ ({})$endOfLine")
+  }
+}
+
+// `type name = T;` in TS; `/** @typedef {T} name */` in JS.
+fun generateTypeAlias(
+  name: String,
+  lang: String,
+  type: suspend SequenceScope<Code>.() -> Unit,
+): Sequence<Code> = sequence {
+  if (isTsLang(lang)) {
+    yield("type $name = ")
+    type()
+    yield(endOfLine)
+  }
+  else {
+    yield("/** @typedef {")
+    type()
+    yield("} $name */$newLine")
+  }
+}
+
 // The phantom argument that carries the component library's `Ref` brand into
 // `__VLS_unwrap` / `__VLS_withDotValue`; the helper declarations cannot
 // resolve the library import themselves.
-fun getRefBrandArgument(vueCompilerOptions: VueCompilerOptions): String =
-  "{} as import('${vueCompilerOptions.lib}').Ref<unknown>"
+fun getRefBrandArgument(vueCompilerOptions: VueCompilerOptions, lang: String): String =
+  asType("import('${vueCompilerOptions.lib}').Ref<unknown>", lang)
 
 fun getTypeScriptAST(
   text: String,
