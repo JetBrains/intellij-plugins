@@ -189,6 +189,9 @@ fun generateEventExpression(
 
       yield("// @ts-ignore$newLine")
       yield("(...[\$event]) => {$newLine")
+      // consume $event to avoid TS6133 when the expression doesn't use it
+      yield("void \$event$endOfLine")
+
       yieldAll(generateReasserts(options, ctx, accessMark))
       yieldAll(ctx.generateConditionGuards())
 
