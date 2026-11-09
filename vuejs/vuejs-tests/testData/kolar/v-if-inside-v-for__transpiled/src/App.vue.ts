@@ -20,7 +20,7 @@ let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.ul, __VLS_intrinsics.ul)({
 });
 for (const [item] of __VLS_vFor((__VLS_ctx.items)!)) {
-__VLS_asFunctionalElement(__VLS_intrinsics.template)({
+__VLS_asFunctionalElement1(__VLS_intrinsics.template)({
 key: (item),
 });
 if (item > 1) {

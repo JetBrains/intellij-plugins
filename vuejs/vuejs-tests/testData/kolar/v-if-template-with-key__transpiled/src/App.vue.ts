@@ -27,14 +27,14 @@ return (__VLS_ctx.show = !__VLS_ctx.show);
 }},
 });
 if (__VLS_ctx.show) {
-__VLS_asFunctionalElement(__VLS_intrinsics.template)({
+__VLS_asFunctionalElement1(__VLS_intrinsics.template)({
 key: ('a'),
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
 }
 else {
-__VLS_asFunctionalElement(__VLS_intrinsics.template)({
+__VLS_asFunctionalElement1(__VLS_intrinsics.template)({
 key: ('b'),
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
