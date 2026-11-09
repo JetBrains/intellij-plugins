@@ -4,7 +4,6 @@ import com.intellij.lang.DependentLanguage
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
-import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
@@ -21,10 +20,6 @@ abstract class Angular2ExprDialect(
   abstract val templateSyntax: Angular2TemplateSyntax
 
   abstract fun getKeywords(): TokenSet
-
-  override fun isAtLeast(other: JSLanguageDialect): Boolean {
-    return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT.isAtLeast(other)
-  }
 
   companion object {
 

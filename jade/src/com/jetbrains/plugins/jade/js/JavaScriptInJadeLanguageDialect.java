@@ -4,8 +4,6 @@ package com.jetbrains.plugins.jade.js;
 import com.intellij.lang.DependentLanguage;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSLanguageDialect;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import org.jetbrains.annotations.NotNull;
 
 public class JavaScriptInJadeLanguageDialect extends JSLanguageDialect implements DependentLanguage {
   public static final DialectOptionHolder DIALECT_OPTION_HOLDER = new DialectOptionHolder("JS_IN_JADE", false, true);
@@ -14,10 +12,5 @@ public class JavaScriptInJadeLanguageDialect extends JSLanguageDialect implement
 
   private JavaScriptInJadeLanguageDialect() {
     super("JSInJade", DIALECT_OPTION_HOLDER);
-  }
-
-  @Override
-  public boolean isAtLeast(@NotNull JSLanguageDialect other) {
-    return super.isAtLeast(other) || JavaScriptSupportLoader.ECMA_SCRIPT_6.isAtLeast(other);
   }
 }
