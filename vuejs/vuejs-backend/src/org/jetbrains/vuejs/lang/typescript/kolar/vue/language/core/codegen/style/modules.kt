@@ -26,12 +26,25 @@ fun generateStyleModules(
     yield("{$newLine")
     for (style in styleModules) {
       when (val module = style.module) {
-        is IRAttr.Present -> yield("\$style")
+        is IRAttr.Present -> {
+          val moduleAttrOffset = style.moduleAttrOffset
+          if (moduleAttrOffset == null) {
+            yield("\$style")
+          }
+          else {
+            yield(DataSegment(
+              text = "\$style",
+              source = Source("main"),
+              sourceOffset = moduleAttrOffset,
+              data = codeFeatures.verification,
+            ))
+          }
+        }
         is IRAttr.WithText -> yield(DataSegment(
           text = module.text,
           source = Source("main"),
           sourceOffset = module.offset,
-          data = codeFeatures.navigation,
+          data = codeFeatures.navigationAndVerification,
         ))
         null -> Unit
       }

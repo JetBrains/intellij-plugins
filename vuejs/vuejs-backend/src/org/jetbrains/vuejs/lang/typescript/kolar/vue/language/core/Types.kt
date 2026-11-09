@@ -72,6 +72,7 @@ data class IRStyle(
   override val content: IRContent,
   val src: IRAttr?,
   val module: IRAttr?,
+  val moduleAttrOffset: Int?,
   val scoped: Boolean,
   val imports: List<TextWithOffset>,
   val bindings: List<TextWithOffset>,
