@@ -6,14 +6,18 @@ import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSLiveTemplatesTestBase;
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.Consumer;
 
 import java.util.List;
@@ -50,6 +54,16 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     runTemplateTest(getTestName(false), "mxml", "jsClassName()");
     runTemplateTest(getTestName(false), "as", "jsClassName()");
     runTemplateTest(getTestName(false) + "2", "as", "jsQualifiedClassName()");
+  }
+
+  public void testNoEmmetInMxmlScript() {
+    myFixture.configureByFile(getBasePath() + getTestName(false) + ".mxml");
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+      TemplateManager.getInstance(getProject()).startTemplate(myFixture.getEditor(), TemplateSettings.TAB_CHAR);
+    });
+    NonBlockingReadActionImpl.waitForAsyncTaskCompletion();
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
+    myFixture.checkResultByFile(getBasePath() + getTestName(false) + "_after.mxml");
   }
 
   protected void doTest(final String templateName, final String extension) {
