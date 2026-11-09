@@ -3,28 +3,20 @@
 
 const flags: Record<string, boolean> = { beta: true }
 const key = 'beta'
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-flags: typeof flags;
-key: typeof key;
-}>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-if (__VLS_ctx.flags[__VLS_ctx.key]) {
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(flags, {} as import('vue').Ref<unknown>);
+if (flags.value[__VLS_unwrap(key, {} as import('vue').Ref<unknown>)]) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
 }
-type __VLS_RootEl = 
-| __VLS_Elements['div'];
 // @ts-ignore
 [flags,key,];
 const __VLS_export = (await import('vue')).defineComponent({

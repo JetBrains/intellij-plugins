@@ -10,33 +10,30 @@ const __VLS_export = ((
 	__VLS_setup = (async () => {
 const items = ['a', 'b', 'c']
 const showList = ref(true)
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-showList: typeof showList;
-items: typeof items;
-}>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(showList, {} as import('vue').Ref<unknown>);
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (...[$event]) => {
-return (__VLS_ctx.showList = !__VLS_ctx.showList);
+...{ onClick: // @ts-ignore
+(...[$event]) => {
+void $event;
+return (showList.value = !showList.value);
 // @ts-ignore
 [showList,showList,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.ul, __VLS_intrinsics.ul)({
 });
-if (__VLS_ctx.showList) {
-for (const [item] of __VLS_vFor((__VLS_ctx.items)!)) {
+if (showList.value) {
+const __VLS_0 = __VLS_tryAsConstant((__VLS_unwrap(items, {} as import('vue').Ref<unknown>)));
+for (const [item] of __VLS_vFor(__VLS_nonNull(__VLS_0))) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.li, __VLS_intrinsics.li)({
 key: (item),
 });

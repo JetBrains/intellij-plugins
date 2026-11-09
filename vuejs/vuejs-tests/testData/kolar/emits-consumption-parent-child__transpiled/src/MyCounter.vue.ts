@@ -16,47 +16,43 @@ function onChange() {
 function onReset() {
   emit('reset')
 }
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-count: typeof count;
-onChange: typeof onChange;
-emit: typeof emit;
-onReset: typeof onReset;
-}>;
 type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof emit>>;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
 ...{} as { $emit: typeof emit },
 ...{} as { $props: __VLS_EmitProps },
 ...{} as __VLS_EmitProps,
-...{} as __VLS_SetupExposed,
 };
-type __VLS_LocalComponents = __VLS_SetupExposed;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-( __VLS_ctx.count );
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+( __VLS_unwrap(count, {} as import('vue').Ref<unknown>) );
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (__VLS_ctx.onChange)},
+...{ onClick: (onChange)},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (...[$event]) => {
-return (__VLS_ctx.emit('change', __VLS_ctx.count));
+...{ onClick: // @ts-ignore
+(...[$event]) => {
+void $event;
+return (__VLS_unwrap(emit, {} as import('vue').Ref<unknown>)('change', __VLS_unwrap(count, {} as import('vue').Ref<unknown>)));
 // @ts-ignore
-[count,count,onChange,emit,];
+[count,count,emit,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (__VLS_ctx.onReset)},
+...{ onClick: (onReset)},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (...[$event]) => {
-return (__VLS_ctx.emit('reset'));
+...{ onClick: // @ts-ignore
+(...[$event]) => {
+void $event;
+return (__VLS_unwrap(emit, {} as import('vue').Ref<unknown>)('reset'));
 // @ts-ignore
-[emit,onReset,];
+[emit,];
 }},
 });
 // @ts-ignore
@@ -65,3 +61,4 @@ const __VLS_export = (await import('vue')).defineComponent({
 __typeEmits: {} as __VLS_Emit,
 });
 export default {} as typeof __VLS_export;
+import { defineEmits, } from 'vue';

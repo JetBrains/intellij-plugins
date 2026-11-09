@@ -5,8 +5,6 @@ const props = defineProps({
   count: Number,
   label: { type: String, required: true, default: '' },
 })
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
 ...{} as { $props: typeof props },
@@ -18,6 +16,7 @@ let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 ( props.count );
 ( props.label );
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
@@ -36,3 +35,4 @@ props: {
 },
 });
 export default {} as typeof __VLS_export;
+import { defineProps, } from 'vue';

@@ -4,49 +4,53 @@
 import MyCounter from './MyCounter.vue'
 
 let count = 1
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-count: typeof count;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = import('vue').ShallowUnwrapRef<{
+MyCounter: typeof MyCounter;
 }>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-( __VLS_ctx.count );
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(count, {} as import('vue').Ref<unknown>);
+( count.value );
 const __VLS_0 = MyCounter;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
-...{ 'onChange': {} as any },
-...{ 'onReset': {} as any },
-}));
+// @ts-ignore
+...{ 'onChange': {} as any }, ...{ 'onReset': {} as any }, }));
 const __VLS_2 = __VLS_1({
 ...{ 'onChange': {} as any },
 ...{ 'onReset': {} as any },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 let __VLS_5!: __VLS_ResolveEmits<typeof __VLS_0, typeof __VLS_3.emit>;
-const __VLS_6: __VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onChange', 'change', 'change'> = {
+const __VLS_6: Record<string, unknown> & Partial<__VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onChange', 'change', 'change'>> = {
 /** @type {typeof __VLS_5.change} */
-onChange: (...[$event]) => {
-return (__VLS_ctx.count = $event);
+onChange: // @ts-ignore
+(...[$event]) => {
+void $event;
+__VLS_withDotValue(count, {} as import('vue').Ref<unknown>);
+return (count.value = $event);
 // @ts-ignore
 [count,count,];
 },
 };
-const __VLS_7: __VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onReset', 'reset', 'reset'> = {
+void __VLS_6;
+const __VLS_7: Record<string, unknown> & Partial<__VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onReset', 'reset', 'reset'>> = {
 /** @type {typeof __VLS_5.reset} */
-onReset: (...[$event]) => {
-return (__VLS_ctx.count = 0);
+onReset: // @ts-ignore
+(...[$event]) => {
+void $event;
+__VLS_withDotValue(count, {} as import('vue').Ref<unknown>);
+return (count.value = 0);
 // @ts-ignore
 [count,];
 },
 };
+void __VLS_7;
 var __VLS_3!: __VLS_ExtractComponentContext<typeof __VLS_0, typeof __VLS_2>;
 var __VLS_4!: __VLS_ExtractComponentProps<typeof __VLS_0, typeof __VLS_2>;
 // @ts-ignore

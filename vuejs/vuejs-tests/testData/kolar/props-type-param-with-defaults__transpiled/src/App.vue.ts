@@ -3,9 +3,8 @@
 
 type __VLS_Props = { count?: number };
 const props = withDefaults(defineProps<__VLS_Props>(), { count: 1 })
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 const __VLS_defaults = { count: 1 };
+void __VLS_defaults;
 type __VLS_PublicProps = __VLS_Props;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
@@ -18,6 +17,7 @@ let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 ( props.count );
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 title: (props.count),
@@ -30,3 +30,4 @@ __defaults: __VLS_defaults,
 __typeProps: {} as __VLS_PublicProps,
 });
 export default {} as typeof __VLS_export;
+import { defineProps, withDefaults, } from 'vue';

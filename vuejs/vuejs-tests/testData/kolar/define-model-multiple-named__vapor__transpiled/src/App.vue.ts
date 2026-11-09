@@ -8,8 +8,6 @@ const __VLS_export = ((
 	__VLS_setup = (async () => {
 const title = defineModel<string>('title')
 const count = defineModel<number>('count')
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 type __VLS_ModelProps = {
 'title'?: string;
 'count'?: number;
@@ -20,26 +18,22 @@ type __VLS_ModelEmit = {
 };
 let __VLS_modelEmit!: __VLS_ShortEmits<__VLS_ModelEmit>;
 type __VLS_PublicProps = __VLS_ModelProps;
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-title: typeof title;
-count: typeof count;
-}>;
 type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof __VLS_modelEmit>>;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
 ...{} as { $emit: typeof __VLS_modelEmit },
 ...{} as { $props: __VLS_ModelProps & __VLS_EmitProps },
 ...{} as __VLS_ModelProps & __VLS_EmitProps,
-...{} as __VLS_SetupExposed,
 };
-type __VLS_LocalComponents = __VLS_SetupExposed;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-( __VLS_ctx.title );
-( __VLS_ctx.count );
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+( __VLS_unwrap(title, {} as import('vue').Ref<unknown>) );
+( __VLS_unwrap(count, {} as import('vue').Ref<unknown>) );
 // @ts-ignore
 [title,count,];
 return {} as {
@@ -53,3 +47,4 @@ return {} as {
 ) => ({} as import('vue').VNode & { __ctx?: NonNullable<Awaited<typeof __VLS_setup>> }));
 export default {} as typeof __VLS_export;
 type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};
+import { defineModel, } from 'vue';

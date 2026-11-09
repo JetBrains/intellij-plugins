@@ -11,43 +11,31 @@ const __VLS_export = ((
 	__VLS_setup = (async () => {
 const items = [1, 2, 3]
 const counterRefs = ref<InstanceType<typeof MyCounter>[]>()
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-items: typeof items;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = import('vue').ShallowUnwrapRef<{
+MyCounter: typeof MyCounter;
 }>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-for (const [item] of __VLS_vFor((__VLS_ctx.items)!)) {
-const __VLS_0 = MyCounter;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_0 = __VLS_tryAsConstant((__VLS_unwrap(items, {} as import('vue').Ref<unknown>)));
+for (const [item] of __VLS_vFor(__VLS_nonNull(__VLS_0))) {
+const __VLS_1 = MyCounter;
 // @ts-ignore
-const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
+const __VLS_2 = __VLS_asFunctionalComponent1(__VLS_1, new __VLS_1({
+// @ts-ignore
+key: (item), count: (item), ref: "counterRefs", }));
+const __VLS_3 = __VLS_2({
 key: (item),
 count: (item),
 ref: "counterRefs",
-}));
-const __VLS_2 = __VLS_1({
-key: (item),
-count: (item),
-ref: "counterRefs",
-}, ...__VLS_functionalComponentArgsRest(__VLS_1));
-var __VLS_5!: Parameters<NonNullable<typeof __VLS_3['expose']>>[0];
-var __VLS_3!: __VLS_ExtractComponentContext<typeof __VLS_0, typeof __VLS_2>;
+}, ...__VLS_functionalComponentArgsRest(__VLS_2));
 // @ts-ignore
 [items,];
 }
-// @ts-ignore
-var __VLS_6 = __VLS_5, ;
-type __VLS_TemplateRefs = {}
-& { counterRefs: (typeof __VLS_6 | null)[] };
 // @ts-ignore
 [];
 return {} as {

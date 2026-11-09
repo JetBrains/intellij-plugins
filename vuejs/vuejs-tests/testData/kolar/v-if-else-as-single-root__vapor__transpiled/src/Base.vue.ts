@@ -7,22 +7,17 @@ const __VLS_export = ((
 	__VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>['expose'],
 	__VLS_setup = (async () => {
 const show = true
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-show: typeof show;
-}>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-if (__VLS_ctx.show) {
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(show, {} as import('vue').Ref<unknown>);
+if (show.value) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 ...{ class: "on" },
 });
@@ -34,9 +29,6 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 });
 /** @type {__VLS_StyleScopedClasses['off']} */;
 }
-type __VLS_RootEl = 
-| __VLS_Elements['div']
-| __VLS_Elements['span'];
 // @ts-ignore
 [show,];
 return {} as {

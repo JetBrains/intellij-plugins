@@ -6,8 +6,6 @@ const __VLS_export = ((
 	__VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, 'attrs' | 'emit' | 'slots'>>,
 	__VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>['expose'],
 	__VLS_setup = (async () => {
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
 type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
@@ -15,16 +13,14 @@ let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
 var __VLS_0 = {
 };
-// @ts-ignore
-var __VLS_1 = __VLS_0, ;
+var __VLS_1 = __VLS_0!;
 type __VLS_Slots = {}
 & { default?: (props: typeof __VLS_1) => any };
-type __VLS_RootEl = 
-| __VLS_Elements['div'];
 return {} as {
 	props: import('vue').PublicProps & (typeof globalThis extends { __VLS_PROPS_FALLBACK: infer P } ? P : {});
 	expose: (exposed: {}) => void;

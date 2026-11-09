@@ -7,33 +7,26 @@ const __VLS_export = ((
 	__VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>['expose'],
 	__VLS_setup = (async () => {
 const value: string | number = 'hello'
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-value: typeof value;
-}>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-if (typeof __VLS_ctx.value === 'string') {
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(value, {} as import('vue').Ref<unknown>);
+if (typeof value.value === 'string') {
 __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 });
-( __VLS_ctx.value.toUpperCase() );
+( value.value.toUpperCase() );
 }
 else {
 __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 });
-( __VLS_ctx.value.toFixed(2) );
+( value.value.toFixed(2) );
 }
-type __VLS_RootEl = 
-| __VLS_Elements['span'];
 // @ts-ignore
 [value,value,value,];
 return {} as {

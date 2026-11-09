@@ -11,41 +11,39 @@ const emit = defineEmits(['inFocus', 'submit'])
 function onSubmit() {
   emit('submit')
 }
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-emit: typeof emit;
-onSubmit: typeof onSubmit;
-}>;
 type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof emit>>;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
 ...{} as { $emit: typeof emit },
 ...{} as { $props: __VLS_EmitProps },
 ...{} as __VLS_EmitProps,
-...{} as __VLS_SetupExposed,
 };
-type __VLS_LocalComponents = __VLS_SetupExposed;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onFocus: (...[$event]) => {
-return (__VLS_ctx.emit('inFocus'));
+...{ onFocus: // @ts-ignore
+(...[$event]) => {
+void $event;
+return (__VLS_unwrap(emit, {} as import('vue').Ref<unknown>)('inFocus'));
 // @ts-ignore
 [emit,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (__VLS_ctx.onSubmit)},
+...{ onClick: (onSubmit)},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (...[$event]) => {
-return (__VLS_ctx.emit('submit'));
+...{ onClick: // @ts-ignore
+(...[$event]) => {
+void $event;
+return (__VLS_unwrap(emit, {} as import('vue').Ref<unknown>)('submit'));
 // @ts-ignore
-[emit,onSubmit,];
+[emit,];
 }},
 });
 // @ts-ignore
@@ -61,3 +59,4 @@ return {} as {
 ) => ({} as import('vue').VNode & { __ctx?: NonNullable<Awaited<typeof __VLS_setup>> }));
 export default {} as typeof __VLS_export;
 type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};
+import { defineEmits, } from 'vue';

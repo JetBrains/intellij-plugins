@@ -6,8 +6,8 @@ type __VLS_Slots = {
   footer(props: { value: number }): any
 };
 const __VLS_slots = defineSlots<__VLS_Slots>()
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
+void __VLS_slots;
+
 const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
 type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
@@ -15,6 +15,7 @@ let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 __VLS_asFunctionalSlot(__VLS_slots.header)({
 value: (1),
 });
@@ -30,3 +31,4 @@ type __VLS_WithSlots<T, S> = T & {
 		$slots: S;
 	}
 };
+import { defineSlots, } from 'vue';

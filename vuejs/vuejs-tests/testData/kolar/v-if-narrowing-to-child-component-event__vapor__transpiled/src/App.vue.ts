@@ -15,41 +15,36 @@ interface Foo {
 }
 
 const foo: Foo = {}
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-foo: typeof foo;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = import('vue').ShallowUnwrapRef<{
+MyCounter: typeof MyCounter;
 }>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
-if (__VLS_ctx.foo.bar) {
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(foo, {} as import('vue').Ref<unknown>);
+if (foo.value.bar) {
 const __VLS_0 = MyCounter;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
-...{ 'onClick': {} as any },
-}));
+// @ts-ignore
+...{ 'onClick': {} as any }, }));
 const __VLS_2 = __VLS_1({
 ...{ 'onClick': {} as any },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 let __VLS_5!: __VLS_ResolveEmits<typeof __VLS_0, typeof __VLS_3.emit>;
-const __VLS_6: __VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onClick', 'click', 'click'> = {
+const __VLS_6: Record<string, unknown> & Partial<__VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onClick', 'click', 'click'>> = {
 /** @type {typeof __VLS_5.click} */
-onClick: (__VLS_ctx.foo.bar.baz),
+onClick: (foo.value.bar.baz),
 };
-var __VLS_7!: Parameters<NonNullable<typeof __VLS_3['expose']>>[0];
+void __VLS_6;
 var __VLS_3!: __VLS_ExtractComponentContext<typeof __VLS_0, typeof __VLS_2>;
 var __VLS_4!: __VLS_ExtractComponentProps<typeof __VLS_0, typeof __VLS_2>;
 }
-type __VLS_RootEl = 
-| NonNullable<typeof __VLS_7>['$el'];
 // @ts-ignore
 [foo,foo,];
 return {} as {

@@ -12,13 +12,13 @@ type __VLS_Slots = {
   default(props: { item: T }): any
 };
 const __VLS_slots = defineSlots<__VLS_Slots>()
+void __VLS_slots;
+
 
 function reset(): void {}
 
 let __VLS_exposed!: { reset(): void };
 defineExpose<typeof __VLS_exposed>()
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 type __VLS_PublicProps = __VLS_Props;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
@@ -31,6 +31,7 @@ let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 __VLS_asFunctionalSlot(__VLS_slots['default'])({
 item: (__VLS_ctx.$props.item),
 });
@@ -47,3 +48,4 @@ return {} as {
 ) => ({} as import('vue').VNode & { __ctx?: NonNullable<Awaited<typeof __VLS_setup>> }));
 export default {} as typeof __VLS_export;
 type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};
+import { defineProps, defineSlots, defineExpose, } from 'vue';

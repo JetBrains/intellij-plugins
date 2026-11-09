@@ -6,32 +6,33 @@ import MyCounter from './MyCounter.vue'
 import MyLabel from './MyLabel.vue'
 
 const showCounter = ref(true)
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-showCounter: typeof showCounter;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = import('vue').ShallowUnwrapRef<{
+MyCounter: typeof MyCounter;
+MyLabel: typeof MyLabel;
 }>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+// @ts-ignore
+__VLS_withDotValue(showCounter, {} as import('vue').Ref<unknown>);
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (...[$event]) => {
-return (__VLS_ctx.showCounter = !__VLS_ctx.showCounter);
+...{ onClick: // @ts-ignore
+(...[$event]) => {
+void $event;
+return (showCounter.value = !showCounter.value);
 // @ts-ignore
 [showCounter,showCounter,];
 }},
 });
-if (__VLS_ctx.showCounter) {
+if (showCounter.value) {
 const __VLS_0 = MyCounter;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
+// @ts-ignore
 }));
 const __VLS_2 = __VLS_1({
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
@@ -40,6 +41,7 @@ else {
 const __VLS_5 = MyLabel;
 // @ts-ignore
 const __VLS_6 = __VLS_asFunctionalComponent1(__VLS_5, new __VLS_5({
+// @ts-ignore
 }));
 const __VLS_7 = __VLS_6({
 }, ...__VLS_functionalComponentArgsRest(__VLS_6));

@@ -10,8 +10,6 @@ type __VLS_Emit = {
   submit: [payload: { email: string }]
 };
 const __VLS_emit = defineEmits<__VLS_Emit>()
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
 type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof __VLS_emit>>;
 const __VLS_ctx = {
 ...{} as import('vue').ComponentPublicInstance,
@@ -25,15 +23,16 @@ let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: (...[$event]) => {
+...{ onClick: // @ts-ignore
+(...[$event]) => {
+void $event;
 return (__VLS_ctx.$emit('submit', { email: 'a@b.com' }));
 // @ts-ignore
 [$emit,];
 }},
 });
-type __VLS_RootEl = 
-| __VLS_Elements['button'];
 // @ts-ignore
 [];
 return {} as {
@@ -47,3 +46,4 @@ return {} as {
 ) => ({} as import('vue').VNode & { __ctx?: NonNullable<Awaited<typeof __VLS_setup>> }));
 export default {} as typeof __VLS_export;
 type __VLS_PrettifyLocal<T> = (T extends any ? { [K in keyof T]: T[K]; } : { [K in keyof T as K]: T[K]; }) & {};
+import { defineEmits, } from 'vue';

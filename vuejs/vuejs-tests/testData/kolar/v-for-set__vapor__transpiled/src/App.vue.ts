@@ -7,24 +7,18 @@ const __VLS_export = ((
 	__VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>['expose'],
 	__VLS_setup = (async () => {
 const tags = new Set(['a', 'b', 'c'])
-// @ts-ignore
-declare const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, }: typeof import('vue');
-type __VLS_SetupExposed = import('vue').ShallowUnwrapRef<{
-tags: typeof tags;
-}>;
-const __VLS_ctx = {
-...{} as import('vue').ComponentPublicInstance,
-...{} as __VLS_SetupExposed,
-};
-type __VLS_LocalComponents = __VLS_SetupExposed;
+const __VLS_ctx = {} as import('vue').ComponentPublicInstance;
+type __VLS_LocalComponents = {};
 type __VLS_GlobalComponents = import('vue').GlobalComponents;
 let __VLS_components!: __VLS_LocalComponents & __VLS_GlobalComponents;
 let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
-type __VLS_LocalDirectives = __VLS_SetupExposed;
+type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
+void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.ul, __VLS_intrinsics.ul)({
 });
-for (const [tag] of __VLS_vFor((__VLS_ctx.tags)!)) {
+const __VLS_0 = __VLS_tryAsConstant((__VLS_unwrap(tags, {} as import('vue').Ref<unknown>)));
+for (const [tag] of __VLS_vFor(__VLS_nonNull(__VLS_0))) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.li, __VLS_intrinsics.li)({
 key: (tag),
 });
@@ -32,8 +26,6 @@ key: (tag),
 // @ts-ignore
 [tags,];
 }
-type __VLS_RootEl = 
-| __VLS_Elements['ul'];
 // @ts-ignore
 [];
 return {} as {
