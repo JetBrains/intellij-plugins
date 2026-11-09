@@ -59,6 +59,15 @@ class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints") {
     testTSServiceInlayHints()
   }
 
+  @Test
+  fun testExternalTemplateNoComponent() = doConfiguredTest(
+    Angular2TestModule.ANGULAR_CORE_20_1_4,
+    dir = false,
+    extension = "html",
+  ) {
+    testTSServiceInlayHints()
+  }
+
   override fun setUp() {
     super.setUp()
     myFixture.configureJSInlayHints(
