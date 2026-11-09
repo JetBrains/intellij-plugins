@@ -79,7 +79,15 @@ fun generateInterpolation(
         sourceOffset = start + offset,
         data = data,
       ))
-      yield(DataSegment(".value", block.name, start + offset, codeFeatures.verification))
+      yield(".")
+      val boundary = yield(Boundary.start(
+        block.name,
+        start + offset,
+        start + offset + name.length,
+        codeFeatures.verification,
+      ))
+      yield("value")
+      yield(boundary.end())
     }
     else if (options.setupBindings.contains(name)) {
       // First pass records narrowing accesses here; the second pass emits from dotValueBindings.
@@ -91,7 +99,15 @@ fun generateInterpolation(
           sourceOffset = start + offset,
           data = identifierData,
         ))
-        yield(DataSegment(".value", block.name, start + offset, codeFeatures.verification))
+        yield(".")
+        val boundary = yield(Boundary.start(
+          block.name,
+          start + offset,
+          start + offset + name.length,
+          codeFeatures.verification,
+        ))
+        yield("value")
+        yield(boundary.end())
       }
       else {
         // `new __VLS_unwrap(Foo)()` parses as `new (__VLS_unwrap(Foo)())`,

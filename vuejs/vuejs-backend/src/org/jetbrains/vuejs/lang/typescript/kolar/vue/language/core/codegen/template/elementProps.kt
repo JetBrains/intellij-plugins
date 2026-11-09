@@ -231,13 +231,29 @@ fun generatePropExp(
         shouldIdentifierSkipped(ctx, propVariableName) -> yieldAll(codes)
         options.setupRefs.contains(propVariableName) -> {
           yieldAll(codes)
-          yield(DataSegment(".value", Source("template"), exp.loc.startOffset, codeFeatures.verification))
+          yield(".")
+          val boundary = yield(Boundary.start(
+            Source("template"),
+            exp.loc.startOffset,
+            exp.loc.startOffset + exp.loc.source.length,
+            codeFeatures.verification,
+          ))
+          yield("value")
+          yield(boundary.end())
         }
         options.setupBindings.contains(propVariableName) -> {
           ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
           if (options.dotValueBindings.contains(propVariableName)) {
             yieldAll(codes)
-            yield(DataSegment(".value", Source("template"), exp.loc.startOffset, codeFeatures.verification))
+            yield(".")
+            val boundary = yield(Boundary.start(
+              Source("template"),
+              exp.loc.startOffset,
+              exp.loc.startOffset + exp.loc.source.length,
+              codeFeatures.verification,
+            ))
+            yield("value")
+            yield(boundary.end())
           }
           else {
             yield("${names.unwrap}(")
