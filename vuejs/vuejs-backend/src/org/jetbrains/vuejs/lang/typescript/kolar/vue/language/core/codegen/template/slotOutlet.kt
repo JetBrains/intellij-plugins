@@ -39,7 +39,12 @@ fun generateSlotOutlet(
   if (options.hasDefineSlots) {
     yield("${names.asFunctionalSlot}(")
     if (nameProp != null) {
-      val boundary = yield(Boundary.start(Source("template"), nameProp.loc.startOffset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        nameProp.loc.startOffset,
+        nameProp.loc.endOffset,
+        codeFeatures.verification,
+      ))
       yield(options.slotsAssignName ?: names.slots)
       if (nameProp is AttributeNode && nameProp.value != null) {
         val (content, offset) = normalizeAttributeValue(nameProp.value!!)
@@ -53,23 +58,38 @@ fun generateSlotOutlet(
       else {
         yield("['default']")
       }
-      yield(boundary.end(nameProp.loc.endOffset))
+      yield(boundary.end())
     }
     else {
-      val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        startTagOffset,
+        startTagEndOffset,
+        codeFeatures.verification,
+      ))
       yield("${options.slotsAssignName ?: names.slots}[")
-      val boundary2 = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
+      val boundary2 = yield(Boundary.start(
+        Source("template"),
+        startTagOffset,
+        startTagEndOffset,
+        codeFeatures.verification,
+      ))
       yield("'default'")
-      yield(boundary2.end(startTagEndOffset))
+      yield(boundary2.end())
       yield("]")
-      yield(boundary.end(startTagEndOffset))
+      yield(boundary.end())
     }
     yield(")(")
-    val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      startTagOffset,
+      startTagEndOffset,
+      codeFeatures.verification,
+    ))
     yield("{$newLine")
     yieldAll(generateElementProps(options, ctx, node, node.props.filter { it !== nameProp }, true))
     yield("}")
-    yield(boundary.end(startTagEndOffset))
+    yield(boundary.end())
     yield(")$endOfLine")
   }
   else {

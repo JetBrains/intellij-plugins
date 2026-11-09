@@ -47,17 +47,27 @@ fun generateVSlot(
       ))
     }
     else {
-      val boundary = yield(Boundary.start(Source("template"), slotDir.loc.startOffset, codeFeatures.withoutHighlightAndCompletion))
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        slotDir.loc.startOffset,
+        slotDir.loc.startOffset + (slotDir.rawName?.length ?: 0),
+        codeFeatures.withoutHighlightAndCompletion,
+      ))
       yield("default")
-      yield(boundary.end(slotDir.loc.startOffset + (slotDir.rawName?.length ?: 0)))
+      yield(boundary.end())
     }
   }
   else {
     yield("const { ")
     // #932: reference for implicit default slot
-    val boundary = yield(Boundary.start(Source("template"), node.loc.startOffset, codeFeatures.navigation))
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      node.loc.startOffset,
+      node.loc.endOffset,
+      codeFeatures.navigation,
+    ))
     yield("default")
-    yield(boundary.end(node.loc.endOffset))
+    yield(boundary.end())
   }
   yield(": $slotVar } = $ctxVar.slots!$endOfLine")
 
@@ -151,7 +161,12 @@ private fun generateSlotParameters(
 
   if (types.any { it != null }) {
     yield(", ")
-    val boundary = yield(Boundary.start(Source("template"), exp.loc.startOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      exp.loc.startOffset,
+      exp.loc.endOffset,
+      codeFeatures.verification,
+    ))
     yield("(")
     for (type in types) {
       if (type != null) {
@@ -164,7 +179,7 @@ private fun generateSlotParameters(
       }
     }
     yield(") => [] as any")
-    yield(boundary.end(exp.loc.endOffset))
+    yield(boundary.end())
   }
   yield(")$endOfLine")
 }

@@ -116,9 +116,14 @@ private fun generateSlotsType(
       yieldAll(generateObjectProperty(options, ctx, slot.name, slot.offset, codeFeatures.navigation))
     }
     else {
-      val boundary = yield(Boundary.start(Source("template"), slot.tagRange.first, codeFeatures.navigation))
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        slot.tagRange.first,
+        slot.tagRange.second,
+        codeFeatures.navigation,
+      ))
       yield("default")
-      yield(boundary.end(slot.tagRange.second))
+      yield(boundary.end())
     }
     yield("?: (props: typeof ${slot.propsVar}) => any }")
   }

@@ -93,7 +93,12 @@ fun generateInterpolation(
     }
     else {
       // #1205, #1264
-      val boundary = yield(Boundary.start(block.name, start + offset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(
+        block.name,
+        start + offset,
+        start + offset + name.length,
+        codeFeatures.verification,
+      ))
       if (ctx.dollarVars.contains(name)) {
         yield(names.dollars)
       }
@@ -108,7 +113,7 @@ fun generateInterpolation(
         sourceOffset = start + offset,
         data = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data,
       ))
-      yield(boundary.end(start + offset + name.length))
+      yield(boundary.end())
     }
 
     prevEnd = offset + name.length

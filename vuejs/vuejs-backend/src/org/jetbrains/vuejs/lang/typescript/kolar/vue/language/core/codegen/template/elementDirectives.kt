@@ -27,7 +27,12 @@ fun generateElementDirectives(
   for (rawProp in node.props) {
     val prop = rawProp as? DirectiveNode ?: continue
     if (prop.name == "slot" || prop.name == "on" || prop.name == "model" || prop.name == "bind") continue
-    val boundary = yield(Boundary.start(Source("template"), prop.loc.startOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      prop.loc.startOffset,
+      prop.loc.endOffset,
+      codeFeatures.verification,
+    ))
     if (options.isVapor && !isBuiltInDirective(prop.name)) {
       // vapor custom directives receive a value getter instead of a vdom binding object
       yieldAll(generateIdentifier(options, ctx, prop))
@@ -46,7 +51,7 @@ fun generateElementDirectives(
       yieldAll(generateValue(options, ctx, prop))
       yield("}, null!, null!)")
     }
-    yield(boundary.end(prop.loc.endOffset))
+    yield(boundary.end())
     yield(endOfLine)
   }
 }
@@ -58,7 +63,12 @@ private fun generateIdentifier(
 ): Sequence<Code> = sequence {
   val rawName = "v-" + prop.name
   val startOffset = prop.loc.startOffset
-  val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
+  val boundary = yield(Boundary.start(
+    Source("template"),
+    startOffset,
+    startOffset + rawName.length,
+    codeFeatures.verification,
+  ))
   yield(names.directives)
   yield(".")
   yieldAll(generateCamelized(
@@ -77,7 +87,7 @@ private fun generateIdentifier(
   if (!isBuiltInDirective(prop.name)) {
     ctx.accessVariable(Source("template"), camelize(rawName), prop.loc.startOffset)
   }
-  yield(boundary.end(startOffset + rawName.length))
+  yield(boundary.end())
 }
 
 private fun generateArg(
@@ -90,9 +100,14 @@ private fun generateArg(
   if (arg is SimpleExpressionNode) {
     val startOffset = arg.loc.startOffset + arg.loc.source.indexOf(arg.content)
     if (asBindingProperty) {
-      val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        startOffset,
+        startOffset + arg.content.length,
+        codeFeatures.verification,
+      ))
       yield("arg")
-      yield(boundary.end(startOffset + arg.content.length))
+      yield(boundary.end())
       yield(": ")
     }
     if (arg.isStatic) {
@@ -127,11 +142,14 @@ fun generateModifiers(
   val modifiers = prop.modifiers
   if (modifiers.isNotEmpty()) {
     if (asBindingProperty) {
-      val startOffset = modifiers.first().loc.startOffset - 1
-      val endOffset = modifiers.last().loc.endOffset
-      val boundary = yield(Boundary.start(Source("template"), startOffset, codeFeatures.verification))
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        modifiers.first().loc.startOffset - 1,
+        modifiers.last().loc.endOffset,
+        codeFeatures.verification,
+      ))
       yield(propertyName)
-      yield(boundary.end(endOffset))
+      yield(boundary.end())
       yield(": ")
     }
     yield("{ ")
@@ -154,17 +172,22 @@ private fun generateValue(
 ): Sequence<Code> = sequence {
   val exp = prop.exp
   if (exp is SimpleExpressionNode) {
-    val boundary = yield(Boundary.start(Source("template"), exp.loc.startOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      exp.loc.startOffset,
+      exp.loc.endOffset,
+      codeFeatures.verification,
+    ))
     if (asBindingProperty) {
       yield("value")
-      yield(boundary.end(exp.loc.endOffset))
+      yield(boundary.end())
       yield(": ")
       yieldAll(generatePropExp(options, ctx, prop, exp))
     }
     else {
       yield("() => ")
       yieldAll(generatePropExp(options, ctx, prop, exp))
-      yield(boundary.end(exp.loc.endOffset))
+      yield(boundary.end())
     }
     yield(", ")
   }

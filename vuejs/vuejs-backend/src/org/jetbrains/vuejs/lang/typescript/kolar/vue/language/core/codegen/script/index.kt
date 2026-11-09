@@ -63,7 +63,12 @@ private fun generateWorker(
     else
       codeFeatures.all
     yield("import ${names.src} from ")
-    val boundary = yield(Boundary.start(script.name, scriptSrc.offset, features))
+    val boundary = yield(Boundary.start(
+      script.name,
+      scriptSrc.offset,
+      scriptSrc.offset + scriptSrc.text.length,
+      features,
+    ))
     yield("'")
     yield(DataSegment(
       text = src.substring(0, scriptSrc.text.length),
@@ -73,7 +78,7 @@ private fun generateWorker(
     ))
     yield(src.substring(scriptSrc.text.length))
     yield("'")
-    yield(boundary.end(scriptSrc.offset + scriptSrc.text.length))
+    yield(boundary.end())
     yield(endOfLine)
     yield("export default ${names.src}${endOfLine}")
     yieldAll(generateTemplate(options, ctx, names.src))
@@ -254,8 +259,13 @@ private fun generateExportDeclareEqual(
   name: String,
 ): Sequence<Code> = sequence {
   yield("const ")
-  val boundary = yield(Boundary.start(block.name, block.content.startOffset, codeFeatures.doNotReportTs6133))
+  val boundary = yield(Boundary.start(
+    block.name,
+    block.content.startOffset,
+    block.content.endOffset,
+    codeFeatures.doNotReportTs6133,
+  ))
   yield(name)
-  yield(boundary.end(block.content.endOffset))
+  yield(boundary.end())
   yield(" = ")
 }

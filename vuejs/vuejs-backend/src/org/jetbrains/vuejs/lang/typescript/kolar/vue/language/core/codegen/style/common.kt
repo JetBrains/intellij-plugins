@@ -19,7 +19,12 @@ fun generateClassProperty(
   propertyType: String,
 ): Sequence<Code> = sequence {
   yield("$newLine & { ")
-  val boundary = yield(Boundary.start(source, offset, codeFeatures.navigation))
+  val boundary = yield(Boundary.start(
+    source,
+    offset,
+    offset + classNameWithDot.length,
+    codeFeatures.navigation,
+  ))
   yield("'")
   yield(DataSegment(
     text = classNameWithDot.substring(1),
@@ -28,7 +33,7 @@ fun generateClassProperty(
     data = boundary.features,
   ))
   yield("'")
-  yield(boundary.end(offset + classNameWithDot.length))
+  yield(boundary.end())
   yield(": $propertyType")
   yield(" }")
 }
@@ -39,7 +44,12 @@ fun generateStyleImports(
   val src = style.src
   if (src is IRAttr.WithText) {
     yield("$newLine & typeof import(")
-    val boundary = yield(Boundary.start(Source("main"), src.offset, codeFeatures.navigationAndVerification))
+    val boundary = yield(Boundary.start(
+      Source("main"),
+      src.offset,
+      src.offset + src.text.length,
+      codeFeatures.navigationAndVerification,
+    ))
     yield("'")
     yield(DataSegment(
       text = src.text,
@@ -48,7 +58,7 @@ fun generateStyleImports(
       data = boundary.features,
     ))
     yield("'")
-    yield(boundary.end(src.offset + src.text.length))
+    yield(boundary.end())
     yield(").default")
   }
   for ((text, offset) in style.imports) {

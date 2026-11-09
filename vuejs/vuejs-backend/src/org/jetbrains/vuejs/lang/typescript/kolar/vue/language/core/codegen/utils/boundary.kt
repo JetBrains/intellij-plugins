@@ -11,23 +11,25 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInform
 class Boundary
 private constructor(
   private val source: Source,
+  private val endOffset: Int,
   val features: VueCodeInformation,
 ) {
   companion object {
     fun start(
       source: Source,
       startOffset: Int,
+      endOffset: Int,
       features: VueCodeInformation,
     ): ValueWithReturn<Code, Boundary> {
       val token = CombineToken(source)
       val boundaryFeatures = features.copy(__combineToken = token)
       return ValueWithReturn(
         value = DataSegment(text = "", source = source, sourceOffset = startOffset, data = boundaryFeatures),
-        returnValue = Boundary(source, boundaryFeatures),
+        returnValue = Boundary(source, endOffset, boundaryFeatures),
       )
     }
   }
 
-  fun end(endOffset: Int): Code =
+  fun end(): Code =
     DataSegment(text = "", source = source, sourceOffset = endOffset, data = features)
 }

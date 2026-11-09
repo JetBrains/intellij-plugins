@@ -45,11 +45,11 @@ fun generateObjectProperty(
       yieldAll(generateCamelized(code, Source("template"), offset, features))
     }
     else {
-      val boundary = yield(Boundary.start(Source("template"), offset, features))
+      val boundary = yield(Boundary.start(Source("template"), offset, offset + code.length, features))
       yield("'")
       yieldAll(generateCamelized(code, Source("template"), offset, boundary.features))
       yield("'")
-      yield(boundary.end(offset + code.length))
+      yield(boundary.end())
     }
   }
   else {

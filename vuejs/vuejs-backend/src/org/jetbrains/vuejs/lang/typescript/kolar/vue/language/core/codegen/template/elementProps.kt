@@ -98,7 +98,12 @@ fun generateElementProps(
         val shouldCamelize = getShouldCamelize(options, node, directiveProp, propName)
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
-        val boundary = yield(Boundary.start(Source("template"), directiveProp.loc.startOffset, codeFeatures.verification))
+        val boundary = yield(Boundary.start(
+          Source("template"),
+          directiveProp.loc.startOffset,
+          directiveProp.loc.endOffset,
+          codeFeatures.verification,
+        ))
         if (directiveProp.arg != null) {
           yieldAll(generateObjectProperty(options, ctx, propName, directiveProp.arg!!.loc.startOffset, features, shouldCamelize))
         }
@@ -106,17 +111,23 @@ fun generateElementProps(
           val boundary2 = yield(Boundary.start(
             Source("template"),
             directiveProp.loc.startOffset,
+            directiveProp.loc.startOffset + "v-model".length,
             codeFeatures.withoutHighlightAndCompletion
           ))
           yield(propName)
-          yield(boundary2.end(directiveProp.loc.startOffset + "v-model".length))
+          yield(boundary2.end())
         }
         yield(": ")
         val argLoc = directiveProp.arg?.loc ?: directiveProp.loc
-        val boundary3 = yield(Boundary.start(Source("template"), argLoc.startOffset, codeFeatures.verification))
+        val boundary3 = yield(Boundary.start(
+          Source("template"),
+          argLoc.startOffset,
+          argLoc.endOffset,
+          codeFeatures.verification,
+        ))
         yieldAll(generatePropExp(options, ctx, directiveProp, directiveProp.exp as? SimpleExpressionNode))
-        yield(boundary3.end(argLoc.endOffset))
-        yield(boundary.end(directiveProp.loc.endOffset))
+        yield(boundary3.end())
+        yield(boundary.end())
         if (shouldSpread) yield(" }")
         yield(",$newLine")
         if (isComponent && directiveProp.name == "model" && directiveProp.modifiers.isNotEmpty()) {
@@ -136,7 +147,12 @@ fun generateElementProps(
         val shouldCamelize = getShouldCamelize(options, node, attrProp, attrProp.name)
         val features = getPropsCodeFeatures(checkUnknownProps)
         if (shouldSpread) yield("...{ ")
-        val boundary = yield(Boundary.start(Source("template"), attrProp.loc.startOffset, codeFeatures.verification))
+        val boundary = yield(Boundary.start(
+          Source("template"),
+          attrProp.loc.startOffset,
+          attrProp.loc.endOffset,
+          codeFeatures.verification,
+        ))
         // Pug shorthand syntax (was here, but removed)
         yieldAll(generateObjectProperty(options, ctx, attrProp.name, attrProp.loc.startOffset, features, shouldCamelize))
         yield(": ")
@@ -145,7 +161,7 @@ fun generateElementProps(
           attrProp.value != null -> yieldAll(generateAttrValue(attrProp.value!!, codeFeatures.withoutNavigation))
           else -> yield("true")
         }
-        yield(boundary.end(attrProp.loc.endOffset))
+        yield(boundary.end())
         if (shouldSpread) yield(" }")
         yield(",$newLine")
       }
@@ -155,10 +171,15 @@ fun generateElementProps(
           failedPropExps?.add(FailedPropExpressions(simpleExp, "(", ")"))
         }
         else {
-          val boundary = yield(Boundary.start(Source("template"), simpleExp.loc.startOffset, codeFeatures.verification))
+          val boundary = yield(Boundary.start(
+            Source("template"),
+            simpleExp.loc.startOffset,
+            simpleExp.loc.endOffset,
+            codeFeatures.verification,
+          ))
           yield("...")
           yieldAll(generatePropExp(options, ctx, directiveProp, simpleExp))
-          yield(boundary.end(simpleExp.loc.endOffset))
+          yield(boundary.end())
           yield(",$newLine")
         }
       }

@@ -17,7 +17,7 @@ fun generateStringLiteralKey(
     yield("'$code'")
   }
   else {
-    val boundary = yield(Boundary.start(Source("template"), offset, info))
+    val boundary = yield(Boundary.start(Source("template"), offset, offset + code.length, info))
     yield("'")
     yield(DataSegment(
       text = code,
@@ -26,6 +26,6 @@ fun generateStringLiteralKey(
       data = boundary.features,
     ))
     yield("'")
-    yield(boundary.end(offset + code.length))
+    yield(boundary.end())
   }
 }

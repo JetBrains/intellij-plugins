@@ -254,9 +254,14 @@ fun generateSetupFunction(
       transforms.add(insert(useCssModule.callExp.end) {
         sequence {
           yield(" as ${type}[")
-          val boundary = yield(Boundary.start(scriptSetup.name, useCssModule.exp.start, codeFeatures.verification))
+          val boundary = yield(Boundary.start(
+            scriptSetup.name,
+            useCssModule.exp.start,
+            useCssModule.exp.end,
+            codeFeatures.verification,
+          ))
           yield("'\$style'")
-          yield(boundary.end(useCssModule.exp.end))
+          yield(boundary.end())
           yield("])")
         }
       })

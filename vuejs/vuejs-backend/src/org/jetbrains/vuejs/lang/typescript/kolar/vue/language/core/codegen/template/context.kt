@@ -167,6 +167,7 @@ class TemplateCodegenContext {
       val boundary = yield(Boundary.start(
         source = Source("template"),
         startOffset = expectError.node.loc.startOffset,
+        endOffset = expectError.node.loc.endOffset,
         features = VueCodeInformation(
           verification = object : VerificationInfo.WithFilter {
             // If no errors/warnings/diagnostics were reported within the region of code covered
@@ -181,7 +182,7 @@ class TemplateCodegenContext {
         ),
       ))
       yield("// @ts-expect-error")
-      yield(boundary.end(expectError.node.loc.endOffset))
+      yield(boundary.end())
       yield("$newLine$endOfLine")
     }
   }

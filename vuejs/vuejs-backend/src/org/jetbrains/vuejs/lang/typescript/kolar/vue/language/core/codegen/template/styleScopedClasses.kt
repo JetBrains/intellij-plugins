@@ -139,7 +139,12 @@ fun generateStyleScopedClassReference(
   }
 
   yield("/** @type {${names.StyleScopedClasses}[")
-  val boundary = yield(Boundary.start(block.name, fullStart, codeFeatures.navigationAndCompletion))
+  val boundary = yield(Boundary.start(
+    block.name,
+    fullStart,
+    offset + className.length,
+    codeFeatures.navigationAndCompletion,
+  ))
   yield("'")
   yieldAll(generateEscaped(
     className,
@@ -149,6 +154,6 @@ fun generateStyleScopedClassReference(
     classNameEscapeRE,
   ))
   yield("'")
-  yield(boundary.end(offset + className.length))
+  yield(boundary.end())
   yield("]} */$endOfLine")
 }

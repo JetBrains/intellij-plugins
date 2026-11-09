@@ -132,18 +132,17 @@ fun generateEventArg(
       codeFeatures.doNotReportTs2353AndTs2561.verification,
   )
   val camelizedName = if (directive.isNotEmpty()) capitalize(name) else name
+  val boundary = yield(Boundary.start(Source("template"), start, start + camelizedName.length, computedFeatures))
   if (identifierRE.matches(camelize(camelizedName))) {
-    val boundary = yield(Boundary.start(Source("template"), start, computedFeatures))
     yield(directive)
     yieldAll(generateCamelized(camelizedName, Source("template"), start, boundary.features))
   }
   else {
-    val boundary = yield(Boundary.start(Source("template"), start, computedFeatures))
     yield("'")
     yield(directive)
     yieldAll(generateCamelized(camelizedName, Source("template"), start, boundary.features))
     yield("'")
-    yield(boundary.end(start + name.length))
+    yield(boundary.end())
   }
 }
 

@@ -196,20 +196,30 @@ fun generateComponent(
   yield("}))$endOfLine")
 
   yield("const ")
-  val boundary = yield(Boundary.start(Source("template"), node.loc.startOffset, codeFeatures.doNotReportTs6133))
+  val boundary = yield(Boundary.start(
+    Source("template"),
+    node.loc.startOffset,
+    node.loc.endOffset,
+    codeFeatures.doNotReportTs6133,
+  ))
   yield(vnodeVar)
-  yield(boundary.end(node.loc.endOffset))
+  yield(boundary.end())
   yield(" = $functionalVar")
 
   val generic = ctx.getCommentInfo().generic
   if (generic != null) {
     val content = generic.content
     val offset = generic.offset
-    val genericBoundary = yield(Boundary.start(Source("template"), offset, codeFeatures.verification))
+    val genericBoundary = yield(Boundary.start(
+      Source("template"),
+      offset,
+      offset + content.length,
+      codeFeatures.verification,
+    ))
     yield("<")
     yield(DataSegment(text = content, source = Source("template"), sourceOffset = offset, data = codeFeatures.all))
     yield(">")
-    yield(genericBoundary.end(offset + content.length))
+    yield(genericBoundary.end())
   }
 
   val shouldInheritAttrs = hasVBindAttrs(options, ctx, node)
@@ -218,6 +228,7 @@ fun generateComponent(
   val boundary2 = yield(Boundary.start(
     Source("template"),
     startTagOffset,
+    startTagOffset + tag.length,
     if (shouldInheritAttrs && options.vueCompilerOptions.checkRequiredFallthroughAttributes) VueCodeInformation()
     else codeFeatures.verification,
   ))
@@ -231,7 +242,7 @@ fun generateComponent(
   yield(newLine)
   yieldAll(propCodes)
   yield("}")
-  yield(boundary2.end(startTagOffset + tag.length))
+  yield(boundary2.end())
   yield(", ...${names.functionalComponentArgsRest}($functionalVar))$endOfLine")
 
   yieldAll(generateFailedExpressions(options, ctx, failedPropExps))
@@ -323,7 +334,12 @@ fun generateElement(
     ))
   }
   yield(")(")
-  val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
+  val boundary = yield(Boundary.start(
+    Source("template"),
+    startTagOffset,
+    startTagOffset + node.tag.length,
+    codeFeatures.verification,
+  ))
   yield("{$newLine")
   yieldAll(generateElementProps(
     options = options,
@@ -334,7 +350,7 @@ fun generateElement(
     failedPropExps = failedPropExps,
   ))
   yield("}")
-  yield(boundary.end(startTagOffset + node.tag.length))
+  yield(boundary.end())
   yield(")$endOfLine")
 
   yieldAll(generateFailedExpressions(options, ctx, failedPropExps))
@@ -373,7 +389,12 @@ fun generateFragment(
   // special case for <template v-for="..." :key="..." />
   if (node.props.isNotEmpty()) {
     yield("__VLS_asFunctionalElement(${names.intrinsics}.template)(")
-    val boundary = yield(Boundary.start(Source("template"), startTagOffset, codeFeatures.verification))
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      startTagOffset,
+      startTagOffset + node.tag.length,
+      codeFeatures.verification,
+    ))
     yield("{$newLine")
     yieldAll(generateElementProps(
       options = options,
@@ -383,7 +404,7 @@ fun generateFragment(
       checkUnknownProps = options.vueCompilerOptions.checkUnknownProps,
     ))
     yield("}")
-    yield(boundary.end(startTagOffset + node.tag.length))
+    yield(boundary.end())
     yield(")$endOfLine")
   }
 
