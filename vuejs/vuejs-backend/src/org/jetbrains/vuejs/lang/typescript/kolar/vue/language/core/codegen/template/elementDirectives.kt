@@ -54,10 +54,9 @@ fun generateElementDirectives(
       yieldAll(generateModifiers(options, ctx, prop))
       yieldAll(generateValue(options, ctx, prop))
       // Vue invokes hooks with all four arguments regardless of the declared
-      // arity. The excess-argument error (TS2554) lands on the first extra
-      // argument, so the synthetic trailing args get their own @ts-ignore'd
-      // line; when the arity matches, the binding above is checked as usual.
-      yield("},${newLine}// @ts-ignore${newLine}null, null)")
+      // arity; the padded hook keeps the declared params checked, so the
+      // synthetic vnode args are `never` to stay assignable to whatever they declare.
+      yield("},${newLine}${names.nonNull}(null), ${names.nonNull}(null))")
     }
     yield(boundary.end())
     yield(endOfLine)
