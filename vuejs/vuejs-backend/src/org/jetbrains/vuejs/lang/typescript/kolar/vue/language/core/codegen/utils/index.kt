@@ -51,7 +51,7 @@ fun generateTypedVar(
   }
 }
 
-// `type name = T;` in TS; `/** @typedef {T} name */` in JS.
+// `type name = T;` in TS; `/** @typedef {T} name */;` in JS.
 fun generateTypeAlias(
   name: String,
   lang: String,
@@ -65,7 +65,7 @@ fun generateTypeAlias(
   else {
     yield("/** @typedef {")
     type()
-    yield("} $name */$newLine")
+    yield("} $name */$endOfLine")
   }
 }
 
