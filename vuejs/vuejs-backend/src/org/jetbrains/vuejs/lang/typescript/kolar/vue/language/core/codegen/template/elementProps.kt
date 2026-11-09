@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.picomatch.isMatch
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.AttributeNode
@@ -23,7 +22,6 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.asType
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateUnicode
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateAttr
@@ -225,49 +223,15 @@ fun generatePropExp(
           __shorthandExpression = VueCodeInformation.ShorthandExpression.html,
         ),
       ).toList()
-      // Keep in sync with the access strategy in interpolation.kt.
-      when {
-        options.setupConsts.contains(propVariableName) -> yieldAll(codes)
-        shouldIdentifierSkipped(ctx, propVariableName) -> yieldAll(codes)
-        options.setupRefs.contains(propVariableName) -> {
-          yieldAll(codes)
-          yield(".")
-          val boundary = yield(Boundary.start(
-            Source("template"),
-            exp.loc.startOffset,
-            exp.loc.startOffset + exp.loc.source.length,
-            codeFeatures.verification,
-          ))
-          yield("value")
-          yield(boundary.end())
-        }
-        options.setupBindings.contains(propVariableName) -> {
-          ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
-          if (options.dotValueBindings.contains(propVariableName)) {
-            yieldAll(codes)
-            yield(".")
-            val boundary = yield(Boundary.start(
-              Source("template"),
-              exp.loc.startOffset,
-              exp.loc.startOffset + exp.loc.source.length,
-              codeFeatures.verification,
-            ))
-            yield("value")
-            yield(boundary.end())
-          }
-          else {
-            yield("${names.unwrap}(")
-            yieldAll(codes)
-            yield(", ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})")
-          }
-        }
-        else -> {
-          ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
-          yield(names.ctx)
-          yield(".")
-          yieldAll(codes)
-        }
-      }
+      yieldAll(generateIdentifier(
+        options = options,
+        ctx = ctx,
+        codes = codes,
+        name = propVariableName,
+        source = Source("template"),
+        start = exp.loc.startOffset,
+        end = exp.loc.endOffset,
+      ))
       ctx.inlayHints.add(createVBindShorthandInlayHintInfo(prop.loc, propVariableName))
     }
   }

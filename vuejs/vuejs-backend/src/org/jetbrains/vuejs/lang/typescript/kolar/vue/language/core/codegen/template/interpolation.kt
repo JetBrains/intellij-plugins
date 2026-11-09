@@ -35,7 +35,6 @@ fun generateInterpolation(
 
   var prevEnd = 0
   for ((name, offset, isShorthand, isNarrowing, inTypeQuery, isNewOperand) in forEachIdentifiers(options, ctx, code, prefix, suffix, inNarrowing)) {
-    val identifierData = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data
     if (isShorthand) {
       yieldAll(generateNonIdentifierCode(
         code = code.substring(prevEnd, offset + name.length),
@@ -56,102 +55,25 @@ fun generateInterpolation(
       ))
     }
 
-    // Access strategy, in precedence order (keep in sync with the v-bind
-    // shorthand handling in elementProps.kt):
-    // - destructured props / imported components → direct reference
-    // - template refs → direct `.value`
-    // - dotValue bindings (narrowed at least once anywhere) → `.value` at
-    //   every position; narrowing then works on the `.value` reference chain
-    // - other bindings → `__VLS_unwrap` (plain reads keep the original type)
-    // - otherwise → `__VLS_ctx.<name>`
-    if (options.setupConsts.contains(name)) {
-      yield(DataSegment(
-        text = name,
-        source = block.name,
-        sourceOffset = start + offset,
-        data = identifierData,
-      ))
-    }
-    else if (options.setupRefs.contains(name)) {
-      yield(DataSegment(
-        text = name,
-        source = block.name,
-        sourceOffset = start + offset,
-        data = data,
-      ))
-      yield(".")
-      val boundary = yield(Boundary.start(
-        block.name,
-        start + offset,
-        start + offset + name.length,
-        codeFeatures.verification,
-      ))
-      yield("value")
-      yield(boundary.end())
-    }
-    else if (options.setupBindings.contains(name)) {
-      // First pass records narrowing accesses here; the second pass emits from dotValueBindings.
-      ctx.accessVariable(block.name, name, start + offset, inTypeQuery || isNarrowing)
-      if (inTypeQuery || options.dotValueBindings.contains(name)) {
-        yield(DataSegment(
-          text = name,
-          source = block.name,
-          sourceOffset = start + offset,
-          data = identifierData,
-        ))
-        yield(".")
-        val boundary = yield(Boundary.start(
-          block.name,
-          start + offset,
-          start + offset + name.length,
-          codeFeatures.verification,
-        ))
-        yield("value")
-        yield(boundary.end())
-      }
-      else {
-        // `new __VLS_unwrap(Foo)()` parses as `new (__VLS_unwrap(Foo)())`,
-        // whose target lacks a construct signature; keep the operand parenthesized.
-        if (isNewOperand) {
-          yield("(")
-        }
-        yield("${names.unwrap}(")
-        yield(DataSegment(
-          text = name,
-          source = block.name,
-          sourceOffset = start + offset,
-          data = identifierData,
-        ))
-        yield(", ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})")
-        if (isNewOperand) {
-          yield(")")
-        }
-      }
-    }
-    else {
-      // #1205, #1264
-      val boundary = yield(Boundary.start(
-        block.name,
-        start + offset,
-        start + offset + name.length,
-        codeFeatures.verification,
-      ))
-      if (ctx.dollarVars.contains(name)) {
-        yield(names.dollars)
-      }
-      else {
-        ctx.accessVariable(block.name, name, start + offset)
-        yield(names.ctx)
-      }
-      yield(".")
-      yield(DataSegment(
-        text = name,
-        source = block.name,
-        sourceOffset = start + offset,
-        data = identifierData,
-      ))
-      yield(boundary.end())
-    }
+    val codes = listOf<Code>(DataSegment(
+      text = name,
+      source = block.name,
+      sourceOffset = start + offset,
+      data = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data,
+    ))
+
+    yieldAll(generateIdentifier(
+      options = options,
+      ctx = ctx,
+      codes = codes,
+      name = name,
+      source = block.name,
+      start = start + offset,
+      end = start + offset + name.length,
+      isNarrowing = isNarrowing,
+      inTypeQuery = inTypeQuery,
+      isNewOperand = isNewOperand,
+    ))
 
     prevEnd = offset + name.length
   }
@@ -201,6 +123,92 @@ private fun generateNonIdentifierCode(
   ))
   if (code.length > 1) {
     yield(DataSegment(text = code.substring(1), source = source, sourceOffset = offset + 1, data = data))
+  }
+}
+
+// Access strategy, in precedence order:
+// - setup consts → direct reference
+// - local-scope / global names → direct reference (the interpolation path
+//   filters these earlier; the v-bind shorthand path relies on this branch)
+// - template refs → direct `.value`
+// - dotValue bindings (narrowed at least once anywhere) → `.value` at
+//   every position; narrowing then works on the `.value` reference chain
+// - other bindings → `__VLS_unwrap` (plain reads keep the original type)
+// - otherwise → `__VLS_ctx.<name>`
+fun generateIdentifier(
+  options: CommonCodegenOptions,
+  ctx: TemplateCodegenContext,
+  codes: List<Code>,
+  name: String,
+  source: Source,
+  start: Int,
+  end: Int,
+  isNarrowing: Boolean = false,
+  inTypeQuery: Boolean = false,
+  isNewOperand: Boolean = false,
+): Sequence<Code> = sequence {
+  if (options.setupConsts.contains(name) || shouldIdentifierSkipped(ctx, name)) {
+    yieldAll(codes)
+  }
+  else if (options.setupRefs.contains(name)) {
+    yieldAll(codes)
+    yield(".")
+    val boundary = yield(Boundary.start(
+      source,
+      start,
+      end,
+      codeFeatures.verification,
+    ))
+    yield("value")
+    yield(boundary.end())
+  }
+  else if (options.setupBindings.contains(name)) {
+    // First pass records narrowing accesses here; the second pass emits from dotValueBindings.
+    ctx.accessVariable(source, name, start, inTypeQuery || isNarrowing)
+    if (inTypeQuery || options.dotValueBindings.contains(name)) {
+      yieldAll(codes)
+      yield(".")
+      val boundary = yield(Boundary.start(
+        source,
+        start,
+        end,
+        codeFeatures.verification,
+      ))
+      yield("value")
+      yield(boundary.end())
+    }
+    else {
+      // `new __VLS_unwrap(Foo)()` parses as `new (__VLS_unwrap(Foo)())`,
+      // whose target lacks a construct signature; keep the operand parenthesized.
+      if (isNewOperand) {
+        yield("(")
+      }
+      yield("${names.unwrap}(")
+      yieldAll(codes)
+      yield(", ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})")
+      if (isNewOperand) {
+        yield(")")
+      }
+    }
+  }
+  else {
+    // #1205, #1264
+    val boundary = yield(Boundary.start(
+      source,
+      start,
+      end,
+      codeFeatures.verification,
+    ))
+    if (ctx.dollarVars.contains(name)) {
+      yield(names.dollars)
+    }
+    else {
+      ctx.accessVariable(source, name, start)
+      yield(names.ctx)
+    }
+    yield(".")
+    yieldAll(codes)
+    yield(boundary.end())
   }
 }
 
