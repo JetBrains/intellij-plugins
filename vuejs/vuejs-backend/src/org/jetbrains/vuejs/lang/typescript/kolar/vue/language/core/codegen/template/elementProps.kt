@@ -223,8 +223,14 @@ fun generatePropExp(
         ),
       ).toList()
       when {
+        options.destructuredProps.contains(propVariableName) || options.importedComponents.contains(propVariableName) -> yieldAll(codes)
         shouldIdentifierSkipped(ctx, propVariableName) -> yieldAll(codes)
         options.setupRefs.contains(propVariableName) -> {
+          yieldAll(codes)
+          yield(".value")
+        }
+        options.setupBindings.contains(propVariableName) -> {
+          ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
           yieldAll(codes)
           yield(".value")
         }

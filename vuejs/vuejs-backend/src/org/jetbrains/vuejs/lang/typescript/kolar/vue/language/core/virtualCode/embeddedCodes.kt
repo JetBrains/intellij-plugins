@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode
 
-import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.js.symbol.Symbol
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
@@ -14,7 +13,6 @@ class VueEmbeddedCode(
   var content: List<Code>,
 ) {
   var parentCodeId: String? = null
-  val linkedCodeMappings: MutableList<KolarMapping<Nothing?>> = mutableListOf()
   val embeddedCodes: MutableList<VueEmbeddedCode> = mutableListOf()
 
   companion object {
@@ -43,24 +41,6 @@ fun getMappingsForCode(
         val builder = mapping.toBuilder()
         tokenMappings[combineToken] = builder
         newMappings.add(builder)
-      }
-      continue
-    }
-    val linkedToken = mapping.data.__linkedToken
-    if (linkedToken != null) {
-      val prevMapping = tokenMappings[linkedToken]
-      if (prevMapping != null) {
-        code.linkedCodeMappings.add(
-          KolarMapping(
-            sourceOffsets = intArrayOf(prevMapping.generatedOffsets[0]),
-            generatedOffsets = intArrayOf(mapping.generatedOffsets[0]),
-            lengths = intArrayOf(linkedToken.value),
-            data = null,
-          )
-        )
-      }
-      else {
-        tokenMappings[linkedToken] = mapping.toBuilder()
       }
       continue
     }

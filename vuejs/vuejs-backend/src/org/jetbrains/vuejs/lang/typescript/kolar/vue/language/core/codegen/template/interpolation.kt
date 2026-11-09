@@ -85,12 +85,35 @@ fun generateInterpolation(
       ))
     }
 
-    if (options.setupRefs.contains(name)) {
+    // Access strategy, in precedence order:
+    // - destructured props / imported components → direct reference
+    // - template refs → direct `.value`
+    // - other bindings → `.value` + `__VLS_withDotValue` assertion
+    // - otherwise → `__VLS_ctx.<name>`
+    if (options.destructuredProps.contains(name) || options.importedComponents.contains(name)) {
+      yield(DataSegment(
+        text = name,
+        source = block.name,
+        sourceOffset = start + offset,
+        data = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data,
+      ))
+    }
+    else if (options.setupRefs.contains(name)) {
       yield(DataSegment(
         text = name,
         source = block.name,
         sourceOffset = start + offset,
         data = data,
+      ))
+      yield(".value")
+    }
+    else if (options.setupBindings.contains(name)) {
+      ctx.accessVariable(block.name, name, start + offset)
+      yield(DataSegment(
+        text = name,
+        source = block.name,
+        sourceOffset = start + offset,
+        data = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data,
       ))
       yield(".value")
     }

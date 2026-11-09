@@ -36,7 +36,6 @@ object names {
   const val Props: String = "__VLS_Props"
   const val PublicProps: String = "__VLS_PublicProps"
   const val RootEl: String = "__VLS_RootEl"
-  const val SetupExposed: String = "__VLS_SetupExposed"
   const val Slots: String = "__VLS_Slots"
   const val StyleModules: String = "__VLS_StyleModules"
   const val StyleScopedClasses: String = "__VLS_StyleScopedClasses"
@@ -55,6 +54,7 @@ object names {
   const val tryAsConstant: String = "__VLS_tryAsConstant"
   const val vFor: String = "__VLS_vFor"
   const val vSlot: String = "__VLS_vSlot"
+  const val withDotValue: String = "__VLS_withDotValue"
 
   const val ConstructorOverloads: String = "__VLS_ConstructorOverloads"
   const val Elements: String = "__VLS_Elements"

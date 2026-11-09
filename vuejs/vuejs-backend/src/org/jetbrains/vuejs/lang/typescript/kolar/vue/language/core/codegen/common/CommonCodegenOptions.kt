@@ -2,5 +2,8 @@
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common
 
 interface CommonCodegenOptions {
+  val destructuredProps: Set<String>
+  val importedComponents: Set<String>
   val setupRefs: Set<String>
+  val setupBindings: Set<String>
 }

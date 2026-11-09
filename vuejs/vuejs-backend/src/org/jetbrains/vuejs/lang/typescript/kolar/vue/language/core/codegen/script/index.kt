@@ -81,7 +81,7 @@ private fun generateWorker(
     yield(boundary.end())
     yield(endOfLine)
     yield("export default ${names.src}${endOfLine}")
-    yieldAll(generateTemplate(options, ctx, names.src))
+    yieldAll(generateTemplate(options, names.src))
   }
   // <script> + <script setup>
   else if (script != null && scriptRanges != null && scriptSetup != null && scriptSetupRanges != null) {
@@ -106,7 +106,7 @@ private fun generateWorker(
         scriptSetup,
         scriptSetupRanges,
         scriptSetup.generic,
-        generateSetupFunction(options, ctx, scriptSetup, scriptSetupRanges, generateTemplate(options, ctx, selfType)),
+        generateSetupFunction(options, ctx, scriptSetup, scriptSetupRanges, generateTemplate(options, selfType)),
       ))
     }
     else {
@@ -116,7 +116,7 @@ private fun generateWorker(
         ctx,
         scriptSetup,
         scriptSetupRanges,
-        generateTemplate(options, ctx, selfType),
+        generateTemplate(options, selfType),
         sequence { yield("return ") },
       ))
       yield("})()${endOfLine}")
@@ -134,7 +134,7 @@ private fun generateWorker(
         scriptSetup,
         scriptSetupRanges,
         scriptSetup.generic,
-        generateSetupFunction(options, ctx, scriptSetup, scriptSetupRanges, generateTemplate(options, ctx)),
+        generateSetupFunction(options, ctx, scriptSetup, scriptSetupRanges, generateTemplate(options)),
       ))
     }
     else {
@@ -143,7 +143,7 @@ private fun generateWorker(
         ctx,
         scriptSetup,
         scriptSetupRanges,
-        generateTemplate(options, ctx),
+        generateTemplate(options),
         generateExportDeclareEqual(scriptSetup, names.export),
       ))
     }
@@ -160,14 +160,14 @@ private fun generateWorker(
         exportDefault,
         vueCompilerOptions,
         names.export,
-        generateTemplate(options, ctx, names.export),
+        generateTemplate(options, names.export),
       ))
     }
     else {
       yieldAll(generateSfcBlockSection(script, script.content.startOffset, script.content.endOffset, codeFeatures.all))
       yieldAll(generateExportDeclareEqual(script, names.export))
       yield("(await import('${vueCompilerOptions.lib}')).defineComponent({})${endOfLine}")
-      yieldAll(generateTemplate(options, ctx, names.export))
+      yieldAll(generateTemplate(options, names.export))
       yield("export default ${exportExpression}${endOfLine}")
     }
   }

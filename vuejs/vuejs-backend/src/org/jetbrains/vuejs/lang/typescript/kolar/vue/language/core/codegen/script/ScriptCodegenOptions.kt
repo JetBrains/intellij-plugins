@@ -17,5 +17,8 @@ data class ScriptCodegenOptions(
   val scriptSetupRanges: ScriptSetupRanges?,
   val templateAndStyleTypes: Set<String>,
   val templateAndStyleCodes: List<Code>,
-  val exposed: Set<String>,
+  val setupBindings: Set<String>,
+  val localComponents: Set<String>,
+  val localDirectives: Set<String>,
+  val withDotValueBindings: Set<String>,
 )

@@ -44,7 +44,6 @@ private fun generateWorker(
   ctx: TemplateCodegenContext,
 ): Sequence<Code> = sequence {
   val scope = ctx.scope()
-  scope.declare(options.setupConsts)
   val vueCompilerOptions = options.vueCompilerOptions
 
   options.slotsAssignName?.let { scope.declare(it) }

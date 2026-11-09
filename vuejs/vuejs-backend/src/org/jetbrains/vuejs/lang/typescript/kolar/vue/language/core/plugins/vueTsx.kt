@@ -27,6 +27,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
 
 private val validLangs = setOf("js", "jsx", "ts", "tsx")
 
+private val localDirectiveRE = Regex("^v[A-Z]")
+
 class VueTsxPlugin(
   vueCompilerOptions: VueCompilerOptions,
 ) : VueLanguagePlugin(vueCompilerOptions) {
@@ -84,11 +86,38 @@ private class Codegen(
     names
   }
 
-  private val getSetupConsts: () -> Set<String> = computedSet {
+  private val getSetupBindings: () -> Set<String> = computedSet {
+    val names = mutableSetOf<String>()
+    val scriptSetupRanges = getScriptSetupRanges()
+    if (ir.scriptSetup != null && scriptSetupRanges != null) {
+      for (range in scriptSetupRanges.bindings) {
+        names.add(ir.scriptSetup.content.substring(range.start, range.end))
+      }
+      val scriptRanges = getScriptRanges()
+      if (ir.script != null && scriptRanges != null) {
+        for (range in scriptRanges.bindings) {
+          names.add(ir.script.content.substring(range.start, range.end))
+        }
+      }
+    }
+    names
+  }
+
+  private val getScriptSetupBindings: () -> Set<String> = computedSet {
+    val names = mutableSetOf<String>()
+    val scriptSetupRanges = getScriptSetupRanges()
+    if (ir.scriptSetup != null && scriptSetupRanges != null) {
+      for (range in scriptSetupRanges.bindings) {
+        names.add(ir.scriptSetup.content.substring(range.start, range.end))
+      }
+    }
+    names
+  }
+
+  private val getDestructuredProps: () -> Set<String> = computedSet {
     val scriptSetupRanges = getScriptSetupRanges()
     val names = mutableSetOf<String>()
     scriptSetupRanges?.defineProps?.destructured?.keys?.let { names.addAll(it) }
-    names.addAll(getImportedComponents())
     val rest = scriptSetupRanges?.defineProps?.destructuredRest
     if (rest != null) names.add(rest)
     names
@@ -148,8 +177,10 @@ private class Codegen(
         template = template,
         isVapor = getIsVapor(),
         componentName = getComponentName(),
-        setupConsts = getSetupConsts(),
+        destructuredProps = getDestructuredProps(),
+        importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
+        setupBindings = getSetupBindings(),
         hasDefineSlots = hasDefineSlots(),
         propsAssignName = getSetupPropsAssignName(),
         slotsAssignName = getSetupSlotsAssignName(),
@@ -164,30 +195,37 @@ private class Codegen(
       StyleCodegenOptions(
         vueCompilerOptions = getResolvedOptions(),
         styles = ir.styles,
-        setupConsts = getSetupConsts(),
+        destructuredProps = getDestructuredProps(),
+        importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
+        setupBindings = getSetupBindings(),
       )
     )
   }
 
-  private val getSetupBindings: () -> Set<String> = computedSet {
-    val names = mutableSetOf<String>()
-    val scriptSetupRanges = getScriptSetupRanges()
-    if (ir.scriptSetup != null && scriptSetupRanges != null) {
-      for (range in scriptSetupRanges.bindings) {
-        names.add(ir.scriptSetup.content.substring(range.start, range.end))
-      }
-      val scriptRanges = getScriptRanges()
-      if (ir.script != null && scriptRanges != null) {
-        for (range in scriptRanges.bindings) {
-          names.add(ir.script.content.substring(range.start, range.end))
-        }
-      }
+  val getLocalComponents: () -> Set<String> = computedSet {
+    val bindings = getSetupBindings()
+    if (bindings.isEmpty()) {
+      return@computedSet bindings
     }
-    names
+    (ir.template?.ast?.components ?: emptyList())
+      .flatMap { listOf(camelize(it), capitalize(camelize(it))) }
+      .filterTo(mutableSetOf()) { it in bindings }
   }
 
-  val getSetupExposed: () -> Set<String> = computedSet {
+  private val getLocalDirectives: () -> Set<String> = computedSet {
+    val bindings = getSetupBindings()
+    if (bindings.isEmpty()) {
+      return@computedSet bindings
+    }
+    // `v[A-Z]` is a naming heuristic: without type analysis there is no
+    // reliable signal to tell a directive from a same-named value binding.
+    // This feeds the local-directive type / completion, where false positives
+    // are harmless (they only surface as extra completion candidates).
+    bindings.filterTo(mutableSetOf()) { localDirectiveRE.containsMatchIn(it) }
+  }
+
+  private val getReferencedBindings: () -> Set<String> = computedSet {
     val bindings = getSetupBindings()
     if (bindings.isEmpty()) {
       return@computedSet bindings
@@ -195,11 +233,11 @@ private class Codegen(
     val candidates = mutableSetOf<String>()
     getGeneratedTemplate()?.ctx?.contextAccesses?.keys?.let { candidates.addAll(it) }
     getGeneratedStyle()?.ctx?.contextAccesses?.keys?.let { candidates.addAll(it) }
-    ir.template?.ast?.components?.forEach { name ->
-      candidates.add(camelize(name))
-      candidates.add(capitalize(camelize(name)))
-    }
     candidates.filterTo(mutableSetOf()) { it in bindings }
+  }
+
+  val getUsedSetupBindings: () -> Set<String> = computedSet {
+    getReferencedBindings() + getLocalComponents()
   }
 
   val getGeneratedScript: () -> ScriptGenerateResult = computed {
@@ -209,7 +247,10 @@ private class Codegen(
         fileName = fileName,
         script = ir.script,
         scriptSetup = ir.scriptSetup,
-        exposed = getSetupExposed(),
+        setupBindings = getScriptSetupBindings(),
+        localComponents = getLocalComponents(),
+        localDirectives = getLocalDirectives(),
+        withDotValueBindings = getReferencedBindings(),
         scriptRanges = getScriptRanges(),
         scriptSetupRanges = getScriptSetupRanges(),
         templateAndStyleTypes = buildSet {

@@ -336,7 +336,7 @@ private fun generateMacros(
     yield("// @ts-ignore${newLine}")
     yield("declare const { ")
     for (macro in listOf("defineProps", "defineSlots", "defineEmits", "defineExpose", "defineModel", "defineOptions", "withDefaults")) {
-      if (!options.exposed.contains(macro)) {
+      if (!options.setupBindings.contains(macro)) {
         yield("$macro, ")
       }
     }

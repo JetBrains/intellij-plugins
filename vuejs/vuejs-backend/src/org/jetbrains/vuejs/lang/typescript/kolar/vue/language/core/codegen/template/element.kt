@@ -100,12 +100,12 @@ fun generateComponent(
       camelize(tag),
       tag,
     )
-    val matchedSetupConst = originalNames.find { it in options.setupConsts }
-    if (matchedSetupConst != null) {
+    val matchedImportedComponent = originalNames.find { it in options.importedComponents }
+    if (matchedImportedComponent != null) {
       // navigation & auto import support
       yield("const $componentVar = ")
       yieldAll(generateCamelized(
-        matchedSetupConst[0].toString() + tag.substring(1),
+        matchedImportedComponent[0].toString() + tag.substring(1),
         Source("template"),
         startTagOffset,
         VueCodeInformation(
@@ -118,7 +118,7 @@ fun generateComponent(
       if (endTagOffset != null) {
         yield(" || ")
         yieldAll(generateCamelized(
-          matchedSetupConst[0].toString() + tag.substring(1),
+          matchedImportedComponent[0].toString() + tag.substring(1),
           Source("template"),
           endTagOffset,
           codeFeatures.withoutHighlightAndCompletion,

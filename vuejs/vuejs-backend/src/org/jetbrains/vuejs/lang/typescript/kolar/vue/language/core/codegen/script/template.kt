@@ -1,57 +1,34 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.script
 
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation.LinkedToken
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSpreadMerge
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateTemplate(
   options: ScriptCodegenOptions,
-  ctx: ScriptCodegenContext,
   selfType: String? = null,
 ): Sequence<Code> = sequence {
-  yieldAll(generateSetupExposed(options, ctx))
-  yieldAll(generateTemplateCtx(options, ctx, selfType))
-  yieldAll(generateTemplateComponents(options, ctx))
-  yieldAll(generateTemplateDirectives(options, ctx))
+  yieldAll(generateTemplateCtx(options, selfType))
+  yieldAll(generateTemplateComponents(options))
+  yieldAll(generateTemplateDirectives(options))
+
+  for (name in options.withDotValueBindings) {
+    yield("${names.withDotValue}($name, {} as import('${options.vueCompilerOptions.lib}').Ref)${endOfLine}")
+  }
+
   if (options.templateAndStyleCodes.isNotEmpty()) {
     yieldAll(options.templateAndStyleCodes)
   }
 }
 
-private fun generateSetupExposed(
-  options: ScriptCodegenOptions,
-  ctx: ScriptCodegenContext,
-): Sequence<Code> = sequence {
-  val exposed = options.exposed
-  if (exposed.isEmpty()) return@sequence
-
-  ctx.generatedTypes.add(names.SetupExposed)
-
-  yield("type ${names.SetupExposed} = import('${options.vueCompilerOptions.lib}').ShallowUnwrapRef<{${newLine}")
-  for (bindingName in exposed) {
-    val token = LinkedToken(bindingName.length)
-    yield(DataSegment(text = "", source = null, sourceOffset = 0, data = VueCodeInformation(__linkedToken = token)))
-    yield("$bindingName: typeof ")
-    yield(DataSegment(text = "", source = null, sourceOffset = 0, data = VueCodeInformation(__linkedToken = token)))
-    yield(bindingName)
-    yield(endOfLine)
-  }
-  yield("}>${endOfLine}")
-}
-
 private fun generateTemplateCtx(
   options: ScriptCodegenOptions,
-  ctx: ScriptCodegenContext,
   selfType: String?,
 ): Sequence<Code> = sequence {
   val vueCompilerOptions = options.vueCompilerOptions
@@ -99,10 +76,6 @@ private fun generateTemplateCtx(
     exps.add(StringSegment("{} as ${propTypes.joinToString(" & ")}"))
   }
 
-  if (ctx.generatedTypes.contains(names.SetupExposed)) {
-    exps.add(StringSegment("{} as ${names.SetupExposed}"))
-  }
-
   yield("const ${names.ctx} = ")
   yieldAll(generateSpreadMerge(exps))
   yield(endOfLine)
@@ -110,13 +83,12 @@ private fun generateTemplateCtx(
 
 private fun generateTemplateComponents(
   options: ScriptCodegenOptions,
-  ctx: ScriptCodegenContext,
 ): Sequence<Code> = sequence {
   val vueCompilerOptions = options.vueCompilerOptions
   val types = mutableListOf<String>()
 
-  if (ctx.generatedTypes.contains(names.SetupExposed)) {
-    types.add(names.SetupExposed)
+  if (options.localComponents.isNotEmpty()) {
+    types.add(generateExposedType(vueCompilerOptions.lib, options.localComponents))
   }
   options.script?.let { script ->
     options.scriptRanges?.exportDefault?.options?.components?.also { components ->
@@ -145,13 +117,12 @@ private fun generateTemplateComponents(
 
 private fun generateTemplateDirectives(
   options: ScriptCodegenOptions,
-  ctx: ScriptCodegenContext,
 ): Sequence<Code> = sequence {
   val vueCompilerOptions = options.vueCompilerOptions
   val types = mutableListOf<String>()
 
-  if (ctx.generatedTypes.contains(names.SetupExposed)) {
-    types.add(names.SetupExposed)
+  if (options.localDirectives.isNotEmpty()) {
+    types.add(generateExposedType(vueCompilerOptions.lib, options.localDirectives))
   }
   options.script?.let { script ->
     options.scriptRanges?.exportDefault?.options?.directives?.also { directives ->
@@ -165,3 +136,6 @@ private fun generateTemplateDirectives(
   yield("type ${names.LocalDirectives} = ${if (types.isEmpty()) "{}" else types.joinToString(" & ")}${endOfLine}")
   yield("let ${names.directives}!: ${names.LocalDirectives} & import('${vueCompilerOptions.lib}').GlobalDirectives${endOfLine}")
 }
+
+private fun generateExposedType(lib: String, bindings: Set<String>): String =
+  "import('$lib').ShallowUnwrapRef<{\n${bindings.joinToString("\n") { "$it: typeof $it;" }}\n}>"
