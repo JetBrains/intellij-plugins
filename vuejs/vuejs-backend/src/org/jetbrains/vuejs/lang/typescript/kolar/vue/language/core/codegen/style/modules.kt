@@ -1,6 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.style
 
+import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
@@ -8,8 +9,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRAttr
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template.TemplateCodegenContext
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
@@ -26,26 +29,38 @@ fun generateStyleModules(
     yield("{$newLine")
     for (style in styleModules) {
       when (val module = style.module) {
-        is IRAttr.Present -> {
-          val moduleAttrOffset = style.moduleAttrOffset
-          if (moduleAttrOffset == null) {
-            yield("\$style")
-          }
-          else {
+        is IRAttr.Present -> yield("\$style")
+        is IRAttr.WithText -> {
+          val (text, offset) = module
+          if (text.isEmpty()) {
             yield(DataSegment(
               text = "\$style",
               source = Source("main"),
-              sourceOffset = moduleAttrOffset,
+              sourceOffset = offset,
               data = codeFeatures.verification,
             ))
           }
+          else if (identifierRE.matches(text)) {
+            yield(DataSegment(
+              text = text,
+              source = Source("main"),
+              sourceOffset = offset,
+              data = codeFeatures.navigationAndVerification,
+            ))
+          }
+          else {
+            val boundary = yield(Boundary.start(
+              Source("main"),
+              offset,
+              offset + text.length,
+              codeFeatures.navigationAndVerification,
+            ))
+            yield("'")
+            yield(DataSegment(text = text, source = Source("main"), sourceOffset = offset, data = boundary.features))
+            yield("'")
+            yield(boundary.end())
+          }
         }
-        is IRAttr.WithText -> yield(DataSegment(
-          text = module.text,
-          source = Source("main"),
-          sourceOffset = module.offset,
-          data = codeFeatures.navigationAndVerification,
-        ))
         null -> Unit
       }
       yield(": ")
