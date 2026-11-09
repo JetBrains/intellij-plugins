@@ -385,10 +385,11 @@ fun generateFragment(
   node: ElementNode,
 ): Sequence<Code> = sequence {
   val startTagOffset = getElementTagOffsets(node)[0]
+  val failedPropExps = mutableListOf<FailedPropExpressions>()
 
   // special case for <template v-for="..." :key="..." />
   if (node.props.isNotEmpty()) {
-    yield("__VLS_asFunctionalElement(${names.intrinsics}.template)(")
+    yield("${if (options.vueCompilerOptions.checkUnknownProps) names.asFunctionalElement0 else names.asFunctionalElement1}(${names.intrinsics}.template)(")
     val boundary = yield(Boundary.start(
       Source("template"),
       startTagOffset,
@@ -402,10 +403,13 @@ fun generateFragment(
       node = node,
       props = node.props,
       checkUnknownProps = options.vueCompilerOptions.checkUnknownProps,
+      failedPropExps = failedPropExps,
     ))
     yield("}")
     yield(boundary.end())
     yield(")$endOfLine")
+
+    yieldAll(generateFailedExpressions(options, ctx, failedPropExps))
   }
 
   for (child in node.children) {
