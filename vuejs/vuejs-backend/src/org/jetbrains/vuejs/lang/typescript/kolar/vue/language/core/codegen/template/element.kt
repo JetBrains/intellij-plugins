@@ -31,6 +31,8 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.camelize
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.shared.capitalize
 
+private val lineCommentRE = Regex("//(.*)$", RegexOption.MULTILINE)
+
 fun generateComponent(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
@@ -196,7 +198,11 @@ fun generateComponent(
   yield("// @ts-ignore$newLine")
   yield("const $functionalVar = ${if (options.vueCompilerOptions.checkUnknownProps) names.asFunctionalComponent0 else names.asFunctionalComponent1}($componentVar, new $componentVar({$newLine")
   yield("// @ts-ignore$newLine")
-  yield(propsStr.replace("\n", " "))
+  yield(
+    propsStr
+      .replace(lineCommentRE) { "/*${it.groupValues[1].replace("*/", "*\\/")} */" }
+      .replace("\n", " ")
+  )
   yield("}))$endOfLine")
 
   yield("const ")
