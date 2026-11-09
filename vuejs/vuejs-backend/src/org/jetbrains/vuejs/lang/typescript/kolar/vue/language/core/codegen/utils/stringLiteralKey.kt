@@ -10,22 +10,17 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateStringLiteralKey(
   code: String,
-  offset: Int? = null,
-  info: VueCodeInformation? = null,
+  offset: Int,
+  features: VueCodeInformation,
 ): Sequence<Code> = sequence {
-  if (offset == null || info == null) {
-    yield("'$code'")
-  }
-  else {
-    val boundary = yield(Boundary.start(Source("template"), offset, offset + code.length, info))
-    yield("'")
-    yield(DataSegment(
-      text = code,
-      source = Source("template"),
-      sourceOffset = offset,
-      data = boundary.features,
-    ))
-    yield("'")
-    yield(boundary.end())
-  }
+  val boundary = yield(Boundary.start(Source("template"), offset, offset + code.length, features))
+  yield("'")
+  yield(DataSegment(
+    text = code,
+    source = Source("template"),
+    sourceOffset = offset,
+    data = boundary.features,
+  ))
+  yield("'")
+  yield(boundary.end())
 }
