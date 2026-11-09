@@ -172,9 +172,13 @@ fun generateEventExpression(
       scope.declare("\$event")
       yieldAll(ctx.generateConditionGuards())
       if (isSingleExpression(ast)) {
-        yield("return ")
+        yield("return (")
+        yieldAll(interpolation)
+        yield(")")
       }
-      yieldAll(interpolation)
+      else {
+        yieldAll(interpolation)
+      }
       yield(endOfLine)
       yieldAll(scope.end())
       yield("}")
