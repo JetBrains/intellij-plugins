@@ -16,11 +16,11 @@ import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
 import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Test
 
 class PerforceAuthenticationTest : PerforceTestCase() {
 
@@ -29,8 +29,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     unsetUseP4Config()
   }
 
-  @Test
-  fun `test one authentication for several P4CONFIG roots`() {
+  @Test  fun `test one authentication for several P4CONFIG roots`() {
     TestLoggerFactory.enableDebugLogging(myTestRootDisposable, PerforceBaseInfoWorker::class.java, PerforceInfoAndClient::class.java)
 
     val count = 4
@@ -57,8 +56,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     assertEquals(1, commands.filter { it.startsWith("login") }.size)
   }
 
-  @Test
-  fun `test separate connections for different p4config files`() {
+  @Test  fun `test separate connections for different p4config files`() {
     val dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
     val dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
     setupTwoClients(dir1, dir2)
@@ -74,8 +72,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     assertEquals(2, commands.filter { it.startsWith("login") }.size)
   }
 
-  @Test
-  fun `test use default p4config file name when no P4CONFIG env variable is defined`() {
+  @Test  fun `test use default p4config file name when no P4CONFIG env variable is defined`() {
     assertFalse(P4EnvHelper.hasP4ConfigSettingInEnvironment())
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
 
@@ -88,10 +85,9 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     assertEquals(config, singleChange.virtualFile)
   }
 
-  @Test
-  fun `test custom p4config file name`() {
-    Assume.assumeFalse("p4 set doesn't work on linux :(, so skipping PerforceAuthenticationTest.test custom p4config file name",
-                       SystemInfo.isLinux)
+  @Test  fun `test custom p4config file name`() {
+    Assumptions.assumeFalse(SystemInfo.isLinux,
+                            "p4 set doesn't work on linux :(, so skipping PerforceAuthenticationTest.test custom p4config file name")
 
     assertFalse(P4EnvHelper.hasP4ConfigSettingInEnvironment())
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
@@ -109,8 +105,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     }
   }
 
-  @Test
-  fun `test do not use login command when that setting is off`() {
+  @Test  fun `test do not use login command when that setting is off`() {
     val commands: MutableList<String> = ContainerUtil.createConcurrentList()
     AbstractP4Connection.setCommandCallback(CollectConsumer(commands), myTestRootDisposable)
     UIUtil.invokeAndWaitIfNeeded { PerforceLoginManager.getInstance(myProject).checkAndRepairAll() }
@@ -122,8 +117,7 @@ class PerforceAuthenticationTest : PerforceTestCase() {
     assertEquals(0, commands.filter { it.startsWith("login") }.size)
   }
 
-  @Test
-  fun `test parse expiration ticket`() {
+  @Test  fun `test parse expiration ticket`() {
     var loginState = LoginPerformerImpl.parseExpirationTicket("User John ticket expires in 5 hours 55 minutes.")
     assertEquals(21_300_000, loginState.timeLeft)
 

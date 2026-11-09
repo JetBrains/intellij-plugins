@@ -7,10 +7,10 @@ import org.jetbrains.idea.perforce.application.PerforceCheckinEnvironment
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.PerforceChange
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Test
 
 class PerforceSubmitTest : PerforceTestCase() {
 
@@ -19,8 +19,7 @@ class PerforceSubmitTest : PerforceTestCase() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
   }
 
-  @Test
-  fun testIncludeStdoutDiagnosticsOnSubmitFailure() {
+  @Test  fun testIncludeStdoutDiagnosticsOnSubmitFailure() {
     val file = createFileInCommand("a.txt", "aaa")
     refreshChanges()
 

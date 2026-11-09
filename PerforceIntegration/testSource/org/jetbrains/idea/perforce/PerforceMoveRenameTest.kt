@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vcs.actions.VcsContextFactory
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.unversionedFiles
+import com.intellij.openapi.vcs.history.VcsFileRevision
 import com.intellij.openapi.vcs.impl.AbstractVcsHelperImpl
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -15,20 +16,17 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsData
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.TestLoggerFactory
-import com.intellij.testFramework.UsefulTestCase.assertEmpty
-import com.intellij.testFramework.UsefulTestCase.assertEquals
-import com.intellij.testFramework.UsefulTestCase.assertFalse
-import com.intellij.testFramework.UsefulTestCase.assertNotNull
-import com.intellij.testFramework.UsefulTestCase.assertNull
-import com.intellij.testFramework.UsefulTestCase.assertOneElement
-import com.intellij.testFramework.UsefulTestCase.assertOrderedCollection
-import com.intellij.testFramework.UsefulTestCase.assertTrue
-import com.intellij.util.Consumer
 import com.intellij.util.ThrowableRunnable
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.idea.perforce.application.PerforceFileRevision
 import org.jetbrains.idea.perforce.application.PerforceVcs
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import java.util.function.Consumer
 
 open class PerforceMoveRenameTest : PerforceTestCase() {
   private val LOG = Logger.getInstance(PerforceMoveRenameTest::class.java)
@@ -52,7 +50,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     refreshVfs()
     refreshChanges()
 
-    assertEmpty(changeListManager.unversionedFiles)
+    assertThat(changeListManager.unversionedFiles).isEmpty()
 
     submitDefaultList("comment2")
     refreshChanges()
@@ -72,34 +70,28 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     return dir
   }
 
-  @Test
-  fun testIdeaRenameDirectory() {
+  @Test  fun testIdeaRenameDirectory() {
     doTestIdeaRenameDirectory(false)
   }
 
-  @Test
-  fun testIdeaRenameDirectory_Old() {
+  @Test  fun testIdeaRenameDirectory_Old() {
     doTestIdeaRenameDirectory(true)
   }
 
 
-  @Test
-  fun testIdeaRename() {
+  @Test  fun testIdeaRename() {
     testIdeaRenameOrMove(true, false)
   }
 
-  @Test
-  fun testIdeaMove() {
+  @Test  fun testIdeaMove() {
     testIdeaRenameOrMove(false, false)
   }
 
-  @Test
-  fun testIdeaRename_Old() {
+  @Test  fun testIdeaRename_Old() {
     testIdeaRenameOrMove(true, true)
   }
 
-  @Test
-  fun testIdeaMove_Old() {
+  @Test  fun testIdeaMove_Old() {
     testIdeaRenameOrMove(false, true)
   }
 
@@ -113,7 +105,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
 
     submitDefaultList("comment1")
 
-    Assert.assertEquals(1, getFileHistory(file).size)
+    assertEquals(1, getFileHistory(file).size)
 
     openForEdit(file)
     if (rename) {
@@ -127,7 +119,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     changeListManager.waitUntilRefreshed()
 
     val change = getSingleChange()
-    Assert.assertEquals(Change.Type.MOVED, change.type)
+    assertEquals(Change.Type.MOVED, change.type)
     verifyChange(change, "a.txt", if (rename) "b.txt" else "newParent/a.txt")
 
     submitDefaultList("comment2")
@@ -138,13 +130,11 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertEquals(if (old) "add" else "move/add", (revisionList[0] as PerforceFileRevision).action)
   }
 
-  @Test
-  fun testCurrentRevisionAfterRename() {
+  @Test  fun testCurrentRevisionAfterRename() {
     doTestCurrentRevisionAfterRename()
   }
 
-  @Test
-  fun testCurrentRevisionAfterRename_Old() {
+  @Test  fun testCurrentRevisionAfterRename_Old() {
     forceDisableMoveCommand()
     doTestCurrentRevisionAfterRename()
   }
@@ -171,27 +161,25 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
 
     val session = PerforceVcs.getInstance(myProject).vcsHistoryProvider!!.createSessionFor(
       VcsContextFactory.getInstance().createFilePathOn(file))
-    Assert.assertNotNull(session)
+    assertNotNull(session)
     assertNotNull(session!!.currentRevisionNumber)
-    assertOrderedCollection(session.revisionList, Consumer { revision ->
+    assertThat(session.revisionList).satisfiesExactly(Consumer<VcsFileRevision> { revision ->
       assertTrue(revision.commitMessage!!.endsWith("comment3"))
       assertTrue(session.isCurrentRevision(revision.revisionNumber))
-    }, Consumer { revision ->
+    }, Consumer<VcsFileRevision> { revision ->
       assertTrue(revision.commitMessage!!.endsWith("comment2"))
       assertFalse(session.isCurrentRevision(revision.revisionNumber))
-    }, Consumer { revision ->
+    }, Consumer<VcsFileRevision> { revision ->
       assertTrue(revision.commitMessage!!.endsWith("comment1"))
       assertFalse(session.isCurrentRevision(revision.revisionNumber))
     })
   }
 
-  @Test
-  fun testRevertAfterRename() {
+  @Test  fun testRevertAfterRename() {
     doTestRevertAfterRename()
   }
 
-  @Test
-  fun testRevertAfterRename_Old() {
+  @Test  fun testRevertAfterRename_Old() {
     forceDisableMoveCommand()
     doTestRevertAfterRename()
   }
@@ -200,12 +188,12 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     val foo = createDirectoryWithFiveFiles("foo")
     val bar = createDirectoryWithFiveFiles("bar")
     refreshChanges()
-    assertEquals(10, assertOneElement(changeListManager.changeLists).changes.size)
+    assertEquals(10, changeListManager.changeLists.also { assertThat(it).hasSize(1) }.single().changes.size)
     assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
 
     submitDefaultList("initial")
     refreshChanges()
-    assertTrue(assertOneElement(changeListManager.changeLists).changes.isEmpty())
+    assertTrue(changeListManager.changeLists.also { assertThat(it).hasSize(1) }.single().changes.isEmpty())
     assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
 
     renameFileInCommand(foo, "foo1")
@@ -213,23 +201,21 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     refreshChanges()
 
     assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
-    val changes = assertOneElement(changeListManager.changeLists).changes
+    val changes = changeListManager.changeLists.also { assertThat(it).hasSize(1) }.single().changes
     assertEquals(10, changes.size)
 
     rollbackChanges(changes.toMutableList())
     refreshChanges()
 
-    assertTrue(assertOneElement(changeListManager.changeLists).changes.isEmpty())
+    assertTrue(changeListManager.changeLists.also { assertThat(it).hasSize(1) }.single().changes.isEmpty())
     assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
   }
 
-  @Test
-  fun testDiffRevision() {
+  @Test  fun testDiffRevision() {
     doTestDiffRevision()
   }
 
-  @Test
-  fun testDiffRevision_Old() {
+  @Test  fun testDiffRevision_Old() {
     forceDisableMoveCommand()
     doTestDiffRevision()
   }
@@ -255,13 +241,11 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertNotNull(diffProvider.getLastRevision(file))
   }
 
-  @Test
-  fun testMoveBetweenRootsInSameWorkspace() {
+  @Test  fun testMoveBetweenRootsInSameWorkspace() {
     doTestMoveBetweenRootsInSameWorkspace(false)
   }
 
-  @Test
-  fun testMoveBetweenRootsInSameWorkspace_Old() {
+  @Test  fun testMoveBetweenRootsInSameWorkspace_Old() {
     forceDisableMoveCommand()
     doTestMoveBetweenRootsInSameWorkspace(true)
   }
@@ -290,24 +274,20 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertEquals(if (old) "add" else "move/add", (revisionList[0] as PerforceFileRevision).action)
   }
 
-  @Test
-  fun testDoubleRenameBC_AB() {
+  @Test  fun testDoubleRenameBC_AB() {
     doTestRenameBC_AB(true)
   }
 
-  @Test
-  fun testDoubleRenameBC_AB_Old() {
+  @Test  fun testDoubleRenameBC_AB_Old() {
     forceDisableMoveCommand()
     doTestRenameBC_AB(true)
   }
 
-  @Test
-  fun testSingleRenameBC_AB() {
+  @Test  fun testSingleRenameBC_AB() {
     doTestRenameBC_AB(false)
   }
 
-  @Test
-  fun testSingleRenameBC_AB_Old() {
+  @Test  fun testSingleRenameBC_AB_Old() {
     forceDisableMoveCommand()
     doTestRenameBC_AB(false)
   }
@@ -365,7 +345,7 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertEquals((if (doubleRename) 3 else 1), changes.size)
     assertTrue(changeListManager.unversionedFilesPaths.isEmpty())
     assertTrue(changeListManager.modifiedWithoutEditing.isEmpty())
-    assertNotNull(assertOneElement(changeListManager.deletedFiles).path.path.endsWith(if (doubleRename) "foo1.txt" else "foo.txt"))
+    assertNotNull(changeListManager.deletedFiles.also { assertThat(it).hasSize(1) }.single().path.path.endsWith(if (doubleRename) "foo1.txt" else "foo.txt"))
 
     EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
       UndoManager.getInstance(myProject).undo(null)
@@ -374,9 +354,9 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
 
     //assert getChangeListManager().getAllChanges().size() == (old ? 3 : 2)
 
-    assertEmpty(changeListManager.unversionedFilesPaths)
-    assertEmpty(changeListManager.modifiedWithoutEditing)
-    assertEmpty(changeListManager.deletedFiles)
+    assertThat(changeListManager.unversionedFilesPaths).isEmpty()
+    assertThat(changeListManager.modifiedWithoutEditing).isEmpty()
+    assertThat(changeListManager.deletedFiles).isEmpty()
 
     TestLoggerFactory.enableDebugLogging(myTestRootDisposable, PersistentFS::class.java, VfsData::class.java)
 
@@ -409,13 +389,11 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertNull(hadException)
   }
 
-  @Test
-  fun testRenameChangingCase() {
+  @Test  fun testRenameChangingCase() {
     doTestRenameChangingCase()
   }
 
-  @Test
-  fun testRenameChangingCase_Old() {
+  @Test  fun testRenameChangingCase_Old() {
     forceDisableMoveCommand()
     doTestRenameChangingCase()
   }
@@ -433,13 +411,11 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     assertNotNull(getSingleChange())
   }
 
-  @Test
-  fun testMoveUnversionedIntoAnotherModule() {
+  @Test  fun testMoveUnversionedIntoAnotherModule() {
     doTestMoveUnversionedIntoAnotherModule()
   }
 
-  @Test
-  fun testMoveUnversionedIntoAnotherModule_Old() {
+  @Test  fun testMoveUnversionedIntoAnotherModule_Old() {
     forceDisableMoveCommand()
     doTestMoveUnversionedIntoAnotherModule()
   }
@@ -450,10 +426,10 @@ open class PerforceMoveRenameTest : PerforceTestCase() {
     setP4ConfigRoots(dir1, dir2)
     val file = createFileInCommand(dir1, "foo.txt", "")
     refreshChanges()
-    assertOneElement(changeListManager.unversionedFiles)
+    assertThat(changeListManager.unversionedFiles).hasSize(1)
 
     moveFileInCommand(file, dir2)
     changeListManager.waitUntilRefreshed()
-    assertOneElement(changeListManager.unversionedFiles)
+    assertThat(changeListManager.unversionedFiles).hasSize(1)
   }
 }

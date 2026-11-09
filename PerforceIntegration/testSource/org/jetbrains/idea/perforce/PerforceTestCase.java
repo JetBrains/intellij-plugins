@@ -38,7 +38,8 @@ import com.intellij.testFramework.TestApplicationManager;
 import com.intellij.testFramework.TestLoggerFactory;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import com.intellij.testFramework.vcs.AbstractJunitVcsTestCase;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.vcs.AbstractVcsTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.TimeoutUtil;
@@ -62,9 +63,10 @@ import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,19 +75,20 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertFalse;
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static com.intellij.testFramework.UsefulTestCase.assertTrue;
-import static com.intellij.testFramework.UsefulTestCase.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
+@TestApplication
+public abstract class PerforceTestCase extends AbstractVcsTestCase {
   private static final Logger LOG = Logger.getInstance(PerforceTestCase.class);
 
   protected static final String TEST_P4CONFIG = "testP4config";
@@ -101,8 +104,25 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected File myP4ConfigFile;
   protected final Disposable myTestRootDisposable = Disposer.newDisposable();
   private static boolean ourP4StartupFailure;
+  private String myTestName;
 
-  @Before
+  /** The name of the running test method. */
+  protected String getTestName() {
+    return myTestName;
+  }
+
+  @BeforeEach
+  public final void setUpPerforce(TestInfo testInfo) throws Exception {
+    myTestName = testInfo.getTestMethod().orElseThrow().getName();
+    before();
+  }
+
+  @AfterEach
+  public final void tearDownPerforce() throws Exception {
+    after();
+  }
+
+  /** Starts the Perforce server and opens the project. A subclass that overrides it calls {@code super.before()} first. */
   public void before() throws Exception {
     enableDebugLogging();
     Clock.reset();
@@ -114,7 +134,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     String tempDir = myTempDirFixture.findOrCreateDir(FileUtil.sanitizeFileName(getTestName())).getPath();
 
     myClientBinaryPath = P4TestUtil.getResource(getPerforceExecutableDir());
-    assertTrue(myClientBinaryPath + " doesn't exist!", myClientBinaryPath.exists());
+    assertTrue(myClientBinaryPath.exists(), myClientBinaryPath + " doesn't exist!");
     myClientRoot = createSubDirectory(tempDir, "clientRoot");
     setupP4Ignore();
     launchP4Server(tempDir, myClientBinaryPath);
@@ -203,12 +223,12 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   private void launchP4Server(String tempDir, final File p4Client) throws IOException, InterruptedException {
-    Assume.assumeTrue(!ourP4StartupFailure);
+    Assumptions.assumeTrue(!ourP4StartupFailure);
 
     final File p4dRoot = createSubDirectory(tempDir, "p4dRoot");
     final File serverBinary = new File(p4Client, executableName("p4d"));
-    assertTrue(serverBinary + " doesn't exist!", serverBinary.exists());
-    assertTrue("Can't execute " + serverBinary, serverBinary.canExecute());
+    assertTrue(serverBinary.exists(), serverBinary + " doesn't exist!");
+    assertTrue(serverBinary.canExecute(), "Can't execute " + serverBinary);
 
     try {
       ProcessBuilder builder =
@@ -434,7 +454,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     submitDefaultList("p4config");
     refreshVfs();
     refreshChanges();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
 
     setUseP4Config();
     setVcsMappings(mappings);
@@ -579,7 +599,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     Disposer.register(myTestRootDisposable, () -> ClientVersion.DISABLE_MOVE_IN_TESTS = false);
   }
 
-  @After
+  /** Closes the project and stops the Perforce server. A subclass that overrides it calls {@code super.after()}. */
   public void after() throws Exception {
     RunAll.runAll(
       () -> {
@@ -669,8 +689,8 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     ProcessOutput result = runP4WithClient("opened", new File(myClientRoot, path).toString());
     verify(result);
     final String stdout = result.getStdout();
-    assertTrue("Unexpected 'p4 opened' result: " + stdout,
-               StringUtil.startsWithConcatenation(stdout, "//depot/", path, "#1 - ", changeType));
+    assertTrue(StringUtil.startsWithConcatenation(stdout, "//depot/", path, "#1 - ", changeType),
+               "Unexpected 'p4 opened' result: " + stdout);
   }
 
   protected void submitFile(final String... depotPaths) {
@@ -747,7 +767,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     String p4ConfigValue = runP4(new String[]{"set", "P4CONFIG"}, null).getStdout();
     if (StringUtil.isNotEmpty(p4ConfigValue)) {
       runP4(new String[]{"set", "P4CONFIG="}, null);
-      assertEmpty(runP4(new String[]{"set", "P4CONFIG"}, null).getStdout());
+      assertEquals("", runP4(new String[]{"set", "P4CONFIG"}, null).getStdout());
     }
   }
 
@@ -782,7 +802,9 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
   @NotNull
   protected Change getSingleChange() {
-    return assertOneElement(getChangeListManager().getDefaultChangeList().getChanges());
+    Collection<Change> changes = getChangeListManager().getDefaultChangeList().getChanges();
+    assertThat(changes).hasSize(1);
+    return changes.iterator().next();
   }
 
   protected void editExternally(VirtualFile file, String text) {
@@ -807,14 +829,14 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
                                                                                               exceptions,
                                                                                               RollbackProgressListener.EMPTY);
     });
-    assertEmpty(exceptions);
+    assertThat(exceptions).isEmpty();
   }
 
   protected void assertChangesViewEmpty() {
-    assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
-    assertEmpty(getChangeListManager().getDeletedFiles());
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
+    assertThat(getChangeListManager().getDeletedFiles()).isEmpty();
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
   }
 
   protected List<Long> getLists() {
@@ -852,8 +874,8 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     setVcsMappings(createMapping(dir1), createMapping(dir2));
     refreshChanges();
 
-    assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
   }
 
   protected void checkNativeList(final long number, final String comment) {

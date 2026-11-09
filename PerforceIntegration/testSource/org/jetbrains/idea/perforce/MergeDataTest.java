@@ -31,10 +31,13 @@
  */
 package org.jetbrains.idea.perforce;
 
-import junit.framework.TestCase;
 import org.jetbrains.idea.perforce.perforce.MergedFileParser;
+import org.junit.jupiter.api.Test;
 
-public class MergeDataTest extends TestCase{
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MergeDataTest {
+  @Test
   public void test() throws Exception {
     final MergedFileParser parser =
     new MergedFileParser("""

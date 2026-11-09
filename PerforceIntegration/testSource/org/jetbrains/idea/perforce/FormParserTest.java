@@ -1,14 +1,17 @@
 package org.jetbrains.idea.perforce;
 
-import junit.framework.TestCase;
 import org.jetbrains.idea.perforce.perforce.FormParser;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
 
-public class FormParserTest extends TestCase{
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class FormParserTest {
+  @Test
   public void test(){
     String change = """
       # A Perforce Change Specification.

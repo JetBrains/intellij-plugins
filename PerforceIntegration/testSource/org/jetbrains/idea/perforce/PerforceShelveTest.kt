@@ -7,7 +7,6 @@ import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker
 import com.intellij.openapi.vcs.changes.unversionedFiles
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.testFramework.UsefulTestCase.assertOneElement
 import org.jetbrains.idea.perforce.actions.ShelfUtils
 import org.jetbrains.idea.perforce.actions.ShelveAction
 import org.jetbrains.idea.perforce.application.PerforceManager
@@ -15,10 +14,11 @@ import org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer
 import org.jetbrains.idea.perforce.application.PerforceShelf
 import org.jetbrains.idea.perforce.perforce.P4File
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class PerforceShelveTest : PerforceTestCase() {
 
@@ -28,8 +28,7 @@ class PerforceShelveTest : PerforceTestCase() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.REMOVE, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
   }
 
-  @Test
-  fun testReadingShelvedChanges() {
+  @Test  fun testReadingShelvedChanges() {
     createFileInCommand("b.txt", "")
     refreshChanges()
 
@@ -43,8 +42,7 @@ class PerforceShelveTest : PerforceTestCase() {
     assertEquals(listOf("//depot/b.txt"), shelf.getShelvedChanges(xxx).map { it.depotPath })
   }
 
-  @Test
-  fun testShelveActionRevertsAndCreatesANewChangelist() {
+  @Test  fun testShelveActionRevertsAndCreatesANewChangelist() {
     setP4ConfigRoots(myWorkingCopyDir)
 
     val file1 = createFileInCommand("a.txt", "")
@@ -67,8 +65,7 @@ class PerforceShelveTest : PerforceTestCase() {
     assertEquals(setOf("//depot/a.txt", "//depot/b.txt"), shelf.getShelvedChanges(list).map { it.depotPath }.toSet())
   }
 
-  @Test
-  fun testUnshelveToTheSameChangelist() {
+  @Test  fun testUnshelveToTheSameChangelist() {
     val file = createFileInCommand("b.txt", "")
     refreshChanges()
     submitDefaultList("initial")
@@ -89,15 +86,16 @@ class PerforceShelveTest : PerforceTestCase() {
     changeListManager.waitUntilRefreshed()
 
     assertEquals(2, changeListManager.changeLists.size)
-    val change = assertOneElement(findNotNullChangeList("xxx").changes)
+    val xxxChanges = findNotNullChangeList("xxx").changes
+    assertThat(xxxChanges).hasSize(1)
+    val change = xxxChanges.single()
     assertEquals(change.type, Change.Type.MODIFICATION)
     assertEquals(file, change.virtualFile)
 
     assertEquals("abc", VfsUtil.loadText(file))
   }
 
-  @Test
-  fun testShelveAndUnshelveRenamedChanges() {
+  @Test  fun testShelveAndUnshelveRenamedChanges() {
     val file1 = createFileInCommand("a.txt", "")
     refreshChanges()
     submitDefaultList("initial")
@@ -123,8 +121,7 @@ class PerforceShelveTest : PerforceTestCase() {
     assertEquals(listOf(Change.Type.MOVED), changeListManager.allChanges.map { it.type })
   }
 
-  @Test
-  fun testShelveFromANamedChangelistWithTheSameCommentAddsToTheExistingShelf() {
+  @Test  fun testShelveFromANamedChangelistWithTheSameCommentAddsToTheExistingShelf() {
     val changes = prepareChangeListWithShelfAndModifiedFile()
 
     ShelveAction.Handler.shelveChanges(myProject, "my shelf", changes)
@@ -134,8 +131,7 @@ class PerforceShelveTest : PerforceTestCase() {
     assertEquals(setOf("//depot/a.txt", "//depot/b.txt"), shelf.getShelvedChanges(list).map { it.depotPath }.toSet())
   }
 
-  @Test
-  fun testShelveFromANamedChangelistWithADifferentCommentCreatesNewChangelist() {
+  @Test  fun testShelveFromANamedChangelistWithADifferentCommentCreatesNewChangelist() {
     val changes = prepareChangeListWithShelfAndModifiedFile()
 
     ShelveAction.Handler.shelveChanges(myProject, "my shelf2", changes)
@@ -166,7 +162,7 @@ class PerforceShelveTest : PerforceTestCase() {
     refreshChanges()
 
     val newList = findNotNullChangeList("my shelf")
-    assertOneElement(newList.changes)
+    assertThat(newList.changes).hasSize(1)
     return newList.changes
   }
 
@@ -179,8 +175,7 @@ class PerforceShelveTest : PerforceTestCase() {
   private val shelf: PerforceShelf
     get() = PerforceManager.getInstance(myProject).shelf
 
-  @Test
-  fun testRevertingAllFilesInAChangelistWithShelfDoesntRemoveItFromTheView() {
+  @Test  fun testRevertingAllFilesInAChangelistWithShelfDoesntRemoveItFromTheView() {
     createFileInCommand("a.txt", "")
     refreshChanges()
 
@@ -189,8 +184,8 @@ class PerforceShelveTest : PerforceTestCase() {
     refreshChanges()
 
     val list = findNotNullChangeList("xxx")
-    assertOneElement(list.changes)
-    assertOneElement(shelf.getShelvedChanges(list))
+    assertThat(list.changes).hasSize(1)
+    assertThat(shelf.getShelvedChanges(list)).hasSize(1)
 
     RollbackWorker(myProject).doRollback(list.changes, false)
     changeListManager.waitUntilRefreshed()
@@ -198,8 +193,7 @@ class PerforceShelveTest : PerforceTestCase() {
     assertTrue(findNotNullChangeList("xxx").changes.isEmpty())
   }
 
-  @Test
-  fun testParseBaseRevisionInUnshelveConflict() {
+  @Test  fun testParseBaseRevisionInUnshelveConflict() {
     val file = createFileInCommand("a.txt", "")
     refreshChanges()
     submitDefaultList("initial")

@@ -31,13 +31,16 @@
  */
 package org.jetbrains.idea.perforce;
 
-import junit.framework.TestCase;
 import org.jetbrains.idea.perforce.perforce.FStat;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Map;
 
-public class MultipleFStatOutputParsingTest extends TestCase{
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MultipleFStatOutputParsingTest{
+  @Test
   public void test() throws Exception {
     final Map<File, String> map = FStat.splitOutputForEachFile("""
                                                                  ... depotFile //depot/created2.txt

@@ -5,14 +5,14 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
-import static com.intellij.testFramework.UsefulTestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PerforceStreamTest extends PerforceTestCase {
 
@@ -88,7 +88,7 @@ public class PerforceStreamTest extends PerforceTestCase {
     openForEdit(file);
 
     refreshChanges();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
     assertEquals(file, getSingleChange().getVirtualFile());
   }
 

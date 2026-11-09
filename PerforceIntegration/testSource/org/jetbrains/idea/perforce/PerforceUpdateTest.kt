@@ -12,22 +12,19 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.vcsUtil.VcsUtil
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class PerforceUpdateTest : PerforceTestCase() {
 
-  @Before
   override fun before() {
     super.before()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.REMOVE, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
   }
 
-  @Test
-  fun testAddAddConflict() {
+  @Test  fun testAddAddConflict() {
     val dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
     val dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
     setupTwoClients(dir1, dir2)
@@ -49,8 +46,7 @@ class PerforceUpdateTest : PerforceTestCase() {
     return session
   }
 
-  @Test
-  fun `test bulk committed change query`() {
+  @Test  fun `test bulk committed change query`() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
 
     val dir1 = createDirInCommand(myWorkingCopyDir, "dir1")

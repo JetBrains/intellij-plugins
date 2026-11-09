@@ -1,6 +1,5 @@
 package org.jetbrains.idea.perforce;
 
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsConfiguration;
@@ -8,27 +7,35 @@ import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
-import junit.framework.TestCase;
+import com.intellij.testFramework.junit5.TestApplication;
 import org.jetbrains.annotations.NotNull;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PerforceWindowsTest extends TestCase {
-  @Override
-  protected void runTest() throws Throwable {
-    if (SystemInfo.isWindows) {
-      super.runTest();
-    }
+@TestApplication
+@EnabledOnOs(OS.WINDOWS)
+public class PerforceWindowsTest {
+  private TestInfo myTestInfo;
+
+  @BeforeEach
+  public void captureTestInfo(TestInfo testInfo) {
+    myTestInfo = testInfo;
   }
 
+  @Test
   public void testNullClientRoot() throws Exception {
     PerforceTestCase tc = new PerforceTestCase() {
       @Override
@@ -42,13 +49,7 @@ public class PerforceWindowsTest extends TestCase {
   }
 
   private void doSanityTest(PerforceTestCase tc) throws Exception {
-    tc.name = new TestName() {
-      @Override
-      public String getMethodName() {
-        return PerforceWindowsTest.this.getName();
-      }
-    };
-    tc.before();
+    tc.setUpPerforce(myTestInfo);
 
     try {
       tc.setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD,
@@ -58,30 +59,31 @@ public class PerforceWindowsTest extends TestCase {
 
       VirtualFile file = tc.createFileInCommand(tc.createDirInCommand(tc.getWorkingCopyDir(), "a b"), "a.txt", "aaa");
       tc.getChangeListManager().waitUntilRefreshed();
-      assertSameElements(getUnversionedFiles(tc.getChangeListManager()), file);
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).containsExactlyInAnyOrder(file);
 
       tc.addFile("a b/a.txt");
       tc.refreshChanges();
 
       assertEquals(file, tc.getSingleChange().getVirtualFile());
-      assertEmpty(getUnversionedFiles(tc.getChangeListManager()));
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).isEmpty();
 
       tc.rollbackChange(tc.getSingleChange());
       tc.getChangeListManager().waitUntilRefreshed();
-      assertEmpty(tc.getChangeListManager().getAllChanges());
-      assertSameElements(getUnversionedFiles(tc.getChangeListManager()), file);
+      assertThat(tc.getChangeListManager().getAllChanges()).isEmpty();
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).containsExactlyInAnyOrder(file);
     }
     finally {
-      tc.after();
+      tc.tearDownPerforce();
     }
   }
 
+  @Test
   public void testUnixAltRoot() throws Exception {
     PerforceTestCase tc = new PerforceTestCase() {
       @Override
       protected String buildTestClientSpec() {
         String clientRoot = FileUtil.toSystemIndependentName(myClientRoot.toString());
-        assertEquals(clientRoot, clientRoot.charAt(1), ':');
+        assertEquals(clientRoot.charAt(1), ':', clientRoot);
 
         String sep = System.lineSeparator();
         return "Client:\ttest" + sep +
@@ -125,26 +127,26 @@ public class PerforceWindowsTest extends TestCase {
 
       tc.refreshInfoAndClient();
       tc.refreshChanges();
-      assertOneElement(getUnversionedFiles(tc.getChangeListManager()));
-      assertEmpty(tc.getChangeListManager().getDeletedFiles());
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).hasSize(1);
+      assertThat(tc.getChangeListManager().getDeletedFiles()).isEmpty();
 
       tc.setVcsMappings(new VcsDirectoryMapping(drive + ":", "Perforce"));
       tc.refreshInfoAndClient();
       tc.refreshChanges();
-      assertOneElement(getUnversionedFiles(tc.getChangeListManager()));
-      assertEmpty(tc.getChangeListManager().getDeletedFiles());
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).hasSize(1);
+      assertThat(tc.getChangeListManager().getDeletedFiles()).isEmpty();
 
       tc.addFile("foo/a.txt");
       tc.refreshChanges();
-      assertEmpty(getUnversionedFiles(tc.getChangeListManager()));
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).isEmpty();
       tc.getSingleChange();
-      assertEmpty(tc.getChangeListManager().getDeletedFiles());
+      assertThat(tc.getChangeListManager().getDeletedFiles()).isEmpty();
 
       tc.setVcsMappings(new VcsDirectoryMapping(drive + ":\\", "Perforce"));
       tc.refreshChanges();
-      assertEmpty(getUnversionedFiles(tc.getChangeListManager()));
+      assertThat(getUnversionedFiles(tc.getChangeListManager())).isEmpty();
       tc.getSingleChange();
-      assertEmpty(tc.getChangeListManager().getDeletedFiles());
+      assertThat(tc.getChangeListManager().getDeletedFiles()).isEmpty();
     }
     finally {
       try {

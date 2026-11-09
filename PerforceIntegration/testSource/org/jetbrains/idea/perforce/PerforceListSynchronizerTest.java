@@ -20,7 +20,7 @@ import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,12 +28,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertNull;
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
-import static com.intellij.testFramework.UsefulTestCase.assertSize;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PerforceListSynchronizerTest extends PerforceTestCase {
   private PerforceNumberNameSynchronizer mySynch;
@@ -189,7 +186,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     refreshChanges();
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("descr1", getChangeListManager(), file);
-    assertSize(2, getChangeListManager().getChangeLists());
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2);
     getChangeListManager().setDefaultChangeList(getChangeListManager().findChangeList("descr1"));
 
     editListDescription(listNumber, "descr2");
@@ -197,7 +194,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("descr2", getChangeListManager(), file);
     assertEquals("descr2", getChangeListManager().getDefaultChangeList().getName());
-    assertSize(2, getChangeListManager().getChangeLists());
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2);
   }
 
   @Test
@@ -465,9 +462,9 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     createChangeList("xxx", Collections.emptyList());
     refreshChanges();
 
-    assertSize(2, getChangeListManager().getChangeLists());
-    assertEmpty(getChangeListManager().findChangeList(getChangeListManager().getDefaultListName()).getChanges());
-    assertEmpty(getChangeListManager().findChangeList("xxx").getChanges());
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2);
+    assertThat(getChangeListManager().findChangeList(getChangeListManager().getDefaultListName()).getChanges()).isEmpty();
+    assertThat(getChangeListManager().findChangeList("xxx").getChanges()).isEmpty();
   }
 
   @Test
@@ -482,9 +479,11 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     setVcsMappings(new VcsDirectoryMapping(dir1.getPath(), PerforceVcs.getInstance(myProject).getName()));
     refreshChanges();
 
-    assertEmpty(ChangeListManagerExtensionsKt.getUnversionedFiles(getChangeListManager()));
+    assertThat(ChangeListManagerExtensionsKt.getUnversionedFiles(getChangeListManager())).isEmpty();
     assertEquals(file1, getSingleChange().getVirtualFile());
-    assertEquals(getChangeListManager().getDefaultListName(), assertOneElement(getChangeListManager().getChangeLists()).getName());
+    List<LocalChangeList> changeLists = getChangeListManager().getChangeLists();
+    assertThat(changeLists).hasSize(1);
+    assertEquals(getChangeListManager().getDefaultListName(), changeLists.iterator().next().getName());
   }
 
   @Test
@@ -496,21 +495,23 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     refreshChanges();
 
-    assertEquals(file, assertOneElement(getChangeListManager().getAllChanges()).getVirtualFile());
-    assertSize(2, getChangeListManager().getChangeLists());
+    Collection<Change> allChanges = getChangeListManager().getAllChanges();
+    assertThat(allChanges).hasSize(1);
+    assertEquals(file, allChanges.iterator().next().getVirtualFile());
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2);
 
     getChangeListManager().removeChangeList("xxx");
     refreshChanges();
-    assertSize(1, getChangeListManager().getChangeLists());
+    assertThat(getChangeListManager().getChangeLists()).hasSize(1);
     assertEquals(file, getSingleChange().getVirtualFile());
 
     moveToChangelist(num, "//depot/b.txt");
     refreshChanges();
-    assertSize(2, getChangeListManager().getChangeLists()); // xxx is non-empty, so show it again
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2); // xxx is non-empty, so show it again
 
     moveToDefaultChangelist("//depot/b.txt");
     refreshChanges();
-    assertSize(2, getChangeListManager().getChangeLists()); // still show xxx, because it wasn't deleted explicitly
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2); // still show xxx, because it wasn't deleted explicitly
   }
 
   @Test
@@ -524,13 +525,13 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     refreshChanges();
 
     Collection<Change> changes = getChangeListManager().findChangeList("xxx").getChanges();
-    assertSize(2, changes);
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment()
-                  .commit(Collections.singletonList(changes.iterator().next()), "single file"));
+    assertThat(changes).hasSize(2);
+    assertThat(PerforceVcs.getInstance(myProject).getCheckinEnvironment()
+                 .commit(Collections.singletonList(changes.iterator().next()), "single file")).isEmpty();
 
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
-    assertSameElements(getAllChangeListNames(), LocalChangeList.getDefaultName(), "xxx");
+    assertThat(getAllChangeListNames()).containsExactlyInAnyOrder(LocalChangeList.getDefaultName(), "xxx");
   }
 
   @Test
@@ -548,13 +549,13 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     refreshChanges();
 
     Collection<Change> changes = getChangeListManager().findChangeList("xxx").getChanges();
-    assertSize(2, changes);
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment()
-                  .commit(Collections.singletonList(changes.iterator().next()), "single file"));
+    assertThat(changes).hasSize(2);
+    assertThat(PerforceVcs.getInstance(myProject).getCheckinEnvironment()
+                 .commit(Collections.singletonList(changes.iterator().next()), "single file")).isEmpty();
 
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
-    assertSameElements(getAllChangeListNames(), LocalChangeList.getDefaultName(), "xxx");
+    assertThat(getAllChangeListNames()).containsExactlyInAnyOrder(LocalChangeList.getDefaultName(), "xxx");
     assertEquals("xxx", getChangeListManager().getDefaultListName());
   }
 
@@ -565,7 +566,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     getChangeListManager().removeChangeList(LocalChangeList.getDefaultName());
 
     refreshChanges();
-    assertSameElements(getAllChangeListNames(), "foo");
+    assertThat(getAllChangeListNames()).containsExactlyInAnyOrder("foo");
 
     VirtualFile file = createFileInCommand("a.txt", "");
     addFile("a.txt");
@@ -573,7 +574,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     refreshChanges();
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(LocalChangeList.getDefaultName(), getChangeListManager(), file);
-    assertSameElements(getAllChangeListNames(), LocalChangeList.getDefaultName(), "foo");
+    assertThat(getAllChangeListNames()).containsExactlyInAnyOrder(LocalChangeList.getDefaultName(), "foo");
   }
 
   private List<String> getAllChangeListNames() {

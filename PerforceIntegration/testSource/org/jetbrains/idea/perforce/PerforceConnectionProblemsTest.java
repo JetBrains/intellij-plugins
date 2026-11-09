@@ -8,11 +8,11 @@ import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PerforceConnectionProblemsTest extends PerforceTestCase {
   @Override
@@ -30,7 +30,7 @@ public class PerforceConnectionProblemsTest extends PerforceTestCase {
     stopPerforceServer();
     goOnline();
     assertFalse(PerforceSettings.getSettings(myProject).ENABLED);
-    assertOneElement(VcsOperationLog.getInstance(myProject).getPendingOperations());
+    assertThat(VcsOperationLog.getInstance(myProject).getPendingOperations()).hasSize(1);
   }
 
   @Test
@@ -93,8 +93,8 @@ public class PerforceConnectionProblemsTest extends PerforceTestCase {
 
     refreshChanges();
     assertFalse(PerforceSettings.getSettings(myProject).ENABLED);
-    assertOneElement(VcsOperationLog.getInstance(myProject).getPendingOperations());
-    assertOneElement(getChangeListManager().findChangeList(clName).getChanges());
+    assertThat(VcsOperationLog.getInstance(myProject).getPendingOperations()).hasSize(1);
+    assertThat(getChangeListManager().findChangeList(clName).getChanges()).hasSize(1);
   }
 
   @Test
@@ -127,6 +127,6 @@ public class PerforceConnectionProblemsTest extends PerforceTestCase {
     refreshChanges();
     getSingleChange();
     assertFalse(PerforceSettings.getSettings(myProject).ENABLED);
-    assertOneElement(VcsOperationLog.getInstance(myProject).getPendingOperations());
+    assertThat(VcsOperationLog.getInstance(myProject).getPendingOperations()).hasSize(1);
   }
 }

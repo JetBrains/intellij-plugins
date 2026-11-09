@@ -1,7 +1,7 @@
 package org.jetbrains.idea.perforce
 
 import com.intellij.openapi.application.PluginPathManager
-import junit.framework.AssertionFailedError
+import org.opentest4j.AssertionFailedError
 import java.io.File
 
 object P4TestUtil {

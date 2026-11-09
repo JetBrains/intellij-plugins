@@ -1,22 +1,34 @@
 package org.jetbrains.idea.perforce
 
-import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters
 import org.jetbrains.idea.perforce.perforce.connections.P4ParamsCalculator
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.io.path.writeText
 
-class PerforceConfigReadingTest : HeavyPlatformTestCase() {
+@TestApplication
+class PerforceConfigReadingTest {
+  @TempDir
+  lateinit var tempDir: Path
 
+
+  @Test
   fun testSlashInUserName() {
-    val file = createTempFile("p4config.txt", """
+    val file = tempDir.resolve("p4config.txt").apply { writeText("""
 P4USER=foo/bar\goo
 P4CLIENT= foo=bar
-""")
+""") }.toFile()
     val params = P4ParamsCalculator.getParametersFromConfig(file.parentFile, file.name)
     assertNull(params.exception)
     assertEquals("foo/bar\\goo", params.user)
     assertEquals("foo=bar", params.client)
   }
 
+  @Test
   fun `test p4 set output`() {
     val output = """
 P4CLIENT=p4test

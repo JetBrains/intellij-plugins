@@ -1,10 +1,12 @@
 package org.jetbrains.idea.perforce;
 
 import org.jetbrains.idea.perforce.perforce.View;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PerforceViewTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class PerforceViewTest {
   @Test
   public void should_support_wildcards_recursive() {
     final View view = View.create("//depot/...  //kir-mac/...");

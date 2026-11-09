@@ -29,9 +29,7 @@ import org.jetbrains.idea.perforce.operations.P4EditOperation;
 import org.jetbrains.idea.perforce.perforce.PerforceChangeListHelper;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.jobs.ConnectionSelector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,17 +38,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertFalse;
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
-import static com.intellij.testFramework.UsefulTestCase.assertSize;
-import static junit.framework.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PerforceOperationsTest extends PerforceTestCase {
   @Override
-  @Before
   public void before() throws Exception {
     super.before();
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);
@@ -102,14 +96,14 @@ public class PerforceOperationsTest extends PerforceTestCase {
     refreshChanges();
 
     final List<String> files = getFilesInDefaultChangelist();
-    Assert.assertEquals(1, files.size());
+    assertEquals(1, files.size());
     String file = files.get(0);
-    Assert.assertEquals("//depot/b.txt\t# add", file);
+    assertEquals("//depot/b.txt\t# add", file);
 
     ChangeListManagerImpl changeListManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     changeListManager.ensureUpToDate();
     final List<Change> changes = new ArrayList<>(changeListManager.getDefaultChangeList().getChanges());
-    Assert.assertEquals(1, changes.size());
+    assertEquals(1, changes.size());
     verifyChange(changes.get(0), null, "b.txt");
   }
 
@@ -140,10 +134,10 @@ public class PerforceOperationsTest extends PerforceTestCase {
     new P4EditOperation("Default", child).execute(myProject);
     renameFileInCommand(dir, "newchild");
 
-    Assert.assertFalse(new File(myWorkingCopyDir.getPath(), "child").exists());   // IDEADEV-18837
+    assertFalse(new File(myWorkingCopyDir.getPath(), "child").exists());   // IDEADEV-18837
     final File newChildDir = new File(myWorkingCopyDir.getPath(), "newchild");
-    Assert.assertTrue(newChildDir.exists());
-    Assert.assertTrue(new File(newChildDir, "a.txt").canWrite());                 // IDEADEV-18783
+    assertTrue(newChildDir.exists());
+    assertTrue(new File(newChildDir, "a.txt").canWrite());                 // IDEADEV-18783
     refreshVfs();
     refreshChanges();
     verifyChange(getSingleChange(), "child\\a.txt", "newchild\\a.txt");
@@ -155,11 +149,11 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.REMOVE);
     VirtualFile fileToEdit = createFileInCommand("a.txt", null);
     refreshChanges();
-    Assert.assertEquals(1, getFilesInDefaultChangelist().size());
+    assertEquals(1, getFilesInDefaultChangelist().size());
     deleteFileInCommand(fileToEdit);
     refreshChanges();
     List<String> files = getFilesInDefaultChangelist();
-    Assert.assertEquals(0, files.size());
+    assertEquals(0, files.size());
   }
 
   @Test
@@ -169,10 +163,10 @@ public class PerforceOperationsTest extends PerforceTestCase {
     VirtualFile dir = createDirInCommand(myWorkingCopyDir, "test");
     createFileInCommand(dir, "a.txt", null);
     refreshChanges();
-    Assert.assertEquals(1, getFilesInDefaultChangelist().size());
+    assertEquals(1, getFilesInDefaultChangelist().size());
     deleteFileInCommand(dir);
     refreshChanges();
-    Assert.assertEquals(0, getFilesInDefaultChangelist().size());
+    assertEquals(0, getFilesInDefaultChangelist().size());
   }
 
   @Test
@@ -194,19 +188,25 @@ public class PerforceOperationsTest extends PerforceTestCase {
     createChangeList("xxx", List.of("//depot/a.txt"));
     refreshChanges();
 
-    assertEquals("xxx", assertOneElement(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection())).getName());
+    var pendingLists = PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection());
+    assertThat(pendingLists).hasSize(1);
+    assertEquals("xxx", pendingLists.iterator().next().getName());
 
-    assertSize(2, getChangeListManager().getChangeLists());
-    assertEmpty(getChangeListManager().findChangeList(getChangeListManager().getDefaultListName()).getChanges());
+    assertThat(getChangeListManager().getChangeLists()).hasSize(2);
+    assertThat(getChangeListManager().findChangeList(getChangeListManager().getDefaultListName()).getChanges()).isEmpty();
 
-    Change change = assertOneElement(getChangeListManager().findChangeList("xxx").getChanges());
+    var xxxChanges = getChangeListManager().findChangeList("xxx").getChanges();
+    assertThat(xxxChanges).hasSize(1);
+    Change change = xxxChanges.iterator().next();
     assertEquals(file, change.getVirtualFile());
 
     rollbackChange(change);
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges());
+    var changeLists = getChangeListManager().getChangeLists();
+    assertThat(changeLists).hasSize(1);
+    assertThat(changeLists.iterator().next().getChanges()).isEmpty();
 
-    assertEmpty(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection()));
+    assertThat(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection())).isEmpty();
   }
 
   @Test
@@ -235,8 +235,8 @@ public class PerforceOperationsTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("A", getChangeListManager(), file1);
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("B", getChangeListManager(), file2);
 
-    assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("A")).keySet());
-    assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("B")).keySet());
+    assertThat(ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("A")).keySet()).hasSize(1);
+    assertThat(ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("B")).keySet()).hasSize(1);
 
     getChangeListManager().moveChangesTo(listA, getChangeListManager().findChangeList("B").getChanges().toArray(Change.EMPTY_CHANGE_ARRAY));
     getChangeListManager().waitUntilRefreshed();
@@ -244,16 +244,16 @@ public class PerforceOperationsTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("A", getChangeListManager(), file1, file2);
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("B", getChangeListManager());
 
-    assertSize(2, PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection()));
-    assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("A")).keySet());
+    assertThat(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection())).hasSize(2);
+    assertThat(ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("A")).keySet()).hasSize(1);
 
     getChangeListManager().moveChangesTo(listB, getChangeListManager().findChangeList("A").getChanges().toArray(Change.EMPTY_CHANGE_ARRAY));
     getChangeListManager().waitUntilRefreshed();
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("A", getChangeListManager());
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("B", getChangeListManager(), file1, file2);
 
-    assertSize(2, PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection()));
-    assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("B")).keySet());
+    assertThat(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection())).hasSize(2);
+    assertThat(ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("B")).keySet()).hasSize(1);
   }
 
   @Test
@@ -261,7 +261,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY);
     createFileInCommand("a.txt", "");
     getChangeListManager().waitUntilRefreshed();
-    assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().getDefaultChangeList()).keySet());
+    assertThat(ConnectionSelector.getConnections(myProject, getChangeListManager().getDefaultChangeList()).keySet()).hasSize(1);
   }
 
   @Test
@@ -272,10 +272,12 @@ public class PerforceOperationsTest extends PerforceTestCase {
     verify(runP4(new String[]{"-c", "test", "change", "-i"}, spec));
 
     refreshChanges();
-    Change change = assertOneElement(getChangeListManager().getAllChanges());
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Arrays.asList(change), "aaa"));
+    var allChanges = getChangeListManager().getAllChanges();
+    assertThat(allChanges).hasSize(1);
+    Change change = allChanges.iterator().next();
+    assertThat(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Arrays.asList(change), "aaa")).isEmpty();
     refreshChanges();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
   }
 
   @Test
@@ -286,22 +288,22 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     refreshChanges();
     Change change = getSingleChange();
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(List.of(change), "aaa"));
+    assertThat(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(List.of(change), "aaa")).isEmpty();
     refreshChanges();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
 
     moveFileInCommand(file, createDirInCommand(myWorkingCopyDir, "dir"));
     discardUnversionedCacheAndWaitFullRefresh();
 
     rollbackChange(getSingleChange());
     refreshChanges();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
 
     new P4AddOperation(getChangeListManager().getDefaultListName(), createFileInCommand("a$.txt", "")).execute(myProject);
     new P4AddOperation(getChangeListManager().getDefaultListName(), createFileInCommand("a#.txt", "")).execute(myProject);
     new P4AddOperation(getChangeListManager().getDefaultListName(), createFileInCommand("a%.txt", "")).execute(myProject);
     getChangeListManager().waitUntilRefreshed();
-    assertSize(3, getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).hasSize(3);
   }
 
   @Test
@@ -347,9 +349,9 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     deleteFileInCommand(file);
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getDefaultChangeList().getChanges());
-    assertOneElement(getChangeListManager().findChangeList(another).getChanges());
-    assertEmpty(getChangeListManager().getDeletedFiles());
+    assertThat(getChangeListManager().getDefaultChangeList().getChanges()).isEmpty();
+    assertThat(getChangeListManager().findChangeList(another).getChanges()).hasSize(1);
+    assertThat(getChangeListManager().getDeletedFiles()).isEmpty();
   }
 
   @Test
@@ -360,7 +362,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     submitDefaultList("initial");
 
     refreshChanges();
-    assertSameElements(getUnversionedFiles(getChangeListManager()), unversioned);
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactlyInAnyOrder(unversioned);
 
     EdtTestUtil.runInEdtAndWait((() -> new ActionEdit().processFiles(myProject, myWorkingCopyDir)));
     waitForAsyncRefresh();
@@ -368,7 +370,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     getChangeListManager().waitUntilRefreshed();
     assertEquals(toAdd, getSingleChange().getVirtualFile());
     assertEquals(FileStatus.UNKNOWN, FileStatusManager.getInstance(myProject).getStatus(unversioned));
-    assertSameElements(getUnversionedFiles(getChangeListManager()), unversioned);
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactlyInAnyOrder(unversioned);
 
     ProcessOutput result = runP4WithClient("opened");
     verify(result);

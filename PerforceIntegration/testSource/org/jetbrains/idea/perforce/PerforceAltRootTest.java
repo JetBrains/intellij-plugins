@@ -11,12 +11,12 @@ import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.P4WhereResult;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static junit.framework.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PerforceAltRootTest extends PerforceTestCase {
   @Override
@@ -46,16 +46,16 @@ public class PerforceAltRootTest extends PerforceTestCase {
 
     rollbackChange(getSingleChange());
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
   }
 
   private VirtualFile createAndCommit() {
     VirtualFile file = createFileInCommand("foo.txt", "");
     getChangeListManager().waitUntilRefreshed();
 
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Arrays.asList(getSingleChange()), "aaa"));
+    assertThat(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Arrays.asList(getSingleChange()), "aaa")).isEmpty();
     refreshChanges();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
     return file;
   }
 
@@ -71,7 +71,7 @@ public class PerforceAltRootTest extends PerforceTestCase {
 
     rollbackChange(getSingleChange());
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
 
     deleteFileInCommand(file);
     getChangeListManager().waitUntilRefreshed();

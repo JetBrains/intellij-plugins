@@ -36,9 +36,7 @@ import org.jetbrains.idea.perforce.operations.P4MoveRenameOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
 import org.jetbrains.idea.perforce.perforce.PerforceCachingContentRevision;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,24 +48,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertFalse;
-import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
-import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
-import static com.intellij.testFramework.UsefulTestCase.assertNull;
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static com.intellij.testFramework.UsefulTestCase.assertOrderedEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
-import static com.intellij.testFramework.UsefulTestCase.assertTrue;
-import static com.intellij.testFramework.UsefulTestCase.assertUnorderedCollection;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("SameParameterValue")
 public class OfflineModeTest extends PerforceTestCase {
   private static final Logger LOG = Logger.getInstance(OfflineModeTest.class);
 
   @Override
-  @Before
   public void before() throws Exception {
     super.before();
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);
@@ -102,7 +95,7 @@ public class OfflineModeTest extends PerforceTestCase {
     ChangeListManagerImpl changeListManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     changeListManager.ensureUpToDate();
     LocalChangeList list = changeListManager.getDefaultChangeList();
-    Assert.assertEquals(1, list.getChanges().size());
+    assertEquals(1, list.getChanges().size());
     // this is needed since last successful update tracker gets notified after local changes update
     // (on the same thread)
     changeListManager.ensureUpToDate();
@@ -113,11 +106,11 @@ public class OfflineModeTest extends PerforceTestCase {
     changeListManager.ensureUpToDate();
     list = changeListManager.getDefaultChangeList();
     Collection<Change> changes = list.getChanges();
-    Assert.assertEquals(1, changes.size());
+    assertEquals(1, changes.size());
     Change c = changes.iterator().next();
-    Assert.assertNull(c.getBeforeRevision());
+    assertNull(c.getBeforeRevision());
     ContentRevision afterRevision = c.getAfterRevision();
-    Assert.assertTrue(afterRevision instanceof CurrentContentRevision);
+    assertTrue(afterRevision instanceof CurrentContentRevision);
   }
 
   @Test
@@ -127,7 +120,7 @@ public class OfflineModeTest extends PerforceTestCase {
     createFileInCommand("a.txt", null);
     refreshChanges();
     Collection<Change> changes = ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges();
-    Assert.assertEquals(1, changes.size());
+    assertEquals(1, changes.size());
   }
 
   @Test
@@ -144,10 +137,10 @@ public class OfflineModeTest extends PerforceTestCase {
 
     assertEquals(FileStatus.MODIFIED, FileStatusManager.getInstance(myProject).getStatus(fileToEdit));
     Change c = getSingleChange();
-    Assert.assertTrue(c.getBeforeRevision() instanceof PerforceCachingContentRevision);
-    Assert.assertTrue(c.getAfterRevision() instanceof CurrentContentRevision);
-    Assert.assertEquals("original content", c.getBeforeRevision().getContent());
-    Assert.assertEquals("new content", c.getAfterRevision().getContent());
+    assertTrue(c.getBeforeRevision() instanceof PerforceCachingContentRevision);
+    assertTrue(c.getAfterRevision() instanceof CurrentContentRevision);
+    assertEquals("original content", c.getBeforeRevision().getContent());
+    assertEquals("new content", c.getAfterRevision().getContent());
   }
 
   @Test
@@ -160,10 +153,10 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
 
     Change c = getSingleChange();
-    Assert.assertTrue(c.getBeforeRevision() instanceof PerforceCachingContentRevision);
-    Assert.assertNull(c.getAfterRevision());
+    assertTrue(c.getBeforeRevision() instanceof PerforceCachingContentRevision);
+    assertNull(c.getAfterRevision());
     // TODO[yole]: implement when LocalVCS allows to retrieve content for deleted files
-    //Assert.assertEquals("original content", c.getBeforeRevision().getContent());
+    //assertEquals("original content", c.getBeforeRevision().getContent());
   }
 
   @Test
@@ -183,8 +176,8 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
 
     Change c = getSingleChange();
-    Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("a.txt"));
-    Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("b.txt"));
+    assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("a.txt"));
+    assertTrue(c.getAfterRevision().getFile().getPath().endsWith("b.txt"));
 
     goOnline();
     submitDefaultList("comment");
@@ -197,20 +190,20 @@ public class OfflineModeTest extends PerforceTestCase {
     VirtualFile file = createAndSubmit("a.txt", "something");
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     editExternally(file, "something else");
     getChangeListManager().waitUntilRefreshed();
 
-    assertOrderedEquals(getChangeListManager().getModifiedWithoutEditing(), file);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).containsExactly(file);
 
     goOffline();
     refreshChanges();
-    assertOrderedEquals(getChangeListManager().getModifiedWithoutEditing(), file);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).containsExactly(file);
 
     goOnline();
     refreshChanges();
-    assertOrderedEquals(getChangeListManager().getModifiedWithoutEditing(), file);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).containsExactly(file);
   }
 
   @Test
@@ -218,18 +211,18 @@ public class OfflineModeTest extends PerforceTestCase {
     VirtualFile file = createAndSubmit("a.txt", "something");
     goOffline();
     refreshChanges();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     editExternally(file, "something else");
 
     refreshChanges();
-    assertOrderedEquals(getChangeListManager().getModifiedWithoutEditing(), file);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).containsExactly(file);
 
     rollbackModifiedWithoutCheckout(file);
     assertEquals("something", LoadTextUtil.loadText(file).toString());
     assertFalse(file.isWritable());
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
   }
 
   @Test
@@ -239,7 +232,7 @@ public class OfflineModeTest extends PerforceTestCase {
 
     goOffline();
     refreshChanges();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     openForEdit(file);
     editFileInCommand(file, "something1");
@@ -257,11 +250,11 @@ public class OfflineModeTest extends PerforceTestCase {
 
     goOffline();
     refreshChanges();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     openForEdit(file);
     refreshChanges();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     rollbackChange(getSingleChange());
     assertEquals("something", LoadTextUtil.loadText(file).toString());
@@ -346,12 +339,12 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
 
     Collection<Change> changes = ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges();
-    assertUnorderedCollection(changes, c -> {
-                                Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("a.txt"));
-                                Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir2/dir1/c.txt"));
+    assertThat(changes).satisfiesExactlyInAnyOrder(c -> {
+                                assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("a.txt"));
+                                assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir2/dir1/c.txt"));
                               }, c -> {
-                                Assert.assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("b.txt"));
-                                Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir1/b.txt"));
+                                assertTrue(c.getBeforeRevision().getFile().getPath().endsWith("b.txt"));
+                                assertTrue(c.getAfterRevision().getFile().getPath().endsWith("dir1/b.txt"));
                               }
     );
 
@@ -386,14 +379,14 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     rollbackChange(getSingleChange());
 
-    Assert.assertEquals("original content", getFileText(fileToEdit));
-    Assert.assertFalse(fileToEdit.isWritable());
+    assertEquals("original content", getFileText(fileToEdit));
+    assertFalse(fileToEdit.isWritable());
     refreshChanges();
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
 
     goOnline();
     refreshChanges();
-    Assert.assertEquals(0, getFilesInDefaultChangelist().size());
+    assertEquals(0, getFilesInDefaultChangelist().size());
   }
 
   @Test
@@ -407,10 +400,10 @@ public class OfflineModeTest extends PerforceTestCase {
 
     Change c = getSingleChange();
     rollbackChange(c);
-    Assert.assertEquals("original content", getFileText(fileToEdit));
+    assertEquals("original content", getFileText(fileToEdit));
 
     refreshChanges();
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
   }
 
   @Test
@@ -422,10 +415,10 @@ public class OfflineModeTest extends PerforceTestCase {
     goOffline();
     rollbackChange(getSingleChange());
     refreshChanges();
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
 
     goOnline();
-    Assert.assertEquals(0, getFilesInDefaultChangelist().size());
+    assertEquals(0, getFilesInDefaultChangelist().size());
   }
 
   @Test
@@ -436,8 +429,8 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     rollbackChange(getSingleChange());
     refreshChanges();
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
-    Assert.assertEquals(0, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
   }
 
   @Test
@@ -456,9 +449,9 @@ public class OfflineModeTest extends PerforceTestCase {
     goOffline();
     refreshChanges();
 
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
-    assertEmpty(getChangeListManager().getDefaultChangeList().getChanges());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
+    assertThat(getChangeListManager().getDefaultChangeList().getChanges()).isEmpty();
 
     renameFileInCommand(file, "b.txt");
     assertNotNull(LastUnchangedContentTracker.getLastUnchangedContent(file));
@@ -477,14 +470,18 @@ public class OfflineModeTest extends PerforceTestCase {
     assertTrue(file.isValid());
     assertNotNull(LastUnchangedContentTracker.getLastUnchangedContent(file));
 
-    assertInstanceOf(assertOneElement(VcsOperationLog.getInstance(myProject).getPendingOperations()), P4MoveRenameOperation.class);
+    List<VcsOperation> pendingOperations = VcsOperationLog.getInstance(myProject).getPendingOperations();
+    assertThat(pendingOperations).hasSize(1);
+    assertInstanceOf(P4MoveRenameOperation.class, pendingOperations.iterator().next());
 
     Change c = getSingleChange();
     assertEquals(Change.Type.MOVED, c.getType());
     rollbackChange(c);
     getChangeListManager().waitUntilRefreshed();
 
-    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges());
+    List<LocalChangeList> changeLists = getChangeListManager().getChangeLists();
+    assertThat(changeLists).hasSize(1);
+    assertThat(changeLists.iterator().next().getChanges()).isEmpty();
 
     assertNotNull(myWorkingCopyDir.findFileByRelativePath("foo/a.txt"));
     assertNull(myWorkingCopyDir.findFileByRelativePath("bar/a.txt"));
@@ -517,9 +514,9 @@ public class OfflineModeTest extends PerforceTestCase {
     rollbackChange(c);
     refreshChanges();
 
-    Assert.assertEquals("a.txt", file.getName());
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
-    Assert.assertEquals(0, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
+    assertEquals("a.txt", file.getName());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
 
     goOnline();
 
@@ -528,7 +525,7 @@ public class OfflineModeTest extends PerforceTestCase {
     deleteFileInCommand(anotherFile);
     getChangeListManager().waitUntilRefreshed();
 
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
   }
 
   @Test
@@ -541,8 +538,8 @@ public class OfflineModeTest extends PerforceTestCase {
     deleteFileInCommand(file);
 
     refreshChanges();
-    Assert.assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
-    Assert.assertEquals(0, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
+    assertEquals(0, ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges().size());
+    assertEquals(0, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
   }
 
   @Test
@@ -554,8 +551,8 @@ public class OfflineModeTest extends PerforceTestCase {
 
     refreshChanges();
     Change c = getSingleChange();
-    Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("b.txt"));
-    Assert.assertEquals(1, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
+    assertTrue(c.getAfterRevision().getFile().getPath().endsWith("b.txt"));
+    assertEquals(1, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
   }
 
   @Test
@@ -568,8 +565,8 @@ public class OfflineModeTest extends PerforceTestCase {
 
     refreshChanges();
     Change c = getSingleChange();
-    Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("c.txt"));
-    Assert.assertEquals(1, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
+    assertTrue(c.getAfterRevision().getFile().getPath().endsWith("c.txt"));
+    assertEquals(1, VcsOperationLog.getInstance(myProject).getPendingOperations().size());
   }
 
   @Test
@@ -583,12 +580,12 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     Change c = getSingleChange();
     final ContentRevision beforeRevision = c.getBeforeRevision();
-    assertNotNull(c.toString(), beforeRevision);
-    Assert.assertTrue(beforeRevision.getFile().getPath().endsWith("a.txt"));
-    Assert.assertTrue(c.getAfterRevision().getFile().getPath().endsWith("a.txt"));
+    assertNotNull(beforeRevision, c.toString());
+    assertTrue(beforeRevision.getFile().getPath().endsWith("a.txt"));
+    assertTrue(c.getAfterRevision().getFile().getPath().endsWith("a.txt"));
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();
-    Assert.assertEquals(1, pendingOps.size());
-    Assert.assertTrue(pendingOps.get(0) instanceof P4EditOperation);
+    assertEquals(1, pendingOps.size());
+    assertTrue(pendingOps.get(0) instanceof P4EditOperation);
   }
 
   @Test
@@ -604,7 +601,7 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     Change c = getSingleChange();
     rollbackChange(c);
-    Assert.assertEquals("content", getFileText(file));
+    assertEquals("content", getFileText(file));
   }
 
   @Test
@@ -618,9 +615,9 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     final ChangeListManager clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     final List<LocalChangeList> lists = clManager.getChangeLists();
-    Assert.assertEquals(2, lists.size());
+    assertEquals(2, lists.size());
     final LocalChangeList list = clManager.findChangeList("Second");
-    Assert.assertEquals(1, list.getChanges().size());
+    assertEquals(1, list.getChanges().size());
 
     goOnline();
     verifyOpenedInList("Second", "a.txt");
@@ -695,10 +692,10 @@ public class OfflineModeTest extends PerforceTestCase {
 
     refreshChanges();
     final List<LocalChangeList> lists = clManager.getChangeLists();
-    Assert.assertEquals(2, lists.size());
-    Assert.assertEquals(1, clManager.findChangeList("Second").getChanges().size());
+    assertEquals(2, lists.size());
+    assertEquals(1, clManager.findChangeList("Second").getChanges().size());
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();
-    Assert.assertEquals(1, pendingOps.size());
+    assertEquals(1, pendingOps.size());
 
     goOnline();
     verifyOpenedInList("Second", "a.txt");
@@ -718,10 +715,10 @@ public class OfflineModeTest extends PerforceTestCase {
     clManager.moveChangesTo(list, c);
 
     final List<LocalChangeList> lists = clManager.getChangeLists();
-    Assert.assertEquals(2, lists.size());
-    Assert.assertEquals(1, clManager.findChangeList("Second").getChanges().size());
+    assertEquals(2, lists.size());
+    assertEquals(1, clManager.findChangeList("Second").getChanges().size());
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();
-    Assert.assertEquals(1, pendingOps.size());
+    assertEquals(1, pendingOps.size());
   }
 
   @Test
@@ -739,10 +736,10 @@ public class OfflineModeTest extends PerforceTestCase {
     clManager.moveChangesTo(list, c);
 
     final List<LocalChangeList> lists = clManager.getChangeLists();
-    Assert.assertEquals(2, lists.size());
-    Assert.assertEquals(1, clManager.findChangeList("Second").getChanges().size());
+    assertEquals(2, lists.size());
+    assertEquals(1, clManager.findChangeList("Second").getChanges().size());
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();
-    Assert.assertEquals(1, pendingOps.size());
+    assertEquals(1, pendingOps.size());
   }
 
   @Test
@@ -756,7 +753,7 @@ public class OfflineModeTest extends PerforceTestCase {
     verifyOpened("b.txt", "add");
     ProcessOutput result = runP4WithClient("resolved");
     String stdout = result.getStdout().trim();
-    Assert.assertTrue(stdout.endsWith("b.txt - branch from //depot/a.txt#1"));
+    assertTrue(stdout.endsWith("b.txt - branch from //depot/a.txt#1"));
   }
 
   @Test
@@ -770,21 +767,21 @@ public class OfflineModeTest extends PerforceTestCase {
 
     getChangeListManager().waitUntilRefreshed();
 
-    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB);
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactlyInAnyOrder(fileB);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     goOffline();
     refreshChanges();
 
-    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB);
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactlyInAnyOrder(fileB);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     editExternally(fileA, "hijacked");
     VirtualFile fileC = createFileInCommand("c.txt", "");
     getChangeListManager().waitUntilRefreshed();
 
-    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB, fileC);
-    assertSameElements(getChangeListManager().getModifiedWithoutEditing(), fileA);
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactlyInAnyOrder(fileB, fileC);
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).containsExactlyInAnyOrder(fileA);
   }
 
   @Test
@@ -804,8 +801,8 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshVfs();
     refreshChanges();
     getChangeListManager().waitUntilRefreshed();
-    assertSameElements(getUnversionedFiles(getChangeListManager()), fileB);
-    assertSameElements(getChangeListManager().getIgnoredFilePaths(), ignoredFiles);
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactlyInAnyOrder(fileB);
+    assertThat(getChangeListManager().getIgnoredFilePaths()).containsExactlyInAnyOrderElementsOf(ignoredFiles);
   }
 
   private VirtualFile createAndSubmit(final String fileName, final String content) {
@@ -845,11 +842,11 @@ public class OfflineModeTest extends PerforceTestCase {
 
     Pattern pattern = Pattern.compile("Change (\\d+).+'(.+) '");
     Matcher m = pattern.matcher(stdout);
-    Assert.assertTrue("Unexpected pending changes: " + stdout, m.matches());
-    Assert.assertEquals(changeListName, m.group(2));
+    assertTrue(m.matches(), "Unexpected pending changes: " + stdout);
+    assertEquals(changeListName, m.group(2));
 
     execResult = runP4WithClient("describe", "-s", m.group(1));
-    Assert.assertTrue(execResult.getStdout().contains("... //depot/" + path));
+    assertTrue(execResult.getStdout().contains("... //depot/" + path));
   }
 
   @Test
@@ -869,14 +866,14 @@ public class OfflineModeTest extends PerforceTestCase {
     assertFalse(VfsUtilCore.virtualToIoFile(file).exists());
 
     getChangeListManager().waitUntilRefreshed();
-    Assert.assertEquals(Change.Type.DELETED, getSingleChange().getType());
+    assertEquals(Change.Type.DELETED, getSingleChange().getType());
 
     createFileInCommand("a.txt", "new content");
     getChangeListManager().waitUntilRefreshed();
-    Assert.assertEquals(Change.Type.MODIFICATION, getSingleChange().getType());
+    assertEquals(Change.Type.MODIFICATION, getSingleChange().getType());
 
     goOnline();
     refreshChanges();
-    Assert.assertEquals(Change.Type.MODIFICATION, getSingleChange().getType());
+    assertEquals(Change.Type.MODIFICATION, getSingleChange().getType());
   }
 }

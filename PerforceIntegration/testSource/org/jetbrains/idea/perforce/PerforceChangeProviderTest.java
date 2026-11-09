@@ -35,9 +35,7 @@ import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.changesBrowser.PerforceChangeBrowserSettings;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,17 +47,15 @@ import java.util.List;
 import java.util.Random;
 
 import static com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt.getUnversionedFiles;
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static com.intellij.testFramework.UsefulTestCase.assertEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertNull;
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static com.intellij.testFramework.UsefulTestCase.assertOrderedEquals;
-import static com.intellij.testFramework.UsefulTestCase.assertSize;
-import static com.intellij.testFramework.UsefulTestCase.fail;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class PerforceChangeProviderTest extends PerforceTestCase {
   private DuringChangeListManagerUpdateTestScheme myScheme;
@@ -98,17 +94,19 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     final ChangeListManagerImpl clManager = getChangeListManager();
     clManager.ensureUpToDate();
 
-    assertOrderedEquals(getUnversionedFiles(clManager), file);
+    assertThat(getUnversionedFiles(clManager)).containsExactly(file);
     assertTrue(clManager.isUnversioned(file));
-    assertEmpty(assertOneElement(clManager.getChangeLists()).getChanges());
+    List<LocalChangeList> changeLists = clManager.getChangeLists();
+    assertThat(changeLists).hasSize(1);
+    assertThat(changeLists.iterator().next().getChanges()).isEmpty();
 
     addFile("a.txt");
 
     refreshChanges();
 
-    Assert.assertEquals(Change.Type.NEW, getSingleChange().getType());
+    assertEquals(Change.Type.NEW, getSingleChange().getType());
 
-    assertEmpty(getUnversionedFiles(clManager));
+    assertThat(getUnversionedFiles(clManager)).isEmpty();
     assertFalse(clManager.isUnversioned(file));
   }
 
@@ -365,9 +363,12 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(clManager.getDefaultListName(), clManager, renamed);
     assertFalse(clManager.isUnversioned(renamed));
 
-    final LocalChangeList list = assertOneElement(clManager.getChangeLists());
-    Change change = assertOneElement(list.getChanges());
-    Assert.assertEquals(Change.Type.MOVED, change.getType());
+    final List<LocalChangeList> lists = clManager.getChangeLists();
+    assertThat(lists).hasSize(1);
+    final LocalChangeList list = lists.iterator().next();
+    assertThat(list.getChanges()).hasSize(1);
+    Change change = list.getChanges().iterator().next();
+    assertEquals(Change.Type.MOVED, change.getType());
   }
 
   @Test
@@ -833,7 +834,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     VirtualFile relFile = myWorkingCopyDir.findFileByRelativePath("rel/a.txt");
     PerforceRunner runner = PerforceRunner.getInstance(myProject);
-    assertOrderedEquals(runner.getResolvedWithConflicts(getConnection(), myWorkingCopyDir), relFile);
+    assertThat(runner.getResolvedWithConflicts(getConnection(), myWorkingCopyDir)).containsExactly(relFile);
 
     MergeData data = getMergeData(relFile);
     assertEquals("original", new String(data.ORIGINAL, StandardCharsets.UTF_8));
@@ -871,7 +872,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     PerforceRunner runner = PerforceRunner.getInstance(myProject);
-    assertOrderedEquals(runner.getResolvedWithConflicts(getConnection(), myWorkingCopyDir), relFile);
+    assertThat(runner.getResolvedWithConflicts(getConnection(), myWorkingCopyDir)).containsExactly(relFile);
     assertEquals(FileStatus.MERGED_WITH_CONFLICTS, FileStatusManager.getInstance(myProject).getStatus(relFile));
 
     final MergeData data = getMergeData(relFile);
@@ -919,7 +920,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     PerforceRunner runner = PerforceRunner.getInstance(myProject);
     assertEquals(FileStatus.MERGED_WITH_CONFLICTS, FileStatusManager.getInstance(myProject).getStatus(relFile));
-    assertOrderedEquals(runner.getResolvedWithConflicts(getConnection(), myWorkingCopyDir), relFile);
+    assertThat(runner.getResolvedWithConflicts(getConnection(), myWorkingCopyDir)).containsExactly(relFile);
 
     final MergeData data = getMergeData(relFile);
     assertTrue(Arrays.equals(data.ORIGINAL, original));
@@ -948,8 +949,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     }
     refreshVfs();
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
-    assertSize(n, getUnversionedFiles(getChangeListManager()));
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).hasSize(n);
   }
 
   @Test
@@ -971,16 +972,16 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     openForEdit(file2);
     refreshChanges();
 
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
-    assertSize(2, getChangeListManager().getAllChanges());
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
+    assertThat(getChangeListManager().getAllChanges()).hasSize(2);
 
     setUseP4Config();
     setVcsMappings(new VcsDirectoryMapping(dir1.getPath(), PerforceVcs.getInstance(myProject).getName()),
                    new VcsDirectoryMapping(dir2.getPath(), PerforceVcs.getInstance(myProject).getName()));
 
     refreshChanges();
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
-    assertSize(2, getChangeListManager().getAllChanges());
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
+    assertThat(getChangeListManager().getAllChanges()).hasSize(2);
   }
 
   @Test
@@ -996,8 +997,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     }
 
     setP4ConfigRoots(roots.toArray(VirtualFile.EMPTY_ARRAY));
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
-    assertEmpty(getChangeListManager().getAllChanges());
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
 
     List<String> commands = new ArrayList<>();
     AbstractP4Connection.setCommandCallback(commands::add, myTestRootDisposable);
@@ -1017,7 +1018,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     verify(runP4WithClient("sync", "//depot/...@0"));
 
     PerforceRepositoryLocation location = PerforceRepositoryLocation.create(myWorkingCopyDir, myProject);
-    assertOneElement(PerforceVcs.getInstance(myProject).getCommittedChangesProvider().getIncomingFiles(location));
+    assertThat(PerforceVcs.getInstance(myProject).getCommittedChangesProvider().getIncomingFiles(location)).hasSize(1);
   }
 
   @Test
@@ -1035,12 +1036,12 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     CollectConsumer<String> callback = new CollectConsumer<>();
     AbstractP4Connection.setCommandCallback(callback, myTestRootDisposable);
 
-    assertOneElement(cache.getChanges(settings, myWorkingCopyDir, vcs, 100, false, provider, location));
+    assertThat(cache.getChanges(settings, myWorkingCopyDir, vcs, 100, false, provider, location)).hasSize(1);
     assertTrue(callback.getResult().contains("describe -s 1"));
     callback.getResult().clear();
 
-    assertOneElement(cache.getChanges(settings, myWorkingCopyDir, vcs, 100, false, provider, location));
-    assertFalse(callback.getResult().toString(), callback.getResult().contains("describe -s 1"));
+    assertThat(cache.getChanges(settings, myWorkingCopyDir, vcs, 100, false, provider, location)).hasSize(1);
+    assertFalse(callback.getResult().contains("describe -s 1"), callback.getResult().toString());
   }
 
   @Test
@@ -1060,13 +1061,13 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     verify(runP4WithClient("unshelve", "-s", "2"));
     refreshChanges();
 
-    assertOneElement(clManager.findChangeList("xxx").getChanges());
-    assertOneElement(PerforceRunner.getInstance(myProject).getResolvedWithConflicts(getConnection(), myWorkingCopyDir));
+    assertThat(clManager.findChangeList("xxx").getChanges()).hasSize(1);
+    assertThat(PerforceRunner.getInstance(myProject).getResolvedWithConflicts(getConnection(), myWorkingCopyDir)).hasSize(1);
 
     verify(runP4WithClient("resolve", "-ay", "//depot/a.txt"));
     refreshChanges();
-    assertOneElement(clManager.findChangeList("xxx").getChanges());
-    assertEmpty(PerforceRunner.getInstance(myProject).getResolvedWithConflicts(getConnection(), myWorkingCopyDir));
+    assertThat(clManager.findChangeList("xxx").getChanges()).hasSize(1);
+    assertThat(PerforceRunner.getInstance(myProject).getResolvedWithConflicts(getConnection(), myWorkingCopyDir)).isEmpty();
 
     verify(runP4WithClient("shelve", "-d", "-c", "2"));
     submitList(2);
@@ -1095,11 +1096,11 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     assertEquals(atRoot, getSingleChange().getVirtualFile());
-    assertOrderedEquals(getUnversionedFiles(getChangeListManager()), inBarXml);
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactly(inBarXml);
     assertEquals(FileStatus.IGNORED, FileStatusManager.getInstance(myProject).getStatus(inFoo));
     assertEquals(FileStatus.IGNORED, FileStatusManager.getInstance(myProject).getStatus(inBar));
 
-    cmds.forEach(cmd -> assertFalse(cmd, cmd.contains("inFoo.txt") || cmd.contains("inBar.txt")));
+    cmds.forEach(cmd -> assertFalse(cmd.contains("inFoo.txt") || cmd.contains("inBar.txt"), cmd));
   }
 
   @Test
@@ -1122,8 +1123,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     rollbackChange(getSingleChange());
     getChangeListManager().waitUntilRefreshed();
 
-    assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
   }
 
   @Test
@@ -1148,18 +1149,19 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     assertEquals(Change.Type.NEW, getSingleChange().getType());
-    assertOneElement(getChangeListManager().getDeletedFiles());
+    assertThat(getChangeListManager().getDeletedFiles()).hasSize(1);
 
     if (rollbackLocallyDeleted) {
-      rollbackMissingFileDeletion(assertOneElement(getChangeListManager().getDeletedFiles()));
+      assertThat(getChangeListManager().getDeletedFiles()).hasSize(1);
+      rollbackMissingFileDeletion(getChangeListManager().getDeletedFiles().iterator().next());
     }
     else {
       rollbackChange(getSingleChange());
     }
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getChangeListManager().getDeletedFiles());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
+    assertThat(getChangeListManager().getDeletedFiles()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
   }
 
   @Test
@@ -1173,9 +1175,9 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     discardUnversionedCache();
     setVcsMappings(new VcsDirectoryMapping(myWorkingCopyDir.getPath(), "Perforce"));
 
-    assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
-    assertEmpty(getChangeListManager().getDeletedFiles());
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
+    assertThat(getChangeListManager().getDeletedFiles()).isEmpty();
   }
 
   @Test
@@ -1190,16 +1192,16 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     createFileInCommand(dir2, "b.txt", "");
     refreshChanges();
 
-    assertSize(2, getChangeListManager().getAllChanges());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
+    assertThat(getChangeListManager().getAllChanges()).hasSize(2);
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
 
     submitFileWithClient("test", "//depot/a.txt");
     submitFileWithClient("dir2", "//depot/b.txt");
     refreshVfs();
     refreshChanges();
 
-    assertEmpty(getChangeListManager().getAllChanges());
-    assertEmpty(getUnversionedFiles(getChangeListManager()));
+    assertThat(getChangeListManager().getAllChanges()).isEmpty();
+    assertThat(getUnversionedFiles(getChangeListManager())).isEmpty();
   }
 
   @Test
@@ -1250,7 +1252,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshChanges();
 
     assertEquals(file, getSingleChange().getVirtualFile());
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing()); // file2 changed status can't be determined
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty(); // file2 changed status can't be determined
   }
 
   @Test
@@ -1294,7 +1296,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     refreshChanges();
     assertEquals(file, getSingleChange().getVirtualFile());
-    assertOrderedEquals(getUnversionedFiles(getChangeListManager()), link);
+    assertThat(getUnversionedFiles(getChangeListManager())).containsExactly(link);
 
     addFile("link.txt");
     submitDefaultList("initial");
@@ -1305,7 +1307,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     refreshVfs();
     refreshChanges();
     assertEquals(file, getSingleChange().getVirtualFile());
-    assertEmpty(getChangeListManager().getModifiedWithoutEditing());
+    assertThat(getChangeListManager().getModifiedWithoutEditing()).isEmpty();
 
     rollbackChange(getSingleChange());
     getChangeListManager().waitUntilRefreshed();
@@ -1314,7 +1316,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
   @Test
   public void everythingWorksWhenViewMappingUseClientNameInAnotherCase() {
-    Assume.assumeFalse(SystemInfo.isFileSystemCaseSensitive);
+    assumeFalse(SystemInfo.isFileSystemCaseSensitive);
 
     setupClient(buildTestClientSpec("test", myClientRoot.toString(), "//Test/..."));
     VirtualFile file = createFileInCommand("a.txt", "a");

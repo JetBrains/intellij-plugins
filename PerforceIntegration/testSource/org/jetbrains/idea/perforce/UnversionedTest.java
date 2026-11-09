@@ -9,13 +9,12 @@ import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.idea.perforce.application.PerforceChangeProvider;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UnversionedTest extends PerforceTestCase {
 
@@ -23,7 +22,6 @@ public class UnversionedTest extends PerforceTestCase {
   private VcsDirtyScopeManager myDirtyScopeManager;
 
   @Override
-  @Before
   public void before() throws Exception {
     super.before();
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);

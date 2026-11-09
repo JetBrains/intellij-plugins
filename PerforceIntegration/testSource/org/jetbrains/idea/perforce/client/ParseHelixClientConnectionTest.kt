@@ -1,13 +1,24 @@
 package org.jetbrains.idea.perforce.client
 
-import com.intellij.vcs.test.VcsPlatformTest
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.jetbrains.idea.perforce.P4TestUtil
 import org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider
 import org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider.ConfigFiles
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
-class ParseHelixClientConnectionTest : VcsPlatformTest() {
+@TestApplication
+class ParseHelixClientConnectionTest {
+  companion object {
+    private val projectFixture = projectFixture()
+  }
 
+  private val project get() = projectFixture.get()
+
+  @Test
   fun `test parse single client connection`() {
     val configFiles = Mockito.mock(ConfigFiles::class.java)
     val connectionMapFile = P4TestUtil.getResource("connectionmap-single.xml")
@@ -24,6 +35,7 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
     assertEquals("ssl:server-host:1666", singleConnectionParameters.server)
   }
 
+  @Test
   fun `test parse multi client connection`() {
     val configFiles = Mockito.mock(ConfigFiles::class.java)
     val connectionMapFile = P4TestUtil.getResource("connectionmap-multi.xml")

@@ -32,7 +32,6 @@
 package org.jetbrains.idea.perforce;
 
 import com.intellij.openapi.vcs.VcsException;
-import junit.framework.TestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.idea.perforce.perforce.PerforceChange;
 import org.jetbrains.idea.perforce.perforce.View;
@@ -41,17 +40,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"ConstantConditions"})
 public
 @NonNls
-class ChangeTest extends TestCase {
+class ChangeTest {
+  @Test
   public void testView() {
     final View view = View.create("\t//depot/javacvs/src/javacvs/... //test-client2/client2_view1/...");
     assertEquals("//depot/javacvs/src/javacvs/...", view.getDepotPath());
     assertEquals("//test-client2/client2_view1/...", view.getLocalPath());
   }
 
+  @Test
   public void testChange() throws Exception {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//depot/javacvs/src/javacvs/... //test-client2/client2_view1/..."));
@@ -61,6 +69,7 @@ class ChangeTest extends TestCase {
     assertEquals(new File("c://TestPerforce2/client2_view1/readme2.txt"), change.getFile());
   }
 
+  @Test
   public void testMultipleMatchesOnSameView() throws Exception {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//ExceptionAnalyser/... //unit-056/ExceptionAnalyser/..."));
@@ -74,6 +83,7 @@ class ChangeTest extends TestCase {
     assertEquals(new File("c:/yole/ExceptionAnalyser/Sisyphus/ideaplugin/src/com/intellij/sisyphus/ideaplugin/B.java"), change2.getFile());
   }
 
+  @Test
   public void testSCR1920() throws Exception {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//eMeasurement/workspace/%%1/ems_4.8_darwin/... //lanebr_4.8/%%1/..."));
@@ -82,6 +92,7 @@ class ChangeTest extends TestCase {
     assertEquals(new File("C:/esbe48/com.ncs.es.reporting.v40.common/src/com/ncs/es/reporting/v40/common/persistence/OrgUnitPersistenceImpl.java"), change.getFile());
   }
 
+  @Test
   public void testSCR1920_2() throws Exception {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//eMeasurement/workspace/%%1.%%2/ems_4.8_darwin/... //lanebr_4.8/%%2.%%1/..."));
@@ -90,6 +101,7 @@ class ChangeTest extends TestCase {
     assertEquals(new File("C:/esbe48/common.com.ncs.es.reporting.v40/src/com/ncs/es/reporting/v40/common/persistence/OrgUnitPersistenceImpl.java"), change.getFile());
   }
 
+  @Test
   public void testCasesInDepot() throws Exception {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//DEPOT/javacvs/src/javacvs/... //test-client2/client2_view1/..."));
@@ -99,6 +111,7 @@ class ChangeTest extends TestCase {
     assertEquals(new File("c://TestPerforce2/client2_view1/readme2.txt"), change.getFile());
   }
 
+  @Test
   public void testConvertDepotPathToClient() {
 
     assertEquals(new File("client2_view1/readme2.txt"),
@@ -116,6 +129,7 @@ class ChangeTest extends TestCase {
 
   }
 
+  @Test
   public void testExcludeMappingUsingWildcards() throws VcsException {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//DEPOT/... //test-client2/..."));
@@ -128,6 +142,7 @@ class ChangeTest extends TestCase {
 
   }
 
+  @Test
   public void testExcludeMappingUsingWildcards_2() throws VcsException {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//DEPOT/... //test-client2/..."));
@@ -138,6 +153,7 @@ class ChangeTest extends TestCase {
     assertNull(change);
   }
 
+  @Test
   public void testExcludeMappingUsingWildcards_3() throws VcsException {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//DEPOT/.../include/... //test-client2/.../include/..."));
@@ -148,6 +164,7 @@ class ChangeTest extends TestCase {
     assertEquals(new File("c://TestPerforce2/javacvs/include/javacvs/readme2.txt"), change.getFile());
   }
 
+  @Test
   public void testIsExcluded() {
     List<View> views = Arrays.asList(View.create("//DEPOT/... //client/..."), View.create("-//DEPOT/.../*.xml //client/.../*.txt"),
                                      View.create("-//DEPOT/bar/.../*.xml //client/.../*.xsl"));
@@ -161,6 +178,7 @@ class ChangeTest extends TestCase {
     assertTrue(View.isExcluded("//client/foo/a.xsl", views));
   }
 
+  @Test
   public void testReInclude() {
     List<View> views = Arrays.asList(View.create("//DEPOT/... //client/..."), View.create("-//DEPOT/foo/... //client/foo/..."),
                                      View.create("//DEPOT/foo/bar/... //client/foo/bar/..."));
@@ -169,6 +187,7 @@ class ChangeTest extends TestCase {
     assertFalse(View.isExcluded("//client/foo/bar/a.txt", views));
   }
 
+  @Test
   public void testLoop() throws VcsException {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//Actuate/Development/f1j/%%1 //jboehle.snowmass2/f1j/%%1"));
@@ -177,12 +196,14 @@ class ChangeTest extends TestCase {
     assertEquals(new File("c://TestPerforce2/f1j/readme2.txt"), change.getFile());
   }
 
+  @Test
   public void testPlugin() {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//... //jboehle.snowmass2/f1j/..."));
     assertNotNull(View.getRelativePath("//Actuate/Development/f1j/...", "jboehle.snowmass2", views));
   }
 
+  @Test
   public void testTW4207() {
     final View view = View.create(
       "\"//APPS/source/dev/4.2/SQLServer/DBGhost Build Output Scripts/...\" \"//MyApps/source/dev/4.2/SQLServer/DBGhost Build Output Scripts/...\"");
@@ -192,6 +213,7 @@ class ChangeTest extends TestCase {
     assertEquals("//APPS/source/dev/4.2/SQLServer/DBGhost Build Output Scripts/...", view.getDepotPath());
   }
 
+  @Test
   public void testLongestMatch() throws VcsException {
     final ArrayList<View> views = new ArrayList<>();
     views.add(View.create("\t//depot/code/work/... //LOCAL/code/work/..."));

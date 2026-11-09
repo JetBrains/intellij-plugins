@@ -15,8 +15,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager
 import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.UsefulTestCase.assertOneElement
-import com.intellij.testFramework.UsefulTestCase.assertSize
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.vcsUtil.VcsUtil
 import org.jetbrains.idea.perforce.actions.ShowAllSubmittedFilesAction
@@ -26,10 +24,11 @@ import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.application.annotation.PerforceFileAnnotation
 import org.jetbrains.idea.perforce.perforce.PerforceChangeList
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.util.Arrays
 
@@ -40,8 +39,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
   }
 
-  @Test
-  fun testCorrectSubmittedRevision() {
+  @Test  fun testCorrectSubmittedRevision() {
     createFileInCommand("a.txt", "aaa")
     changeListManager.defaultChangeList = changeListManager.addChangeList("another", null)
     val file2 = createFileInCommand("b.txt", "aaa")
@@ -50,17 +48,18 @@ class PerforceHistoryTest : PerforceTestCase() {
 
     submitDefaultList("initial")
     val changes = changeListManager.allChanges
-    assertEquals(file2, assertOneElement(changes).virtualFile)
+    assertThat(changes).hasSize(1)
+    assertEquals(file2, changes.single().virtualFile)
 
     val jobs = PerforceVcs.getInstance(myProject).checkinEnvironment.getSubmitJobs(changes)
-    val revision = assertOneElement(jobs!!).submit("comment", null)
+    assertThat(jobs!!).hasSize(1)
+    val revision = jobs.single().submit("comment", null)
 
     val history = getFileHistory(file2)
     assertEquals(history[0].revisionNumber.asString(), revision.toString())
   }
 
-  @Test
-  fun testEmptyLineInSubmitComment() {
+  @Test  fun testEmptyLineInSubmitComment() {
     val file = createFileInCommand("a.txt", "aaa")
     refreshChanges()
 
@@ -71,8 +70,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertEquals(comment, history[0].commitMessage)
   }
 
-  @Test
-  fun `test history from another branch`() {
+  @Test  fun `test history from another branch`() {
     val file = createFileInCommand(createDirInCommand(workingCopyDir, "subdir"), "a.txt", "aaa")
     refreshChanges()
 
@@ -94,7 +92,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     val change = fileAnnotation.findChangeForLine(0)
     assertTrue(change!!.description().contains("added bbb"))
 
-    val singleChange = assertOneElement(getSubmittedChanges(change))
+    val singleChange = getSubmittedChanges(change).also { assertThat(it).hasSize(1) }.single()
 
     assertEquals("aaa", singleChange.beforeRevision!!.content)
     assertEquals("bbb", singleChange.afterRevision!!.content)
@@ -110,8 +108,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     return changeList!!.changes
   }
 
-  @Test
-  fun `test ignore whitespace`() {
+  @Test  fun `test ignore whitespace`() {
     val file = createFileInCommand(createDirInCommand(workingCopyDir, "subdir"), "a.txt", "aaa")
     refreshChanges()
 
@@ -126,8 +123,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertTrue(change!!.description().contains("initial"))
   }
 
-  @Test
-  fun `test annotate FilePath`() {
+  @Test  fun `test annotate FilePath`() {
     var file = createFileInCommand(myWorkingCopyDir, "a.txt", "aaa")
     refreshChanges()
 
@@ -152,8 +148,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertEquals("initial", annotation.findChangeForLine(0)!!.description())
   }
 
-  @Test
-  fun `test annotate after move`() {
+  @Test  fun `test annotate after move`() {
     val tail = "penultimate\nlast"
 
     val dir = createDirInCommand(workingCopyDir, "subdir")
@@ -190,8 +185,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertEquals(history[3].revisionNumber, fileAnnotation.getLineRevisionNumber(2))
   }
 
-  @Test
-  fun `test show affected changes after copy`() {
+  @Test  fun `test show affected changes after copy`() {
     val dir1 = createDirInCommand(workingCopyDir, "dir1")
     val file1 = createFileInCommand(dir1!!, "a.txt", "foo")
     refreshChanges()
@@ -208,7 +202,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     val change = fileAnnotation.findChangeForLine(0)
     assertEquals("change", change!!.description())
 
-    var singleChange = assertOneElement(getSubmittedChanges(change))
+    var singleChange = getSubmittedChanges(change).also { assertThat(it).hasSize(1) }.single()
     assertEquals(file1.path, singleChange.beforeRevision!!.file.path)
 
     // p4 copy to dir2
@@ -218,7 +212,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertNotNull(file2)
 
     // check copied file history is still there
-    singleChange = assertOneElement(getSubmittedChanges(change))
+    singleChange = getSubmittedChanges(change).also { assertThat(it).hasSize(1) }.single()
     assertEquals(file1.path, singleChange.beforeRevision!!.file.path)
 
     // narrow down project to dir2
@@ -228,7 +222,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     refreshChanges()
 
     // check copied file history is still there, under depot path
-    singleChange = assertOneElement(getSubmittedChanges(change))
+    singleChange = getSubmittedChanges(change).also { assertThat(it).hasSize(1) }.single()
     assertEquals("//depot/dir1/a.txt", singleChange.beforeRevision!!.file.path)
 
     // narrow down workspace to dir2
@@ -236,12 +230,11 @@ class PerforceHistoryTest : PerforceTestCase() {
     refreshChanges()
 
     // check copied file history is still there, under depot path
-    singleChange = assertOneElement(getSubmittedChanges(change))
+    singleChange = getSubmittedChanges(change).also { assertThat(it).hasSize(1) }.single()
     assertEquals("//depot/dir1/a.txt", singleChange.beforeRevision!!.file.path)
   }
 
-  @Test
-  fun `annotate follows integrations into the file`() {
+  @Test  fun `annotate follows integrations into the file`() {
     setAnnotateFollowIntegrations(true)
     val (sourceFile, branchedFile) = createFileWithIntegratedChanges()
 
@@ -257,12 +250,12 @@ class PerforceHistoryTest : PerforceTestCase() {
 
     val changeList = fileAnnotation.revisionsChangesProvider!!.getChangesIn(1).first
     assertEquals(addedBbbNumber, changeList.number.toString())
-    val change = assertOneElement(changeList.changes)
+    assertThat(changeList.changes).hasSize(1)
+    val change = changeList.changes.single()
     assertEquals("aaa\nbbb\n", StringUtil.convertLineSeparators(change.afterRevision!!.content!!))
   }
 
-  @Test
-  fun `annotate does not follow integrations`() {
+  @Test  fun `annotate does not follow integrations`() {
     setAnnotateFollowIntegrations(false)
     val (_, branchedFile) = createFileWithIntegratedChanges()
 
@@ -309,13 +302,11 @@ class PerforceHistoryTest : PerforceTestCase() {
     return file to workingCopyDir.findChild("subdir2")!!.findChild("a.txt")!!
   }
 
-  @Test
-  fun `get annotated content using changelist number with follow integrations enabled`() {
+  @Test  fun `get annotated content using changelist number with follow integrations enabled`() {
     checkAnnotationHistoryContent(true)
   }
 
-  @Test
-  fun `get annotated content using changelist number with follow integrations disabled`() {
+  @Test  fun `get annotated content using changelist number with follow integrations disabled`() {
     checkAnnotationHistoryContent(false)
   }
 
@@ -355,8 +346,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertEquals("aaa", String(revisions[2].loadContent()!!))
   }
 
-  @Test
-  fun `correct revision content after rename and change`() {
+  @Test  fun `correct revision content after rename and change`() {
     val file = createFileInCommand("a.txt", "aaa")
     refreshChanges()
 
@@ -384,8 +374,7 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertEquals("aaa bbb", singleChange.beforeRevision!!.content)
   }
 
-  @Test
-  fun `test diff for an utf-16 file`() {
+  @Test  fun `test diff for an utf-16 file`() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
 
     val file = createFileInCommand("a.txt", "")
@@ -404,13 +393,12 @@ class PerforceHistoryTest : PerforceTestCase() {
     assertEquals(StandardCharsets.UTF_16LE, file.charset)
 
     val history = getFileHistory(file)
-    assertSize(2, history)
+    assertThat(history).hasSize(2)
     assertTrue(Arrays.equals(history[0].loadContent(), file.contentsToByteArray()))
     assertTrue(Arrays.equals(history[1].loadContent(), firstContent))
   }
 
-  @Test
-  fun `test diff for older revisions on file which now is utf16`() {
+  @Test  fun `test diff for older revisions on file which now is utf16`() {
     val file = createFileInCommand("a.txt", "")
     setFileText(file, "first")
     refreshChanges()

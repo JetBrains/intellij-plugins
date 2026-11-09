@@ -1,22 +1,32 @@
 package org.jetbrains.idea.perforce.config
 
 import com.intellij.openapi.components.service
-import com.intellij.vcs.test.VcsPlatformTest
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.jetbrains.idea.perforce.perforce.connections.P4ConfigListener
 import org.jetbrains.idea.perforce.perforce.connections.PerforceExternalConfigTracker
 import org.jetbrains.idea.perforce.perforce.connections.PerforceWorkspaceConfigurator.Companion.P4CONFIG_NAME
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Collections
 import java.util.concurrent.CountDownLatch
 
-class PerforceExternalConfigTrackerTest : VcsPlatformTest() {
+@TestApplication
+class PerforceExternalConfigTrackerTest {
+  private val projectFixture = projectFixture(openAfterCreation = true)
+  private val project get() = projectFixture.get()
 
+
+  @Test
   fun `test single config`() {
     test(configCount = 1, ModificationType.CREATE)
     test(configCount = 1, ModificationType.MODIFY)
     test(configCount = 1, ModificationType.DELETE)
   }
 
+  @Test
   fun `test multiple config`() {
     test(configCount = 3, ModificationType.CREATE)
     test(configCount = 3, ModificationType.MODIFY)
@@ -56,7 +66,7 @@ class PerforceExternalConfigTrackerTest : VcsPlatformTest() {
 
     val modifiedConfigPaths = modificationCounter.getModifiedPaths()
     assertEquals(configs.size, modifiedConfigPaths.size)
-    assertContainsElements(modifiedConfigPaths, configPaths)
+    assertThat(modifiedConfigPaths).containsAll(configPaths)
   }
 
   private enum class ModificationType { CREATE, MODIFY, DELETE }

@@ -1,9 +1,9 @@
 package org.jetbrains.idea.perforce.perforce;
 
 import com.intellij.openapi.util.Comparing;
-import junit.framework.TestCase;
 import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.merge.BaseRevision;
+import org.junit.jupiter.api.Test;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -15,9 +15,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class P4OutputParserTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class P4OutputParserTest {
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
 
+  @Test
   public void testLog() {
     String output = """
       //depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewClass.java
@@ -59,6 +65,7 @@ public class P4OutputParserTest extends TestCase {
 
   }
 
+  @Test
   public void testLogForFileWithBranch() {
     assertTrue(OutputMessageParser.LOG_PATTERN.matcher("... #3 change 66879 edit on 2005/03/15 17:03:00 by Dallas@omega (text)").matches());
     assertTrue(OutputMessageParser.DEPOT_PATTERN.matcher("//depot/Fabrique/fabrique-activeLibraries/controls/source/jetbrains/fabrique/web/ui/LayoutImpl.java").matches());
@@ -141,6 +148,7 @@ public class P4OutputParserTest extends TestCase {
 
   }
 
+  @Test
   public void testChanges() throws Exception{
     String output= """
       Change 66853 on 2005/03/15 15:03:42 by lesya@lesya_new
@@ -164,6 +172,7 @@ public class P4OutputParserTest extends TestCase {
     checkChange(changes.get(2), 66826, "2005/03/15 14:01:15", "lesya", "lesya_new", "StructuralReplaceTest rebombed");
   }
 
+  @Test
   public void testResolve() throws Exception{
     final Map<String, BaseRevision> output = PerforceRunner
       .processResolveOutput("C:\\work\\Irida\\source\\com\\intellij\\ide\\favoritesTreeView\\FavoritesTreeStructure.java - merging //IDEA/source/com/intellij/ide/favoritesTreeView/FavoritesTreeStructure.java #14 using base //IDEA/source/com/intellij/ide/favoritesTreeView/FavoritesTreeStructure.java#13\n" +
@@ -176,6 +185,7 @@ public class P4OutputParserTest extends TestCase {
     assertEquals("//IDEA/source/com/intellij/ide/ui/customization/CustomizableActionsPanel.java", output.get("C:\\work\\Irida\\source\\com\\intellij\\ide\\ui\\customization\\CustomizableActionsPanel.java").getDepotPath());
   }
 
+  @Test
   public void testBranches() {
     String branchesOutput = """
       Branch demetra 2005/09/28 'IDEA 6 '
@@ -198,6 +208,7 @@ public class P4OutputParserTest extends TestCase {
                                                        "Omea2.0", "OmeaPro1.0", "OmeaReader1.0", "ReSharper-Release1.0")));
   }
 
+  @Test
   public void testReadChangeDescription() {
     String changeDescription = """
       Change 104643 by ven@5.0 on 2005/10/06 16:14:20
@@ -217,6 +228,7 @@ public class P4OutputParserTest extends TestCase {
     assertEquals("ven", changeList.USER);
   }
 
+  @Test
   public void testOpened() throws Exception {
     String opened = "//IDEA_Branches/irida/idea.ipr#3 - edit default change (text)\n" +
                     "//website/eshop_dev/static/content/idea/uninstall/index.jsp#5 - edit change 127985 (text)";
@@ -230,6 +242,7 @@ public class P4OutputParserTest extends TestCase {
     assertEquals(127985, list.get(1).getChangeList());
   }
 
+  @Test
   public void testResolved() throws Exception {
     String resolved = "C:\\yole\\ExceptionAnalyser\\PerforceTest\\src\\a\\b\\c\\d\\C.java - branch from //ExceptionAnalyser/PerforceTest/src/a/b/c/d/B.java#1\n" +
                       "C:\\yole\\IDEA\\idea.ipr - ignored //IDEA/idea.ipr#246,#247";

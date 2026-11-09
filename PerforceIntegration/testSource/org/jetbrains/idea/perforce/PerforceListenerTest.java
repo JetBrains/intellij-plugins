@@ -4,10 +4,10 @@ import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsTestUtil;
 import com.intellij.openapi.vcs.changes.ChangeListManagerExtensionsKt;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
-import static junit.framework.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PerforceListenerTest extends PerforceTestCase {
   @Test
@@ -38,6 +38,6 @@ public class PerforceListenerTest extends PerforceTestCase {
     VirtualFile file2 = VcsTestUtil.copyFileInCommand(myProject, file, dir2, "b.txt");
     refreshChanges();
     assertEquals(file2, getSingleChange().getVirtualFile());
-    assertEmpty(ChangeListManagerExtensionsKt.getUnversionedFiles(getChangeListManager()));
+    assertThat(ChangeListManagerExtensionsKt.getUnversionedFiles(getChangeListManager())).isEmpty();
   }
 }

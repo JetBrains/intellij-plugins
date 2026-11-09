@@ -31,10 +31,13 @@
  */
 package org.jetbrains.idea.perforce;
 
-import junit.framework.TestCase;
 import org.jetbrains.idea.perforce.application.annotation.AnnotationInfo;
+import org.junit.jupiter.api.Test;
 
-public class AnnotationParsingTest extends TestCase{
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class AnnotationParsingTest {
+  @Test
   public void test() throws Exception {
     final AnnotationInfo annotationInfo = new AnnotationInfo("1: line1 \n2: \n300300300300300: line3\n", false);
     assertEquals("line1 \n\nline3\n", annotationInfo.getContent());

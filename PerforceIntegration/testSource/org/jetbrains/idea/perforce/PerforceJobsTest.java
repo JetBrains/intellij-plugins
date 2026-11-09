@@ -21,7 +21,7 @@ import org.jetbrains.idea.perforce.perforce.jobs.P4JobsLogicConn;
 import org.jetbrains.idea.perforce.perforce.jobs.PerforceJob;
 import org.jetbrains.idea.perforce.perforce.jobs.PerforceJobSpecification;
 import org.jetbrains.idea.perforce.perforce.jobs.StandardJobFields;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,11 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PerforceJobsTest extends PerforceTestCase {
   @Override
@@ -143,7 +143,7 @@ public class PerforceJobsTest extends PerforceTestCase {
     assertEquals("job001", perforceJobs.get(0).getName());
     assertEquals("job002", perforceJobs.get(1).getName());
 
-    assertOneElement(worker.getJobs(jobsSpec, new ByNamesConstraint(Collections.singletonList("a&&b")), connection, key));
+    assertThat(worker.getJobs(jobsSpec, new ByNamesConstraint(Collections.singletonList("a&&b")), connection, key)).hasSize(1);
   }
 
   @Test
@@ -215,7 +215,7 @@ public class PerforceJobsTest extends PerforceTestCase {
 
     LocalChangeList changeList = getChangeListManager().findChangeList(description);
     assertNotNull(changeList);
-    assertEquals(changeList.getComment(), description, changeList.getComment());
+    assertEquals(description, changeList.getComment(), changeList.getComment());
   }
 
   @Test
@@ -239,7 +239,9 @@ public class PerforceJobsTest extends PerforceTestCase {
 
     FullSearchSpecificator spec = new FullSearchSpecificator();
     spec.addStandardConstraint(FullSearchSpecificator.Parts.jobname, "just*");
-    PerforceJob job = assertOneElement(worker.getJobs(worker.getSpec(connection), spec, connection, key));
+    var foundJobs = worker.getJobs(worker.getSpec(connection), spec, connection, key);
+    assertThat(foundJobs).hasSize(1);
+    PerforceJob job = foundJobs.iterator().next();
 
     assertEquals("justdoit", job.getName());
     assertNull(job.getValueForStandardField(StandardJobFields.date));

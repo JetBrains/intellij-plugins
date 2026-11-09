@@ -4,8 +4,8 @@ import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import org.jetbrains.idea.perforce.perforce.connections.P4ParametersConnection
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class Perforce2016Test : PerforceTestCase() {
 
@@ -13,8 +13,7 @@ class Perforce2016Test : PerforceTestCase() {
     return "2016.2"
   }
 
-  @Test
-  fun `test merge info from several P4CONFIG files`() {
+  @Test  fun `test merge info from several P4CONFIG files`() {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)
     ignoreTestP4ConfigFiles()
 

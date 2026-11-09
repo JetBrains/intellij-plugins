@@ -14,25 +14,19 @@ import org.jetbrains.idea.perforce.application.ParticularConnectionPerforceInteg
 import org.jetbrains.idea.perforce.application.PerforceIntegrateEnvironment
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 
-@RunWith(Parameterized::class)
-class PerforceIntegrateTest(private val myInMain: Boolean,
-                            private val myReverse: Boolean,
-                            private val myIntegrateChangeList: Boolean) : PerforceTestCase() {
+class PerforceIntegrateTest : PerforceTestCase() {
 
   private lateinit var myMainDir: VirtualFile
   private lateinit var myBranchDir: VirtualFile
 
   companion object {
     @JvmStatic
-    @Parameterized.Parameters(name = "inMain={0} reverse={1} changeList={2}")
     fun data(): Collection<Array<Any?>> {
       return arrayListOf(
         arrayOf(false, false, false),
@@ -47,7 +41,6 @@ class PerforceIntegrateTest(private val myInMain: Boolean,
     }
   }
 
-  @Before
   override fun before() {
     super.before()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
@@ -57,8 +50,9 @@ class PerforceIntegrateTest(private val myInMain: Boolean,
            "\nBranch: branch\nOwner: test\nOptions: unlocked\nView: //depot/main/...\t//depot/branch/..."))
   }
 
-  @Test
-  fun checkIntegrate() {
+  @ParameterizedTest(name = "inMain={0} reverse={1} changeList={2}")
+  @MethodSource("data")
+  fun checkIntegrate(myInMain: Boolean, myReverse: Boolean, myIntegrateChangeList: Boolean) {
     val projectDir = if (myInMain) myMainDir else myBranchDir
     setVcsMappings(createMapping(projectDir))
 
@@ -68,7 +62,7 @@ class PerforceIntegrateTest(private val myInMain: Boolean,
     submitDefaultList("create file")
 
     val targetDir = if (myReverse) myMainDir else myBranchDir
-    val files = integrate()
+    val files = integrate(myReverse, myIntegrateChangeList)
     val useDepotPath = targetDir != projectDir
     val pathPrefix = if (useDepotPath) "//depot/" + targetDir.name else targetDir.path
     val expectedFile = pathPrefix + "/a.txt" + if (useDepotPath) "#1" else ""
@@ -76,7 +70,7 @@ class PerforceIntegrateTest(private val myInMain: Boolean,
                  if (useDepotPath) listOf(expectedFile) else listOf(FileUtil.toSystemDependentName(expectedFile)))
   }
 
-  private fun integrate(): UpdatedFiles {
+  private fun integrate(myReverse: Boolean, myIntegrateChangeList: Boolean): UpdatedFiles {
     val s = PerforceSettings.getSettings(myProject).getSettings(connection)
     s.INTEGRATE_BRANCH_NAME = "branch"
     s.INTEGRATE_REVERSE = myReverse
