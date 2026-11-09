@@ -12,6 +12,7 @@ import com.intellij.psi.util.childrenSequence
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import com.intellij.util.containers.sequenceOfNotNull
+import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
@@ -21,6 +22,12 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInform
 const val newLine: String = "\n"
 const val endOfLine: String = ";\n"
 val identifierRE: Regex = Regex("^[a-zA-Z_\$][0-9a-zA-Z_\$]*\$")
+
+// The phantom argument that carries the component library's `Ref` brand into
+// `__VLS_unwrap` / `__VLS_withDotValue`; the helper declarations cannot
+// resolve the library import themselves.
+fun getRefBrandArgument(vueCompilerOptions: VueCompilerOptions): String =
+  "{} as import('${vueCompilerOptions.lib}').Ref<unknown>"
 
 fun getTypeScriptAST(
   text: String,

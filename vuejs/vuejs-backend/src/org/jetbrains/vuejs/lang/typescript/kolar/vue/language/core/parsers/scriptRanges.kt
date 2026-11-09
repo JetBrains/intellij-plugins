@@ -43,6 +43,7 @@ data class ScriptRanges(
   val exportDefault: ScriptExportDefault?,
   val bindings: List<TextRange<*>>,
   val components: List<TextRange<*>>,
+  val nonFlowingBindings: List<TextRange<*>>,
 )
 
 fun parseScriptRanges(
@@ -67,12 +68,13 @@ fun parseScriptRanges(
     }
   }
 
-  val (bindings, components) = parseBindingRanges(ast, vueCompilerOptions.extensions)
+  val (bindings, components, nonFlowingBindings) = parseBindingRanges(ast, vueCompilerOptions.extensions)
 
   return ScriptRanges(
     exportDefault = exportDefault,
     bindings = bindings,
     components = components,
+    nonFlowingBindings = nonFlowingBindings,
   )
 }
 

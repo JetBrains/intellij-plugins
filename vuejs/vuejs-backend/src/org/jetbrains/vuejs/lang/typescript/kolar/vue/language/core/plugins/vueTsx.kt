@@ -103,6 +103,23 @@ private class Codegen(
     names
   }
 
+  private val getNonFlowingBindings: () -> Set<String> = computedSet {
+    val names = mutableSetOf<String>()
+    val scriptSetupRanges = getScriptSetupRanges()
+    if (ir.scriptSetup != null && scriptSetupRanges != null) {
+      for (range in scriptSetupRanges.nonFlowingBindings) {
+        names.add(ir.scriptSetup.content.substring(range.start, range.end))
+      }
+      val scriptRanges = getScriptRanges()
+      if (ir.script != null && scriptRanges != null) {
+        for (range in scriptRanges.nonFlowingBindings) {
+          names.add(ir.script.content.substring(range.start, range.end))
+        }
+      }
+    }
+    names
+  }
+
   private val getScriptSetupBindings: () -> Set<String> = computedSet {
     val names = mutableSetOf<String>()
     val scriptSetupRanges = getScriptSetupRanges()
@@ -168,10 +185,10 @@ private class Codegen(
     capitalize(camelize(name))
   }
 
-  val getGeneratedTemplate: () -> TemplateGenerateResult? = computed {
-    val template = ir.template ?: return@computed null
-    if (getResolvedOptions().skipTemplateCodegen) return@computed null
-    generateTemplate(
+  private fun generateTemplatePass(dotValueBindings: Set<String>): TemplateGenerateResult? {
+    val template = ir.template ?: return null
+    if (getResolvedOptions().skipTemplateCodegen) return null
+    return generateTemplate(
       TemplateCodegenOptions(
         vueCompilerOptions = getResolvedOptions(),
         template = template,
@@ -181,6 +198,8 @@ private class Codegen(
         importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
         setupBindings = getSetupBindings(),
+        dotValueBindings = dotValueBindings,
+        reassertBindings = dotValueBindings.filterTo(mutableSetOf()) { it in getNonFlowingBindings() },
         hasDefineSlots = hasDefineSlots(),
         propsAssignName = getSetupPropsAssignName(),
         slotsAssignName = getSetupSlotsAssignName(),
@@ -189,9 +208,9 @@ private class Codegen(
     )
   }
 
-  private val getGeneratedStyle: () -> StyleGenerateResult? = computed {
-    if (ir.styles.isEmpty()) return@computed null
-    generateStyle(
+  private fun generateStylePass(dotValueBindings: Set<String>): StyleGenerateResult? {
+    if (ir.styles.isEmpty()) return null
+    return generateStyle(
       StyleCodegenOptions(
         vueCompilerOptions = getResolvedOptions(),
         styles = ir.styles,
@@ -199,6 +218,7 @@ private class Codegen(
         importedComponents = getImportedComponents(),
         setupRefs = getSetupRefs(),
         setupBindings = getSetupBindings(),
+        dotValueBindings = dotValueBindings,
       )
     )
   }
@@ -225,6 +245,22 @@ private class Codegen(
     bindings.filterTo(mutableSetOf()) { localDirectiveRE.containsMatchIn(it) }
   }
 
+  // First pass: collect bindings used in narrowing positions (output discarded);
+  // the second pass (the computeds below) finalizes every access of these with `.value`.
+  private val getDotValueBindings: () -> Set<String> = computedSet {
+    val bindings = getSetupBindings()
+    if (bindings.isEmpty()) {
+      return@computedSet bindings
+    }
+    val names = mutableSetOf<String>()
+    generateTemplatePass(emptySet())?.ctx?.dotValueAccesses?.let { names.addAll(it) }
+    generateStylePass(emptySet())?.ctx?.dotValueAccesses?.let { names.addAll(it) }
+    names
+  }
+
+  val getGeneratedTemplate: () -> TemplateGenerateResult? = computed { generateTemplatePass(getDotValueBindings()) }
+  private val getGeneratedStyle: () -> StyleGenerateResult? = computed { generateStylePass(getDotValueBindings()) }
+
   private val getReferencedBindings: () -> Set<String> = computedSet {
     val bindings = getSetupBindings()
     if (bindings.isEmpty()) {
@@ -250,7 +286,7 @@ private class Codegen(
         setupBindings = getScriptSetupBindings(),
         localComponents = getLocalComponents(),
         localDirectives = getLocalDirectives(),
-        withDotValueBindings = getReferencedBindings(),
+        dotValueBindings = getDotValueBindings(),
         scriptRanges = getScriptRanges(),
         scriptSetupRanges = getScriptSetupRanges(),
         templateAndStyleTypes = buildSet {

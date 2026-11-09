@@ -20,5 +20,5 @@ data class ScriptCodegenOptions(
   val setupBindings: Set<String>,
   val localComponents: Set<String>,
   val localDirectives: Set<String>,
-  val withDotValueBindings: Set<String>,
+  val dotValueBindings: Set<String>,
 )

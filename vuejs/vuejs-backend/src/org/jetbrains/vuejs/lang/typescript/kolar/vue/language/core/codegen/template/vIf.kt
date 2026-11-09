@@ -31,6 +31,7 @@ fun generateVIf(
 
     val condition = branch.condition
     if (condition is SimpleExpressionNode) {
+      val accessMark = ctx.accessLog.size
       val codes = generateInterpolation(
         options = options,
         ctx = ctx,
@@ -40,9 +41,13 @@ fun generateVIf(
         start = condition.loc.startOffset,
         prefix = "(",
         suffix = ")",
+        inNarrowing = true,
       ).toList()
       yieldAll(codes)
-      ctx.conditions.add(toString(codes))
+      ctx.conditions.add(TemplateCodegenContext.Condition(
+        text = toString(codes),
+        accesses = ctx.accessLog.subList(accessMark, ctx.accessLog.size).toList(),
+      ))
       addedBlockCondition = true
       yield(" ")
     }
@@ -54,7 +59,8 @@ fun generateVIf(
     yield("}$newLine")
 
     if (addedBlockCondition) {
-      ctx.conditions[ctx.conditions.size - 1] = "!${ctx.conditions.last()}"
+      val condition = ctx.conditions.last()
+      condition.text = "!${condition.text}"
     }
   }
 

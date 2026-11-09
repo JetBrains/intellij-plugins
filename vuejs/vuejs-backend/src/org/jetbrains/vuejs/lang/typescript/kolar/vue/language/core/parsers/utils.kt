@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier
 import com.intellij.lang.javascript.JSStringUtil.unquoteStringLiteralValue
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
@@ -28,14 +29,21 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStar
 fun parseBindingRanges(
   ast: JSEmbeddedContent,
   componentExtensions: List<String>,
-): Pair<List<TextRange<*>>, List<TextRange<*>>> {
+): BindingRanges {
   val bindings = mutableListOf<TextRange<*>>()
   val components = mutableListOf<TextRange<*>>()
+  // Bindings re-asserted per closure by the template codegen (imports, `let`/`var`).
+  val nonFlowingBindings = mutableListOf<TextRange<*>>()
 
   for (node in forEachNode(ast)) {
     if (isVariableStatement(node)) {
+      val isConst = node.varKeyword == JSVarStatement.VarKeyword.CONST
       for (decl in node.variables) {
-        bindings.addAll(collectBindingRanges(decl.nameIdentifier!!))
+        val ranges = collectBindingRanges(decl.nameIdentifier!!)
+        bindings.addAll(ranges)
+        if (!isConst) {
+          nonFlowingBindings.addAll(ranges)
+        }
       }
     }
     else if (isFunctionDeclaration(node)) {
@@ -65,6 +73,7 @@ fun parseBindingRanges(
           }
           else {
             bindings.add(getStartEnd(defaultImportName))
+            nonFlowingBindings.add(getStartEnd(defaultImportName))
           }
         }
 
@@ -83,6 +92,7 @@ fun parseBindingRanges(
             }
             else {
               bindings.add(getStartEnd(nameIdentifier))
+              nonFlowingBindings.add(getStartEnd(nameIdentifier))
             }
           }
         }
@@ -94,13 +104,24 @@ fun parseBindingRanges(
 
         if (namespaceImportName != null) {
           bindings.add(getStartEnd(namespaceImportName))
+          nonFlowingBindings.add(getStartEnd(namespaceImportName))
         }
       }
     }
   }
 
-  return Pair(bindings, components)
+  return BindingRanges(
+    bindings = bindings,
+    components = components,
+    nonFlowingBindings = nonFlowingBindings,
+  )
 }
+
+data class BindingRanges(
+  val bindings: List<TextRange<*>>,
+  val components: List<TextRange<*>>,
+  val nonFlowingBindings: List<TextRange<*>>,
+)
 
 fun getClosestMultiLineCommentRange(
   node: PsiElement,

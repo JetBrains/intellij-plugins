@@ -121,6 +121,7 @@ data class ScriptSetupRanges(
   val importSectionEndOffset: Int,
   val bindings: List<TextRange<*>>,
   val components: List<TextRange<*>>,
+  val nonFlowingBindings: List<TextRange<*>>,
   val defineModel: List<DefineModel>,
   val defineProps: DefineProps?,
   val withDefaults: CallExpression?,
@@ -405,13 +406,14 @@ fun parseScriptSetupRanges(
     visitNode(node, mutableListOf(ast))
   }
 
-  val (bindings, components) = parseBindingRanges(ast, vueCompilerOptions.extensions)
+  val (bindings, components, nonFlowingBindings) = parseBindingRanges(ast, vueCompilerOptions.extensions)
 
   return ScriptSetupRanges(
     leadingCommentEndOffset = leadingCommentEndOffset,
     importSectionEndOffset = importSectionEndOffset,
     bindings = bindings,
     components = components,
+    nonFlowingBindings = nonFlowingBindings,
     defineModel = defineModelList,
     defineProps = defineProps,
     withDefaults = withDefaults,

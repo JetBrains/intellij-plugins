@@ -33,8 +33,15 @@ class TemplateCodegenContext {
   val dynamicSlots: MutableList<DynamicSlot> = mutableListOf()
   val dollarVars: MutableSet<String> = mutableSetOf()
   val contextAccesses: MutableMap<String, MutableMap<Source, MutableSet<Int>>> = mutableMapOf()
-  val callAccessedBindings: MutableSet<String> = mutableSetOf()
-  val conditions: MutableList<String> = mutableListOf()
+  val dotValueAccesses: MutableSet<String> = mutableSetOf()
+
+  // Ordered log of accessed names; event-handler closures slice from a mark
+  // to find the names accessed within their body.
+  val accessLog: MutableList<String> = mutableListOf()
+
+  // Active branch conditions with the names each accessed; the guards are
+  // replayed inside inline-handler closures.
+  val conditions: MutableList<Condition> = mutableListOf()
   val inlayHints: MutableList<InlayHintInfo> = mutableListOf()
   val inheritedAttrVars: MutableSet<String> = mutableSetOf()
   val templateRefs: MutableMap<String, MutableList<TemplateRef>> = mutableMapOf()
@@ -57,18 +64,17 @@ class TemplateCodegenContext {
     source: Source,
     name: String,
     offset: Int? = null,
+    dotValue: Boolean = false,
   ) {
+    accessLog.add(name)
     val map = contextAccesses.getOrPut(name) { mutableMapOf() }
     val arr = map.getOrPut(source) { mutableSetOf() }
     if (offset != null) {
       arr.add(offset)
     }
-  }
-
-  fun accessVariableAsCall(
-    name: String,
-  ) {
-    callAccessedBindings.add(name)
+    if (dotValue) {
+      dotValueAccesses.add(name)
+    }
   }
 
   inner class Scope {
@@ -119,7 +125,10 @@ class TemplateCodegenContext {
 
   fun generateConditionGuards(): Sequence<Code> = sequence {
     for (condition in conditions) {
-      yield("if (!$condition) throw 0$endOfLine")
+      if (condition.accesses.isNotEmpty() && condition.accesses.all { name -> scopes.any { name in it } }) {
+        continue
+      }
+      yield("if (!${condition.text}) throw 0$endOfLine")
     }
   }
 
@@ -249,6 +258,11 @@ class TemplateCodegenContext {
     }
     yield("]$endOfLine")
   }
+
+  class Condition(
+    var text: String,
+    val accesses: List<String>,
+  )
 
   data class Slot(
     val name: String,

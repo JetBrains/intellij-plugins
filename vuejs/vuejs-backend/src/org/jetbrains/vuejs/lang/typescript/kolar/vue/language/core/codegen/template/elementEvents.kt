@@ -21,6 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.FakeSourceFile
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endsWithSemicolon
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
@@ -166,24 +167,15 @@ fun generateEventExpression(
       suffix = if (isCompound) "" else ")",
     )
     if (isCompound) {
-      yield("(...[\$event]) => {$newLine")
       val scope = ctx.scope()
       scope.declare("\$event")
-      yieldAll(ctx.generateConditionGuards())
 
-      // The top-level `__VLS_withDotValue` assertion does not narrow imported
-      // bindings inside this closure (TS control-flow limitation), so re-assert
-      // the setup bindings that are called by this handler right here. Only
-      // called bindings are re-asserted: for local bindings the top-level
-      // assertion already flows into this closure, and re-asserting non-call
-      // accesses would double-narrow them.
-      ctx.callAccessedBindings.clear()
+      val accessMark = ctx.accessLog.size
       val codes = interpolation.toList()
-      for (name in ctx.callAccessedBindings) {
-        if (options.setupBindings.contains(name)) {
-          yield("${names.withDotValue}($name, {} as import('${options.vueCompilerOptions.lib}').Ref<unknown>)$endOfLine")
-        }
-      }
+
+      yield("(...[\$event]) => {$newLine")
+      yieldAll(generateReasserts(options, ctx, accessMark))
+      yieldAll(ctx.generateConditionGuards())
 
       if (isSingleExpression(ast)) {
         yield("return (")
@@ -221,21 +213,51 @@ fun generateModelEventExpression(
 ): Sequence<Code> = sequence {
   val exp = prop.exp
   if (exp is SimpleExpressionNode) {
-    yield("(...[\$event]) => {$newLine")
-    yieldAll(ctx.generateConditionGuards())
-    yieldAll(generateInterpolation(
+    val accessMark = ctx.accessLog.size
+    val codes = generateInterpolation(
       options = options,
       ctx = ctx,
       block = options.template,
       data = codeFeatures.verification,
       code = exp.content,
       start = exp.loc.startOffset,
-    ))
+      inNarrowing = true,
+    ).toList()
+    yield("(...[\$event]) => {$newLine")
+    yieldAll(generateReasserts(options, ctx, accessMark))
+    yieldAll(ctx.generateConditionGuards())
+    yieldAll(codes)
     yield(" = \$event$endOfLine")
     yield("}")
   }
   else {
     yield("() => {}")
+  }
+}
+
+// Assertion narrowing does not flow into nested closures for imports and
+// `let`/`var` bindings (TS limitation), so re-assert those bindings at closure tops.
+private fun generateReasserts(
+  options: TemplateCodegenOptions,
+  ctx: TemplateCodegenContext,
+  accessMark: Int,
+): Sequence<Code> = sequence {
+  val reasserts = linkedSetOf<String>()
+  val collect = { name: String ->
+    if (options.reassertBindings.contains(name) && ctx.scopes.none { name in it }) {
+      reasserts.add(name)
+    }
+  }
+  for (name in ctx.accessLog.subList(accessMark, ctx.accessLog.size).toList()) {
+    collect(name)
+  }
+  for (condition in ctx.conditions) {
+    for (name in condition.accesses) {
+      collect(name)
+    }
+  }
+  for (name in reasserts) {
+    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions)})$endOfLine")
   }
 }
 

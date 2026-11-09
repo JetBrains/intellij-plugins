@@ -8,6 +8,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSfcBlockSection
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateSpreadMerge
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateTemplate(
@@ -18,8 +19,8 @@ fun generateTemplate(
   yieldAll(generateTemplateComponents(options))
   yieldAll(generateTemplateDirectives(options))
 
-  for (name in options.withDotValueBindings) {
-    yield("${names.withDotValue}($name, {} as import('${options.vueCompilerOptions.lib}').Ref<unknown>)${endOfLine}")
+  for (name in options.dotValueBindings) {
+    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions)})${endOfLine}")
   }
 
   if (options.templateAndStyleCodes.isNotEmpty()) {

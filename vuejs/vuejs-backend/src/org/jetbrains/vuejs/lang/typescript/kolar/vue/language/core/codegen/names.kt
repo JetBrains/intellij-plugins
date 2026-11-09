@@ -52,6 +52,7 @@ object names {
   const val functionalComponentArgsRest: String = "__VLS_functionalComponentArgsRest"
   const val omit: String = "__VLS_omit"
   const val tryAsConstant: String = "__VLS_tryAsConstant"
+  const val unwrap: String = "__VLS_unwrap"
   const val vFor: String = "__VLS_vFor"
   const val vSlot: String = "__VLS_vSlot"
   const val withDotValue: String = "__VLS_withDotValue"

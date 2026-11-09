@@ -21,6 +21,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateUnicode
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.identifierRE
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.hyphenateAttr
@@ -222,6 +223,7 @@ fun generatePropExp(
           __shorthandExpression = VueCodeInformation.ShorthandExpression.html,
         ),
       ).toList()
+      // Keep in sync with the access strategy in interpolation.kt.
       when {
         options.destructuredProps.contains(propVariableName) || options.importedComponents.contains(propVariableName) -> yieldAll(codes)
         shouldIdentifierSkipped(ctx, propVariableName) -> yieldAll(codes)
@@ -231,8 +233,15 @@ fun generatePropExp(
         }
         options.setupBindings.contains(propVariableName) -> {
           ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)
-          yieldAll(codes)
-          yield(".value")
+          if (options.dotValueBindings.contains(propVariableName)) {
+            yieldAll(codes)
+            yield(".value")
+          }
+          else {
+            yield("${names.unwrap}(")
+            yieldAll(codes)
+            yield(", ${getRefBrandArgument(options.vueCompilerOptions)})")
+          }
         }
         else -> {
           ctx.accessVariable(Source("template"), propVariableName, exp.loc.startOffset)

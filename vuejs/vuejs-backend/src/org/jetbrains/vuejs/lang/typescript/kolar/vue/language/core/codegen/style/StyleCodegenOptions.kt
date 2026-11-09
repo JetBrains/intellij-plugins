@@ -6,10 +6,11 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.IRStyle
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.common.CommonCodegenOptions
 
 data class StyleCodegenOptions(
-  val vueCompilerOptions: VueCompilerOptions,
+  override val vueCompilerOptions: VueCompilerOptions,
   val styles: List<IRStyle>,
   override val destructuredProps: Set<String>,
   override val importedComponents: Set<String>,
   override val setupRefs: Set<String>,
   override val setupBindings: Set<String>,
+  override val dotValueBindings: Set<String>,
 ) : CommonCodegenOptions
