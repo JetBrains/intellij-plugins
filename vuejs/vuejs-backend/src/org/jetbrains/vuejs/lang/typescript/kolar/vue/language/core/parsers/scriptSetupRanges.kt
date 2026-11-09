@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSDestructuringElement
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.endOffset
@@ -64,6 +65,7 @@ data class DefineModel(
   val modifierType: TextRange<*>?,
   val runtimeType: TextRange<*>?,
   val defaultValue: TextRange<*>?,
+  val defaultPropsArg: TextRange<*>?,
   val required: Boolean?,
   val comments: TextRange<*>?,
 )
@@ -191,6 +193,7 @@ fun parseScriptSetupRanges(
           var modifierType: TextRange<*>? = null
           var runtimeType: TextRange<*>? = null
           var defaultValue: TextRange<*>? = null
+          var defaultPropsArg: TextRange<*>? = null
           var required = false
 
           if (isVariableDeclaration(parent) && isIdentifier(parent.nameIdentifier)) {
@@ -212,13 +215,29 @@ fun parseScriptSetupRanges(
 
           if (options != null && isObjectLiteralExpression(options)) {
             for (prop in options.properties) {
-              if (isPropertyAssignment(prop) && isIdentifier(prop.nameIdentifier)) {
-                val initializer = prop.initializer ?: continue
-                when (prop.name) {
-                  "type" -> runtimeType = getStartEnd(initializer)
-                  "default" -> defaultValue = getStartEnd(initializer)
-                  "required" -> if (initializer is JSLiteralExpression && initializer.value == true) required = true
+              val initializer: PsiElement = when {
+                isPropertyAssignment(prop) -> prop.initializer ?: continue
+                isFunctionLike(prop) && prop.name == "default" -> prop
+                else -> continue
+              }
+              if (!isIdentifier(prop.nameIdentifier)) {
+                continue
+              }
+
+              when (prop.name) {
+                "type" -> runtimeType = getStartEnd(initializer)
+                "default" -> {
+                  if (isPropertyAssignment(prop)) {
+                    defaultValue = getStartEnd(initializer)
+                  }
+                  if (isFunctionLike(initializer) && initializer.parameters.isNotEmpty()) {
+                    val firstArg = initializer.parameters[0]
+                    if (!firstArg.isRest && (firstArg as? JSParameter)?.typeElement == null) {
+                      defaultPropsArg = getStartEnd(firstArg)
+                    }
+                  }
                 }
+                "required" -> if (initializer is JSLiteralExpression && initializer.value == true) required = true
               }
             }
           }
@@ -235,6 +254,7 @@ fun parseScriptSetupRanges(
             modifierType = modifierType,
             runtimeType = runtimeType,
             defaultValue = defaultValue,
+            defaultPropsArg = defaultPropsArg,
             required = required,
             comments = getClosestMultiLineCommentRange(node, parents),
             arg = getStartEnd(node),

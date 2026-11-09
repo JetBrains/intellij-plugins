@@ -160,6 +160,23 @@ fun generateSetupFunction(
 ): Sequence<Code> = sequence {
   val transforms = mutableListOf<CodeTransform>()
 
+  for (defineModel in scriptSetupRanges.defineModel) {
+    val defaultPropsArg = defineModel.defaultPropsArg ?: continue
+    transforms.add(insert(defaultPropsArg.end) {
+      sequence {
+        yield(": ")
+        if (scriptSetupRanges.defineProps?.typeArg != null) {
+          yield(names.Props)
+        }
+        else {
+          // FIXME: (props: typeof props) => ... would cause TS2502
+          yield("typeof ")
+          yield(scriptSetupRanges.defineProps?.name ?: names.props)
+        }
+      }
+    })
+  }
+
   scriptSetupRanges.defineProps?.let { defineProps ->
     val callExp = scriptSetupRanges.withDefaults?.callExp ?: defineProps.callExp
     transforms.addAll(
