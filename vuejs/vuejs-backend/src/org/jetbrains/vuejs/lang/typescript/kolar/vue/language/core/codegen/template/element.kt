@@ -264,14 +264,17 @@ fun generateComponent(
   val isSingleRoot = node in ctx.singleRootNodes
                      && !options.vueCompilerOptions.fallthroughComponentNames.contains(hyphenateTag(tag))
   val inferRootEl = ctx.dollarVars.contains("\$el") || options.vueCompilerOptions.inferComponentDollarEl
+  val inferTemplateRefs = options.vueCompilerOptions.inferTemplateDollarRefs
+                          || options.vueCompilerOptions.inferComponentDollarRefs
+                          || options.setupRefs.isNotEmpty()
 
-  if (templateRef != null || (isSingleRoot && inferRootEl)) {
+  if ((templateRef != null && inferTemplateRefs) || (isSingleRoot && inferRootEl)) {
     val componentInstanceVar = ctx.getInternalVariable()
     yieldAll(generateTypedVar("var", componentInstanceVar, options.scriptLang) {
       yield("Parameters<NonNullable<typeof ${getCtxVar()}['expose']>>[0]")
     })
 
-    if (templateRef != null) {
+    if (templateRef != null && inferTemplateRefs) {
       var typeExp = "typeof ${ctx.getHoistVariable(componentInstanceVar)} | null"
       if (ctx.inVFor) {
         typeExp = "($typeExp)[]"

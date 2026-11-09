@@ -167,10 +167,14 @@ class TemplateCodegenContext {
   fun generateHoistVariables(): Sequence<Code> = sequence {
     // trick to avoid TS 4081 (#5186)
     if (hoistVars.isNotEmpty()) {
-      yield("// @ts-ignore$newLine")
       yield("var ")
+      var first = true
       for ((originalVar, hoistVar) in hoistVars) {
-        yield("$hoistVar = $originalVar, ")
+        if (!first) {
+          yield(", ")
+        }
+        first = false
+        yield("$hoistVar = $originalVar!")
       }
       yield(endOfLine)
     }

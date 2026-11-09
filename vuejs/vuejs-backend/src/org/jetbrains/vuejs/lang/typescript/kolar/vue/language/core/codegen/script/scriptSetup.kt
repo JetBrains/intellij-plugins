@@ -405,17 +405,37 @@ fun generateMacros(
   options: ScriptCodegenOptions,
 ): Sequence<Code> = sequence {
   if (options.vueCompilerOptions.target >= 3.3) {
-    var emitted = false
-    for (macro in listOf("defineProps", "defineSlots", "defineEmits", "defineExpose", "defineModel", "defineOptions", "withDefaults")) {
-      if (!options.setupBindings.contains(macro)) {
-        if (!emitted) {
-          yield("// @ts-ignore${newLine}import { ")
-          emitted = true
-        }
-        yield("$macro, ")
+    val scriptSetup = options.scriptSetup
+    val scriptSetupRanges = options.scriptSetupRanges
+    if (scriptSetup == null || scriptSetupRanges == null) {
+      return@sequence
+    }
+
+    val usedMacros = mutableListOf<Pair<String, String>>()
+    val add = { canonical: String, exp: TextRange<*>? ->
+      if (exp != null) {
+        usedMacros.add(canonical to scriptSetup.content.substring(exp.start, exp.end))
       }
     }
-    if (emitted) {
+    add("defineProps", scriptSetupRanges.defineProps?.exp)
+    add("defineEmits", scriptSetupRanges.defineEmits?.exp)
+    add("defineSlots", scriptSetupRanges.defineSlots?.exp)
+    add("defineExpose", scriptSetupRanges.defineExpose?.exp)
+    add("withDefaults", scriptSetupRanges.withDefaults?.exp)
+    if (scriptSetupRanges.defineModel.isNotEmpty()) {
+      usedMacros.add("defineModel" to "defineModel")
+    }
+    if (scriptSetupRanges.defineOptions != null) {
+      usedMacros.add("defineOptions" to "defineOptions")
+    }
+
+    val toImport = usedMacros.filter { (_, alias) -> !options.setupBindings.contains(alias) }
+
+    if (toImport.isNotEmpty()) {
+      yield("import { ")
+      for ((canonical, alias) in toImport) {
+        yield(if (alias == canonical) "$canonical, " else "$canonical as $alias, ")
+      }
       yield("} from '${options.vueCompilerOptions.lib}'${endOfLine}")
     }
   }
