@@ -17,7 +17,6 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.diagnostic.Logger;
@@ -218,44 +217,49 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     return getPackageQualifiedName();
   }
 
-  @Override
-  public @NotNull Map<QualifiedName, Collection<PbSymbol>> getLocalQualifiedSymbolMap() {
+  private @NotNull ImmutableSetMultimap<QualifiedName, PbSymbol> getLocalQualifiedSymbols() {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
             Result.create(
-                computeLocalQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)))
-        .asMap();
+                computeLocalQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)));
+  }
+
+  @Override
+  public @NotNull Map<QualifiedName, Collection<PbSymbol>> getLocalQualifiedSymbolMap() {
+    return getLocalQualifiedSymbols().asMap();
   }
 
   @Override
   public @NotNull Map<QualifiedName, Collection<PbSymbol>> getExportedQualifiedSymbolMap() {
     return CachedValuesManager.getCachedValue(
-        this,
-        () ->
-            Result.create(
-                computeExportedQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)))
+            this,
+            () ->
+                Result.create(
+                    computeExportedQualifiedSymbolMap(),
+                    PbCompositeModificationTracker.byElement(this)))
         .asMap();
   }
 
   @Override
   public @NotNull Map<QualifiedName, Collection<PbSymbol>> getFullQualifiedSymbolMap() {
     return CachedValuesManager.getCachedValue(
-        this,
-        () ->
-            Result.create(
-                computeFullQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)))
+            this,
+            () ->
+                Result.create(
+                    computeFullQualifiedSymbolMap(),
+                    PbCompositeModificationTracker.byElement(this)))
         .asMap();
   }
 
-  private ImmutableMultimap<QualifiedName, PbSymbol> computeLocalQualifiedSymbolMap() {
-    ImmutableMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableMultimap.builder();
+  private ImmutableSetMultimap<QualifiedName, PbSymbol> computeLocalQualifiedSymbolMap() {
+    ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
     addSymbolsRecursively(this, builder);
     return builder.build();
   }
 
   private static void addSymbolsRecursively(
-    PbSymbolOwner parent, ImmutableMultimap.Builder<QualifiedName, PbSymbol> builder) {
+      PbSymbolOwner parent, ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder) {
     for (PbSymbol symbol : parent.getSymbols()) {
       QualifiedName symbolQualifiedName = symbol.getQualifiedName();
       if (symbolQualifiedName != null) {
@@ -267,13 +271,16 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
     }
   }
 
-  private ImmutableMultimap<QualifiedName, PbSymbol> computeExportedQualifiedSymbolMap() {
+  private ImmutableSetMultimap<QualifiedName, PbSymbol> computeExportedQualifiedSymbolMap() {
     // Return all local symbols from this file and all files in the transitive set of public
     // imports.
-    ImmutableMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableListMultimap.builder();
-
-    getLocalQualifiedSymbolMap().forEach(builder::putAll);
-    for (PbFile importedFile : getImportedFileList(/* includePrivate= */ false)) {
+    List<PbFile> importedFiles = getImportedFileList(/* includePrivate= */ false);
+    if (importedFiles.isEmpty()) {
+      return getLocalQualifiedSymbols();
+    }
+    ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
+    builder.putAll(getLocalQualifiedSymbols());
+    for (PbFile importedFile : importedFiles) {
       importedFile.getLocalQualifiedSymbolMap().forEach(builder::putAll);
     }
     return builder.build();
@@ -281,9 +288,13 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
 
   private ImmutableSetMultimap<QualifiedName, PbSymbol> computeFullQualifiedSymbolMap() {
     // Return all local symbols from this file and exported symbols from all imported files.
+    List<PbFile> importedFiles = getImportedFileList(/* includePrivate= */ true);
+    if (importedFiles.isEmpty()) {
+      return getLocalQualifiedSymbols();
+    }
     ImmutableSetMultimap.Builder<QualifiedName, PbSymbol> builder = ImmutableSetMultimap.builder();
-    getLocalQualifiedSymbolMap().forEach(builder::putAll);
-    for (PbFile importedFile : getImportedFileList(/* includePrivate= */ true)) {
+    builder.putAll(getLocalQualifiedSymbols());
+    for (PbFile importedFile : importedFiles) {
       importedFile.getLocalQualifiedSymbolMap().forEach(builder::putAll);
     }
     return builder.build();

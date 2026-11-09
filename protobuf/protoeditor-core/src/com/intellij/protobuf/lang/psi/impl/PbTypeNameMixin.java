@@ -17,9 +17,11 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.psi.PbField;
 import com.intellij.protobuf.lang.psi.PbMapField;
 import com.intellij.protobuf.lang.psi.PbMessageTypeName;
+import com.intellij.protobuf.lang.psi.PbNamedTypeElement;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbSymbolOwner;
 import com.intellij.protobuf.lang.psi.PbTypeName;
@@ -31,6 +33,8 @@ import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference;
 import com.intellij.protobuf.lang.resolve.ResolveFilters;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +86,19 @@ abstract class PbTypeNameMixin extends PbQualifiedReferenceBase implements PbTyp
   @Override
   public @NotNull String getShortName() {
     return getSymbolPath().getSymbol().getText();
+  }
+
+  @Override
+  public @Nullable PbNamedTypeElement getDeclaredNamedType() {
+    if (getBuiltInType() != null) {
+      return null;
+    }
+    return CachedValuesManager.getCachedValue(
+        this,
+        () ->
+            Result.create(
+                PbPsiUtil.resolveRefToType(getEffectiveReference(), PbNamedTypeElement.class),
+                PbCompositeModificationTracker.byElement(this)));
   }
 
   @Override
