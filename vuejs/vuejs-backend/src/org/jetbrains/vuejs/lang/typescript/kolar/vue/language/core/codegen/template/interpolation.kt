@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSTypeDeclarationOwner
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
+import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getBindingElements
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
@@ -65,20 +66,22 @@ fun generateInterpolation(
   var prevEnd = 0
   for ((name, offset, isShorthand) in forEachIdentifiers(options, ctx, code, prefix, suffix)) {
     if (isShorthand) {
-      yield(DataSegment(
-        text = code.substring(prevEnd, offset + name.length),
+      yieldAll(generateNonIdentifierCode(
+        code = code.substring(prevEnd, offset + name.length),
         source = block.name,
-        sourceOffset = start + prevEnd,
+        offset = start + prevEnd,
         data = data,
+        shouldCut = prevEnd > 0,
       ))
       yield(": ")
     }
     else if (prevEnd < offset) {
-      yield(DataSegment(
-        text = code.substring(prevEnd, offset),
+      yieldAll(generateNonIdentifierCode(
+        code = code.substring(prevEnd, offset),
         source = block.name,
-        sourceOffset = start + prevEnd,
+        offset = start + prevEnd,
         data = data,
+        shouldCut = prevEnd > 0,
       ))
     }
 
@@ -120,16 +123,50 @@ fun generateInterpolation(
   }
 
   if (prevEnd < code.length) {
-    yield(DataSegment(
-      text = code.substring(prevEnd),
+    yieldAll(generateNonIdentifierCode(
+      code = code.substring(prevEnd),
       source = block.name,
-      sourceOffset = start + prevEnd,
+      offset = start + prevEnd,
       data = data,
+      shouldCut = prevEnd > 0,
     ))
   }
 
   if (suffix.isNotEmpty()) {
     yield(suffix)
+  }
+}
+
+/**
+ * Yield a code chunk, cutting the boundary character off as verification-only.
+ *
+ * Adjacent mappings share the boundary offset (closed interval), so both the
+ * neighbouring token's end and this chunk's start claim the same source offset.
+ * Downgrading the boundary character to verification-only keeps content-sensitive
+ * features (rename / navigation) from firing on the neighbouring chunk.
+ */
+private fun generateNonIdentifierCode(
+  code: String,
+  source: Source,
+  offset: Int,
+  data: VueCodeInformation,
+  shouldCut: Boolean = true,
+): Sequence<Code> = sequence {
+  if (code.isEmpty()) {
+    return@sequence
+  }
+  if (!shouldCut) {
+    yield(DataSegment(text = code, source = source, sourceOffset = offset, data = data))
+    return@sequence
+  }
+  yield(DataSegment(
+    text = code.substring(0, 1),
+    source = source,
+    sourceOffset = offset,
+    data = VueCodeInformation(verification = data.verification),
+  ))
+  if (code.length > 1) {
+    yield(DataSegment(text = code.substring(1), source = source, sourceOffset = offset + 1, data = data))
   }
 }
 
