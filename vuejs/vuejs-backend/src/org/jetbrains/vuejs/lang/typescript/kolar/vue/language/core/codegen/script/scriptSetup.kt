@@ -48,6 +48,12 @@ fun generateGeneric(
   val vueCompilerOptions = options.vueCompilerOptions
   yield("(")
   if (generic is IRAttr.WithText) {
+    val boundary = yield(Boundary.start(
+      scriptSetup.name,
+      generic.offset,
+      generic.offset + generic.text.length,
+      codeFeatures.verification,
+    ))
     yield("<")
     yield(DataSegment(
       text = generic.text,
@@ -59,6 +65,7 @@ fun generateGeneric(
       yield(",")
     }
     yield(">")
+    yield(boundary.end())
   }
   yield(
     "(${newLine}" +
