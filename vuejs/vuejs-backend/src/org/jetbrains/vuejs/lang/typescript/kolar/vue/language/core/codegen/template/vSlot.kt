@@ -89,21 +89,18 @@ fun generateVSlot(
     if (arg is SimpleExpressionNode) {
       isStatic = arg.isStatic
     }
-    if (isStatic && arg == null) {
-      yield("// @ts-ignore$newLine")
-      yield("${names.nonNull}($ctxVar.slots)['")
-      val prefixLen = when {
-        slotDir.loc.source.startsWith("#") -> "#".length
-        slotDir.loc.source.startsWith("v-slot:") -> "v-slot:".length
-        else -> 0
-      }
-      yield(DataSegment(text = "",
-                        source = Source("template"),
-                        sourceOffset = slotDir.loc.startOffset + prefixLen,
-                        data = codeFeatures.completion))
-      yield("'/* empty slot name completion */]$endOfLine")
-    }
     yield("}$newLine")
+    if (isStatic && arg == null) {
+      if (slotDir.loc.source.startsWith("#") || slotDir.loc.source.startsWith("v-slot:")) {
+        yield("/** @type {NonNullable<typeof $ctxVar['slots']>['")
+        val prefixLen = if (slotDir.loc.source.startsWith("#")) "#".length else "v-slot:".length
+        yield(DataSegment(text = "",
+                          source = Source("template"),
+                          sourceOffset = slotDir.loc.startOffset + prefixLen,
+                          data = codeFeatures.completion))
+        yield("']} */$endOfLine")
+      }
+    }
   }
 }
 
