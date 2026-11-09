@@ -8,8 +8,10 @@ import com.intellij.lang.ecmascript6.psi.ES6NamedImports
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
+import com.intellij.lang.javascript.psi.JSBinaryExpression
 import com.intellij.lang.javascript.psi.JSBlockStatement
 import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSConditionalExpression
 import com.intellij.lang.javascript.psi.JSDestructuringArray
 import com.intellij.lang.javascript.psi.JSDestructuringElement
 import com.intellij.lang.javascript.psi.JSDestructuringObject
@@ -29,6 +31,7 @@ import com.intellij.lang.javascript.psi.JSStatement
 import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.TypeScriptSatisfiesExpression
+import com.intellij.lang.javascript.psi.ecma6.ES6TaggedTemplateExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptCallSignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptCastExpression
@@ -194,6 +197,21 @@ fun isSatisfiesExpression(node: PsiElement?): Boolean {
 fun isCallExpression(node: PsiElement?): Boolean {
   contract { returns(true) implies (node is JSCallExpression) }
   return node is JSCallExpression
+}
+
+fun isTaggedTemplateExpression(node: PsiElement?): Boolean {
+  contract { returns(true) implies (node is ES6TaggedTemplateExpression) }
+  return node is ES6TaggedTemplateExpression
+}
+
+fun isBinaryExpression(node: PsiElement?): Boolean {
+  contract { returns(true) implies (node is JSBinaryExpression) }
+  return node is JSBinaryExpression
+}
+
+fun isConditionalExpression(node: PsiElement?): Boolean {
+  contract { returns(true) implies (node is JSConditionalExpression) }
+  return node is JSConditionalExpression
 }
 
 fun isParenthesizedExpression(node: PsiElement?): Boolean {

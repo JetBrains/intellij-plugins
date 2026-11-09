@@ -33,6 +33,7 @@ class TemplateCodegenContext {
   val dynamicSlots: MutableList<DynamicSlot> = mutableListOf()
   val dollarVars: MutableSet<String> = mutableSetOf()
   val contextAccesses: MutableMap<String, MutableMap<Source, MutableSet<Int>>> = mutableMapOf()
+  val callAccessedBindings: MutableSet<String> = mutableSetOf()
   val conditions: MutableList<String> = mutableListOf()
   val inlayHints: MutableList<InlayHintInfo> = mutableListOf()
   val inheritedAttrVars: MutableSet<String> = mutableSetOf()
@@ -62,6 +63,12 @@ class TemplateCodegenContext {
     if (offset != null) {
       arr.add(offset)
     }
+  }
+
+  fun accessVariableAsCall(
+    name: String,
+  ) {
+    callAccessedBindings.add(name)
   }
 
   inner class Scope {

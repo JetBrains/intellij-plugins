@@ -170,13 +170,28 @@ fun generateEventExpression(
       val scope = ctx.scope()
       scope.declare("\$event")
       yieldAll(ctx.generateConditionGuards())
+
+      // The top-level `__VLS_withDotValue` assertion does not narrow imported
+      // bindings inside this closure (TS control-flow limitation), so re-assert
+      // the setup bindings that are called by this handler right here. Only
+      // called bindings are re-asserted: for local bindings the top-level
+      // assertion already flows into this closure, and re-asserting non-call
+      // accesses would double-narrow them.
+      ctx.callAccessedBindings.clear()
+      val codes = interpolation.toList()
+      for (name in ctx.callAccessedBindings) {
+        if (options.setupBindings.contains(name)) {
+          yield("${names.withDotValue}($name, {} as import('${options.vueCompilerOptions.lib}').Ref<unknown>)$endOfLine")
+        }
+      }
+
       if (isSingleExpression(ast)) {
         yield("return (")
-        yieldAll(interpolation)
+        yieldAll(codes)
         yield(")")
       }
       else {
-        yieldAll(interpolation)
+        yieldAll(codes)
       }
       yield(endOfLine)
       yieldAll(scope.end())

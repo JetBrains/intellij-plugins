@@ -1,10 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSInitializerOwner
 import com.intellij.lang.javascript.psi.JSNamedElement
 import com.intellij.lang.javascript.psi.JSTypeDeclarationOwner
+import com.intellij.lang.javascript.psi.TypeScriptSatisfiesExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
@@ -12,16 +15,25 @@ import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.getBindingElements
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrayBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isArrowFunction
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isAsExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBinaryExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBlock
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isCallExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isConditionalExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isFunctionLike
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isIdentifier
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isNonNullExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectBindingPattern
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isObjectLiteralExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isParenthesizedExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAccessExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isPropertyAssignment
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isSatisfiesExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isShorthandPropertyAssignment
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isSpreadAssignment
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTaggedTemplateExpression
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeAssertionExpression
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isTypeQueryNode
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isVariableDeclaration
@@ -64,7 +76,7 @@ fun generateInterpolation(
   }
 
   var prevEnd = 0
-  for ((name, offset, isShorthand) in forEachIdentifiers(options, ctx, code, prefix, suffix)) {
+  for ((name, offset, isShorthand, isCall) in forEachIdentifiers(options, ctx, code, prefix, suffix)) {
     if (isShorthand) {
       yieldAll(generateNonIdentifierCode(
         code = code.substring(prevEnd, offset + name.length),
@@ -109,13 +121,18 @@ fun generateInterpolation(
     }
     else if (options.setupBindings.contains(name)) {
       ctx.accessVariable(block.name, name, start + offset)
+      if (isCall) {
+        ctx.accessVariableAsCall(name)
+      }
       yield(DataSegment(
         text = name,
         source = block.name,
         sourceOffset = start + offset,
         data = if (isShorthand) data.copy(__shorthandExpression = VueCodeInformation.ShorthandExpression.js) else data,
       ))
-      yield(".value")
+      if (!isCall) {
+        yield(".value")
+      }
     }
     else {
       // #1205, #1264
@@ -199,35 +216,85 @@ private fun forEachIdentifiers(
   code: String,
   prefix: String,
   suffix: String,
-): Sequence<Triple<String, Int, Boolean>> = sequence {
+): Sequence<IdentifierInfo> = sequence {
   if (identifierRE.matches(code) && !shouldIdentifierSkipped(ctx, code)) {
-    yield(Triple(code, 0, false))
+    yield(IdentifierInfo(code, 0, isShorthand = false, isCall = false))
     return@sequence
   }
 
   val scope = ctx.scope()
   val ast = getTypeScriptAST(prefix + code + suffix, options)
-  for ((id, isShorthand) in forEachDeclarations(ast, ctx, scope)) {
+  for ((id, isShorthand, isCall) in forEachDeclarations(ast, ctx, scope, false)) {
     val text = getNodeText(id)
     if (shouldIdentifierSkipped(ctx, text)) continue
-    yield(Triple(text, getStartEnd(id).start - prefix.length, isShorthand))
+    yield(IdentifierInfo(text, getStartEnd(id).start - prefix.length, isShorthand, isCall))
   }
   scope.end()
 }
+
+private data class IdentifierInfo(
+  val name: String,
+  val offset: Int,
+  val isShorthand: Boolean,
+  val isCall: Boolean,
+)
 
 private fun forEachDeclarations(
   node: PsiElement,
   ctx: TemplateCodegenContext,
   scope: TemplateCodegenContext.Scope,
-): Sequence<Pair<PsiElement, Boolean>> = sequence {
+  inCallPosition: Boolean,
+): Sequence<Triple<PsiElement, Boolean, Boolean>> = sequence {
   if (isIdentifier(node)) {
-    yield(Pair(node, false))
+    yield(Triple(node, false, inCallPosition))
   }
   else if (isShorthandPropertyAssignment(node)) {
-    yield(Pair(node.nameIdentifier!!, true))
+    yield(Triple(node.nameIdentifier!!, true, inCallPosition))
   }
   else if (isPropertyAccessExpression(node)) {
-    yieldAll(forEachDeclarations(node.qualifier!!, ctx, scope))
+    yieldAll(forEachDeclarations(node.qualifier!!, ctx, scope, false))
+  }
+  else if (isCallExpression(node)) {
+    node.methodExpression?.let { yieldAll(forEachDeclarations(it, ctx, scope, true)) }
+    for (arg in node.arguments) {
+      yieldAll(forEachDeclarations(arg, ctx, scope, false))
+    }
+  }
+  else if (isTaggedTemplateExpression(node)) {
+    node.tag?.let { yieldAll(forEachDeclarations(it, ctx, scope, true)) }
+    node.templateExpression?.let { yieldAll(forEachDeclarations(it, ctx, scope, false)) }
+  }
+  else if (isParenthesizedExpression(node)) {
+    node.innerExpression?.let { yieldAll(forEachDeclarations(it, ctx, scope, inCallPosition)) }
+  }
+  else if (isNonNullExpression(node)) {
+    node.expression?.let { yieldAll(forEachDeclarations(it, ctx, scope, inCallPosition)) }
+  }
+  // `TypeScriptAsExpression` extends `TypeScriptCastExpression`, so check it first
+  else if (isAsExpression(node) || isSatisfiesExpression(node)) {
+    val (expression, type) = when (node) {
+      is TypeScriptAsExpression -> node.expression to node.type
+      else -> (node as TypeScriptSatisfiesExpression).expression to node.type
+    }
+    expression?.let { yieldAll(forEachDeclarations(it, ctx, scope, inCallPosition)) }
+    type?.let { yieldAll(forEachDeclarationsInTypeNode(it)) }
+  }
+  else if (isTypeAssertionExpression(node)) {
+    node.type?.let { yieldAll(forEachDeclarationsInTypeNode(it)) }
+    node.expression?.let { yieldAll(forEachDeclarations(it, ctx, scope, inCallPosition)) }
+  }
+  else if (isBinaryExpression(node)) {
+    val operator = node.operationSign
+    val isLogical = operator == JSTokenTypes.OROR
+                    || operator == JSTokenTypes.ANDAND
+                    || operator == JSTokenTypes.QUEST_QUEST
+    node.lOperand?.let { yieldAll(forEachDeclarations(it, ctx, scope, isLogical && inCallPosition)) }
+    node.rOperand?.let { yieldAll(forEachDeclarations(it, ctx, scope, isLogical && inCallPosition)) }
+  }
+  else if (isConditionalExpression(node)) {
+    node.condition?.let { yieldAll(forEachDeclarations(it, ctx, scope, false)) }
+    node.thenBranch?.let { yieldAll(forEachDeclarations(it, ctx, scope, inCallPosition)) }
+    node.elseBranch?.let { yieldAll(forEachDeclarations(it, ctx, scope, inCallPosition)) }
   }
   else if (isVariableDeclaration(node)) {
     scope.declare(collectBindingNames(node))
@@ -247,18 +314,18 @@ private fun forEachDeclarations(
         // fix https://github.com/vuejs/language-tools/issues/1176
         val computedPropName = prop.computedPropertyName
         if (computedPropName != null) {
-          yieldAll(forEachDeclarations(computedPropName.expression!!, ctx, scope))
+          yieldAll(forEachDeclarations(computedPropName.expression!!, ctx, scope, false))
         }
-        yieldAll(forEachDeclarations(prop.initializer!!, ctx, scope))
+        yieldAll(forEachDeclarations(prop.initializer!!, ctx, scope, false))
       }
       // fix https://github.com/vuejs/language-tools/issues/1156
       else if (isShorthandPropertyAssignment(prop)) {
-        yieldAll(forEachDeclarations(prop, ctx, scope))
+        yieldAll(forEachDeclarations(prop, ctx, scope, false))
       }
       // fix https://github.com/vuejs/language-tools/issues/1148#issuecomment-1094378126
       else if (isSpreadAssignment(prop)) {
         // TODO: cannot report "Spread types may only be created from object types.ts(2698)"
-        yieldAll(forEachDeclarations(prop.expression!!, ctx, scope))
+        yieldAll(forEachDeclarations(prop.expression!!, ctx, scope, false))
       }
       // fix https://github.com/vuejs/language-tools/issues/4604
       else if (isFunctionLike(prop) && prop.block != null) {
@@ -273,13 +340,13 @@ private fun forEachDeclarations(
   else if (isBlock(node)) {
     val scope = ctx.scope()
     for (child in forEachNode(node)) {
-      yieldAll(forEachDeclarations(child, ctx, scope))
+      yieldAll(forEachDeclarations(child, ctx, scope, false))
     }
     scope.end()
   }
   else {
     for (child in forEachNode(node)) {
-      yieldAll(forEachDeclarations(child, ctx, scope))
+      yieldAll(forEachDeclarations(child, ctx, scope, false))
     }
   }
 }
@@ -288,25 +355,25 @@ private fun forEachDeclarationsInBinding(
   node: PsiElement,
   ctx: TemplateCodegenContext,
   scope: TemplateCodegenContext.Scope,
-): Sequence<Pair<PsiElement, Boolean>> = sequence {
+): Sequence<Triple<PsiElement, Boolean, Boolean>> = sequence {
   val type = (node as? JSTypeDeclarationOwner)?.typeElement
   if (type != null) {
     yieldAll(forEachDeclarationsInTypeNode(type))
   }
   val nameIdentifier = (node as? JSNamedElement)?.nameIdentifier
   if (nameIdentifier != null && !isIdentifier(nameIdentifier)) {
-    yieldAll(forEachDeclarations(nameIdentifier, ctx, scope))
+    yieldAll(forEachDeclarations(nameIdentifier, ctx, scope, false))
   }
   val initializer = (node as? JSInitializerOwner)?.initializer
   if (initializer != null) {
-    yieldAll(forEachDeclarations(initializer, ctx, scope))
+    yieldAll(forEachDeclarations(initializer, ctx, scope, false))
   }
 }
 
 private fun forEachDeclarationsInFunction(
   node: JSFunction,
   ctx: TemplateCodegenContext,
-): Sequence<Pair<PsiElement, Boolean>> = sequence {
+): Sequence<Triple<PsiElement, Boolean, Boolean>> = sequence {
   val scope = ctx.scope()
   for (param in node.parameters) {
     scope.declare(collectBindingNames(param.declarationElement!!))
@@ -314,20 +381,20 @@ private fun forEachDeclarationsInFunction(
   }
   val body = node.block
   if (body != null) {
-    yieldAll(forEachDeclarations(body, ctx, scope))
+    yieldAll(forEachDeclarations(body, ctx, scope, false))
   }
   scope.end()
 }
 
 private fun forEachDeclarationsInTypeNode(
   node: PsiElement,
-): Sequence<Pair<PsiElement, Boolean>> = sequence {
+): Sequence<Triple<PsiElement, Boolean, Boolean>> = sequence {
   if (isTypeQueryNode(node)) {
     var id = node.expression!!
     while (isPropertyAccessExpression(id)) {
       id = id.qualifier ?: break
     }
-    yield(Pair(id, false))
+    yield(Triple(id, false, false))
   }
   else {
     for (child in forEachNode(node)) {

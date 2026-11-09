@@ -19,7 +19,7 @@ fun generateTemplate(
   yieldAll(generateTemplateDirectives(options))
 
   for (name in options.withDotValueBindings) {
-    yield("${names.withDotValue}($name, {} as import('${options.vueCompilerOptions.lib}').Ref)${endOfLine}")
+    yield("${names.withDotValue}($name, {} as import('${options.vueCompilerOptions.lib}').Ref<unknown>)${endOfLine}")
   }
 
   if (options.templateAndStyleCodes.isNotEmpty()) {
