@@ -27,14 +27,14 @@ type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.$emit('click');
+return (__VLS_ctx.$emit('click'));
 // @ts-ignore
 [$emit,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.$emit('submit', { email: 'a@b.com' });
+return (__VLS_ctx.$emit('submit', { email: 'a@b.com' }));
 // @ts-ignore
 [$emit,];
 }},

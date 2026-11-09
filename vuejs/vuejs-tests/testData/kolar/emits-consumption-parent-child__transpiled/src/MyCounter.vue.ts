@@ -44,7 +44,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.emit('change', __VLS_ctx.count);
+return (__VLS_ctx.emit('change', __VLS_ctx.count));
 // @ts-ignore
 [count,count,onChange,emit,];
 }},
@@ -54,7 +54,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.emit('reset');
+return (__VLS_ctx.emit('reset'));
 // @ts-ignore
 [emit,onReset,];
 }},

@@ -34,7 +34,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.emit('change', 1, 'user');
+return (__VLS_ctx.emit('change', 1, 'user'));
 // @ts-ignore
 [onChange,emit,];
 }},

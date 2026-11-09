@@ -24,14 +24,14 @@ type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onFocus: (...[$event]) => {
-return __VLS_ctx.$emit('inFocus');
+return (__VLS_ctx.$emit('inFocus'));
 // @ts-ignore
 [$emit,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.$emit('submit');
+return (__VLS_ctx.$emit('submit'));
 // @ts-ignore
 [$emit,];
 }},

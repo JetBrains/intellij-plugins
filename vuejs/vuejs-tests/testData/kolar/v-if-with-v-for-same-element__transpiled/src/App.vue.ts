@@ -23,7 +23,7 @@ type __VLS_LocalDirectives = __VLS_SetupExposed;
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.showList = !__VLS_ctx.showList;
+return (__VLS_ctx.showList = !__VLS_ctx.showList);
 // @ts-ignore
 [showList,showList,];
 }},

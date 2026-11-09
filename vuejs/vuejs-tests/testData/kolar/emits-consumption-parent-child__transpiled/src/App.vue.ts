@@ -34,7 +34,7 @@ let __VLS_5!: __VLS_ResolveEmits<typeof __VLS_0, typeof __VLS_3.emit>;
 const __VLS_6: __VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onChange', 'change', 'change'> = {
 /** @type {typeof __VLS_5.change} */
 onChange: (...[$event]) => {
-return __VLS_ctx.count = $event;
+return (__VLS_ctx.count = $event);
 // @ts-ignore
 [count,count,];
 },
@@ -42,7 +42,7 @@ return __VLS_ctx.count = $event;
 const __VLS_7: __VLS_ResolveEvent<typeof __VLS_4, typeof __VLS_5, 'onReset', 'reset', 'reset'> = {
 /** @type {typeof __VLS_5.reset} */
 onReset: (...[$event]) => {
-return __VLS_ctx.count = 0;
+return (__VLS_ctx.count = 0);
 // @ts-ignore
 [count,];
 },

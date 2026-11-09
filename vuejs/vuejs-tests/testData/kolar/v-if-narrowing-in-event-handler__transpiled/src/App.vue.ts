@@ -27,7 +27,7 @@ if (__VLS_ctx.example.bar) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
 if (!(__VLS_ctx.example.bar)) throw 0;
-return __VLS_ctx.example.bar.baz();
+return (__VLS_ctx.example.bar.baz());
 // @ts-ignore
 [example,example,];
 }},

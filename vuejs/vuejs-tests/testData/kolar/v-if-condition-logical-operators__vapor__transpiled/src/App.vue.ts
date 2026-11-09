@@ -28,14 +28,14 @@ type __VLS_LocalDirectives = __VLS_SetupExposed;
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.isLoggedIn = !__VLS_ctx.isLoggedIn;
+return (__VLS_ctx.isLoggedIn = !__VLS_ctx.isLoggedIn);
 // @ts-ignore
 [isLoggedIn,isLoggedIn,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.isAdmin = !__VLS_ctx.isAdmin;
+return (__VLS_ctx.isAdmin = !__VLS_ctx.isAdmin);
 // @ts-ignore
 [isAdmin,isAdmin,];
 }},

@@ -28,14 +28,14 @@ type __VLS_LocalDirectives = __VLS_SetupExposed;
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.showIf = !__VLS_ctx.showIf;
+return (__VLS_ctx.showIf = !__VLS_ctx.showIf);
 // @ts-ignore
 [showIf,showIf,];
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 ...{ onClick: (...[$event]) => {
-return __VLS_ctx.showShow = !__VLS_ctx.showShow;
+return (__VLS_ctx.showShow = !__VLS_ctx.showShow);
 // @ts-ignore
 [showShow,showShow,];
 }},
