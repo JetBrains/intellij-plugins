@@ -36,6 +36,8 @@ fun generateElementProps(
   props: List<Node>,
   checkUnknownProps: Boolean,
   failedPropExps: MutableList<FailedPropExpressions>? = null,
+  // type of the object the props are passed to, if any
+  attrsType: String? = null,
 ): Sequence<Code> = sequence {
   val isComponent = node.tagType == ElementTypes.COMPONENT
 
@@ -49,7 +51,15 @@ fun generateElementProps(
         yield("...{ ")
         yieldAll(generateEventArg(options, propArg.loc.source, propArg.loc.startOffset))
         yield(": ")
-        yieldAll(generateEventExpression(options, ctx, prop))
+        yieldAll(generateEventExpression(
+          options,
+          ctx,
+          prop,
+          if (attrsType != null)
+            "${names.EventArgs}<$attrsType, '${getEventArgName(propArg.loc.source)}'>"
+          else
+            "any[]",
+        ))
         yield("},")
       }
       else {

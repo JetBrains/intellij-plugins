@@ -371,6 +371,7 @@ fun generateElement(
     props = node.props,
     checkUnknownProps = options.vueCompilerOptions.checkUnknownProps,
     failedPropExps = failedPropExps,
+    attrsType = "typeof ${names.intrinsics}['${node.tag}']",
   ))
   yield("}")
   yield(boundary.end())
@@ -429,6 +430,7 @@ fun generateFragment(
       props = node.props,
       checkUnknownProps = options.vueCompilerOptions.checkUnknownProps,
       failedPropExps = failedPropExps,
+      attrsType = "typeof ${names.intrinsics}.template",
     ))
     yield("}")
     yield(boundary.end())

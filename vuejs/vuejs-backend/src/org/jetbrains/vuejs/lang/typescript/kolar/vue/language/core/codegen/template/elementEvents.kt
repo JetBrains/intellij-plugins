@@ -110,19 +110,30 @@ fun generateElementEvents(
       yield("/** @type {$eventType} */${newLine}const $eventVar = {$newLine")
     }
     for ((prop, source, offset) in items) {
+      val argsType = "${names.EventArgs}<$eventType, '$propName'>"
       if (prop.name == "on") {
         yield("/** @type {typeof $emitsVar.")
         yieldAll(generateEventArg(options, source, offset!!, emitPrefix.dropLast(1), codeFeatures.navigation))
         yield("} */$newLine")
-      }
-      if (prop.name == "on") {
-        yieldAll(generateEventArg(options, source, offset!!, propPrefix.dropLast(1)))
+        // in JS, the JSDoc above types the property, and fails to parse for a non-identifier name
+        val emitArgName = getEventArgName(source, emitPrefix.dropLast(1))
+        yieldAll(generateEventArg(options, source, offset, propPrefix.dropLast(1)))
         yield(": ")
-        yieldAll(generateEventExpression(options, ctx, prop))
+        yieldAll(generateEventExpression(
+          options,
+          ctx,
+          prop,
+          if (isTsLang(options.scriptLang))
+            argsType
+          else if (identifierRE.matches(emitArgName))
+            "${names.EventArgs}<typeof $emitsVar, '$emitArgName'>"
+          else
+            "any[]",
+        ))
       }
       else {
         yield("'$propName': ")
-        yieldAll(generateModelEventExpression(options, ctx, prop))
+        yieldAll(generateModelEventExpression(options, ctx, prop, argsType))
       }
       yield(",$newLine")
     }
@@ -161,10 +172,28 @@ fun generateEventArg(
   }
 }
 
+fun getEventArgName(name: String, directive: String = "on"): String {
+  val capitalized = if (directive.isNotEmpty()) capitalize(name) else name
+  return directive + capitalized.split('-').mapIndexed { i, part -> if (i != 0) capitalize(part) else part }.joinToString("")
+}
+
+private fun generateEventParameter(
+  options: TemplateCodegenOptions,
+  argsType: String,
+): Sequence<Code> = sequence {
+  if (isTsLang(options.scriptLang)) {
+    yield("(...[\$event]: $argsType) => {$newLine")
+  }
+  else {
+    yield("(/** @type {$argsType} */ ...[\$event]) => {$newLine")
+  }
+}
+
 fun generateEventExpression(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
   prop: DirectiveNode,
+  argsType: String,
 ): Sequence<Code> = sequence {
   val exp = prop.exp
   if (exp is SimpleExpressionNode) {
@@ -187,8 +216,7 @@ fun generateEventExpression(
       val accessMark = ctx.accessLog.size
       val codes = interpolation.toList()
 
-      yield("// @ts-ignore$newLine")
-      yield("(...[\$event]) => {$newLine")
+      yieldAll(generateEventParameter(options, argsType))
       // consume $event to avoid TS6133 when the expression doesn't use it
       yield("void \$event$endOfLine")
 
@@ -228,6 +256,7 @@ fun generateModelEventExpression(
   options: TemplateCodegenOptions,
   ctx: TemplateCodegenContext,
   prop: DirectiveNode,
+  argsType: String,
 ): Sequence<Code> = sequence {
   val exp = prop.exp
   if (exp is SimpleExpressionNode) {
@@ -241,8 +270,7 @@ fun generateModelEventExpression(
       start = exp.loc.startOffset,
       inNarrowing = true,
     ).toList()
-    yield("// @ts-ignore$newLine")
-    yield("(...[\$event]) => {$newLine")
+    yieldAll(generateEventParameter(options, argsType))
     yieldAll(generateReasserts(options, ctx, accessMark))
     yieldAll(ctx.generateConditionGuards())
     yieldAll(codes)

@@ -37,7 +37,8 @@ fun generateSlotOutlet(
   }
 
   if (options.hasDefineSlots) {
-    yield("${names.asFunctionalSlot}(")
+    val slotVar = ctx.getInternalVariable()
+    yield("const $slotVar = ${names.asFunctionalSlot}(")
     if (nameProp != null) {
       val boundary = yield(Boundary.start(
         Source("template"),
@@ -79,7 +80,8 @@ fun generateSlotOutlet(
       yield("]")
       yield(boundary.end())
     }
-    yield(")(")
+    yield(")$endOfLine")
+    yield("$slotVar(")
     val boundary = yield(Boundary.start(
       Source("template"),
       startTagOffset,
@@ -87,7 +89,15 @@ fun generateSlotOutlet(
       codeFeatures.verification,
     ))
     yield("{$newLine")
-    yieldAll(generateElementProps(options, ctx, node, node.props.filter { it !== nameProp }, true))
+    yieldAll(generateElementProps(
+      options,
+      ctx,
+      node,
+      node.props.filter { it !== nameProp },
+      true,
+      null,
+      "Parameters<typeof $slotVar>[0]",
+    ))
     yield("}")
     yield(boundary.end())
     yield(")$endOfLine")
