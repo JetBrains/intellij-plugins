@@ -14,4 +14,4 @@ fun dirname(path: String): String =
   Path(path).parent.toString()
 
 fun relative(from: String, to: String): String =
-  Path(from).relativeTo(Path(to)).toString()
+  Path(to).relativeTo(Path(from)).toString()
