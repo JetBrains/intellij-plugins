@@ -38,7 +38,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.collect
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getNodeText
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.utils.getStartEnd
 
-private val tsCheckRE = Regex("""^//\s*@ts-(?:no)?check($|\s)""")
+private val tsCheckRE = Regex("""^//(?:\s*@ts-(?:no)?check(?:$|\s)|/\s*<reference\s)""")
 
 // CallExpressionRange { callExp, exp, arg?, typeArg? }
 // Base for DefineProps, DefineEmits, DefineSlots, UseTemplateRef; also used standalone

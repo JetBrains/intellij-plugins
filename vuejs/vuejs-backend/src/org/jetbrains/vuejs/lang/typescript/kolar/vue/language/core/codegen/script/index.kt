@@ -86,7 +86,6 @@ private fun generateWorker(
   // <script> + <script setup>
   else if (script != null && scriptRanges != null && scriptSetup != null && scriptSetupRanges != null) {
     yieldAll(generateScriptSetupImports(scriptSetup, scriptSetupRanges))
-    yieldAll(generateMacros(options))
 
     var selfType: String? = null
     val exportDefault = scriptRanges.exportDefault
@@ -99,6 +98,7 @@ private fun generateWorker(
       yield("export default ${exportExpression}${endOfLine}")
     }
 
+    yieldAll(generateMacros(options))
     yieldAll(generateExportDeclareEqual(scriptSetup, names.export))
     if (scriptSetup.generic != null) {
       yieldAll(generateGeneric(

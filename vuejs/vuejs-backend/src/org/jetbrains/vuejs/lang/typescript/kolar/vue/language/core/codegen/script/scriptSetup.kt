@@ -455,7 +455,7 @@ fun generateMacros(
     val toImport = usedMacros.filter { (_, alias) -> !options.setupBindings.contains(alias) }
 
     if (toImport.isNotEmpty()) {
-      yield("const { ")
+      yield("${newLine}const { ")
       for ((canonical, alias) in toImport) {
         yield(if (alias == canonical) "$canonical, " else "$canonical: $alias, ")
       }
