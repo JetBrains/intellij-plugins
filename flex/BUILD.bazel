@@ -1,5 +1,14 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
+
+# the `lib` directory, which UltimateRepositoryModules.kt copies to the plugin distribution
+pkg_files(
+    name = "lib",
+    srcs = glob(["lib/*"]),
+    prefix = "lib",
+)
 
 ### auto-generated section `dev intellij.flex` start
 dev_dist_plugin(
@@ -14,7 +23,7 @@ dev_dist_plugin(
 ### auto-generated section `dev intellij.flex` end
 
 ### auto-generated section `build intellij.flex` start
-jvm_library(
+ij_plugin_module(
     name = "flex",
     srcs = glob(
         [
@@ -27,6 +36,8 @@ jvm_library(
         allow_empty = True,
     ),
     module_name = "intellij.flex",
+    # manually written attribute
+    non_classpath_data = [":lib"],
     resource_strip_prefix = "resources",
     resources = glob(
         ["resources/**/*"],
@@ -125,6 +136,20 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.flex` end
+
+### auto-generated section `plugin intellij.flex` start
+ij_plugin(
+    name = "flex_plugin",
+    descriptor_module = ":flex_plugin_module",
+    content_modules = [
+        # do not sort,
+        "//contrib/flex/css",
+        "//contrib/flex/jps-plugin:jps",
+        "//contrib/flex/flex-shared:shared",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.flex` end
 
 ### auto-generated section `iml intellij.flex` start
 exports_files(
