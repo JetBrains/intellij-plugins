@@ -97,11 +97,17 @@ fun generateGeneric(
       }<typeof ${names.propsOption}>"
     )
   }
-  if (scriptSetupRanges.defineEmits != null || scriptSetupRanges.defineModel.isNotEmpty()) {
+  val hasEmitProps = scriptSetupRanges.defineEmits != null || scriptSetupRanges.defineModel.isNotEmpty()
+  if (hasEmitProps) {
     propTypes.add(names.EmitProps)
   }
   if (options.templateAndStyleTypes.contains(names.InheritedAttrs)) {
-    propTypes.add(names.InheritedAttrs)
+    propTypes.add(
+      if (hasEmitProps)
+        "Omit<${names.InheritedAttrs}, keyof ${names.EmitProps}>"
+      else
+        names.InheritedAttrs
+    )
   }
   scriptSetupRanges.defineEmits?.let { defineEmits ->
     emitTypes.add("typeof ${defineEmits.name ?: names.emit}")
