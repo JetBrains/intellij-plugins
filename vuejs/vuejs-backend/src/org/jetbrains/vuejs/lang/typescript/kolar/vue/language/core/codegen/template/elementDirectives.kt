@@ -102,7 +102,7 @@ private fun generateIdentifier(
     ),
   ))
   if (!isBuiltInDirective(prop.name)) {
-    ctx.accessVariable(Source("template"), camelize(rawName), prop.loc.startOffset)
+    ctx.accessVariable(Source("template"), camelize(rawName), prop.loc.startOffset, false, rawName)
   }
   yield(boundary.end())
 }

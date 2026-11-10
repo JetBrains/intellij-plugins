@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.temp
 
 import com.intellij.lang.typescript.kolar.KolarCodeInformation.VerificationInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
-import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.CommentNode
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.compiler.core.ElementNode
@@ -15,6 +14,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeF
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateCamelized
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
@@ -87,7 +87,8 @@ class TemplateCodegenContext {
   val slots: MutableList<Slot> = mutableListOf()
   val dynamicSlots: MutableList<DynamicSlot> = mutableListOf()
   val dollarVars: MutableSet<String> = mutableSetOf()
-  val contextAccesses: MutableMap<String, MutableMap<Source, MutableSet<Int>>> = mutableMapOf()
+  /** Per name and source, the offsets of the accesses and their source text, which may be the hyphenated name. */
+  val contextAccesses: MutableMap<String, MutableMap<Source, MutableMap<Int, String>>> = mutableMapOf()
   val dotValueAccesses: MutableSet<String> = mutableSetOf()
 
   // Ordered log of accessed names; event-handler closures slice from a mark
@@ -120,12 +121,13 @@ class TemplateCodegenContext {
     name: String,
     offset: Int? = null,
     dotValue: Boolean = false,
+    sourceName: String = name,
   ) {
     accessLog.add(name)
     val map = contextAccesses.getOrPut(name) { mutableMapOf() }
-    val arr = map.getOrPut(source) { mutableSetOf() }
+    val arr = map.getOrPut(source) { mutableMapOf() }
     if (offset != null) {
-      arr.add(offset)
+      arr[offset] = sourceName
     }
     if (dotValue) {
       dotValueAccesses.add(name)
@@ -316,8 +318,8 @@ class TemplateCodegenContext {
     for ((varName, map) in contextAccesses) {
       for ((source, offsets) in map) {
         if (varName !in reservedWords) {
-          for (offset in offsets) {
-            yield(DataSegment(varName, source, offset, codeFeatures.importCompletionOnly))
+          for ((offset, sourceName) in offsets) {
+            yieldAll(generateCamelized(sourceName, source, offset, codeFeatures.importCompletionOnly))
             yield(",")
           }
         }
