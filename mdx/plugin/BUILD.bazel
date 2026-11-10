@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -31,6 +32,23 @@ jvm_library(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.mdx.plugin` end
+
+### auto-generated section `plugin intellij.mdx.plugin` start
+ij_plugin(
+    name = "plugin_plugin",
+    descriptor_module = ":plugin",
+    content_modules = [
+        # do not sort,
+        "//contrib/mdx",
+        "//contrib/mdx/shared",
+        "//contrib/mdx/react",
+        "//contrib/mdx/backend",
+        "//contrib/mdx/frontend",
+        "//contrib/mdx/frontend.split",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.mdx.plugin` end
 
 ### auto-generated section `iml intellij.mdx.plugin` start
 exports_files(
