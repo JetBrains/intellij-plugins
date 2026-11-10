@@ -100,28 +100,27 @@ fun generateInterpolation(
       yieldAll(codes)
       return@sequence
     }
-    if (body.kind == FunctionBodyKind.EXPRESSION) {
-      yield("{$newLine")
-      yieldAll(generateReasserts(reasserts))
-    }
-    // Diagnostics reported on the generated `return` statement or call map back to the original expression.
-    val boundary = yield(Boundary.start(block.name, start + body.start, start + body.end, VueCodeInformation(
-      verification = data.verification,
-    )))
+    // Diagnostics reported on the generated call, or on the `return` keyword (where TS reports
+    // return type mismatches), map back to the original expression.
+    val verification = VueCodeInformation(verification = data.verification)
     if (body.kind == FunctionBodyKind.PARAMETER) {
+      val boundary = yield(Boundary.start(block.name, start + body.start, start + body.end, verification))
       yield("(() => {$newLine")
       yieldAll(generateReasserts(reasserts))
-    }
-    yield("return (")
-    yieldAll(codes)
-    if (body.kind == FunctionBodyKind.PARAMETER) {
+      yield("return (")
+      yieldAll(codes)
       yield(")$endOfLine})()")
       yield(boundary.end())
     }
     else {
-      yield(");")
+      yield("{$newLine")
+      yieldAll(generateReasserts(reasserts))
+      val boundary = yield(Boundary.start(block.name, start + body.start, start + body.end, verification))
+      yield("return")
       yield(boundary.end())
-      yield("$newLine}")
+      yield(" (")
+      yieldAll(codes)
+      yield(")$endOfLine}")
     }
   }
 
