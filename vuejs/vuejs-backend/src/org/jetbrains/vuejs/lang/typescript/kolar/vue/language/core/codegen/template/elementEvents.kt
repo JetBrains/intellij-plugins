@@ -214,7 +214,9 @@ fun generateEventExpression(
       scope.declare("\$event")
 
       val accessMark = ctx.accessLog.size
+      ctx.enterFunction()
       val codes = interpolation.toList()
+      ctx.exitFunction()
 
       yieldAll(generateEventParameter(options, argsType))
       // consume $event to avoid TS6133 when the expression doesn't use it
@@ -261,6 +263,7 @@ fun generateModelEventExpression(
   val exp = prop.exp
   if (exp is SimpleExpressionNode) {
     val accessMark = ctx.accessLog.size
+    ctx.enterFunction()
     val codes = generateInterpolation(
       options = options,
       ctx = ctx,
@@ -270,6 +273,7 @@ fun generateModelEventExpression(
       start = exp.loc.startOffset,
       inNarrowing = true,
     ).toList()
+    ctx.exitFunction()
     yieldAll(generateEventParameter(options, argsType))
     yieldAll(generateReasserts(options, ctx, accessMark))
     yieldAll(ctx.generateConditionGuards())
