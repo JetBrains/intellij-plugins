@@ -46,13 +46,14 @@ class VueTranspiledFileBuilder {
   private fun getTranspiledFileInternal(
     file: VueFile,
   ): TranspiledFile {
+    val filePath = file.originalFile.viewProvider.virtualFile.path
     val code = VueEmbeddedCode(
       id = SCRIPT_ID,
       lang = "ts",
       content = emptyList(),
     )
 
-    plugin.resolveEmbeddedCode(fileName = file.name, useIR(file), code)
+    plugin.resolveEmbeddedCode(fileName = filePath, useIR(file), code)
 
     val generatedCode = toString(code.content)
     val mappings = getMappingsForCode(code)
