@@ -9,7 +9,7 @@ AstroFile:test.astro
       PsiElement(XML_ATTRIBUTE)
         XmlToken:XML_NAME('is:inline')
       XmlToken:XML_TAG_END('>')
-      JSEmbeddedContent:JS:ES6_EMBEDDED_CONTENT
+      JSEmbeddedContent
         PsiWhiteSpace('\n    ')
         JSVarStatement
           JSAttributeList

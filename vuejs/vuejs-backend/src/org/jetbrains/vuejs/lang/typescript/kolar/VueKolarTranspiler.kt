@@ -1,7 +1,7 @@
 package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
-import com.intellij.lang.javascript.dialects.ECMA6LanguageDialect
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.kolar.KolarCodegenContext
@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ThreeState
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
@@ -65,12 +66,15 @@ class VueKolarTranspiler(
     when (element.language) {
       // setup
       TypeScriptLanguageDialect,
-      ECMA6LanguageDialect,
 
       // interpolations
       VueTSLanguage,
       VueJSLanguage,
         -> true
+
+      // setup in JavaScript. A token of every JS dialect has JavascriptLanguage, so accept only a composite element.
+      JavascriptLanguage
+        -> element !is LeafPsiElement
 
       else -> false
     }

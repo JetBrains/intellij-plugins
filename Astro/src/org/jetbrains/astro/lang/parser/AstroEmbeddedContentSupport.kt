@@ -8,6 +8,7 @@ import com.intellij.html.embedding.HtmlEmbedmentInfo
 import com.intellij.html.embedding.HtmlTagEmbeddedContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
 import com.intellij.psi.tree.IElementType
@@ -57,7 +58,7 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
     val attributeName = attributeName?.trim()
     return when {
       namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) || namesEqual(attributeName, ASTRO_DEFINE_VARS_DIRECTIVE) ->
-        HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
+        HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavascriptLanguage)
       namesEqual(attributeName, HtmlUtil.TYPE_ATTRIBUTE_NAME) -> {
         val language = attributeValue?.trim()?.toString() ?: return null
         Language.findInstancesByMimeType(language)

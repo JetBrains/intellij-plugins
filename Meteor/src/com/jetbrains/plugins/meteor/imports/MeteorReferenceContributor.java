@@ -10,7 +10,7 @@ import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.json.psi.JsonValue;
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference;
 import com.intellij.lang.javascript.frameworks.modules.JSPathMappingsUtil;
 import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory;
@@ -139,7 +139,7 @@ final class MeteorReferenceContributor implements JSModuleReferenceContributor {
       String text = buildFileWithExportsText(exports);
 
       myFromText = PsiFileFactory.getInstance(element.getProject())
-        .createFileFromText("module.js", JavaScriptSupportLoader.ECMA_SCRIPT_6, text, false, true);
+        .createFileFromText("module.js", JavascriptLanguage.INSTANCE, text, false, true);
     }
 
     @Override

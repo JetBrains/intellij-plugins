@@ -8,12 +8,13 @@ import com.intellij.lang.MetaLanguageProvider
 import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavascriptLanguage
 
 object VueJSLanguage :
   JSLanguageDialect(
     id = "VueJS",
     optionHolder = DialectOptionHolder.JS_WITH_JSX,
-    baseLanguage = JavaScriptSupportLoader.ECMA_SCRIPT_6,
+    baseLanguage = JavascriptLanguage,
   ),
   DependentLanguage
 

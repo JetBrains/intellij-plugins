@@ -14,7 +14,7 @@ HtmlFile:test.vue
           XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('js')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
       XmlToken:XML_TAG_END('>')
-      JSEmbeddedContent:JS:MOD_ES6_EMBEDDED_CONTENT
+      JSEmbeddedContent:JS:MOD_EMBEDDED_CONTENT
         PsiWhiteSpace('\n')
         ES6Class
           JSAttributeList

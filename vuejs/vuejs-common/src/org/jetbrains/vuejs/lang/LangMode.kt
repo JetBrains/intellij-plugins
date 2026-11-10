@@ -18,9 +18,9 @@ import org.jetbrains.vuejs.lang.html.lexer.VueScriptEmbedmentInfo
  * Enum values are designed to be a little strange in order to make the reader think about the above.
  */
 enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElementType, vararg val attrValues: String?) {
-  PENDING(VueJSLanguage, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT),
+  PENDING(VueJSLanguage, JSElementTypes.MOD_EMBEDDED_CONTENT),
   NO_TS(
-      VueJSLanguage, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript",
+      VueJSLanguage, JSElementTypes.MOD_EMBEDDED_CONTENT, "js", "javascript",
         null /* null -> lang attribute is missing */),
   HAS_TS(VueTSLanguage, JSElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
 

@@ -6,6 +6,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.lang.LighterLazyParseableNode
 import com.intellij.lang.PsiBuilderFactory
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.psi.ParsingDiagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
@@ -37,7 +38,7 @@ object VueElementTypes {
     VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.TYPESCRIPT, "SCRIPT_SETUP_TS_")
 
   val SCRIPT_SETUP_JS_EMBEDDED_CONTENT: VueScriptSetupEmbeddedContentElementType =
-    VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.ECMA_SCRIPT_6, "SCRIPT_SETUP_JS_")
+    VueScriptSetupEmbeddedContentElementType(JavascriptLanguage, "SCRIPT_SETUP_JS_")
 
   val VUE_EMBEDDED_CONTENT: IElementType = EmbeddedVueContentElementType()
 

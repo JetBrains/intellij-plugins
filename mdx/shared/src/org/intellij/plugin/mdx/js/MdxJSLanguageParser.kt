@@ -6,15 +6,15 @@ import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
-import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
+import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.tree.IFileElementType
 
 val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
 
-internal class MdxJSParserDefinition : ECMA6ParserDefinition() {
+internal class MdxJSParserDefinition : JavascriptParserDefinition() {
   override fun getFileNodeType(): IFileElementType = FILE
 
   override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
@@ -26,7 +26,7 @@ internal class MdxJSParserDefinition : ECMA6ParserDefinition() {
 internal class MdxJSLanguageParser(
   builder: PsiBuilder,
 ) : ES6Parser(
-  ECMA_SCRIPT_6,
+  JavascriptLanguage,
   builder,
 ) {
 

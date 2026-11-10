@@ -12,6 +12,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSModuleContentType
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -171,7 +172,7 @@ internal class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbe
 
   private fun findEmbedmentInfo(language: String?): HtmlEmbedmentInfo = when (language) {
     null, "js" -> { // fast path + special case for VueParserTest
-      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavascriptLanguage)
     }
     "ts" -> { // fast path + special case for VueParserTest
       HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.TYPESCRIPT)
