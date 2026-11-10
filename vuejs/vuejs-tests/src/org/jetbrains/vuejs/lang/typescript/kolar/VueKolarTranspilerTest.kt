@@ -443,6 +443,16 @@ class VueKolarTranspilerTest {
   }
 
   @Test
+  fun `setup-const-in-slot-interpolation`() {
+    doTest()
+  }
+
+  @Test
+  fun `setup-const-in-slot-interpolation__vapor`() {
+    doTest()
+  }
+
+  @Test
   fun `simple-app-with-components`() {
     doTest()
   }
