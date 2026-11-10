@@ -5,7 +5,6 @@ import com.goide.SdkAware
 import com.goide.junit5.goCodeInsightFixture
 import com.goide.junit5.goSharedProjectFixture
 import com.goide.psi.GoTypeSpec
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.protobuf.ProtoeditorCoreIcons
 import com.intellij.protobuf.ide.gutter.findImplementations
@@ -16,8 +15,6 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -35,7 +32,7 @@ class PbGoNavigationGutterTest {
   @Test
   fun `test no gutters in pb file without implementations`() {
     addProtoFile()
-    assertTrue(timeoutRunBlocking { withContext(Dispatchers.EDT) { myFixture.findGuttersAtCaret().isEmpty() } })
+    assertTrue(myFixture.findGuttersAtCaret().isEmpty())
   }
 
   @Test
@@ -93,11 +90,9 @@ class PbGoNavigationGutterTest {
   }
 
   /** Returns the icon and the tooltip text of the only gutter mark at the caret. */
-  private fun gutterAtCaret(): Pair<Icon?, String?> = timeoutRunBlocking {
-    withContext(Dispatchers.EDT) {
-      val gutter = myFixture.findGuttersAtCaret().single()
-      gutter.icon to gutter.tooltipText
-    }
+  private fun gutterAtCaret(): Pair<Icon?, String?> {
+    val gutter = myFixture.findGuttersAtCaret().single()
+    return timeoutRunBlocking { readAction { gutter.icon to gutter.tooltipText } }
   }
 
   private fun addProtoFile() {
