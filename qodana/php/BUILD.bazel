@@ -109,6 +109,7 @@ jvm_library(
         "//phpstorm/coverage",
         "@community//libraries/junit4",
         "@community//libraries/junit6",
+        "//phpstorm/php-openapi:php",
         "//phpstorm/php-backend",
         "//plugins/taint-analysis/php",
     ],

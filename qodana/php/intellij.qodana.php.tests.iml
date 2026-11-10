@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="intellij.php.coverage" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.php" scope="TEST" />
     <orderEntry type="module" module-name="intellij.php.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.taintAnalysis.php" scope="TEST" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="RUNTIME" />

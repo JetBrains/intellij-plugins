@@ -98,6 +98,65 @@ class KotlinPsiSignalExtractorTest : BasePlatformTestCase() {
     "a",
   )
 
+  /** An assignment binds a name too, so a lambda written to an existing variable reports it. */
+  fun testLambdaAssignedToExistingVariableReportsTheName() = assertScope(
+    """
+    fun handler() {
+      var h: (() -> Unit)? = null
+      h = {
+        if (x != y) {
+          report()
+        }
+      }
+    }
+    """,
+    "h",
+  )
+
+  /** The same for an anonymous `fun() {}`. */
+  fun testAnonymousFunctionAssignedToExistingVariableReportsTheName() = assertScope(
+    """
+    fun handler() {
+      var h: (() -> Unit)? = null
+      h = fun() {
+        if (x != y) {
+          report()
+        }
+      }
+    }
+    """,
+    "h",
+  )
+
+  /** A qualified target reports the plain name, never the qualifier, as Java and JS report it. */
+  fun testLambdaAssignedToPropertyReportsThePlainName() = assertScope(
+    """
+    class Holder {
+      var f: (() -> Unit)? = null
+
+      fun handler() {
+        this.f = {
+          if (x != y) {
+            report()
+          }
+        }
+      }
+    }
+    """,
+    "f",
+  )
+
+  /** Only `=` binds. A `+=` reads the target and writes it back, so it labels nothing. */
+  fun testCompoundAssignmentReportsEnclosingFunction() = assertScope(
+    """
+    fun handler() {
+      var total = 0
+      total += items.sumOf { if (x != y) 1 else 2 }
+    }
+    """,
+    "handler",
+  )
+
   /** A trailing-lambda call with no binding and no named ancestor. Nothing can label this scope. */
   fun testUnboundLambdaReportsNoScope() = assertNoScope(
     """
@@ -263,6 +322,46 @@ class KotlinPsiSignalExtractorTest : BasePlatformTestCase() {
     """,
     "IF(if,CONDITION(BINARY_EXPRESSION),THEN,else,ELSE)  [scope=value:PROPERTY_ACCESSOR]",
   )
+
+  // region the lambda shape contract, kept in sync with every other language
+
+  /** A lambda bounds the shape walk. The shape describes the call, never the binding around it. */
+  fun testShapeInsideBoundLambdaStopsAtTheLambda() = assertSig<KtCallExpression>(
+    """
+    fun bar() { val f = { weigh(1) } }
+    """,
+    "CALL_EXPRESSION(REFERENCE_EXPRESSION(IDENTIFIER),VALUE_ARGUMENT_LIST(VALUE_ARGUMENT))  [scope=f:LAMBDA_EXPRESSION]",
+    text = "weigh(1)",
+  )
+
+  /** The same lambda as a trailing argument gives the same shape, and the enclosing function names it. */
+  fun testShapeInsideUnboundLambdaStopsAtTheLambda() = assertSig<KtCallExpression>(
+    """
+    fun bar() { run { weigh(1) } }
+    """,
+    "CALL_EXPRESSION(REFERENCE_EXPRESSION(IDENTIFIER),VALUE_ARGUMENT_LIST(VALUE_ARGUMENT))  [scope=bar:FUNCTION]",
+    text = "weigh(1)",
+  )
+
+  /** The invariant the two tests above pin by value. A drift here breaks the baseline of every language. */
+  fun testShapeDoesNotDependOnTheLambdaBinding() {
+    val bound = astShapeOf<KtCallExpression>("bound.kt", "fun bar() { val f = { weigh(1) } }", "weigh(1)")
+
+    assertNotNull(bound)
+    assertEquals("the shape must not depend on the binding", bound,
+                 astShapeOf<KtCallExpression>("argument.kt", "fun bar() { run { weigh(1) } }", "weigh(1)"))
+  }
+
+  /** The AST shape at the [T] whose text equals [text]. Each snippet needs its own [fileName]. */
+  private inline fun <reified T : PsiElement> astShapeOf(fileName: String, code: String, text: String): String? {
+    val file = myFixture.configureByText(fileName, code)
+    val element = PsiTreeUtil.findChildrenOfType(file, T::class.java).firstOrNull { it.text == text }
+    assertNotNull("no ${T::class.simpleName} with text '$text'", element)
+
+    return PsiSignalExtractor.extractSignals(element!!).astShape
+  }
+
+  // endregion
 
   private fun assertScope(code: String, expectedName: String) {
     val signals = signalsOfFirstIf(code)

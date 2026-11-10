@@ -87,6 +87,7 @@ jvm_library(
         "//contrib/qodana/coverage",
         "//goland/intellij-go/plugin",
         "//goland/intellij-go/impl",
+        "//goland/intellij-go/testFramework",
         "//goland/intellij-go/go-coverage",
         "@community//platform/util/jdom",
         "@community//plugins/coverage-common:coverage",
