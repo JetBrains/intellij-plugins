@@ -5,8 +5,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LanguageLevelModuleExtension;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.project.IntelliJProjectConfiguration;
 import com.intellij.testFramework.IdeaTestUtil;
@@ -26,6 +26,7 @@ public final class CucumberJavaTestUtil {
     return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk17) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        super.configureModule(module, model, contentEntry);
         attachCucumberCore1(model);
         attachStandardCucumberLibraries(model);
       }
@@ -36,6 +37,7 @@ public final class CucumberJavaTestUtil {
     return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        super.configureModule(module, model, contentEntry);
         attachCucumberCore2(model);
         attachStandardCucumberLibraries(model);
       }
@@ -46,6 +48,7 @@ public final class CucumberJavaTestUtil {
     return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        super.configureModule(module, model, contentEntry);
         attachCucumberCore3(model);
         attachStandardCucumberLibraries(model);
       }
@@ -72,6 +75,7 @@ public final class CucumberJavaTestUtil {
     return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        super.configureModule(module, model, contentEntry);
         IntelliJProjectConfiguration.LibraryRoots libraryRoots;
         libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java.tests", "cucumber-core-" + version);
         PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
@@ -101,9 +105,10 @@ public final class CucumberJavaTestUtil {
           extension.setLanguageLevel(LanguageLevel.JDK_11);
         }
 
-        VirtualFile sourceRoot = VirtualFileManager.getInstance().refreshAndFindFileByUrl("temp:///src");
+        SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+        VirtualFile sourceRoot = sourceFolders.length == 0 ? null : sourceFolders[0].getFile();
         if (sourceRoot != null) {
-          contentEntry.removeSourceFolder(contentEntry.getSourceFolders()[0]);
+          contentEntry.removeSourceFolder(sourceFolders[0]);
           contentEntry.addSourceFolder(sourceRoot, true);
         }
       }

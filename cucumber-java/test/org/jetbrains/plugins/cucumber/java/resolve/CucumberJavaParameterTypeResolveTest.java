@@ -4,45 +4,58 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.PomTargetPsiElementImpl;
-import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightJavaProject;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
+import org.jetbrains.plugins.cucumber.resolve.CucumberResolveFixture;
+import org.junit.jupiter.api.Test;
 
-public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolveTest {
+import static com.intellij.testFramework.fixtures.LightJavaFixturesKt.lightJavaProjectFixture;
+import static org.jetbrains.plugins.cucumber.java.resolve.CucumberJavaResolveFixtures.cucumberJavaResolveFixture;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@TestApplication
+public class CucumberJavaParameterTypeResolveTest {
+  private static final TestFixture<LightJavaProject> projectFixture = lightJavaProjectFixture(CucumberJavaTestUtil.createCucumber4_8ProjectDescriptor());
+  private final TestFixture<CucumberResolveFixture> cucumber = cucumberJavaResolveFixture(
+    projectFixture,
+    CucumberJavaResolveFixtures.RESOLVE_RELATED_TEST_DATA_PATH,
+    element -> getStepDefinitionName(element)
+  );
+
+  @Test
   public void testHighlightingOK() {
-    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
-    myFixture.testHighlighting("ParameterTypeSteps.java");
+    cucumber.get().init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+    cucumber.get().getFixture().testHighlighting("ParameterTypeSteps.java");
   }
 
+  @Test
   public void testParameterTypeResolve() {
-    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+    cucumber.get().init("stepResolve_ParameterType", "ParameterTypeSteps.java");
 
-    checkReference("{iso-<caret>date}", "iso-date");
+    cucumber.get().checkReference("{iso-<caret>date}", "iso-date");
   }
 
+  @Test
   public void testNoReferenceInStringLiteralOutsideAnnotations() {
-    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
-    final PsiReference reference = findReferenceBySignature("System.out.println(\"te<caret>xt\")");
-    assertFalse("CucumberJavaParameterTypeReference not expected inside method body",
-                reference instanceof CucumberJavaParameterTypeReference);
+    cucumber.get().init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+    final PsiReference reference = cucumber.get().findReferenceBySignature("System.out.println(\"te<caret>xt\")");
+    assertFalse(reference instanceof CucumberJavaParameterTypeReference,
+                "CucumberJavaParameterTypeReference not expected inside method body");
   }
 
+  @Test
   public void testResolveEnumParameterType() {
-    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+    cucumber.get().init("stepResolve_ParameterType", "ParameterTypeSteps.java");
 
-    checkReference("{MyEnu<caret>m}", "MyEnum");
+    cucumber.get().checkReference("{MyEnu<caret>m}", "MyEnum");
   }
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber4_8ProjectDescriptor();
-  }
-
-  @Nullable
-  @Override
-  protected String getStepDefinitionName(@NotNull final PsiElement element) {
+  private static @Nullable String getStepDefinitionName(@NotNull final PsiElement element) {
     if (element instanceof PomTargetPsiElementImpl psiElement) {
       return psiElement.getName();
     }

@@ -6,95 +6,119 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.project.IntelliJProjectConfiguration;
 import com.intellij.testFramework.IdeaTestUtil;
-import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightJavaProject;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
+import org.jetbrains.plugins.cucumber.resolve.CucumberResolveFixture;
+import org.junit.jupiter.api.Test;
 
+import static com.intellij.testFramework.fixtures.LightJavaFixturesKt.lightJavaProjectFixture;
+import static org.jetbrains.plugins.cucumber.java.resolve.CucumberJavaResolveFixtures.cucumberJavaResolveFixture;
 
-public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
+@TestApplication
+public class CucumberJava3ResolveTest {
+  private static final TestFixture<LightJavaProject> projectFixture = lightJavaProjectFixture(createDescriptor());
+  private final TestFixture<CucumberResolveFixture> cucumber = cucumberJavaResolveFixture(projectFixture);
+
+  @Test
   public void testHighlightingOK_1() {
-    init("stepResolve_ParameterType");
-    myFixture.testHighlighting("ParameterTypeSteps.java");
+    cucumber.get().init("stepResolve_ParameterType");
+    cucumber.get().getFixture().testHighlighting("ParameterTypeSteps.java");
   }
 
+  @Test
   public void testHighlightingOK_2() {
-    init("stepResolveJava8CucumberExpressions");
-    myFixture.testHighlighting(
+    cucumber.get().init("stepResolveJava8CucumberExpressions");
+    cucumber.get().getFixture().testHighlighting(
       "ParameterTypeSteps.java",
       "TargetStatusSteps.java",
       "io/cucumber/cucumberexpressions/ParameterType.java"
     );
   }
 
+  @Test
   public void testResolveOfStepWithParameterType() {
-    init("stepResolve_ParameterType");
-    checkReference("tod<caret>ay", "step_method");
-    checkReference("in<caret>t", "step_method");
-    checkReference("floa<caret>t", "step_method");
-    checkReference("wor<caret>d", "step_method");
-    checkReference("strin<caret>g", "step_string_method");
+    CucumberResolveFixture resolve = cucumber.get();
+    resolve.init("stepResolve_ParameterType");
+    resolve.checkReference("tod<caret>ay", "step_method");
+    resolve.checkReference("in<caret>t", "step_method");
+    resolve.checkReference("floa<caret>t", "step_method");
+    resolve.checkReference("wor<caret>d", "step_method");
+    resolve.checkReference("strin<caret>g", "step_string_method");
   }
 
+  @Test
   public void testResolveOfStepWithAdditionalParameterType() {
-    init("stepResolve_ParameterType");
-    checkReference("bigin<caret>teger", "step_method");
-    checkReference("bigde<caret>cimal", "step_method");
-    checkReference("sho<caret>rt", "step_method");
-    checkReference("by<caret>te", "step_method");
-    checkReference("lo<caret>ng", "step_method");
-    checkReference("dou<caret>ble", "step_method");
+    CucumberResolveFixture resolve = cucumber.get();
+    resolve.init("stepResolve_ParameterType");
+    resolve.checkReference("bigin<caret>teger", "step_method");
+    resolve.checkReference("bigde<caret>cimal", "step_method");
+    resolve.checkReference("sho<caret>rt", "step_method");
+    resolve.checkReference("by<caret>te", "step_method");
+    resolve.checkReference("lo<caret>ng", "step_method");
+    resolve.checkReference("dou<caret>ble", "step_method");
   }
 
+  @Test
   public void testResolveOfExpressionWithNotNecessaryGroup() {
-    init("stepResolve_ParameterType");
+    CucumberResolveFixture resolve = cucumber.get();
+    resolve.init("stepResolve_ParameterType");
 
-    checkReference("I have 10 cucum<caret>bers in my belly", "iHaveCucumbersInMyBelly");
-    checkReference("I have 1 cucumb<caret>er in my belly", "iHaveCucumbersInMyBelly");
+    resolve.checkReference("I have 10 cucum<caret>bers in my belly", "iHaveCucumbersInMyBelly");
+    resolve.checkReference("I have 1 cucumb<caret>er in my belly", "iHaveCucumbersInMyBelly");
   }
 
+  @Test
   public void testResolveWithDollar() {
-    init("stepResolve_ParameterType");
+    cucumber.get().init("stepResolve_ParameterType");
 
-    checkReference("I ha<caret>ve $10", "iHaveDollars");
+    cucumber.get().checkReference("I ha<caret>ve $10", "iHaveDollars");
   }
 
+  @Test
   public void testStepResolveJava8CucumberExpressions() {
-    init("stepResolveJava8CucumberExpressions");
+    cucumber.get().init("stepResolveJava8CucumberExpressions");
 
-    checkReference("the string \"test\" is in the d<caret>ummy repository", "Given");
+    cucumber.get().checkReference("the string \"test\" is in the d<caret>ummy repository", "Given");
   }
 
+  @Test
   public void testJava8MethodReference() {
-    init("stepResolveJava8CucumberExpressions");
+    cucumber.get().init("stepResolveJava8CucumberExpressions");
 
-    checkReference("the list should contain exac<caret>tly 1 entries", "Then");
+    cucumber.get().checkReference("the list should contain exac<caret>tly 1 entries", "Then");
   }
 
+  @Test
   public void testResolveStepDefinitionRequiringEscaping() {
-    init("stepResolve_ParameterType");
+    cucumber.get().init("stepResolve_ParameterType");
 
-    checkReference("| st<caret>ep \"", "my_test_step");
+    cucumber.get().checkReference("| st<caret>ep \"", "my_test_step");
   }
 
+  @Test
   public void testResolveStepDefinitionWithParenthesis() {
-    init("stepResolve_ParameterType");
+    cucumber.get().init("stepResolve_ParameterType");
 
-    checkReference("Given I have pa<caret>renthes(s)", "my_test_step_with_parenthesis");
+    cucumber.get().checkReference("Given I have pa<caret>renthes(s)", "my_test_step_with_parenthesis");
   }
 
+  @Test
   public void testAnonymousParameterType() {
-    init("stepResolve_ParameterType");
+    cucumber.get().init("stepResolve_ParameterType");
 
-    checkReference("step with any<caret>thing", "anonymousParameterType");
+    cucumber.get().checkReference("step with any<caret>thing", "anonymousParameterType");
   }
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
+  private static DefaultLightProjectDescriptor createDescriptor() {
     return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        super.configureModule(module, model, contentEntry);
         CucumberJavaTestUtil.attachCucumberCore3(model);
         CucumberJavaTestUtil.attachStandardCucumberLibraries(model);
 
