@@ -1,14 +1,22 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.template
 
+import com.intellij.lang.ecmascript6.psi.ES6ComputedName
 import com.intellij.lang.javascript.psi.JSBlockStatement
+import com.intellij.lang.javascript.psi.JSDestructuringArray
+import com.intellij.lang.javascript.psi.JSDestructuringElement
+import com.intellij.lang.javascript.psi.JSDestructuringObject
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSParameterList
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.lang.typescript.kolar.js.generator.yield
 import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isBlock
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isExpressionStatement
+import org.jetbrains.vuejs.lang.typescript.kolar.typescript.isStringLiteral
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.DataSegment
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.Source
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.StringSegment
@@ -50,6 +58,8 @@ fun generateInterpolation(
 
   // Assertion narrowing does not flow into functions for imports and `let`/`var`
   // bindings (TS limitation), so each function body re-asserts the ones it reads.
+  // Parameter defaults run before the body, so each one that reads such a binding
+  // re-asserts it in an immediately invoked arrow, whose flow stays in the function.
   // Bodies are buffered until their end, when those reads are known.
   val bodies = if (!reassertBindings.isNullOrEmpty() && !identifierRE.matches(code))
     collectFunctionBodies(getTypeScriptAST(prefix + code + suffix, options))
@@ -72,23 +82,46 @@ fun generateInterpolation(
     return codes
   }
 
+  fun generateReasserts(reasserts: Set<String>): Sequence<Code> = sequence {
+    for (name in reasserts) {
+      yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})$endOfLine")
+    }
+  }
+
   fun generateFunctionBody(frame: FunctionBodyFrame): Sequence<Code> = sequence {
-    val (isBlock, codes, reasserts) = frame
+    val (body, codes, reasserts) = frame
     if (reasserts.isEmpty()) {
       yieldAll(codes)
       return@sequence
     }
-    yield(if (isBlock) newLine else "{$newLine")
-    for (name in reasserts) {
-      yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})$endOfLine")
-    }
-    if (isBlock) {
+    if (body.kind == FunctionBodyKind.BLOCK) {
+      yield(newLine)
+      yieldAll(generateReasserts(reasserts))
       yieldAll(codes)
+      return@sequence
+    }
+    if (body.kind == FunctionBodyKind.EXPRESSION) {
+      yield("{$newLine")
+      yieldAll(generateReasserts(reasserts))
+    }
+    // Diagnostics reported on the generated `return` statement or call map back to the original expression.
+    val boundary = yield(Boundary.start(block.name, start + body.start, start + body.end, VueCodeInformation(
+      verification = data.verification,
+    )))
+    if (body.kind == FunctionBodyKind.PARAMETER) {
+      yield("(() => {$newLine")
+      yieldAll(generateReasserts(reasserts))
+    }
+    yield("return (")
+    yieldAll(codes)
+    if (body.kind == FunctionBodyKind.PARAMETER) {
+      yield(")$endOfLine})()")
+      yield(boundary.end())
     }
     else {
-      yield("return (")
-      yieldAll(codes)
-      yield(")$endOfLine}")
+      yield(");")
+      yield(boundary.end())
+      yield("$newLine}")
     }
   }
 
@@ -100,7 +133,7 @@ fun generateInterpolation(
       from = offset
       if (enter) {
         ctx.enterFunction()
-        frames.add(FunctionBodyFrame(isBlock = body.isBlock, codes = mutableListOf(), reasserts = linkedSetOf()))
+        frames.add(FunctionBodyFrame(body = body, codes = mutableListOf(), reasserts = linkedSetOf()))
       }
       else {
         ctx.exitFunction()
@@ -160,10 +193,16 @@ fun generateInterpolation(
   }
 }
 
+private enum class FunctionBodyKind {
+  BLOCK,
+  EXPRESSION,
+  PARAMETER,
+}
+
 private data class FunctionBody(
   val start: Int,
   val end: Int,
-  val isBlock: Boolean,
+  val kind: FunctionBodyKind,
 )
 
 private data class FunctionBodyMark(
@@ -173,28 +212,88 @@ private data class FunctionBodyMark(
 )
 
 private data class FunctionBodyFrame(
-  val isBlock: Boolean,
+  val body: FunctionBody,
   val codes: MutableList<Code>,
   val reasserts: MutableSet<String>,
 )
 
-// Bodies in pre-order; a block body spans between its braces.
+// Function scopes in pre-order: the expressions a parameter list evaluates, then the body.
+// A block body spans from after its directive prologue to its closing brace.
 // manual: a PSI class static block is the block itself, a member of the class
 private fun collectFunctionBodies(ast: FakeSourceFile): List<FunctionBody> {
   val bodies = mutableListOf<FunctionBody>()
-  fun visit(node: PsiElement) {
-    val body = when {
-      node is JSFunction ->
-        node.block ?: if (node.isShorthandArrowFunction) PsiTreeUtil.getChildOfType(node, JSExpression::class.java) else null
-      isBlock(node) && node.parent is JSClass -> node
-      else -> null
-    }
-    if (body != null) {
-      val (_, start, end) = getStartEnd(body)
-      val isBlock = isBlock(body)
-      if (body !is JSBlockStatement || body.statementListItems.isNotEmpty()) {
-        bodies.add(FunctionBody(start = if (isBlock) start + 1 else start, end = if (isBlock) end - 1 else end, isBlock = isBlock))
+  lateinit var visit: (PsiElement) -> Unit
+  val pushParameterExpression = { node: PsiElement ->
+    val (_, start, end) = getStartEnd(node)
+    bodies.add(FunctionBody(start = start, end = end, kind = FunctionBodyKind.PARAMETER))
+    visit(node)
+  }
+  // manual: the PSI binding patterns differ from the TS ones
+  fun visitBinding(name: PsiElement?) {
+    when (name) {
+      is JSDestructuringElement -> visitBinding(name.target)
+      is JSDestructuringObject -> for (property in name.properties) {
+        PsiTreeUtil.getChildOfType(property, ES6ComputedName::class.java)?.expression?.let(pushParameterExpression)
+        val element = property.destructuringElement
+        if (element is JSDestructuringElement) {
+          visitBinding(element.target)
+        }
+        element?.initializer?.let(pushParameterExpression)
       }
+      is JSDestructuringArray -> for (element in name.elements) {
+        if (element is JSDestructuringElement) {
+          visitBinding(element.target)
+        }
+        element.initializer?.let(pushParameterExpression)
+      }
+    }
+  }
+  fun pushBody(body: PsiElement) {
+    val (_, start, end) = getStartEnd(body)
+    if (body is JSBlockStatement) {
+      val statements = body.statementListItems
+      val prologue = statements.indexOfFirst { statement ->
+        !isExpressionStatement(statement) || !isStringLiteral(statement.expression)
+      }
+      if (prologue != -1) {
+        bodies.add(FunctionBody(
+          start = if (prologue != 0) getStartEnd(statements[prologue - 1]).end else start + 1,
+          end = end - 1,
+          kind = FunctionBodyKind.BLOCK,
+        ))
+      }
+    }
+    else {
+      bodies.add(FunctionBody(start = start, end = end, kind = FunctionBodyKind.EXPRESSION))
+    }
+  }
+  visit = fun(node: PsiElement) {
+    if (node is JSFunction) {
+      val body = node.block
+                 ?: if (node.isShorthandArrowFunction) PsiTreeUtil.getChildOfType(node, JSExpression::class.java) else null
+      if (body != null) {
+        for (child in forEachNode(node)) {
+          if (child === body) {
+            continue
+          }
+          if (child !is JSParameterList) {
+            visit(child)
+            continue
+          }
+          for (parameter in node.parameters) {
+            (parameter as? JSAttributeListOwner)?.attributeList?.let(visit)
+            visitBinding(parameter.declarationElement)
+            parameter.typeElement?.let(visit)
+            parameter.initializer?.let(pushParameterExpression)
+          }
+        }
+        pushBody(body)
+        visit(body)
+        return
+      }
+    }
+    else if (isBlock(node) && node.parent is JSClass) {
+      pushBody(node)
     }
     for (child in forEachNode(node)) {
       visit(child)
