@@ -449,11 +449,13 @@ fun generateMacros(
     val toImport = usedMacros.filter { (_, alias) -> !options.setupBindings.contains(alias) }
 
     if (toImport.isNotEmpty()) {
-      yield("import { ")
+      yield("const { ")
       for ((canonical, alias) in toImport) {
-        yield(if (alias == canonical) "$canonical, " else "$canonical as $alias, ")
+        yield(if (alias == canonical) "$canonical, " else "$canonical: $alias, ")
       }
-      yield("} from '${options.vueCompilerOptions.lib}'${endOfLine}")
+      yield("} = ")
+      yield(asType("typeof import('${options.vueCompilerOptions.lib}')", options.scriptLang))
+      yield(endOfLine)
     }
   }
 }

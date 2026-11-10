@@ -86,6 +86,7 @@ private fun generateWorker(
   // <script> + <script setup>
   else if (script != null && scriptRanges != null && scriptSetup != null && scriptSetupRanges != null) {
     yieldAll(generateScriptSetupImports(scriptSetup, scriptSetupRanges))
+    yieldAll(generateMacros(options))
 
     var selfType: String? = null
     val exportDefault = scriptRanges.exportDefault
@@ -125,6 +126,7 @@ private fun generateWorker(
   // only <script setup>
   else if (scriptSetup != null && scriptSetupRanges != null) {
     yieldAll(generateScriptSetupImports(scriptSetup, scriptSetupRanges))
+    yieldAll(generateMacros(options))
 
     if (scriptSetup.generic != null) {
       yieldAll(generateExportDeclareEqual(scriptSetup, names.export))
@@ -174,12 +176,6 @@ private fun generateWorker(
   }
 
   yieldAll(ctx.localTypes.generate())
-
-  // The <script src> branch never embeds the script setup content, so no
-  // macro references can appear and the import would be unused.
-  if (scriptSetup != null && scriptSetupRanges != null && script?.src !is IRAttr.WithText) {
-    yieldAll(generateMacros(options))
-  }
 }
 
 private fun generateScriptWithExportDefault(
