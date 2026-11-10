@@ -90,6 +90,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-codeinsight:javascript-codeinsight_test_lib",
         "//plugins/JavaScriptLanguage/javascript-coverage:javascript-coverage_test_lib",
         "//plugins/JavaScriptLanguage/javascript-psi-impl:javascript-psi-impl_test_lib",
+        "//plugins/js-test-common:javascript-testing_test_lib",
     ],
 )
 ### auto-generated section `build intellij.qodana.js` end

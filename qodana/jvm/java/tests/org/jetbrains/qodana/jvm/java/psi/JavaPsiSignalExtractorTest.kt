@@ -520,6 +520,46 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
     walk(root, 0)
   }.trimEnd()
 
+  // region the lambda shape contract, kept in sync with every other language
+
+  /** A lambda bounds the shape walk. The shape describes the call, never the binding around it. */
+  fun testShapeInsideBoundLambdaStopsAtTheLambda() {
+    assertSig<PsiMethodCallExpression>(
+      "class Foo { void bar(){ java.util.function.Supplier<Integer> f = () -> weigh(1); } int weigh(int v){ return v; } }",
+      "METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION(IDENTIFIER),EXPRESSION_LIST(LITERAL_EXPRESSION))  [scope=f:LAMBDA_EXPRESSION]",
+      text = "weigh(1)",
+    )
+  }
+
+  /** The same lambda as an argument gives the same shape, and the enclosing method names it. */
+  fun testShapeInsideUnboundLambdaStopsAtTheLambda() {
+    assertSig<PsiMethodCallExpression>(
+      "class Foo { void bar(){ run(() -> weigh(1)); } void run(java.util.function.Supplier<Integer> s){} int weigh(int v){ return v; } }",
+      "METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION(IDENTIFIER),EXPRESSION_LIST(LITERAL_EXPRESSION))  [scope=bar:METHOD]",
+      text = "weigh(1)",
+    )
+  }
+
+  /** The invariant the two tests above pin by value. A drift here breaks the baseline of every language. */
+  fun testShapeDoesNotDependOnTheLambdaBinding() {
+    val bound = astShapeOf<PsiMethodCallExpression>("Bound.java", "class Foo { void bar(){ java.util.function.Supplier<Integer> f = () -> weigh(1); } int weigh(int v){ return v; } }", "weigh(1)")
+
+    assertNotNull(bound)
+    assertEquals("the shape must not depend on the binding",
+                 bound, astShapeOf<PsiMethodCallExpression>("Argument.java", "class Foo { void bar(){ run(() -> weigh(1)); } void run(java.util.function.Supplier<Integer> s){} int weigh(int v){ return v; } }", "weigh(1)"))
+  }
+
+  /** The AST shape at the [T] whose text equals [text]. Each snippet needs its own [fileName]. */
+  private inline fun <reified T : PsiElement> astShapeOf(fileName: String, @Language("JAVA") code: String, text: String): String? {
+    val file = myFixture.configureByText(fileName, code)
+    val element = PsiTreeUtil.findChildrenOfType(file, T::class.java).firstOrNull { it.text == text }
+    assertNotNull("no ${T::class.simpleName} with text '$text'", element)
+
+    return PsiSignalExtractor.extractSignals(element!!).astShape
+  }
+
+  // endregion
+
   private inline fun <reified T : PsiElement> assertSig(@Language("JAVA") code: String, expected: String, text: String? = null) {
     assertEquals(expected, sig<T>(code, text))
   }

@@ -212,6 +212,8 @@ jvm_library(
         "//goland/intellij-go/plugin:plugin_test_lib",
         "//goland/intellij-go/impl",
         "//goland/intellij-go/impl:impl_test_lib",
+        "//goland/intellij-go/testFramework",
+        "//goland/intellij-go/testFramework:testFramework_test_lib",
         "//goland/intellij-go/go-coverage",
         "//goland/intellij-go/go-coverage:go-coverage_test_lib",
         "@community//platform/util/jdom",

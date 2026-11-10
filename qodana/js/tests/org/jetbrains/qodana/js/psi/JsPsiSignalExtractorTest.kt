@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.js.psi
 
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpressionStatement
 import com.intellij.lang.javascript.psi.JSIfStatement
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -761,6 +762,40 @@ class JsPsiSignalExtractorTest : BasePlatformTestCase() {
     assertEquals(expected, "${signals.enclosingScopeName}:${signals.enclosingScopeType}")
     assertNotNull(signals.astShape)
   }
+
+  // region the lambda shape contract, kept in sync with every other language
+
+  /** An arrow function bounds the shape walk. The shape describes the call, never the binding around it. */
+  fun testShapeInsideBoundLambdaStopsAtTheLambda() =
+    assertAstShapeAt<JSCallExpression>("bound.ts", "function bar() { const f = () => weigh(1) }", "weigh(1)", "JS:CALL_EXPRESSION(JS:REFERENCE_EXPRESSION(JS:IDENTIFIER),JS:ARGUMENT_LIST)")
+
+  /** The same arrow function as an argument gives the same shape. */
+  fun testShapeInsideUnboundLambdaStopsAtTheLambda() =
+    assertAstShapeAt<JSCallExpression>("argument.ts", "function bar() { run(() => weigh(1)) }", "weigh(1)", "JS:CALL_EXPRESSION(JS:REFERENCE_EXPRESSION(JS:IDENTIFIER),JS:ARGUMENT_LIST)")
+
+  /** The invariant the two tests above pin by value. A drift here breaks the baseline of every language. */
+  fun testShapeDoesNotDependOnTheLambdaBinding() {
+    val bound = astShapeOf<JSCallExpression>("bound.ts", "function bar() { const f = () => weigh(1) }", "weigh(1)")
+
+    assertNotNull(bound)
+    assertEquals("the shape must not depend on the binding", bound,
+                 astShapeOf<JSCallExpression>("argument.ts", "function bar() { run(() => weigh(1)) }", "weigh(1)"))
+  }
+
+  private inline fun <reified T : PsiElement> assertAstShapeAt(fileName: String, code: String, text: String, expected: String) {
+    assertEquals(expected, astShapeOf<T>(fileName, code, text))
+  }
+
+  /** The AST shape at the [T] whose text equals [text]. Each snippet needs its own [fileName]. */
+  private inline fun <reified T : PsiElement> astShapeOf(fileName: String, code: String, text: String): String? {
+    val file = myFixture.configureByText(fileName, code)
+    val element = PsiTreeUtil.findChildrenOfType(file, T::class.java).firstOrNull { it.text == text }
+    assertNotNull("no ${T::class.simpleName} with text '$text'", element)
+
+    return PsiSignalExtractor.extractSignals(element!!).astShape
+  }
+
+  // endregion
 
   private fun assertNoScope(code: String) {
     val signals = signalsOfFirstIf(code)
