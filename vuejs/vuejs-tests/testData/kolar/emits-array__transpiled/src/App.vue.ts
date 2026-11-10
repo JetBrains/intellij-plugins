@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+
 const { defineEmits, } = {} as typeof import('vue');
 const __VLS_emit = defineEmits(['inFocus', 'submit'])
 type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof __VLS_emit>>;
@@ -17,9 +18,9 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_template = () => {
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onFocus: // @ts-ignore
-(...[$event]) => {
+...{ onFocus: (...[$event]: __VLS_EventArgs<typeof __VLS_intrinsics['button'], 'onFocus'>) => {
 void $event;
 return (__VLS_ctx.$emit('inFocus'));
 // @ts-ignore
@@ -27,8 +28,7 @@ return (__VLS_ctx.$emit('inFocus'));
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: // @ts-ignore
-(...[$event]) => {
+...{ onClick: (...[$event]: __VLS_EventArgs<typeof __VLS_intrinsics['button'], 'onClick'>) => {
 void $event;
 return (__VLS_ctx.$emit('submit'));
 // @ts-ignore
@@ -37,6 +37,10 @@ return (__VLS_ctx.$emit('submit'));
 });
 // @ts-ignore
 [];
+return {
+};
+};
+void [__VLS_template];
 const __VLS_export = (await import('vue')).defineComponent({
 emits: {} as __VLS_NormalizeEmits<typeof __VLS_emit>,
 });

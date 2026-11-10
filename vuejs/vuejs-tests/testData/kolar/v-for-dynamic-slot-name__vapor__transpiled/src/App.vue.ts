@@ -19,6 +19,7 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_template = () => {
 const __VLS_0 = MyCounter || MyCounter;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
@@ -26,6 +27,7 @@ const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
 }));
 const __VLS_2 = __VLS_1({
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
+var __VLS_3!: __VLS_ExtractComponentContext<typeof __VLS_0, typeof __VLS_2>;
 const { default: __VLS_5 } = __VLS_nonNull(__VLS_3.slots);
 const __VLS_6 = __VLS_tryAsConstant((__VLS_unwrap(names, {} as import('vue').Ref<unknown>)));
 for (const [name] of __VLS_vFor(__VLS_nonNull(__VLS_6))) {
@@ -42,9 +44,12 @@ const [slotProps] = __VLS_vSlot(__VLS_nonNull(__VLS_7));
 }
 // @ts-ignore
 [];
-var __VLS_3!: __VLS_ExtractComponentContext<typeof __VLS_0, typeof __VLS_2>;
 // @ts-ignore
 [];
+return {
+};
+};
+void [__VLS_template];
 return {} as {
 	props: import('vue').PublicProps & (typeof globalThis extends { __VLS_PROPS_FALLBACK: infer P } ? P : {});
 	expose: (exposed: {}) => void;

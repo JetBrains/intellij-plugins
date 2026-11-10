@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+
 const { defineModel, } = {} as typeof import('vue');
 const __VLS_export = ((
 	__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>['props'],
@@ -33,10 +34,15 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_template = () => {
 ( __VLS_unwrap(title, {} as import('vue').Ref<unknown>) );
 ( __VLS_unwrap(count, {} as import('vue').Ref<unknown>) );
 // @ts-ignore
 [title,count,];
+return {
+};
+};
+void [__VLS_template];
 return {} as {
 	props: import('vue').PublicProps & __VLS_PrettifyLocal<__VLS_PublicProps & __VLS_EmitProps> & (typeof globalThis extends { __VLS_PROPS_FALLBACK: infer P } ? P : {});
 	expose: (exposed: {}) => void;

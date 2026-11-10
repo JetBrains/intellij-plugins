@@ -25,7 +25,7 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
-// @ts-ignore
+const __VLS_template = () => {
 __VLS_withDotValue(foo, {} as import('vue').Ref<unknown>);
 if (foo.value.bar) {
 const __VLS_0 = MyCounter;
@@ -47,6 +47,10 @@ var __VLS_4!: __VLS_ExtractComponentProps<typeof __VLS_0, typeof __VLS_2>;
 }
 // @ts-ignore
 [foo,foo,];
+return {
+};
+};
+void [__VLS_template];
 return {} as {
 	props: import('vue').PublicProps & (typeof globalThis extends { __VLS_PROPS_FALLBACK: infer P } ? P : {});
 	expose: (exposed: {}) => void;

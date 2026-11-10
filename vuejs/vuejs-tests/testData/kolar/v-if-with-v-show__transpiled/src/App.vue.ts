@@ -13,13 +13,11 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
-// @ts-ignore
+const __VLS_template = () => {
 __VLS_withDotValue(showIf, {} as import('vue').Ref<unknown>);
-// @ts-ignore
 __VLS_withDotValue(showShow, {} as import('vue').Ref<unknown>);
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: // @ts-ignore
-(...[$event]) => {
+...{ onClick: (...[$event]: __VLS_EventArgs<typeof __VLS_intrinsics['button'], 'onClick'>) => {
 void $event;
 return (showIf.value = !showIf.value);
 // @ts-ignore
@@ -27,8 +25,7 @@ return (showIf.value = !showIf.value);
 }},
 });
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: // @ts-ignore
-(...[$event]) => {
+...{ onClick: (...[$event]: __VLS_EventArgs<typeof __VLS_intrinsics['button'], 'onClick'>) => {
 void $event;
 return (showShow.value = !showShow.value);
 // @ts-ignore
@@ -38,11 +35,16 @@ return (showShow.value = !showShow.value);
 if (showIf.value) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
-__VLS_asFunctionalDirective(__VLS_directives.vShow, {} as import('vue').ObjectDirective)(__VLS_nonNull(null), { ...__VLS_directiveBindingRestFields, value: (showShow.value), },
-__VLS_nonNull(null), __VLS_nonNull(null));
+const __VLS_0 = __VLS_asFunctionalDirective(__VLS_directives.vShow, {} as import('vue').ObjectDirective);
+__VLS_0(__VLS_nonNull(null), { ...__VLS_directiveBindingRestFields, value: (showShow.value), },
+...__VLS_directiveHookArgsRest(__VLS_0));
 }
 // @ts-ignore
 [showIf,showShow,];
+return {
+};
+};
+void [__VLS_template];
 const __VLS_export = (await import('vue')).defineComponent({
 });
 export default {} as typeof __VLS_export;

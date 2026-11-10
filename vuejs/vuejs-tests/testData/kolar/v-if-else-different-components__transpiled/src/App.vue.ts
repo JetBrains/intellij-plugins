@@ -17,11 +17,10 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
-// @ts-ignore
+const __VLS_template = () => {
 __VLS_withDotValue(showCounter, {} as import('vue').Ref<unknown>);
 __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
-...{ onClick: // @ts-ignore
-(...[$event]) => {
+...{ onClick: (...[$event]: __VLS_EventArgs<typeof __VLS_intrinsics['button'], 'onClick'>) => {
 void $event;
 return (showCounter.value = !showCounter.value);
 // @ts-ignore
@@ -48,6 +47,10 @@ const __VLS_7 = __VLS_6({
 }
 // @ts-ignore
 [showCounter,];
+return {
+};
+};
+void [__VLS_template];
 const __VLS_export = (await import('vue')).defineComponent({
 });
 export default {} as typeof __VLS_export;

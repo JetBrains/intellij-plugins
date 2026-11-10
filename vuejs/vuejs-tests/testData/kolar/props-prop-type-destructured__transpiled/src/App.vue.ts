@@ -3,6 +3,7 @@
 
 import type { PropType } from 'vue'
 
+
 const { defineProps, } = {} as typeof import('vue');
 const __VLS_props = defineProps({
   shape: { type: Object as PropType<{ x: number, y: number }> },
@@ -20,6 +21,7 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_template = () => {
 ( shape.x );
 ( shape.y );
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
@@ -31,6 +33,10 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 });
 ( shape.y );
+return {
+};
+};
+void [__VLS_template];
 const __VLS_export = (await import('vue')).defineComponent({
 props: {
   shape: { type: Object as PropType<{ x: number, y: number }> },

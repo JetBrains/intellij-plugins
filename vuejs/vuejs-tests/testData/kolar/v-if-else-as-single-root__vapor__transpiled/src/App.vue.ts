@@ -20,6 +20,7 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_template = () => {
 const __VLS_0 = Base;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
@@ -30,6 +31,10 @@ ref: "baseRef",
 ...{ class: "extra" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 /** @type {__VLS_StyleScopedClasses['extra']} */;
+return {
+};
+};
+void [__VLS_template];
 return {} as {
 	props: import('vue').PublicProps & (typeof globalThis extends { __VLS_PROPS_FALLBACK: infer P } ? P : {});
 	expose: (exposed: {}) => void;

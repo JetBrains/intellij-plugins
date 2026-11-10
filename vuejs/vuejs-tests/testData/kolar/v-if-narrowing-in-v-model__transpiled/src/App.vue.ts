@@ -14,7 +14,7 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
-// @ts-ignore
+const __VLS_template = () => {
 __VLS_withDotValue(form, {} as import('vue').Ref<unknown>);
 if (form.value) {
 __VLS_asFunctionalElement1(__VLS_intrinsics.input)({
@@ -23,6 +23,10 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.input)({
 }
 // @ts-ignore
 [form,form,];
+return {
+};
+};
+void [__VLS_template];
 const __VLS_export = (await import('vue')).defineComponent({
 });
 export default {} as typeof __VLS_export;

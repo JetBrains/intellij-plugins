@@ -9,6 +9,7 @@ let __VLS_intrinsics!: import('vue/jsx-runtime').JSX.IntrinsicElements;
 type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
+const __VLS_template = () => {
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
 var __VLS_0 = {
@@ -16,6 +17,12 @@ var __VLS_0 = {
 var __VLS_1 = __VLS_0!;
 type __VLS_Slots = {}
 & { default?: (props: typeof __VLS_1) => any };
+return {
+__VLS_Slots: {} as __VLS_Slots,
+};
+};
+type __VLS_Slots = ReturnType<typeof __VLS_template>['__VLS_Slots'];
+void [__VLS_template, {} as [__VLS_Slots]];
 const __VLS_base = (await import('vue')).defineComponent({
 });
 const __VLS_export = {} as __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;

@@ -2,7 +2,7 @@
   "name": "vue-transpiled-data-extractor",
   "type": "module",
   "dependencies": {
-    "@vue/typescript-plugin": "3.3.13",
+    "@vue/typescript-plugin": "3.3.14",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
