@@ -273,7 +273,16 @@ fun generateModelEventExpression(
     yieldAll(generateEventParameter(options, argsType))
     yieldAll(generateReasserts(options, ctx, accessMark))
     yieldAll(ctx.generateConditionGuards())
+    val boundary = yield(Boundary.start(
+      Source("template"),
+      exp.loc.startOffset,
+      exp.loc.endOffset,
+      codeFeatures.verification,
+    ))
+    yield("(")
     yieldAll(codes)
+    yield(")")
+    yield(boundary.end())
     yield(" = \$event$endOfLine")
     yield("}")
   }
