@@ -153,11 +153,9 @@ fun generateComponent(
         // navigation support
         yield("/** @ts-ignore @type {")
         for (offset in listOfNotNull(startTagOffset, endTagOffset)) {
-          yield(" | typeof ${names.components}.")
-          yieldAll(generateCamelized(tag, Source("template"), offset, codeFeatures.navigation))
-          if (tag[0] != tag[0].uppercaseChar()) {
-            yield(" | typeof ${names.components}.")
-            yieldAll(generateCamelized(capitalize(tag), Source("template"), offset, codeFeatures.navigation))
+          for (name in linkedSetOf(tag, capitalize(tag))) {
+            yield(" | typeof ${if (options.setupBindings.contains(camelize(name))) "" else "${names.components}."}")
+            yieldAll(generateCamelized(name, Source("template"), offset, codeFeatures.navigation))
           }
           if (tag.contains('-')) {
             yield(" | typeof ${names.components}[")
