@@ -61,7 +61,7 @@ private fun generateWorker(
     yieldAll(generateTemplateChild(options, ctx, ast as Node))
   }
 
-  yieldAll(ctx.generateHoistVariables())
+  yieldAll(ctx.generateHoistVariables(options.scriptLang))
   yieldAll(generateSlotsType(options, ctx))
   yieldAll(generateInheritedAttrsType(options, ctx))
   yieldAll(generateTemplateRefsType(options, ctx))

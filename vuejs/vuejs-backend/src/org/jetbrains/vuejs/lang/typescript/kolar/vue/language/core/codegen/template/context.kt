@@ -12,8 +12,10 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.Code
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueCodeInformation
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.InlayHintInfo
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.codeFeatures
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.names
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.Boundary
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.endOfLine
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
@@ -164,9 +166,11 @@ class TemplateCodegenContext {
   ): String =
     hoistVars.getOrPut(originalVar) { "__VLS_${variableId++}" }
 
-  fun generateHoistVariables(): Sequence<Code> = sequence {
+  fun generateHoistVariables(scriptLang: String): Sequence<Code> = sequence {
     // trick to avoid TS 4081 (#5186)
     if (hoistVars.isNotEmpty()) {
+      // non-null assertions are TS-only syntax (TS8013 in JS)
+      val isTs = isTsLang(scriptLang)
       yield("var ")
       var first = true
       for ((originalVar, hoistVar) in hoistVars) {
@@ -174,7 +178,12 @@ class TemplateCodegenContext {
           yield(", ")
         }
         first = false
-        yield("$hoistVar = $originalVar!")
+        yield(
+          if (isTs)
+            "$hoistVar = $originalVar!"
+          else
+            "$hoistVar = ${names.nonNull}($originalVar)"
+        )
       }
       yield(endOfLine)
     }
