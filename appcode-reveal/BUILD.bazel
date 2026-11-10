@@ -31,11 +31,7 @@ jvm_library(
         ["resources/**/*"],
     ),
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        # do not sort,
-        "//CIDR-appcode/appcode/swiftDebugger",
-        "//CIDR/cidr-debugger/core",
-    ],
+    runtime_deps = ["//CIDR/cidr-debugger/core"],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
