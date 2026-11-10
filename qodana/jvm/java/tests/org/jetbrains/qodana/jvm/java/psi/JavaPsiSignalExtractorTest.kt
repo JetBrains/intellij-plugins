@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.jvm.java.psi
 
+import com.intellij.openapi.application.readAction
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiArrayAccessExpression
 import com.intellij.psi.PsiArrayInitializerExpression
@@ -46,14 +47,30 @@ import com.intellij.psi.PsiWhileStatement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.fixtures.lightJavaCodeInsightFixture
+import com.intellij.testFramework.fixtures.lightJavaProjectFixture
+import com.intellij.testFramework.junit5.TestApplication
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiSignalExtractor
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
 /** Verifies [PsiSignalExtractor]: enclosing-scope detection and AST-shape serialization over real Java PSI. */
-class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
+@TestApplication
+class JavaPsiSignalExtractorTest {
+  companion object {
+    private val projectFixture = lightJavaProjectFixture()
+  }
 
-  fun testExtractsEnclosingMethodScopeAndAstShape() {
+  private val myFixture by lightJavaCodeInsightFixture(projectFixture)
+
+  @Test
+  fun testExtractsEnclosingMethodScopeAndAstShape(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     val file = myFixture.configureByText(
       "Foo.java",
       """
@@ -66,106 +83,169 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
       }
       """.trimIndent()
     )
-    val ifStatement = PsiTreeUtil.findChildOfType(file, PsiIfStatement::class.java)!!
+    readAction {
+      val ifStatement = PsiTreeUtil.findChildOfType(file, PsiIfStatement::class.java)!!
 
-    val signals = PsiSignalExtractor.extractSignals(ifStatement)
+      val signals = PsiSignalExtractor.extractSignals(ifStatement)
 
-    assertEquals("bar", signals.enclosingScopeName)
-    assertEquals("METHOD", signals.enclosingScopeType)
-    assertNotNull(signals.astShape)
-    assertTrue("astShape was '${signals.astShape}'", signals.astShape!!.startsWith("IF_STATEMENT"))
+      assertEquals("bar", signals.enclosingScopeName)
+      assertEquals("METHOD", signals.enclosingScopeType)
+      assertNotNull(signals.astShape)
+      assertTrue(signals.astShape!!.startsWith("IF_STATEMENT"), "astShape was '${signals.astShape}'")
+    }
   }
 
-  fun testNoEnclosingFunctionScope() {
+  @Test
+  fun testNoEnclosingFunctionScope(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     val file = myFixture.configureByText("Foo.java", "class Foo { int field = 1; }")
-    val field = PsiTreeUtil.findChildOfType(file, PsiField::class.java)!!
+    readAction {
+      val field = PsiTreeUtil.findChildOfType(file, PsiField::class.java)!!
 
-    val signals = PsiSignalExtractor.extractSignals(field)
+      val signals = PsiSignalExtractor.extractSignals(field)
 
-    assertNull(signals.enclosingScopeName)
-    assertNull(signals.enclosingScopeType)
-    assertNotNull(signals.astShape)
+      assertNull(signals.enclosingScopeName)
+      assertNull(signals.enclosingScopeType)
+      assertNotNull(signals.astShape)
+    }
   }
 
   // type level
-  fun testClass() = assertSig<PsiClass>("class Foo {}", "CLASS(CLASS_KEYWORD,IDENTIFIER)  [scope=-:-]")
-  fun testInterface() = assertSig<PsiClass>("interface Foo {}", "CLASS(INTERFACE_KEYWORD,IDENTIFIER)  [scope=-:-]")
-  fun testEnum() = assertSig<PsiClass>("enum E { A, B }", "CLASS(ENUM_KEYWORD,ENUM_CONSTANT,ENUM_CONSTANT)  [scope=-:-]")
-  fun testNestedClass() = assertSig<PsiClass>("class Foo { class Inner {} }", "CLASS(CLASS_KEYWORD,IDENTIFIER)  [scope=-:-]", text = "class Inner {}")
+  @Test
+  fun testClass(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClass>("class Foo {}", "CLASS(CLASS_KEYWORD,IDENTIFIER)  [scope=-:-]") }
+  @Test
+  fun testInterface(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClass>("interface Foo {}", "CLASS(INTERFACE_KEYWORD,IDENTIFIER)  [scope=-:-]") }
+  @Test
+  fun testEnum(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClass>("enum E { A, B }", "CLASS(ENUM_KEYWORD,ENUM_CONSTANT,ENUM_CONSTANT)  [scope=-:-]") }
+  @Test
+  fun testNestedClass(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClass>("class Foo { class Inner {} }", "CLASS(CLASS_KEYWORD,IDENTIFIER)  [scope=-:-]", text = "class Inner {}") }
 
   // class members
-  fun testField() = assertSig<PsiField>("class Foo { int f = 1; }", "FIELD(TYPE(INT_KEYWORD),LITERAL_EXPRESSION)  [scope=-:-]")
-  fun testMethod() = assertSig<PsiMethod>("class Foo { void bar() {} }", "METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=bar:METHOD]")
-  fun testConstructor() = assertSig<PsiMethod>("class Foo { Foo() {} }", "METHOD(IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=Foo:METHOD]")
-  fun testStaticInit() = assertSig<PsiClassInitializer>("final class Foo { static { sink(); } static void sink(){} }", "CLASS_INITIALIZER(MODIFIER_LIST(STATIC_KEYWORD),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=-:-]")
-  fun testParameter() = assertSig<PsiParameter>("class Foo { void bar(int p) {} }", "PARAMETER_LIST(PARAMETER(TYPE))  [scope=bar:METHOD]")
+  @Test
+  fun testField(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiField>("class Foo { int f = 1; }", "FIELD(TYPE(INT_KEYWORD),LITERAL_EXPRESSION)  [scope=-:-]") }
+  @Test
+  fun testMethod(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethod>("class Foo { void bar() {} }", "METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=bar:METHOD]") }
+  @Test
+  fun testConstructor(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethod>("class Foo { Foo() {} }", "METHOD(IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=Foo:METHOD]") }
+  @Test
+  fun testStaticInit(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClassInitializer>("final class Foo { static { sink(); } static void sink(){} }", "CLASS_INITIALIZER(MODIFIER_LIST(STATIC_KEYWORD),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=-:-]") }
+  @Test
+  fun testParameter(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiParameter>("class Foo { void bar(int p) {} }", "PARAMETER_LIST(PARAMETER(TYPE))  [scope=bar:METHOD]") }
 
   // initializers / assignment sides
-  fun testFieldInitRHS() = assertSig<PsiMethodCallExpression>("class Foo { int f = compute(); int compute(){return 1;} }", "FIELD(TYPE(INT_KEYWORD),METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]", text = "compute()")
-  fun testLocalInitRHS() = assertSig<PsiMethodCallExpression>("class Foo { void bar() { int x = compute(); } int compute(){return 1;} }", "DECLARATION_STATEMENT(LOCAL_VARIABLE)  [scope=bar:METHOD]", text = "compute()")
-  fun testAssignLHS() = assertSig<PsiReferenceExpression>("class Foo { int f; void bar() { f = compute(); } int compute(){return 1;} }", "EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION)  [scope=bar:METHOD]", text = "f")
-  fun testAssignRHS() = assertSig<PsiMethodCallExpression>("class Foo { int f; void bar() { f = compute(); } int compute(){return 1;} }", "EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION)  [scope=bar:METHOD]", text = "compute()")
-  fun testAssignExpr() = assertSig<PsiAssignmentExpression>("class Foo { int f; void bar() { f = compute(); } int compute(){return 1;} }", "EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION(REFERENCE_EXPRESSION,METHOD_CALL_EXPRESSION))  [scope=bar:METHOD]", text = "f = compute()")
+  @Test
+  fun testFieldInitRHS(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodCallExpression>("class Foo { int f = compute(); int compute(){return 1;} }", "FIELD(TYPE(INT_KEYWORD),METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]", text = "compute()") }
+  @Test
+  fun testLocalInitRHS(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodCallExpression>("class Foo { void bar() { int x = compute(); } int compute(){return 1;} }", "DECLARATION_STATEMENT(LOCAL_VARIABLE)  [scope=bar:METHOD]", text = "compute()") }
+  @Test
+  fun testAssignLHS(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiReferenceExpression>("class Foo { int f; void bar() { f = compute(); } int compute(){return 1;} }", "EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION)  [scope=bar:METHOD]", text = "f") }
+  @Test
+  fun testAssignRHS(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodCallExpression>("class Foo { int f; void bar() { f = compute(); } int compute(){return 1;} }", "EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION)  [scope=bar:METHOD]", text = "compute()") }
+  @Test
+  fun testAssignExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiAssignmentExpression>("class Foo { int f; void bar() { f = compute(); } int compute(){return 1;} }", "EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION(REFERENCE_EXPRESSION,METHOD_CALL_EXPRESSION))  [scope=bar:METHOD]", text = "f = compute()") }
 
   // statements in a function
-  fun testExprStatement() = assertSig<PsiExpressionStatement>("class Foo { void bar() { sink(); } void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "sink();")
-  fun testLocalVariable() = assertSig<PsiLocalVariable>("class Foo { void bar() { int x = 1; } }", "DECLARATION_STATEMENT(LOCAL_VARIABLE(TYPE,LITERAL_EXPRESSION))  [scope=bar:METHOD]")
-  fun testReturnStatement() = assertSig<PsiReturnStatement>("class Foo { int bar() { return 1; } }", "RETURN_STATEMENT(RETURN_KEYWORD,LITERAL_EXPRESSION)  [scope=bar:METHOD]")
+  @Test
+  fun testExprStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiExpressionStatement>("class Foo { void bar() { sink(); } void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "sink();") }
+  @Test
+  fun testLocalVariable(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiLocalVariable>("class Foo { void bar() { int x = 1; } }", "DECLARATION_STATEMENT(LOCAL_VARIABLE(TYPE,LITERAL_EXPRESSION))  [scope=bar:METHOD]") }
+  @Test
+  fun testReturnStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiReturnStatement>("class Foo { int bar() { return 1; } }", "RETURN_STATEMENT(RETURN_KEYWORD,LITERAL_EXPRESSION)  [scope=bar:METHOD]") }
 
   // control flow / nested statements
-  fun testIfStatement() = assertSig<PsiIfStatement>("class Foo { void bar() { if (a()) { sink(); } } boolean a(){return true;} void sink(){} }", "IF_STATEMENT(IF_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]")
-  fun testIfInIf() = assertSig<PsiIfStatement>("class Foo { void bar() { if (a()) { if (b()) { c(); } } } boolean a(){return true;} boolean b(){return true;} void c(){} }", "IF_STATEMENT(IF_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]", text = "if (b()) { c(); }")
-  fun testCallInNestedIf() = assertSig<PsiMethodCallExpression>("class Foo { void bar() { if (a()) { if (b()) { c(); } } } boolean a(){return true;} boolean b(){return true;} void c(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "c()")
-  fun testForLoop() = assertSig<PsiForStatement>("class Foo { void bar() { for (int i = 0; i < 10; i++) { sink(); } } void sink(){} }", "FOR_STATEMENT(FOR_KEYWORD,DECLARATION_STATEMENT(LOCAL_VARIABLE),BINARY_EXPRESSION(REFERENCE_EXPRESSION,LITERAL_EXPRESSION),EXPRESSION_STATEMENT(POSTFIX_EXPRESSION),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]")
-  fun testWhileLoop() = assertSig<PsiWhileStatement>("class Foo { void bar() { while (a()) { sink(); } } boolean a(){return true;} void sink(){} }", "WHILE_STATEMENT(WHILE_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]")
-  fun testForeach() = assertSig<PsiForeachStatement>("class Foo { void bar(int[] xs) { for (int value : xs) { sink(value); } } void sink(int value){} }", "FOREACH_STATEMENT(FOR_KEYWORD,PARAMETER(TYPE,IDENTIFIER),REFERENCE_EXPRESSION(IDENTIFIER),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]")
-  fun testTryCatch() = assertSig<PsiTryStatement>("class Foo { void bar() { try { risky(); } catch (Exception e) { handle(); } } void risky(){} void handle(){} }", "TRY_STATEMENT(TRY_KEYWORD,CODE_BLOCK(EXPRESSION_STATEMENT),CATCH_SECTION(CATCH_KEYWORD,PARAMETER,CODE_BLOCK))  [scope=bar:METHOD]")
+  @Test
+  fun testIfStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiIfStatement>("class Foo { void bar() { if (a()) { sink(); } } boolean a(){return true;} void sink(){} }", "IF_STATEMENT(IF_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]") }
+  @Test
+  fun testIfInIf(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiIfStatement>("class Foo { void bar() { if (a()) { if (b()) { c(); } } } boolean a(){return true;} boolean b(){return true;} void c(){} }", "IF_STATEMENT(IF_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]", text = "if (b()) { c(); }") }
+  @Test
+  fun testCallInNestedIf(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodCallExpression>("class Foo { void bar() { if (a()) { if (b()) { c(); } } } boolean a(){return true;} boolean b(){return true;} void c(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "c()") }
+  @Test
+  fun testForLoop(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiForStatement>("class Foo { void bar() { for (int i = 0; i < 10; i++) { sink(); } } void sink(){} }", "FOR_STATEMENT(FOR_KEYWORD,DECLARATION_STATEMENT(LOCAL_VARIABLE),BINARY_EXPRESSION(REFERENCE_EXPRESSION,LITERAL_EXPRESSION),EXPRESSION_STATEMENT(POSTFIX_EXPRESSION),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]") }
+  @Test
+  fun testWhileLoop(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiWhileStatement>("class Foo { void bar() { while (a()) { sink(); } } boolean a(){return true;} void sink(){} }", "WHILE_STATEMENT(WHILE_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]") }
+  @Test
+  fun testForeach(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiForeachStatement>("class Foo { void bar(int[] xs) { for (int value : xs) { sink(value); } } void sink(int value){} }", "FOREACH_STATEMENT(FOR_KEYWORD,PARAMETER(TYPE,IDENTIFIER),REFERENCE_EXPRESSION(IDENTIFIER),BLOCK_STATEMENT(CODE_BLOCK))  [scope=bar:METHOD]") }
+  @Test
+  fun testTryCatch(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiTryStatement>("class Foo { void bar() { try { risky(); } catch (Exception e) { handle(); } } void risky(){} void handle(){} }", "TRY_STATEMENT(TRY_KEYWORD,CODE_BLOCK(EXPRESSION_STATEMENT),CATCH_SECTION(CATCH_KEYWORD,PARAMETER,CODE_BLOCK))  [scope=bar:METHOD]") }
 
   // switch
-  fun testSwitchStatement() = assertSig<PsiSwitchStatement>("class Foo { void bar(int x) { switch (x) { case 1: sink(); break; case 2: other(); break; } } void sink(){} void other(){} }", "SWITCH_STATEMENT(SWITCH_KEYWORD,REFERENCE_EXPRESSION,CODE_BLOCK(SWITCH_LABEL_STATEMENT,EXPRESSION_STATEMENT,BREAK_STATEMENT,SWITCH_LABEL_STATEMENT,EXPRESSION_STATEMENT,BREAK_STATEMENT))  [scope=bar:METHOD]")
-  fun testCaseLabel() = assertSig<PsiSwitchLabelStatement>("class Foo { void bar(int x) { switch (x) { case 1: sink(); break; case 2: other(); break; } } void sink(){} void other(){} }", "SWITCH_LABEL_STATEMENT(CASE_KEYWORD,CASE_LABEL_ELEMENT_LIST(LITERAL_EXPRESSION))  [scope=bar:METHOD]")
-  fun testStmtInCase() = assertSig<PsiExpressionStatement>("class Foo { void bar(int x) { switch (x) { case 1: sink(); break; case 2: other(); break; } } void sink(){} void other(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "sink();")
+  @Test
+  fun testSwitchStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiSwitchStatement>("class Foo { void bar(int x) { switch (x) { case 1: sink(); break; case 2: other(); break; } } void sink(){} void other(){} }", "SWITCH_STATEMENT(SWITCH_KEYWORD,REFERENCE_EXPRESSION,CODE_BLOCK(SWITCH_LABEL_STATEMENT,EXPRESSION_STATEMENT,BREAK_STATEMENT,SWITCH_LABEL_STATEMENT,EXPRESSION_STATEMENT,BREAK_STATEMENT))  [scope=bar:METHOD]") }
+  @Test
+  fun testCaseLabel(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiSwitchLabelStatement>("class Foo { void bar(int x) { switch (x) { case 1: sink(); break; case 2: other(); break; } } void sink(){} void other(){} }", "SWITCH_LABEL_STATEMENT(CASE_KEYWORD,CASE_LABEL_ELEMENT_LIST(LITERAL_EXPRESSION))  [scope=bar:METHOD]") }
+  @Test
+  fun testStmtInCase(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiExpressionStatement>("class Foo { void bar(int x) { switch (x) { case 1: sink(); break; case 2: other(); break; } } void sink(){} void other(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "sink();") }
 
   // lambdas / anonymous
-  fun testLambdaExpr() = assertSig<PsiLambdaExpression>("class Foo { Runnable r = () -> sink(); void sink(){} }", "FIELD(TYPE(JAVA_CODE_REFERENCE),LAMBDA_EXPRESSION(PARAMETER_LIST,ARROW,METHOD_CALL_EXPRESSION))  [scope=-:-]")
-  fun testLambdaBlockStmt() = assertSig<PsiExpressionStatement>("class Foo { Runnable r = () -> { sink(); }; void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]", text = "sink();")
-  fun testAnonymousClass() = assertSig<PsiAnonymousClass>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "ANONYMOUS_CLASS(JAVA_CODE_REFERENCE,EXPRESSION_LIST,METHOD)  [scope=-:-]")
-  fun testStmtInAnonymous() = assertSig<PsiExpressionStatement>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=toString:METHOD]", text = "sink();")
+  @Test
+  fun testLambdaExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiLambdaExpression>("class Foo { Runnable r = () -> sink(); void sink(){} }", "FIELD(TYPE(JAVA_CODE_REFERENCE),LAMBDA_EXPRESSION(PARAMETER_LIST,ARROW,METHOD_CALL_EXPRESSION))  [scope=-:-]") }
+  @Test
+  fun testLambdaBlockStmt(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiExpressionStatement>("class Foo { Runnable r = () -> { sink(); }; void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]", text = "sink();") }
+  @Test
+  fun testAnonymousClass(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiAnonymousClass>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "ANONYMOUS_CLASS(JAVA_CODE_REFERENCE,EXPRESSION_LIST,METHOD)  [scope=-:-]") }
+  @Test
+  fun testStmtInAnonymous(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiExpressionStatement>("class Foo { Object r = new Object() { @Override public String toString() { sink(); return \"\"; } }; void sink(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=toString:METHOD]", text = "sink();") }
 
   // array / new / ternary
-  fun testArrayInitializer() = assertSig<PsiArrayInitializerExpression>("class Foo { int[] a = {1, 2, 3}; }", "FIELD(TYPE(TYPE),ARRAY_INITIALIZER_EXPRESSION(LITERAL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=-:-]")
-  fun testArrayElement() = assertSig<PsiLiteralExpression>("class Foo { int[] a = {1, 2, 3}; }", "LITERAL_EXPRESSION  [scope=-:-]", text = "2")
-  fun testNewExpression() = assertSig<PsiNewExpression>("class Foo { Object o = new Object(); }", "FIELD(TYPE(JAVA_CODE_REFERENCE),NEW_EXPRESSION(NEW_KEYWORD,JAVA_CODE_REFERENCE,EXPRESSION_LIST))  [scope=-:-]")
-  fun testTernary() = assertSig<PsiConditionalExpression>("class Foo { int f = c() ? 1 : 2; boolean c(){return true;} }", "FIELD(TYPE(INT_KEYWORD),CONDITIONAL_EXPRESSION(METHOD_CALL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=-:-]")
+  @Test
+  fun testArrayInitializer(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiArrayInitializerExpression>("class Foo { int[] a = {1, 2, 3}; }", "FIELD(TYPE(TYPE),ARRAY_INITIALIZER_EXPRESSION(LITERAL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=-:-]") }
+  @Test
+  fun testArrayElement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiLiteralExpression>("class Foo { int[] a = {1, 2, 3}; }", "LITERAL_EXPRESSION  [scope=-:-]", text = "2") }
+  @Test
+  fun testNewExpression(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiNewExpression>("class Foo { Object o = new Object(); }", "FIELD(TYPE(JAVA_CODE_REFERENCE),NEW_EXPRESSION(NEW_KEYWORD,JAVA_CODE_REFERENCE,EXPRESSION_LIST))  [scope=-:-]") }
+  @Test
+  fun testTernary(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiConditionalExpression>("class Foo { int f = c() ? 1 : 2; boolean c(){return true;} }", "FIELD(TYPE(INT_KEYWORD),CONDITIONAL_EXPRESSION(METHOD_CALL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=-:-]") }
 
   // more statements
-  fun testDoWhile() = assertSig<PsiDoWhileStatement>("class Foo { void bar() { do { sink(); } while (a()); } boolean a(){return true;} void sink(){} }", "DO_WHILE_STATEMENT(DO_KEYWORD,BLOCK_STATEMENT(CODE_BLOCK),WHILE_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]")
-  fun testThrowStatement() = assertSig<PsiThrowStatement>("class Foo { void bar() { throw new RuntimeException(); } }", "THROW_STATEMENT(THROW_KEYWORD,NEW_EXPRESSION(NEW_KEYWORD,JAVA_CODE_REFERENCE,EXPRESSION_LIST))  [scope=bar:METHOD]")
-  fun testAssertStatement() = assertSig<PsiAssertStatement>("class Foo { void bar() { assert a(); } boolean a(){return true;} }", "ASSERT_STATEMENT(ASSERT_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]")
-  fun testSynchronized() = assertSig<PsiSynchronizedStatement>("class Foo { void bar() { synchronized (this) { sink(); } } void sink(){} }", "SYNCHRONIZED_STATEMENT(SYNCHRONIZED_KEYWORD,THIS_EXPRESSION(THIS_KEYWORD),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=bar:METHOD]")
-  fun testLabeled() = assertSig<PsiLabeledStatement>("class Foo { void bar() { loop: while (cond()) { if (done()) break loop; } } boolean cond(){ return true; } boolean done(){ return true; } }", "LABELED_STATEMENT(IDENTIFIER,WHILE_STATEMENT(WHILE_KEYWORD,METHOD_CALL_EXPRESSION,BLOCK_STATEMENT))  [scope=bar:METHOD]")
-  fun testBreakStatement() = assertSig<PsiBreakStatement>("class Foo { void bar() {\n//noinspection ALL\nfor (;;) { break; } } }", "BREAK_STATEMENT(BREAK_KEYWORD)  [scope=bar:METHOD]")
-  fun testContinueStatement() = assertSig<PsiContinueStatement>("class Foo { void bar() { for (;;) {\n//noinspection ALL\ncontinue; } } }", "CONTINUE_STATEMENT(CONTINUE_KEYWORD)  [scope=bar:METHOD]")
-  fun testTryWithResources() = assertSig<PsiTryStatement>("class Foo { void bar() throws Exception { try (java.io.OutputStream s = open()) { s.flush(); } } java.io.OutputStream open(){ return null; } }", "TRY_STATEMENT(TRY_KEYWORD,RESOURCE_LIST(RESOURCE_VARIABLE),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=bar:METHOD]")
-  fun testMultiCatch() = assertSig<PsiTryStatement>("class Foo { void bar() { try { risky(); } catch (java.io.IOException | RuntimeException e) { handle(); } } void risky() throws java.io.IOException { throw new java.io.IOException(); } void handle(){} }", "TRY_STATEMENT(TRY_KEYWORD,CODE_BLOCK(EXPRESSION_STATEMENT),CATCH_SECTION(CATCH_KEYWORD,PARAMETER,CODE_BLOCK))  [scope=bar:METHOD]")
+  @Test
+  fun testDoWhile(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiDoWhileStatement>("class Foo { void bar() { do { sink(); } while (a()); } boolean a(){return true;} void sink(){} }", "DO_WHILE_STATEMENT(DO_KEYWORD,BLOCK_STATEMENT(CODE_BLOCK),WHILE_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]") }
+  @Test
+  fun testThrowStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiThrowStatement>("class Foo { void bar() { throw new RuntimeException(); } }", "THROW_STATEMENT(THROW_KEYWORD,NEW_EXPRESSION(NEW_KEYWORD,JAVA_CODE_REFERENCE,EXPRESSION_LIST))  [scope=bar:METHOD]") }
+  @Test
+  fun testAssertStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiAssertStatement>("class Foo { void bar() { assert a(); } boolean a(){return true;} }", "ASSERT_STATEMENT(ASSERT_KEYWORD,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]") }
+  @Test
+  fun testSynchronized(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiSynchronizedStatement>("class Foo { void bar() { synchronized (this) { sink(); } } void sink(){} }", "SYNCHRONIZED_STATEMENT(SYNCHRONIZED_KEYWORD,THIS_EXPRESSION(THIS_KEYWORD),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=bar:METHOD]") }
+  @Test
+  fun testLabeled(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiLabeledStatement>("class Foo { void bar() { loop: while (cond()) { if (done()) break loop; } } boolean cond(){ return true; } boolean done(){ return true; } }", "LABELED_STATEMENT(IDENTIFIER,WHILE_STATEMENT(WHILE_KEYWORD,METHOD_CALL_EXPRESSION,BLOCK_STATEMENT))  [scope=bar:METHOD]") }
+  @Test
+  fun testBreakStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiBreakStatement>("class Foo { void bar() {\n//noinspection ALL\nfor (;;) { break; } } }", "BREAK_STATEMENT(BREAK_KEYWORD)  [scope=bar:METHOD]") }
+  @Test
+  fun testContinueStatement(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiContinueStatement>("class Foo { void bar() { for (;;) {\n//noinspection ALL\ncontinue; } } }", "CONTINUE_STATEMENT(CONTINUE_KEYWORD)  [scope=bar:METHOD]") }
+  @Test
+  fun testTryWithResources(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiTryStatement>("class Foo { void bar() throws Exception { try (java.io.OutputStream s = open()) { s.flush(); } } java.io.OutputStream open(){ return null; } }", "TRY_STATEMENT(TRY_KEYWORD,RESOURCE_LIST(RESOURCE_VARIABLE),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=bar:METHOD]") }
+  @Test
+  fun testMultiCatch(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiTryStatement>("class Foo { void bar() { try { risky(); } catch (java.io.IOException | RuntimeException e) { handle(); } } void risky() throws java.io.IOException { throw new java.io.IOException(); } void handle(){} }", "TRY_STATEMENT(TRY_KEYWORD,CODE_BLOCK(EXPRESSION_STATEMENT),CATCH_SECTION(CATCH_KEYWORD,PARAMETER,CODE_BLOCK))  [scope=bar:METHOD]") }
 
   // more expressions
-  fun testBinaryExpr() = assertSig<PsiBinaryExpression>("class Foo { boolean f() { return a() && b(); } boolean a(){return true;} boolean b(){return true;} }", "RETURN_STATEMENT(RETURN_KEYWORD,BINARY_EXPRESSION(METHOD_CALL_EXPRESSION,ANDAND,METHOD_CALL_EXPRESSION))  [scope=f:METHOD]", text = "a() && b()")
-  fun testPolyadicExpr() = assertSig<PsiPolyadicExpression>("class Foo { int f() { return 1 + 2 + 3; } }", "RETURN_STATEMENT(RETURN_KEYWORD,POLYADIC_EXPRESSION(LITERAL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=f:METHOD]")
-  fun testPrefixExpr() = assertSig<PsiPrefixExpression>("class Foo { boolean f(boolean x) { return !x; } }", "RETURN_STATEMENT(RETURN_KEYWORD,PREFIX_EXPRESSION(REFERENCE_EXPRESSION))  [scope=f:METHOD]")
-  fun testPostfixExpr() = assertSig<PsiPostfixExpression>("class Foo { int bar(int i) { i++; return i; } }", "EXPRESSION_STATEMENT(POSTFIX_EXPRESSION(REFERENCE_EXPRESSION,PLUSPLUS))  [scope=bar:METHOD]")
-  fun testCastExpr() = assertSig<PsiTypeCastExpression>("class Foo { int f(Object o) { return (int) o; } }", "RETURN_STATEMENT(RETURN_KEYWORD,TYPE_CAST_EXPRESSION(TYPE,REFERENCE_EXPRESSION))  [scope=f:METHOD]")
-  fun testInstanceofExpr() = assertSig<PsiInstanceOfExpression>("class Foo { boolean f(Object o) { return o instanceof String; } }", "RETURN_STATEMENT(RETURN_KEYWORD,INSTANCE_OF_EXPRESSION(REFERENCE_EXPRESSION,INSTANCEOF_KEYWORD,TYPE))  [scope=f:METHOD]")
-  fun testMethodRef() = assertSig<PsiMethodReferenceExpression>("class Foo { Runnable r = Foo::sink; static void sink(){} }", "FIELD(TYPE(JAVA_CODE_REFERENCE),METHOD_REF_EXPRESSION(REFERENCE_EXPRESSION,DOUBLE_COLON,IDENTIFIER))  [scope=-:-]")
-  fun testArrayAccess() = assertSig<PsiArrayAccessExpression>("class Foo { int f(int[] a) { return a[0]; } }", "RETURN_STATEMENT(RETURN_KEYWORD,ARRAY_ACCESS_EXPRESSION(REFERENCE_EXPRESSION,LITERAL_EXPRESSION))  [scope=f:METHOD]")
-  fun testQualifiedRef() = assertSig<PsiReferenceExpression>("class Foo { int x; int f() { return this.x; } }", "RETURN_STATEMENT(RETURN_KEYWORD,REFERENCE_EXPRESSION(THIS_EXPRESSION))  [scope=f:METHOD]", text = "this.x")
-  fun testNestedCall() = assertSig<PsiMethodCallExpression>("class Foo { void bar() { a().b(); } Foo a(){ return this; } void b(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "a().b()")
-  fun testClassObjAccess() = assertSig<PsiClassObjectAccessExpression>("class Foo { Class<?> c = Foo.class; }", "FIELD(TYPE(JAVA_CODE_REFERENCE),CLASS_OBJECT_ACCESS_EXPRESSION(TYPE,CLASS_KEYWORD))  [scope=-:-]")
+  @Test
+  fun testBinaryExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiBinaryExpression>("class Foo { boolean f() { return a() && b(); } boolean a(){return true;} boolean b(){return true;} }", "RETURN_STATEMENT(RETURN_KEYWORD,BINARY_EXPRESSION(METHOD_CALL_EXPRESSION,ANDAND,METHOD_CALL_EXPRESSION))  [scope=f:METHOD]", text = "a() && b()") }
+  @Test
+  fun testPolyadicExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiPolyadicExpression>("class Foo { int f() { return 1 + 2 + 3; } }", "RETURN_STATEMENT(RETURN_KEYWORD,POLYADIC_EXPRESSION(LITERAL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=f:METHOD]") }
+  @Test
+  fun testPrefixExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiPrefixExpression>("class Foo { boolean f(boolean x) { return !x; } }", "RETURN_STATEMENT(RETURN_KEYWORD,PREFIX_EXPRESSION(REFERENCE_EXPRESSION))  [scope=f:METHOD]") }
+  @Test
+  fun testPostfixExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiPostfixExpression>("class Foo { int bar(int i) { i++; return i; } }", "EXPRESSION_STATEMENT(POSTFIX_EXPRESSION(REFERENCE_EXPRESSION,PLUSPLUS))  [scope=bar:METHOD]") }
+  @Test
+  fun testCastExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiTypeCastExpression>("class Foo { int f(Object o) { return (int) o; } }", "RETURN_STATEMENT(RETURN_KEYWORD,TYPE_CAST_EXPRESSION(TYPE,REFERENCE_EXPRESSION))  [scope=f:METHOD]") }
+  @Test
+  fun testInstanceofExpr(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiInstanceOfExpression>("class Foo { boolean f(Object o) { return o instanceof String; } }", "RETURN_STATEMENT(RETURN_KEYWORD,INSTANCE_OF_EXPRESSION(REFERENCE_EXPRESSION,INSTANCEOF_KEYWORD,TYPE))  [scope=f:METHOD]") }
+  @Test
+  fun testMethodRef(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodReferenceExpression>("class Foo { Runnable r = Foo::sink; static void sink(){} }", "FIELD(TYPE(JAVA_CODE_REFERENCE),METHOD_REF_EXPRESSION(REFERENCE_EXPRESSION,DOUBLE_COLON,IDENTIFIER))  [scope=-:-]") }
+  @Test
+  fun testArrayAccess(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiArrayAccessExpression>("class Foo { int f(int[] a) { return a[0]; } }", "RETURN_STATEMENT(RETURN_KEYWORD,ARRAY_ACCESS_EXPRESSION(REFERENCE_EXPRESSION,LITERAL_EXPRESSION))  [scope=f:METHOD]") }
+  @Test
+  fun testQualifiedRef(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiReferenceExpression>("class Foo { int x; int f() { return this.x; } }", "RETURN_STATEMENT(RETURN_KEYWORD,REFERENCE_EXPRESSION(THIS_EXPRESSION))  [scope=f:METHOD]", text = "this.x") }
+  @Test
+  fun testNestedCall(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodCallExpression>("class Foo { void bar() { a().b(); } Foo a(){ return this; } void b(){} }", "EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=bar:METHOD]", text = "a().b()") }
+  @Test
+  fun testClassObjAccess(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClassObjectAccessExpression>("class Foo { Class<?> c = Foo.class; }", "FIELD(TYPE(JAVA_CODE_REFERENCE),CLASS_OBJECT_ACCESS_EXPRESSION(TYPE,CLASS_KEYWORD))  [scope=-:-]") }
 
   // more nesting
-  fun testLocalClass() = assertSig<PsiClass>("class Foo { void bar() { class Local { void m() {} } } }", "CLASS(CLASS_KEYWORD,IDENTIFIER,METHOD)  [scope=bar:METHOD]", text = "class Local { void m() {} }")
-  fun testNestedLambda() = assertSig<PsiLambdaExpression>("class Foo { java.util.function.Supplier<Runnable> s = () -> () -> sink(); void sink(){} }", "FIELD(TYPE,LAMBDA_EXPRESSION)  [scope=-:-]", text = "() -> sink()")
-  fun testCallArgIsCall() = assertSig<PsiMethodCallExpression>("class Foo { void bar() { outer(inner()); } void outer(int x){} int inner(){ return 1; } }", "METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST)  [scope=bar:METHOD]", text = "inner()")
+  @Test
+  fun testLocalClass(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiClass>("class Foo { void bar() { class Local { void m() {} } } }", "CLASS(CLASS_KEYWORD,IDENTIFIER,METHOD)  [scope=bar:METHOD]", text = "class Local { void m() {} }") }
+  @Test
+  fun testNestedLambda(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiLambdaExpression>("class Foo { java.util.function.Supplier<Runnable> s = () -> () -> sink(); void sink(){} }", "FIELD(TYPE,LAMBDA_EXPRESSION)  [scope=-:-]", text = "() -> sink()") }
+  @Test
+  fun testCallArgIsCall(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertSig<PsiMethodCallExpression>("class Foo { void bar() { outer(inner()); } void outer(int x){} int inner(){ return 1; } }", "METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST)  [scope=bar:METHOD]", text = "inner()") }
 
   // Whole-tree characterization
   // Each test walks ONE top-level member's subtree of [SAMPLE] and asserts the astShape + [scope] that
@@ -173,12 +253,17 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
   // the sample (partitioned by member), but a failure names one member and runs in isolation. On an intentional
   // logic change, regenerate the affected golden from that test's assertion diff.
 
-  fun testTreeClassHeader() = assertEquals(
-    "CLASS[Sample] => CLASS(CLASS_KEYWORD,IDENTIFIER,FIELD,FIELD,FIELD,CLASS_INITIALIZER,METHOD,METHOD,METHOD,METHOD,METHOD,METHOD,METHOD,METHOD)  [scope=-:-]",
-    format(sampleClass(), 0),
-  )
+  @Test
+  fun testTreeClassHeader(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
+    val sample = sampleClass()
+    assertEquals(
+      "CLASS[Sample] => CLASS(CLASS_KEYWORD,IDENTIFIER,FIELD,FIELD,FIELD,CLASS_INITIALIZER,METHOD,METHOD,METHOD,METHOD,METHOD,METHOD,METHOD,METHOD)  [scope=-:-]",
+      readAction { format(sample, 0) },
+    )
+  }
 
-  fun testTreeFieldWithInitializerCall() = assertEquals(
+  @Test
+  fun testTreeFieldWithInitializerCall(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       FIELD[field] => FIELD(TYPE(INT_KEYWORD),IDENTIFIER,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]
         TYPE => FIELD(TYPE(INT_KEYWORD),IDENTIFIER,METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST))  [scope=-:-]
@@ -189,17 +274,19 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
             LITERAL_EXPRESSION => METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST)  [scope=-:-]
     """.trimIndent(),
     characterize(member("field")),
-  )
+  ) }
 
-  fun testTreeUninitializedField() = assertEquals(
+  @Test
+  fun testTreeUninitializedField(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       FIELD[other] => FIELD(TYPE(INT_KEYWORD),IDENTIFIER)  [scope=-:-]
         TYPE => FIELD(TYPE(INT_KEYWORD),IDENTIFIER)  [scope=-:-]
     """.trimIndent(),
     characterize(member("other")),
-  )
+  ) }
 
-  fun testTreeArrayField() = assertEquals(
+  @Test
+  fun testTreeArrayField(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       FIELD[data] => FIELD(TYPE(TYPE),IDENTIFIER,ARRAY_INITIALIZER_EXPRESSION(LITERAL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=-:-]
         TYPE => FIELD(TYPE(TYPE),IDENTIFIER,ARRAY_INITIALIZER_EXPRESSION(LITERAL_EXPRESSION,LITERAL_EXPRESSION,LITERAL_EXPRESSION))  [scope=-:-]
@@ -210,9 +297,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
           LITERAL_EXPRESSION => LITERAL_EXPRESSION  [scope=-:-]
     """.trimIndent(),
     characterize(member("data")),
-  )
+  ) }
 
-  fun testTreeStaticInitializer() = assertEquals(
+  @Test
+  fun testTreeStaticInitializer(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       CLASS_INITIALIZER => CLASS_INITIALIZER(MODIFIER_LIST(STATIC_KEYWORD),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=-:-]
         MODIFIER_LIST => CLASS_INITIALIZER(MODIFIER_LIST(STATIC_KEYWORD),CODE_BLOCK(EXPRESSION_STATEMENT))  [scope=-:-]
@@ -223,9 +311,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
               EXPRESSION_LIST => EXPRESSION_STATEMENT(METHOD_CALL_EXPRESSION)  [scope=-:-]
     """.trimIndent(),
     characterize(staticInitializer()),
-  )
+  ) }
 
-  fun testTreeConstructor() = assertEquals(
+  @Test
+  fun testTreeConstructor(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[Sample] => METHOD(IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=Sample:METHOD]
         PARAMETER_LIST => PARAMETER_LIST  [scope=Sample:METHOD]
@@ -237,9 +326,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
               REFERENCE_EXPRESSION => EXPRESSION_STATEMENT(ASSIGNMENT_EXPRESSION)  [scope=Sample:METHOD]
     """.trimIndent(),
     characterize(member("Sample")),
-  )
+  ) }
 
-  fun testTreeEmptyStaticMethod() = assertEquals(
+  @Test
+  fun testTreeEmptyStaticMethod(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[init] => METHOD(MODIFIER_LIST,TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=init:METHOD]
         MODIFIER_LIST => MODIFIER_LIST(STATIC_KEYWORD)  [scope=init:METHOD]
@@ -248,9 +338,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
         CODE_BLOCK => CODE_BLOCK  [scope=init:METHOD]
     """.trimIndent(),
     characterize(member("init")),
-  )
+  ) }
 
-  fun testTreeIfElseNestedLoops() = assertEquals(
+  @Test
+  fun testTreeIfElseNestedLoops(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[compute] => METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=compute:METHOD]
         TYPE => TYPE(INT_KEYWORD)  [scope=compute:METHOD]
@@ -305,9 +396,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
             REFERENCE_EXPRESSION => RETURN_STATEMENT(RETURN_KEYWORD,REFERENCE_EXPRESSION(IDENTIFIER))  [scope=compute:METHOD]
     """.trimIndent(),
     characterize(member("compute")),
-  )
+  ) }
 
-  fun testTreeControlFlow() = assertEquals(
+  @Test
+  fun testTreeControlFlow(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[controlFlow] => METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=controlFlow:METHOD]
         TYPE => TYPE(VOID_KEYWORD)  [scope=controlFlow:METHOD]
@@ -381,9 +473,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
                     LITERAL_EXPRESSION => METHOD_CALL_EXPRESSION(REFERENCE_EXPRESSION,EXPRESSION_LIST)  [scope=controlFlow:METHOD]
     """.trimIndent(),
     characterize(member("controlFlow")),
-  )
+  ) }
 
-  fun testTreeNesting() = assertEquals(
+  @Test
+  fun testTreeNesting(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[nesting] => METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=nesting:METHOD]
         TYPE => TYPE(VOID_KEYWORD)  [scope=nesting:METHOD]
@@ -434,9 +527,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
                           EXPRESSION_LIST => RETURN_STATEMENT(RETURN_KEYWORD,METHOD_CALL_EXPRESSION)  [scope=toString:METHOD]
     """.trimIndent(),
     characterize(member("nesting")),
-  )
+  ) }
 
-  fun testTreeExpressionBodyMethod() = assertEquals(
+  @Test
+  fun testTreeExpressionBodyMethod(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[name] => METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=name:METHOD]
         TYPE => TYPE(JAVA_CODE_REFERENCE(IDENTIFIER))  [scope=name:METHOD]
@@ -447,9 +541,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
             LITERAL_EXPRESSION => RETURN_STATEMENT(RETURN_KEYWORD,LITERAL_EXPRESSION(STRING_LITERAL))  [scope=name:METHOD]
     """.trimIndent(),
     characterize(member("name")),
-  )
+  ) }
 
-  fun testTreeParameterizedMethod() = assertEquals(
+  @Test
+  fun testTreeParameterizedMethod(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[log] => METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=log:METHOD]
         TYPE => TYPE(VOID_KEYWORD)  [scope=log:METHOD]
@@ -459,9 +554,10 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
         CODE_BLOCK => CODE_BLOCK  [scope=log:METHOD]
     """.trimIndent(),
     characterize(member("log")),
-  )
+  ) }
 
-  fun testTreeEmptyVoidMethod() = assertEquals(
+  @Test
+  fun testTreeEmptyVoidMethod(): Unit = timeoutRunBlocking(timeout = 2.minutes) { assertEquals(
     """
       METHOD[risky] => METHOD(TYPE,IDENTIFIER,PARAMETER_LIST,CODE_BLOCK)  [scope=risky:METHOD]
         TYPE => TYPE(VOID_KEYWORD)  [scope=risky:METHOD]
@@ -469,18 +565,22 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
         CODE_BLOCK => CODE_BLOCK  [scope=risky:METHOD]
     """.trimIndent(),
     characterize(member("risky")),
-  )
+  ) }
 
-  private fun sampleClass(): PsiClass {
+  private suspend fun sampleClass(): PsiClass {
     val file = myFixture.configureByText("Sample.java", RICH_SAMPLE)
-    return PsiTreeUtil.findChildOfType(file, PsiClass::class.java)!!
+    return readAction { PsiTreeUtil.findChildOfType(file, PsiClass::class.java)!! }
   }
 
-  private fun member(name: String): PsiElement =
-    sampleClass().children.first { (it as? PsiNamedElement)?.name == name }
+  private suspend fun member(name: String): PsiElement {
+    val sample = sampleClass()
+    return readAction { sample.children.first { (it as? PsiNamedElement)?.name == name } }
+  }
 
-  private fun staticInitializer(): PsiElement =
-    sampleClass().children.first { it is PsiClassInitializer }
+  private suspend fun staticInitializer(): PsiElement {
+    val sample = sampleClass()
+    return readAction { sample.children.first { it is PsiClassInitializer } }
+  }
 
   /** Formats one node the way a problem reported there would be characterized: `TYPE[name] => astShape  [scope]`. */
   private fun format(element: PsiElement, depth: Int): String {
@@ -491,30 +591,34 @@ class JavaPsiSignalExtractorTest : LightJavaCodeInsightFixtureTestCase() {
   }
 
   /** Walks [root] and all descendants (leaf tokens / whitespace / comments skipped), one [format] line per node. */
-  private fun characterize(root: PsiElement): String = buildString {
-    fun walk(element: PsiElement, depth: Int) {
-      if (element is PsiWhiteSpace || element is PsiComment || element.firstChild == null) return
-      appendLine(format(element, depth))
-      var child = element.firstChild
-      while (child != null) {
-        walk(child, depth + 1)
-        child = child.nextSibling
+  private suspend fun characterize(root: PsiElement): String = readAction {
+    buildString {
+      fun walk(element: PsiElement, depth: Int) {
+        if (element is PsiWhiteSpace || element is PsiComment || element.firstChild == null) return
+        appendLine(format(element, depth))
+        var child = element.firstChild
+        while (child != null) {
+          walk(child, depth + 1)
+          child = child.nextSibling
+        }
       }
+      walk(root, 0)
     }
-    walk(root, 0)
   }.trimEnd()
 
-  private inline fun <reified T : PsiElement> assertSig(@Language("JAVA") code: String, expected: String, text: String? = null) {
+  private suspend inline fun <reified T : PsiElement> assertSig(@Language("JAVA") code: String, expected: String, text: String? = null) {
     assertEquals(expected, sig<T>(code, text))
   }
 
-  private inline fun <reified T : PsiElement> sig(@Language("JAVA") code: String, text: String? = null): String {
+  private suspend inline fun <reified T : PsiElement> sig(@Language("JAVA") code: String, text: String? = null): String {
     val file = myFixture.configureByText("Foo.java", code)
-    val candidates = PsiTreeUtil.findChildrenOfType(file, T::class.java)
-    val element = (if (text == null) candidates.firstOrNull() else candidates.firstOrNull { it.text == text })
-      ?: return "NOT FOUND ${T::class.simpleName}" + (text?.let { " '$it'" } ?: "")
-    val s = PsiSignalExtractor.extractSignals(element)
-    return "${s.astShape ?: "-"}  [scope=${s.enclosingScopeName ?: "-"}:${s.enclosingScopeType ?: "-"}]"
+    return readAction {
+      val candidates = PsiTreeUtil.findChildrenOfType(file, T::class.java)
+      val element = (if (text == null) candidates.firstOrNull() else candidates.firstOrNull { it.text == text })
+        ?: return@readAction "NOT FOUND ${T::class.simpleName}" + (text?.let { " '$it'" } ?: "")
+      val s = PsiSignalExtractor.extractSignals(element)
+      "${s.astShape ?: "-"}  [scope=${s.enclosingScopeName ?: "-"}:${s.enclosingScopeType ?: "-"}]"
+    }
   }
 
   /**
