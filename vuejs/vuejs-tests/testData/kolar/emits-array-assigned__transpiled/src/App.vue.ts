@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineEmits, } = {} as typeof import('vue');
 const emit = defineEmits(['inFocus', 'submit'])
 
 function onSubmit() {
@@ -47,4 +48,3 @@ const __VLS_export = (await import('vue')).defineComponent({
 emits: {} as __VLS_NormalizeEmits<typeof emit>,
 });
 export default {} as typeof __VLS_export;
-import { defineEmits, } from 'vue';

@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineProps, withDefaults, } = {} as typeof import('vue');
 type __VLS_Props = { count?: number };
 const props = withDefaults(defineProps<__VLS_Props>(), { count: 1 })
 const __VLS_defaults = { count: 1 };
@@ -30,4 +31,3 @@ __defaults: __VLS_defaults,
 __typeProps: {} as __VLS_PublicProps,
 });
 export default {} as typeof __VLS_export;
-import { defineProps, withDefaults, } from 'vue';

@@ -3,6 +3,7 @@
 
 import type { PropType } from 'vue'
 
+const { defineProps, } = {} as typeof import('vue');
 const __VLS_props = defineProps({
   shape: { type: Object as PropType<{ x: number, y: number }> },
 });
@@ -36,4 +37,3 @@ props: {
 },
 });
 export default {} as typeof __VLS_export;
-import { defineProps, } from 'vue';

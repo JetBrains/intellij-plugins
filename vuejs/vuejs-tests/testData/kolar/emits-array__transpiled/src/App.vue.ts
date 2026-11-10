@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineEmits, } = {} as typeof import('vue');
 const __VLS_emit = defineEmits(['inFocus', 'submit'])
 type __VLS_EmitProps = __VLS_EmitsToProps<__VLS_NormalizeEmits<typeof __VLS_emit>>;
 const __VLS_ctx = {
@@ -40,4 +41,3 @@ const __VLS_export = (await import('vue')).defineComponent({
 emits: {} as __VLS_NormalizeEmits<typeof __VLS_emit>,
 });
 export default {} as typeof __VLS_export;
-import { defineEmits, } from 'vue';

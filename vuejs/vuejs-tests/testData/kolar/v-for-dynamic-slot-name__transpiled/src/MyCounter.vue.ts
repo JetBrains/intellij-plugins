@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineSlots, } = {} as typeof import('vue');
 type __VLS_Slots = {
   header(props: { value: number }): any
   footer(props: { value: number }): any
@@ -31,4 +32,3 @@ type __VLS_WithSlots<T, S> = T & {
 		$slots: S;
 	}
 };
-import { defineSlots, } from 'vue';

@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineModel, } = {} as typeof import('vue');
 defineModel<string>()
 type __VLS_ModelProps = {
 modelValue?: string;
@@ -32,4 +33,3 @@ __typeEmits: {} as __VLS_ModelEmit,
 __typeProps: {} as __VLS_PublicProps,
 });
 export default {} as typeof __VLS_export;
-import { defineModel, } from 'vue';

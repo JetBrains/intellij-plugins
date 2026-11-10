@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineProps, } = {} as typeof import('vue');
 const __VLS_props = defineProps(['count']);
 const { count } = __VLS_props
 const __VLS_ctx = {
@@ -26,4 +27,3 @@ const __VLS_export = (await import('vue')).defineComponent({
 props: ['count'],
 });
 export default {} as typeof __VLS_export;
-import { defineProps, } from 'vue';

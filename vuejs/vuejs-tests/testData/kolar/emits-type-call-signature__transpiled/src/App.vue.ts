@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineEmits, } = {} as typeof import('vue');
 type __VLS_Emit = {
   (e: 'change', id: number): void
   (e: 'update', value: string): void
@@ -44,4 +45,3 @@ const __VLS_export = (await import('vue')).defineComponent({
 __typeEmits: {} as __VLS_Emit,
 });
 export default {} as typeof __VLS_export;
-import { defineEmits, } from 'vue';

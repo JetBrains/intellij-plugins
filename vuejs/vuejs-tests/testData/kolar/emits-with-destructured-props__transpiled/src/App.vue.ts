@@ -1,6 +1,7 @@
 /// <reference types="@vue/language-core/types/template-helpers.d.ts" />
 /// <reference types="@vue/language-core/types/props-fallback.d.ts" />
 
+const { defineProps, defineEmits, } = {} as typeof import('vue');
 type __VLS_Props = { count: number };
 const __VLS_props = defineProps<__VLS_Props>();
 const { count } = __VLS_props
@@ -48,4 +49,3 @@ __typeEmits: {} as __VLS_Emit,
 __typeProps: {} as __VLS_PublicProps,
 });
 export default {} as typeof __VLS_export;
-import { defineProps, defineEmits, } from 'vue';
