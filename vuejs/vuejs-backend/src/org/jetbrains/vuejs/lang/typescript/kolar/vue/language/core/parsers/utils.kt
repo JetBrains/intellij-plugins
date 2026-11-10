@@ -33,9 +33,6 @@ object BindingFlag {
   const val Variable: Int = 1
   const val Const: Int = 1 shl 1
   const val Component: Int = 1 shl 2
-
-  // `let`/`var` without an initializer; reading these may raise TS2454.
-  const val Uninitialized: Int = 1 shl 3
 }
 
 fun parseBindings(
@@ -48,12 +45,7 @@ fun parseBindings(
     if (isVariableStatement(node)) {
       val isConst = node.varKeyword == JSVarStatement.VarKeyword.CONST
       for (decl in node.variables) {
-        val flags = if (isConst)
-          BindingFlag.None
-        else if (decl.initializer != null)
-          BindingFlag.Variable
-        else
-          BindingFlag.Variable or BindingFlag.Uninitialized
+        val flags = if (isConst) BindingFlag.None else BindingFlag.Variable
         for (name in collectBindingNames(decl.nameIdentifier!!)) {
           bindings[name] = flags
         }

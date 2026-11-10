@@ -12,8 +12,7 @@ import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypeAlias
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.generateTypedVar
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.getRefBrandArgument
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.isTsLang
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.parsers.BindingFlag
+import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.codegen.utils.newLine
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.yield
 
 fun generateTemplate(
@@ -26,26 +25,51 @@ fun generateTemplate(
 
   yield("void ${names.ctx}, ${names.components}, ${names.intrinsics}, ${names.directives}${endOfLine}")
 
+  // The template renders after setup, so it runs in its own function: the bindings
+  // it reads take their render-time types, not the narrowing at the end of setup.
+  // The types setup and the export need from it are passed out through its return type.
+  val exportedTypes = listOf(names.Slots, names.InheritedAttrs, names.TemplateRefs, names.RootEl, names.StyleModules)
+    .filter { name ->
+      options.templateAndStyleTypes.contains(name) && !(name == names.Slots && options.scriptSetupRanges?.defineSlots != null)
+    }
+  yield("const ${names.template} = () => {${newLine}")
+
   for (name in options.dotValueBindings) {
-    val flags = options.scriptSetupRanges?.bindings?.get(name) ?: options.scriptRanges?.bindings?.get(name) ?: 0
-    // an assignment is not a read, so it cannot raise TS2454; the assertion
-    // still narrows `name` through the assignment target. The `unknown` step
-    // avoids TS2352 when `typeof name` is `undefined` (an untyped `let`).
-    val target = if (flags and BindingFlag.Uninitialized != 0)
-      "$name = ${
-        if (isTsLang(options.scriptLang))
-          "{} as unknown as typeof $name"
-        else
-          "/** @type {typeof $name} */ (/** @type {unknown} */ ({}))"
-      }"
-    else
-      name
-    yield("${names.withDotValue}($target, ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})${endOfLine}")
+    yield("${names.withDotValue}($name, ${getRefBrandArgument(options.vueCompilerOptions, options.scriptLang)})${endOfLine}")
   }
 
   if (options.templateAndStyleCodes.isNotEmpty()) {
     yieldAll(options.templateAndStyleCodes)
   }
+
+  yield("return {${newLine}")
+  for (name in exportedTypes) {
+    yield("$name: ${asType(name, options.scriptLang)},${newLine}")
+  }
+  if (options.templateAndStyleTypes.contains(names.dollars)) {
+    yield("${names.dollars},${newLine}")
+  }
+  yield("}${endOfLine}")
+  yield("}${endOfLine}")
+
+  // Consumed only by the parts of setup and the export that apply.
+  val used = mutableListOf(names.template)
+  val returnType = "ReturnType<typeof ${names.template}>"
+  for (name in exportedTypes) {
+    yieldAll(generateTypeAlias(name, options.scriptLang) {
+      yield("$returnType['$name']")
+    })
+  }
+  if (exportedTypes.isNotEmpty()) {
+    used.add(asType("[${exportedTypes.joinToString(", ")}]", options.scriptLang))
+  }
+  if (options.templateAndStyleTypes.contains(names.dollars)) {
+    yieldAll(generateTypedVar("let", names.dollars, options.scriptLang) {
+      yield("$returnType['${names.dollars}']")
+    })
+    used.add(names.dollars)
+  }
+  yield("void [${used.joinToString(", ")}]${endOfLine}")
 }
 
 private fun generateTemplateCtx(

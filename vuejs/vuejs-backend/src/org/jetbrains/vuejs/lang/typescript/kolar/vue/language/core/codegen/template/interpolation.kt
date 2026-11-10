@@ -131,11 +131,9 @@ fun generateInterpolation(
       yieldAll(write(generateNonIdentifierCode(code.substring(from, offset), block.name, start + from, data, from > 0)))
       from = offset
       if (enter) {
-        ctx.enterFunction()
         frames.add(FunctionBodyFrame(body = body, codes = mutableListOf(), reasserts = linkedSetOf()))
       }
       else {
-        ctx.exitFunction()
         yieldAll(write(generateFunctionBody(frames.removeLast())))
       }
     }

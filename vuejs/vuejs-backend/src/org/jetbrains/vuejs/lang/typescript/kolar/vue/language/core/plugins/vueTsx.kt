@@ -250,17 +250,6 @@ private class Codegen(
   val getGeneratedTemplate: () -> TemplateGenerateResult? = computed { generateTemplatePass(getDotValueBindings()) }
   private val getGeneratedStyle: () -> StyleGenerateResult? = computed { generateStylePass(getDotValueBindings()) }
 
-  // Imports and `let`/`var` read only inside template functions are re-asserted there instead.
-  private val getTopLevelDotValueBindings: () -> Set<String> = computedSet {
-    val topLevelAccesses = buildSet {
-      getGeneratedTemplate()?.ctx?.topLevelAccesses?.let { addAll(it) }
-      getGeneratedStyle()?.ctx?.topLevelAccesses?.let { addAll(it) }
-    }
-    getDotValueBindings().filterTo(mutableSetOf()) { name ->
-      (getBindingFlags()[name] ?: 0) and BindingFlag.Variable == 0 || name in topLevelAccesses
-    }
-  }
-
   private val getReferencedBindings: () -> Set<String> = computedSet {
     val bindings = getSetupBindings()
     if (bindings.isEmpty()) {
@@ -287,7 +276,7 @@ private class Codegen(
         setupBindings = getScriptSetupBindings(),
         localComponents = getLocalComponents(),
         localDirectives = getLocalDirectives(),
-        dotValueBindings = getTopLevelDotValueBindings(),
+        dotValueBindings = getDotValueBindings(),
         scriptRanges = getScriptRanges(),
         scriptSetupRanges = getScriptSetupRanges(),
         templateAndStyleTypes = buildSet {

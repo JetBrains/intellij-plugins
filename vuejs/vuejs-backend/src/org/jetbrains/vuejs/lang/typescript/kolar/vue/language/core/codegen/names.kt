@@ -23,6 +23,7 @@ object names {
   const val setup: String = "__VLS_setup"
   const val slots: String = "__VLS_slots"
   const val src: String = "__VLS_src"
+  const val template: String = "__VLS_template"
 
   // uppercase type names
   const val Emit: String = "__VLS_Emit"

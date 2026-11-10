@@ -95,18 +95,6 @@ class TemplateCodegenContext {
   // to find the names accessed within their body.
   val accessLog: MutableList<String> = mutableListOf()
 
-  // Names accessed outside the generated functions that re-assert their bindings.
-  val topLevelAccesses: MutableSet<String> = mutableSetOf()
-  private var functionDepth: Int = 0
-
-  fun enterFunction() {
-    functionDepth++
-  }
-
-  fun exitFunction() {
-    functionDepth--
-  }
-
   // Active branch conditions with the names each accessed; the guards are
   // replayed inside inline-handler closures.
   val conditions: MutableList<Condition> = mutableListOf()
@@ -136,9 +124,6 @@ class TemplateCodegenContext {
     sourceName: String = name,
   ) {
     accessLog.add(name)
-    if (functionDepth == 0) {
-      topLevelAccesses.add(name)
-    }
     val map = contextAccesses.getOrPut(name) { mutableMapOf() }
     val arr = map.getOrPut(source) { mutableMapOf() }
     if (offset != null) {

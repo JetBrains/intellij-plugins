@@ -68,6 +68,7 @@ private fun generateWorker(
   yieldAll(generateRootElType(options, ctx))
 
   if (ctx.dollarVars.isNotEmpty()) {
+    ctx.generatedTypes.add(names.dollars)
     yieldAll(generateTypedVar("var", names.dollars, options.scriptLang) {
       yield("{$newLine")
       if ("\$slots" in ctx.dollarVars) {
