@@ -29,13 +29,13 @@ fun generateElementDirectives(
   for (rawProp in node.props) {
     val prop = rawProp as? DirectiveNode ?: continue
     if (prop.name == "slot" || prop.name == "on" || prop.name == "model" || prop.name == "bind") continue
-    val boundary = yield(Boundary.start(
-      Source("template"),
-      prop.loc.startOffset,
-      prop.loc.endOffset,
-      codeFeatures.verification,
-    ))
     if (options.isVapor && !isBuiltInDirective(prop.name)) {
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        prop.loc.startOffset,
+        prop.loc.endOffset,
+        codeFeatures.verification,
+      ))
       // vapor custom directives receive a value getter instead of a vdom binding object
       yieldAll(generateIdentifier(options, ctx, prop))
       yield("(${names.nonNull}(null), ")
@@ -43,23 +43,33 @@ fun generateElementDirectives(
       yieldAll(generateArg(options, ctx, prop, asBindingProperty = false))
       yieldAll(generateModifiers(options, ctx, prop, "modifiers", asBindingProperty = false))
       yield(")")
+      yield(boundary.end())
+      yield(endOfLine)
     }
     else {
-      yield("${names.asFunctionalDirective}(")
+      val hookVar = ctx.getInternalVariable()
+      yield("const $hookVar = ${names.asFunctionalDirective}(")
       yieldAll(generateIdentifier(options, ctx, prop))
       yield(", ${
         asType("import('${options.vueCompilerOptions.lib}').ObjectDirective", options.scriptLang)
-      })(${names.nonNull}(null), { ...${names.directiveBindingRestFields}, ")
+      })${endOfLine}")
+      val boundary = yield(Boundary.start(
+        Source("template"),
+        prop.loc.startOffset,
+        prop.loc.endOffset,
+        codeFeatures.verification,
+      ))
+      yield("$hookVar(${names.nonNull}(null), { ...${names.directiveBindingRestFields}, ")
       yieldAll(generateArg(options, ctx, prop))
       yieldAll(generateModifiers(options, ctx, prop))
       yieldAll(generateValue(options, ctx, prop))
       // Vue invokes hooks with all four arguments regardless of the declared
-      // arity; the padded hook keeps the declared params checked, so the
-      // synthetic vnode args are `never` to stay assignable to whatever they declare.
-      yield("},${newLine}${names.nonNull}(null), ${names.nonNull}(null))")
+      // arity; the trailing args are sized to the hook's own params, so generic
+      // and overloaded hooks are checked without rebuilding their signatures.
+      yield("},${newLine}...${names.directiveHookArgsRest}($hookVar))")
+      yield(boundary.end())
+      yield(endOfLine)
     }
-    yield(boundary.end())
-    yield(endOfLine)
   }
 }
 

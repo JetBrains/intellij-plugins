@@ -49,6 +49,7 @@ object names {
   const val asFunctionalElement1: String = "__VLS_asFunctionalElement1"
   const val asFunctionalSlot: String = "__VLS_asFunctionalSlot"
   const val directiveBindingRestFields: String = "__VLS_directiveBindingRestFields"
+  const val directiveHookArgsRest: String = "__VLS_directiveHookArgsRest"
   const val functionalComponentArgsRest: String = "__VLS_functionalComponentArgsRest"
   const val nonNull: String = "__VLS_nonNull"
   const val omit: String = "__VLS_omit"
