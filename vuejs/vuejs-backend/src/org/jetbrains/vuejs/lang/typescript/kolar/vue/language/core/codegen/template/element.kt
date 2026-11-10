@@ -133,6 +133,7 @@ fun generateComponent(
       yieldAll(generateTypedVar("let", componentVar, options.scriptLang) {
         yield("${names.WithComponent}<'$tag', ${names.LocalComponents}, ${names.GlobalComponents}")
         yield(if (originalNames.contains(options.componentName)) ", typeof ${names.export}" else ", void")
+        yield(", ${options.vueCompilerOptions.checkUnknownComponents}")
         for (name in originalNames) {
           yield(", '$name'")
         }
@@ -142,8 +143,7 @@ fun generateComponent(
           startTagOffset,
           VueCodeInformation(
             semantic = SemanticInfo.WithOptions(shouldHighlight = { false }),
-            verification = if (options.vueCompilerOptions.checkUnknownComponents) VerificationInfo.Enabled
-            else VerificationInfo.WithIgnoredCodes("2339", "2551"),
+            verification = VerificationInfo.Enabled,
           ),
         ))
         yield("]")

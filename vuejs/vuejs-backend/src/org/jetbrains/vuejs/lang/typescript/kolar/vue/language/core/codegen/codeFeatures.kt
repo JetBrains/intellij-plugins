@@ -108,10 +108,6 @@ object codeFeatures {
     format = true,
   )
 
-  val doNotReportTs2339AndTs2551: VueCodeInformation = VueCodeInformation(
-    verification = VerificationInfo.WithIgnoredCodes("2339", "2551"),
-  )
-
   val doNotReportTs2353AndTs2561: VueCodeInformation = VueCodeInformation(
     verification = VerificationInfo.WithIgnoredCodes("2353", "2561"),
   )
