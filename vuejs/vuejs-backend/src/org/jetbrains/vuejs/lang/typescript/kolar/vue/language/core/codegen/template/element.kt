@@ -306,11 +306,11 @@ fun generateComponent(
   yieldAll(generateStyleScopedClassReferences(options, node))
 
   val slotDir = node.props.filterIsInstance<DirectiveNode>().find { it.name == "slot" }
-  if (slotDir != null || node.children.isNotEmpty()) {
-    yieldAll(generateVSlot(options, ctx, node, slotDir, getCtxVar()))
-  }
+  val hasSlots = slotDir != null || node.children.isNotEmpty()
 
-  if (isCtxVarUsed) {
+  // declared ahead of the slot code that reads them: JS has no `var x!: T`,
+  // so a later declaration would be read before assignment (TS2454)
+  if (isCtxVarUsed || hasSlots) {
     yieldAll(generateTypedVar("var", ctxVar, options.scriptLang) {
       yield("${names.ExtractComponentContext}<typeof $componentVar, typeof $vnodeVar>")
     })
@@ -319,6 +319,10 @@ fun generateComponent(
     yieldAll(generateTypedVar("var", propsVar, options.scriptLang) {
       yield("${names.ExtractComponentProps}<typeof $componentVar, typeof $vnodeVar>")
     })
+  }
+
+  if (hasSlots) {
+    yieldAll(generateVSlot(options, ctx, node, slotDir, ctxVar))
   }
   ctx.components.removeLast()
 }
