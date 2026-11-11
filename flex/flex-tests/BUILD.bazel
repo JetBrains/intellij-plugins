@@ -101,6 +101,7 @@ jvm_library(
         "@community//platform/testIntegration-ui",
         "@community//libraries/junit4",
         "@community//libraries/junit6",
+        "@community//libraries/junit6-params",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5/codeInsight",
         "//platform/duplicates",

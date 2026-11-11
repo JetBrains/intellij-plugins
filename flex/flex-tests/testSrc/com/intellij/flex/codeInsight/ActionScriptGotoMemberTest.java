@@ -4,34 +4,30 @@ package com.intellij.flex.codeInsight;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import com.intellij.ide.util.gotoByName.LanguageRef;
-import com.intellij.lang.javascript.JSGotoByNameTestBase;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.JSGotoByNameFixture;
+import com.intellij.lang.javascript.JSGotoByNameFixture.IndexingModesTest;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.NeedsIndex;
-import com.intellij.testFramework.TestFrameworkUtil;
-import com.intellij.testFramework.TestIndexingModeSupporter;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.TestIndexingModeSupporter.IndexingMode;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("NewClassNamingConvention")
-public class ActionScriptGotoMemberTest extends JSGotoByNameTestBase {
+import static com.intellij.lang.javascript.JSGotoByNameFixture.jsGotoByNameFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
 
-  public static @NotNull Test suite() {
-    TestSuite suite = new TestSuite();
-    suite.addTestSuite(ActionScriptGotoMemberTest.class);
-    TestIndexingModeSupporter.addTest(ActionScriptGotoMemberTest.class, new TestIndexingModeSupporter.FullIndexSuite(), suite);
-    return TestFrameworkUtil.flattenSuite(suite);
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("/goto");
-  }
+@TestApplication
+public class ActionScriptGotoMemberTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSGotoByNameFixture> gotoFixture =
+    jsGotoByNameFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath("/goto")));
 
   @NeedsIndex.SmartMode(reason = "MXML is in a maintenance mode")
-  public void testMxmlMembers() {
-    myFixture.configureByFile(getTestName(false) + ".mxml");
+  @IndexingModesTest
+  public void testMxmlMembers(IndexingMode mode) {
+    gotoFixture.get().inMode(mode).configureByFile(gotoFixture.get().getTestName(false) + ".mxml");
     checkGotoSymbol("myField1", true);
     checkGotoSymbol("myField2", true);
     checkGotoSymbol("field3", false);
@@ -54,8 +50,9 @@ public class ActionScriptGotoMemberTest extends JSGotoByNameTestBase {
   }
 
   private @Nullable NavigationItem checkGotoSymbol(String name, boolean shouldExist) {
-    GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject(), myFixture.getTestRootDisposable());
+    JSGotoByNameFixture goTo = gotoFixture.get();
+    GotoSymbolModel2 model = new GotoSymbolModel2(goTo.getProject(), goTo.getTestRootDisposable());
     model.setFilterItems(LanguageRef.forAllLanguages());
-    return doCheckGoto(model, name, shouldExist);
+    return goTo.doCheckGoto(model, name, shouldExist);
   }
 }
