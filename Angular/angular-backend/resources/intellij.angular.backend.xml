@@ -176,6 +176,7 @@
     <inlineActionHandler implementation="org.angular2.refactoring.inline.Angular2InlineHandler" id="Angular2Inline"
                          order="before genericJSInline"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
+    <runAnything.executionProvider implementation="org.angular2.cli.AngularCliRunAnythingProvider"/>
     <projectTemplatesFactory implementation="org.angular2.AngularProjectTemplatesFactory"/>
     <!-- works in new IDEA wizard -->
     <moduleBuilder builderClass="org.angular2.AngularCLIModuleBuilder"/>
