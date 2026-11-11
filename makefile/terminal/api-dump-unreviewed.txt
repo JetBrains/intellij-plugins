@@ -1,0 +1,4 @@
+f:com.intellij.makefile.terminal.TerminalRunConfigurationCustomizer
+- com.jetbrains.lang.makefile.MakefileRunConfigurationCustomizer
+- <init>():V
+- customizeCommandAndEnvironment(com.intellij.openapi.project.Project,java.lang.String[],java.util.Map):java.lang.String[]

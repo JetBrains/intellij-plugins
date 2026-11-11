@@ -1,0 +1,282 @@
+e:com.intellij.plugins.serialmonitor.Parity
+- java.lang.Enum
+- sf:EVEN:com.intellij.plugins.serialmonitor.Parity
+- sf:NONE:com.intellij.plugins.serialmonitor.Parity
+- sf:ODD:com.intellij.plugins.serialmonitor.Parity
+- s:getEntries():kotlin.enums.EnumEntries
+- f:shortName():java.lang.String
+- s:valueOf(java.lang.String):com.intellij.plugins.serialmonitor.Parity
+- s:values():com.intellij.plugins.serialmonitor.Parity[]
+c:com.intellij.plugins.serialmonitor.SerialMonitorException
+- java.lang.Exception
+- <init>(java.lang.String):V
+- <init>(java.lang.String,java.lang.Throwable):V
+c:com.intellij.plugins.serialmonitor.SerialMonitorToolWindowFactory
+- com.intellij.openapi.project.DumbAware
+- com.intellij.openapi.wm.ToolWindowFactory
+- <init>():V
+- createToolWindowContent(com.intellij.openapi.project.Project,com.intellij.openapi.wm.ToolWindow):V
+- init(com.intellij.openapi.wm.ToolWindow):V
+f:com.intellij.plugins.serialmonitor.SerialPortProfile
+- <init>():V
+- <init>(java.lang.String,I,I,com.intellij.plugins.serialmonitor.StopBits,com.intellij.plugins.serialmonitor.Parity,com.intellij.plugins.serialmonitor.SerialProfileService$NewLine,java.lang.String,Z,Z):V
+- b:<init>(java.lang.String,I,I,com.intellij.plugins.serialmonitor.StopBits,com.intellij.plugins.serialmonitor.Parity,com.intellij.plugins.serialmonitor.SerialProfileService$NewLine,java.lang.String,Z,Z,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:component1():java.lang.String
+- f:component2():I
+- f:component3():I
+- f:component4():com.intellij.plugins.serialmonitor.StopBits
+- f:component5():com.intellij.plugins.serialmonitor.Parity
+- f:component6():com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- f:component7():java.lang.String
+- f:component8():Z
+- f:component9():Z
+- f:copy(java.lang.String,I,I,com.intellij.plugins.serialmonitor.StopBits,com.intellij.plugins.serialmonitor.Parity,com.intellij.plugins.serialmonitor.SerialProfileService$NewLine,java.lang.String,Z,Z):com.intellij.plugins.serialmonitor.SerialPortProfile
+- bs:copy$default(com.intellij.plugins.serialmonitor.SerialPortProfile,java.lang.String,I,I,com.intellij.plugins.serialmonitor.StopBits,com.intellij.plugins.serialmonitor.Parity,com.intellij.plugins.serialmonitor.SerialProfileService$NewLine,java.lang.String,Z,Z,I,java.lang.Object):com.intellij.plugins.serialmonitor.SerialPortProfile
+- f:defaultName():java.lang.String
+- equals(java.lang.Object):Z
+- f:getBaudRate():I
+- f:getBits():I
+- f:getEncoding():java.lang.String
+- f:getLocalEcho():Z
+- f:getNewLine():com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- f:getParity():com.intellij.plugins.serialmonitor.Parity
+- f:getPortName():java.lang.String
+- f:getShowHardwareControls():Z
+- f:getStopBits():com.intellij.plugins.serialmonitor.StopBits
+- hashCode():I
+- f:setBaudRate(I):V
+- f:setBits(I):V
+- f:setEncoding(java.lang.String):V
+- f:setLocalEcho(Z):V
+- f:setNewLine(com.intellij.plugins.serialmonitor.SerialProfileService$NewLine):V
+- f:setParity(com.intellij.plugins.serialmonitor.Parity):V
+- f:setPortName(java.lang.String):V
+- f:setShowHardwareControls(Z):V
+- f:setStopBits(com.intellij.plugins.serialmonitor.StopBits):V
+f:com.intellij.plugins.serialmonitor.SerialPortProfileKt
+- sf:getSerialBits():java.util.List
+- sf:getStandardBauds():java.util.List
+f:com.intellij.plugins.serialmonitor.SerialProfileService
+- com.intellij.openapi.components.PersistentStateComponent
+- <init>(kotlinx.coroutines.CoroutineScope):V
+- f:copyDefaultProfile(java.lang.String):com.intellij.plugins.serialmonitor.SerialPortProfile
+- bs:copyDefaultProfile$default(com.intellij.plugins.serialmonitor.SerialProfileService,java.lang.String,I,java.lang.Object):com.intellij.plugins.serialmonitor.SerialPortProfile
+- f:defaultBaudRate():I
+- f:getCs():kotlinx.coroutines.CoroutineScope
+- f:getProfiles():java.util.Map
+- f:getProfilesFlow():kotlinx.coroutines.flow.Flow
+- getState():com.intellij.plugins.serialmonitor.SerialProfilesState
+- loadState(com.intellij.plugins.serialmonitor.SerialProfilesState):V
+- f:setDefaultProfile(com.intellij.plugins.serialmonitor.SerialPortProfile):V
+- f:setProfiles(java.util.Map):V
+e:com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- java.lang.Enum
+- sf:CR:com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- sf:CRLF:com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- sf:LF:com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- s:getEntries():kotlin.enums.EnumEntries
+- f:getValue():java.lang.String
+- s:valueOf(java.lang.String):com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- s:values():com.intellij.plugins.serialmonitor.SerialProfileService$NewLine[]
+f:com.intellij.plugins.serialmonitor.SerialProfileService$PresentableName
+- com.intellij.openapi.components.State$NameGetter
+- <init>():V
+- get():java.lang.String
+f:com.intellij.plugins.serialmonitor.SerialProfilesState
+- <init>():V
+- <init>(com.intellij.plugins.serialmonitor.SerialPortProfile,java.util.Map):V
+- b:<init>(com.intellij.plugins.serialmonitor.SerialPortProfile,java.util.Map,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:component1():com.intellij.plugins.serialmonitor.SerialPortProfile
+- f:component2():java.util.Map
+- f:copy(com.intellij.plugins.serialmonitor.SerialPortProfile,java.util.Map):com.intellij.plugins.serialmonitor.SerialProfilesState
+- bs:copy$default(com.intellij.plugins.serialmonitor.SerialProfilesState,com.intellij.plugins.serialmonitor.SerialPortProfile,java.util.Map,I,java.lang.Object):com.intellij.plugins.serialmonitor.SerialProfilesState
+- equals(java.lang.Object):Z
+- f:getDefaultProfile():com.intellij.plugins.serialmonitor.SerialPortProfile
+- f:getProfiles():java.util.Map
+- hashCode():I
+- f:setDefaultProfile(com.intellij.plugins.serialmonitor.SerialPortProfile):V
+- f:setProfiles(java.util.Map):V
+e:com.intellij.plugins.serialmonitor.StopBits
+- java.lang.Enum
+- sf:BITS_1:com.intellij.plugins.serialmonitor.StopBits
+- sf:BITS_1_5:com.intellij.plugins.serialmonitor.StopBits
+- sf:BITS_2:com.intellij.plugins.serialmonitor.StopBits
+- s:getEntries():kotlin.enums.EnumEntries
+- s:valueOf(java.lang.String):com.intellij.plugins.serialmonitor.StopBits
+- s:values():com.intellij.plugins.serialmonitor.StopBits[]
+f:com.intellij.plugins.serialmonitor.service.JSerialCommPort
+- com.intellij.plugins.serialmonitor.service.SerialPort
+- sf:Companion:com.intellij.plugins.serialmonitor.service.JSerialCommPort$Companion
+- f:addListener(com.intellij.plugins.serialmonitor.service.SerialPort$SerialPortListener):Z
+- connect(com.intellij.plugins.serialmonitor.SerialPortProfile,com.intellij.plugins.serialmonitor.service.SerialPort$SerialPortListener,Z,Z):V
+- disconnect():V
+- getCTS():Z
+- getDSR():Z
+- getDescriptiveName():java.lang.String
+- getSystemName():java.lang.String
+- setDTR(Z):V
+- setRTS(Z):V
+- write(B[]):I
+f:com.intellij.plugins.serialmonitor.service.JSerialCommPort$Companion
+- f:create(java.lang.String):com.intellij.plugins.serialmonitor.service.JSerialCommPort
+f:com.intellij.plugins.serialmonitor.service.JSerialCommPortProvider
+- com.intellij.plugins.serialmonitor.service.SerialPortProvider
+- <init>():V
+- createPort(java.lang.String):com.intellij.plugins.serialmonitor.service.SerialPort
+- scanAvailablePorts(kotlin.coroutines.Continuation):java.lang.Object
+e:com.intellij.plugins.serialmonitor.service.PortStatus
+- java.lang.Enum
+- sf:BUSY:com.intellij.plugins.serialmonitor.service.PortStatus
+- sf:CONNECTED:com.intellij.plugins.serialmonitor.service.PortStatus
+- sf:CONNECTING:com.intellij.plugins.serialmonitor.service.PortStatus
+- sf:DISCONNECTED:com.intellij.plugins.serialmonitor.service.PortStatus
+- sf:READY:com.intellij.plugins.serialmonitor.service.PortStatus
+- sf:UNAVAILABLE:com.intellij.plugins.serialmonitor.service.PortStatus
+- sf:UNAVAILABLE_DISCONNECTED:com.intellij.plugins.serialmonitor.service.PortStatus
+- s:getEntries():kotlin.enums.EnumEntries
+- f:getIcon():javax.swing.Icon
+- s:valueOf(java.lang.String):com.intellij.plugins.serialmonitor.service.PortStatus
+- s:values():com.intellij.plugins.serialmonitor.service.PortStatus[]
+com.intellij.plugins.serialmonitor.service.SerialPort
+- a:connect(com.intellij.plugins.serialmonitor.SerialPortProfile,com.intellij.plugins.serialmonitor.service.SerialPort$SerialPortListener,Z,Z):V
+- a:disconnect():V
+- a:getCTS():Z
+- a:getDSR():Z
+- a:getDescriptiveName():java.lang.String
+- a:getSystemName():java.lang.String
+- a:setDTR(Z):V
+- a:setRTS(Z):V
+- a:write(B[]):I
+com.intellij.plugins.serialmonitor.service.SerialPort$SerialPortListener
+- onCTSChanged(Z):V
+- onDSRChanged(Z):V
+- onDataReceived(B[]):V
+f:com.intellij.plugins.serialmonitor.service.SerialPortException
+- java.lang.Exception
+- <init>(java.lang.String):V
+com.intellij.plugins.serialmonitor.service.SerialPortProvider
+- a:createPort(java.lang.String):com.intellij.plugins.serialmonitor.service.SerialPort
+- a:scanAvailablePorts(kotlin.coroutines.Continuation):java.lang.Object
+f:com.intellij.plugins.serialmonitor.service.SerialPortService
+- com.intellij.openapi.Disposable$Default
+- <init>(kotlinx.coroutines.CoroutineScope):V
+- f:getCs():kotlinx.coroutines.CoroutineScope
+- f:getPortNamesFlow():kotlinx.coroutines.flow.StateFlow
+- f:getPortsNames():java.util.Set
+- f:newConnection(java.lang.String):com.intellij.plugins.serialmonitor.service.SerialPortService$SerialConnection
+- f:portDescriptiveName(java.lang.String):java.lang.String
+- f:portStatus(java.lang.String):com.intellij.plugins.serialmonitor.service.PortStatus
+f:com.intellij.plugins.serialmonitor.service.SerialPortService$SerialConnection
+- com.intellij.openapi.Disposable
+- <init>(com.intellij.plugins.serialmonitor.service.SerialPortService,java.lang.String,java.util.concurrent.CompletableFuture):V
+- b:<init>(com.intellij.plugins.serialmonitor.service.SerialPortService,java.lang.String,java.util.concurrent.CompletableFuture,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:close(Z):V
+- f:closeSilently(Z):V
+- f:connect(com.intellij.plugins.serialmonitor.SerialPortProfile):V
+- dispose():V
+- f:getCts():Z
+- f:getCtsListener():kotlin.jvm.functions.Function1
+- f:getDataListener():java.util.function.Consumer
+- f:getDsr():Z
+- f:getDsrListener():kotlin.jvm.functions.Function1
+- f:getDtr():Z
+- f:getPortName():java.lang.String
+- f:getRts():Z
+- f:getStatus():com.intellij.plugins.serialmonitor.service.PortStatus
+- f:setCtsListener(kotlin.jvm.functions.Function1):V
+- f:setDataListener(java.util.function.Consumer):V
+- f:setDsrListener(kotlin.jvm.functions.Function1):V
+- f:setDtr(Z):V
+- f:setRts(Z):V
+- f:write(B[]):V
+com.intellij.plugins.serialmonitor.service.SerialPortsListener
+- sf:Companion:com.intellij.plugins.serialmonitor.service.SerialPortsListener$Companion
+- s:getSERIAL_PORTS_TOPIC():com.intellij.util.messages.Topic
+- a:portsStatusChanged():V
+f:com.intellij.plugins.serialmonitor.service.SerialPortsListener$Companion
+- f:getSERIAL_PORTS_TOPIC():com.intellij.util.messages.Topic
+f:com.intellij.plugins.serialmonitor.ui.SerialMonitor
+- com.intellij.openapi.Disposable
+- com.intellij.plugins.serialmonitor.service.SerialPortsListener
+- sf:Companion:com.intellij.plugins.serialmonitor.ui.SerialMonitor$Companion
+- <init>(com.intellij.openapi.project.Project,java.lang.String,com.intellij.plugins.serialmonitor.SerialPortProfile):V
+- f:connect():V
+- f:disconnect():V
+- dispose():V
+- f:getComponent():javax.swing.JComponent
+- f:getPortProfile():com.intellij.plugins.serialmonitor.SerialPortProfile
+- f:getStatus():com.intellij.plugins.serialmonitor.service.PortStatus
+- f:notifyProfileChanged():V
+- portsStatusChanged():V
+f:com.intellij.plugins.serialmonitor.ui.SerialMonitor$Companion
+- f:errorNotification(java.lang.String,com.intellij.openapi.project.Project):V
+- f:errorNotification(java.lang.String,java.awt.Component):V
+f:com.intellij.plugins.serialmonitor.ui.SerialMonitor$HardwareStatusComponents
+- cts:javax.swing.JComponent
+- dsr:javax.swing.JComponent
+- <init>():V
+- f:getCts():javax.swing.JComponent
+- f:getDsr():javax.swing.JComponent
+- f:onCTSChanged(Z):V
+- f:onDSRChanged(Z):V
+- f:setCts(javax.swing.JComponent):V
+- f:setDsr(javax.swing.JComponent):V
+f:com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
+- sf:BUNDLE:java.lang.String
+- s:message(java.lang.String,java.lang.Object[]):java.lang.String
+- s:messagePointer(java.lang.String,java.lang.Object[]):java.util.function.Supplier
+f:com.intellij.plugins.serialmonitor.ui.SerialSettingsUIKt
+- sf:serialSettings(com.intellij.ui.dsl.builder.Panel,com.intellij.openapi.Disposable,com.intellij.plugins.serialmonitor.SerialPortProfile,Z,kotlin.jvm.functions.Function1):V
+- bs:serialSettings$default(com.intellij.ui.dsl.builder.Panel,com.intellij.openapi.Disposable,com.intellij.plugins.serialmonitor.SerialPortProfile,Z,kotlin.jvm.functions.Function1,I,java.lang.Object):V
+c:com.intellij.plugins.serialmonitor.ui.actions.ConnectDisconnectAction
+- com.intellij.openapi.actionSystem.ToggleAction
+- com.intellij.openapi.project.DumbAware
+- <init>(com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- isSelected(com.intellij.openapi.actionSystem.AnActionEvent):Z
+- setSelected(com.intellij.openapi.actionSystem.AnActionEvent,Z):V
+- update(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.intellij.plugins.serialmonitor.ui.actions.SaveHistoryToFileAction
+- com.intellij.openapi.project.DumbAwareAction
+- <init>(com.jediterm.terminal.model.TerminalTextBuffer,java.util.function.Supplier,java.util.function.IntConsumer):V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+- f:getTerminalTextBuffer():com.jediterm.terminal.model.TerminalTextBuffer
+f:com.intellij.plugins.serialmonitor.ui.console.CustomJeditermEmulator
+- com.jediterm.terminal.emulator.JediEmulator
+- sf:Companion:com.intellij.plugins.serialmonitor.ui.console.CustomJeditermEmulator$Companion
+- sf:TIMESTAMP_FORMAT:java.lang.String
+- <init>(com.jediterm.terminal.TerminalDataStream,com.jediterm.terminal.Terminal):V
+- f:getNewLine():com.intellij.plugins.serialmonitor.SerialProfileService$NewLine
+- f:isTimestamped():Z
+- processChar(C,com.jediterm.terminal.Terminal):V
+- f:setNewLine(com.intellij.plugins.serialmonitor.SerialProfileService$NewLine):V
+- f:setTimestamped(Z):V
+f:com.intellij.plugins.serialmonitor.ui.console.CustomJeditermEmulator$Companion
+c:com.intellij.plugins.serialmonitor.ui.console.HexConsoleView
+- com.intellij.execution.impl.ConsoleViewImpl
+- sf:LINE_LENGTH:I
+- sf:SEQUENCE_LENGTH:I
+- <init>(com.intellij.openapi.project.Project,Z):V
+- clear():V
+- output(B[]):V
+c:com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
+- com.intellij.execution.console.DuplexConsoleView
+- com.intellij.openapi.Disposable
+- connect(Z):V
+- s:create(com.intellij.openapi.project.Project,com.intellij.plugins.serialmonitor.SerialPortProfile,com.intellij.ui.components.JBLoadingPanel):com.intellij.plugins.serialmonitor.ui.console.JeditermSerialMonitorDuplexConsoleView
+- createConsoleActions():com.intellij.openapi.actionSystem.AnAction[]
+- getCharset():java.nio.charset.Charset
+- getConnection():com.intellij.plugins.serialmonitor.service.SerialPortService$SerialConnection
+- p:getHistoryFileName():java.lang.String
+- getStatus():com.intellij.plugins.serialmonitor.service.PortStatus
+- p:historySaved(I):V
+- isLoading():Z
+- reconnect():V
+f:icons.SerialMonitorIcons
+- sf:ConnectActive:javax.swing.Icon
+- sf:ConnectPassive:javax.swing.Icon
+- sf:DisconnectedSerial:javax.swing.Icon
+- sf:HexSerial:javax.swing.Icon
+- sf:Invalid:javax.swing.Icon
+- sf:Toolwindow:javax.swing.Icon
+- <init>():V

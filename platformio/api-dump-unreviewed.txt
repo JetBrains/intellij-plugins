@@ -1,0 +1,637 @@
+f:com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
+- s:message(java.lang.String,java.lang.Object[]):java.lang.String
+- s:messagePointer(java.lang.String,java.lang.Object[]):java.util.function.Supplier
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask
+- com.intellij.execution.BeforeRunTask
+- <init>(com.intellij.openapi.util.Key,kotlin.jvm.functions.Function1):V
+- f:createTaskToRun(com.intellij.execution.runners.ExecutionEnvironment):com.intellij.task.ProjectTask
+a:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTaskProvider
+- com.intellij.execution.BeforeRunTaskProvider
+- <init>():V
+- canExecuteTask(com.intellij.execution.configurations.RunConfiguration,com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask):Z
+- pf:createPlatformioBeforeRunTask(com.intellij.openapi.project.Project,kotlin.jvm.functions.Function1):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask
+- executeTask(com.intellij.openapi.actionSystem.DataContext,com.intellij.execution.configurations.RunConfiguration,com.intellij.execution.runners.ExecutionEnvironment,com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask):Z
+- getIcon():javax.swing.Icon
+- isSingleton():Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBuildBeforeRunTaskProvider
+- com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTaskProvider
+- <init>():V
+- createTask(com.intellij.execution.configurations.RunConfiguration):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask
+- getId():com.intellij.openapi.util.Key
+- getName():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider
+- com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTaskProvider
+- <init>():V
+- createTask(com.intellij.execution.configurations.RunConfiguration):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask
+- getId():com.intellij.openapi.util.Key
+- getName():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable
+- com.intellij.openapi.options.SearchableConfigurable
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable$Companion
+- sf:ID:java.lang.String
+- <init>():V
+- apply():V
+- createComponent():javax.swing.JComponent
+- disposeUIResources():V
+- getDisplayName():java.lang.String
+- getHelpTopic():java.lang.String
+- getId():java.lang.String
+- isModified():Z
+- reset():V
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable$Companion
+- f:pioBinFolder():java.nio.file.Path
+- f:pioExePath():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable$PlatformioConfigurableService
+- <init>(kotlinx.coroutines.CoroutineScope):V
+- f:getManualPioLocation():java.lang.String
+- f:setManualPioLocation(java.lang.String):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType
+- com.intellij.execution.configurations.ConfigurationTypeBase
+- com.intellij.openapi.project.DumbAware
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType$Companion
+- sf:PLATFORM_IO_DEBUG_ID:java.lang.String
+- sf:TYPE_ID:java.lang.String
+- <init>():V
+- f:getFactory():com.intellij.execution.configurations.ConfigurationFactory
+- getHelpTopic():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType$Companion
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugConfiguration
+- com.jetbrains.cidr.cpp.execution.CLionRunConfiguration
+- com.intellij.execution.configurations.TargetAwareRunProfile
+- com.jetbrains.cidr.execution.CidrExecutableDataHolder
+- <init>(com.intellij.openapi.project.Project,com.intellij.execution.configurations.ConfigurationFactory):V
+- canRunOn(com.intellij.execution.ExecutionTarget):Z
+- clone():com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugConfiguration
+- debugProfilesEnabled():Z
+- getConfigurationEditor():com.intellij.openapi.options.SettingsEditor
+- getExecutableData():com.jetbrains.cidr.execution.ExecutableData
+- getHelper():com.jetbrains.cidr.execution.CidrBuildConfigurationHelper
+- getResolveConfiguration(com.intellij.execution.ExecutionTarget):com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
+- getState(com.intellij.execution.Executor,com.intellij.execution.runners.ExecutionEnvironment):com.intellij.execution.configurations.CommandLineState
+- setExecutableData(com.jetbrains.cidr.execution.ExecutableData):V
+- f:shouldChangeCauseReload(com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugConfiguration):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
+- com.intellij.openapi.fileTypes.LanguageFileType
+- sf:FILE_NAME:java.lang.String
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
+- getDefaultExtension():java.lang.String
+- getDescription():java.lang.String
+- getIcon():javax.swing.Icon
+- getName():java.lang.String
+- s:isFileOfType(com.intellij.openapi.vfs.VirtualFile):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioLauncher
+- com.jetbrains.cidr.cpp.execution.CLionLauncher
+- <init>(com.intellij.execution.runners.ExecutionEnvironment,com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugConfiguration):V
+- createDebugProcess(com.intellij.execution.configurations.CommandLineState,com.intellij.xdebugger.XDebugSession):com.jetbrains.cidr.execution.debugger.CidrDebugProcess
+- createProcess(com.intellij.execution.configurations.CommandLineState):com.intellij.execution.process.ProcessHandler
+- getRunFileAndEnvironment():java.lang.Void
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProfilerDisabler
+- com.intellij.profiler.clion.CLionProfilerDisabler
+- <init>():V
+- disableCLionProfilerFor(com.intellij.execution.configurations.RunProfile):Z
+e:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- java.lang.Enum
+- sf:NONE:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- sf:NOT_TRUSTED:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- sf:PARSED:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- sf:PARSE_FAILED:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- sf:PARSING:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- sf:UTILITY_FAILED:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- s:getEntries():kotlin.enums.EnumEntries
+- s:valueOf(java.lang.String):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- s:values():com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus[]
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioReloadOnRunConfigChange
+- com.intellij.openapi.startup.ProjectActivity
+- <init>():V
+- execute(com.intellij.openapi.project.Project,kotlin.coroutines.Continuation):java.lang.Object
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
+- com.intellij.openapi.Disposable$Default
+- com.intellij.openapi.components.PersistentStateComponentWithModificationTracker
+- <init>(com.intellij.openapi.project.Project,kotlinx.coroutines.CoroutineScope):V
+- f:cleanCache():V
+- f:getActiveActionIds():java.util.Collection
+- f:getActiveTargetToActionId():java.util.Map
+- f:getBuildConfigurationTargets():java.util.List
+- f:getBuildDirectory():java.nio.file.Path
+- f:getCompileDbDeflatedBase64():java.lang.String
+- f:getConfigJson():java.lang.String
+- f:getCs():kotlinx.coroutines.CoroutineScope
+- f:getEnvs():java.util.List
+- f:getIniFiles():java.util.Set
+- f:getLibrariesPaths():java.util.Map
+- f:getMetadataJson():java.util.Map
+- f:getProject():com.intellij.openapi.project.Project
+- f:getProjectStatus():com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus
+- getState():com.jetbrains.cidr.cpp.embedded.platformio.PlatformioState
+- getStateModificationCount():J
+- f:getSvdPath():java.lang.String
+- f:getTargetExecutablePath():java.lang.String
+- f:getUploadPort():java.lang.String
+- f:getVerbose():Z
+- f:initializeProject():V
+- f:isTargetActive(java.lang.String):Z
+- f:isUploadPortAuto():Z
+- loadState(com.jetbrains.cidr.cpp.embedded.platformio.PlatformioState):V
+- f:refreshProject(Z):V
+- f:setActiveTargetToActionId(java.util.Map):V
+- f:setBuildDirectory(java.nio.file.Path):V
+- f:setCompileDbDeflatedBase64(java.lang.String):V
+- f:setConfigJson(java.lang.String):V
+- f:setEnvs(java.util.List):V
+- f:setIniFiles(java.util.Set):V
+- f:setLibrariesPaths(java.util.Map):V
+- f:setMetadataJson(java.lang.String,java.lang.String):V
+- f:setProjectStatus(com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus):V
+- f:setSvdPath(java.lang.String):V
+- f:setTargetExecutablePath(java.lang.String):V
+- f:setTargets(java.util.List):V
+- f:setUploadPort(java.lang.String):V
+- f:setUploadPortAuto(Z):V
+- f:setVerbose(Z):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioServiceKt
+- sf:getPLATFORMIO_UPDATES_TOPIC():com.intellij.util.messages.Topic
+- sf:getPlatformioProjectResolvePolicyCleanCache():com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
+- sf:getPlatformioProjectResolvePolicyInitialize():com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
+- sf:getPlatformioProjectResolvePolicyPreserveCache():com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioState
+- <init>():V
+- f:getCompileDbDeflatedBase64():java.lang.String
+- f:getConfigJson():java.lang.String
+- f:getEnvNames():java.util.List
+- f:getMetadataJson():java.util.Map
+- f:getUploadPort():java.lang.String
+- f:getVerbose():Z
+- f:isUploadPortAuto():Z
+- f:setCompileDbDeflatedBase64(java.lang.String):V
+- f:setConfigJson(java.lang.String):V
+- f:setEnvNames(java.util.List):V
+- f:setUploadPort(java.lang.String):V
+- f:setUploadPortAuto(Z):V
+- f:setVerbose(Z):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioStateCollector
+- sf:PLATFORMIO_ENV_DIR_SUFFIX:java.lang.String
+- sf:PLATFORMIO_ENV_PREFIX:java.lang.String
+- <init>():V
+- getGroup():com.intellij.internal.statistic.eventLog.EventLogGroup
+c:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState
+- com.intellij.clion.embedded.debugger.peripheralview.SvdWindowState
+- <init>():V
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.lang.String
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
+- bs:copy$default(com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData,java.lang.String,java.lang.String,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioTargetData
+- equals(java.lang.Object):Z
+- f:getDescription():java.lang.String
+- f:getGroup():java.lang.String
+- f:getName():java.lang.String
+- f:getTitle():java.lang.String
+- hashCode():I
+com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUpdatesNotifier
+- projectStateChanged():V
+- targetsChanged():V
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvider
+- com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTaskProvider
+- <init>():V
+- createTask(com.intellij.execution.configurations.RunConfiguration):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask
+- getId():com.intellij.openapi.util.Key
+- getName():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector
+- sf:DEBUG_START_EVENT_ID:com.intellij.internal.statistic.eventLog.events.EventId
+- sf:EVENT_LOG_GROUP:com.intellij.internal.statistic.eventLog.EventLogGroup
+- sf:NEW_PROJECT:com.intellij.internal.statistic.eventLog.events.EventId
+- <init>():V
+- getGroup():com.intellij.internal.statistic.eventLog.EventLogGroup
+f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioValgrindDisabler
+- com.intellij.cidr.profiling.valgrind.ValgrindDisabler
+- <init>():V
+- disableValgrindFor(com.intellij.execution.configurations.RunProfile):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioHomeAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase
+- <init>():V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+a:com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase
+- com.intellij.ide.util.projectWizard.ProjectSettingsStepBase
+- <init>(com.intellij.platform.DirectoryProjectGenerator,com.intellij.ide.util.projectWizard.AbstractNewProjectStep$AbstractCallback):V
+- dispose():V
+- pf:getPlatformioPresent():com.intellij.openapi.observable.properties.AtomicProperty
+- isDumbAware():Z
+- pf:startPlatformioWatcher():V
+e:com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense
+- java.lang.Enum
+- sf:NO:com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense
+- sf:UNKNOWN:com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense
+- sf:YES:com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense
+- s:getEntries():kotlin.enums.EnumEntries
+- s:valueOf(java.lang.String):com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense
+- s:values():com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense[]
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
+- <init>(com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate,java.util.List):V
+- f:component1():com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- f:component2():java.util.List
+- f:copy(com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate,java.util.List):com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo,com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
+- equals(java.lang.Object):Z
+- f:getParameters():java.util.List
+- f:getTemplate():com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- hashCode():I
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.BoardsJsonParser
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.BoardsJsonParser
+- f:parse(java.lang.CharSequence):com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
+- javax.swing.tree.TreeNode
+- <init>(com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode,com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE,java.lang.String,com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo):V
+- f:add(com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode):com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
+- children():java.util.Enumeration
+- getAllowsChildren():Z
+- f:getBoardInfo():com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
+- getChildAt(I):com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
+- getChildCount():I
+- f:getChildren():java.util.List
+- getIndex(javax.swing.tree.TreeNode):I
+- f:getName():java.lang.String
+- getParent():com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode
+- f:getType():com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- f:hasSameValues(java.lang.String,com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE,com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo):Z
+- isLeaf():Z
+- f:setChildren(java.util.List):V
+e:com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- java.lang.Enum
+- sf:BOARD:com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- sf:FRAMEWORK:com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- sf:ROOT:com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- sf:VENDOR:com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- s:getEntries():kotlin.enums.EnumEntries
+- f:getIcon():javax.swing.Icon
+- s:valueOf(java.lang.String):com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE
+- s:values():com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode$TYPE[]
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider
+- com.jetbrains.cidr.cpp.external.system.project.ui.ExternalProjectStatusAndFixesProviderBase
+- <init>():V
+- createLoadAction(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile):com.intellij.openapi.actionSystem.AnAction
+- createSelectAndLoadAction(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile):com.intellij.openapi.actionSystem.AnAction
+- isBuildFile(com.intellij.openapi.vfs.VirtualFile):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioBuildConfigurationHelper
+- com.jetbrains.cidr.execution.CidrBuildConfigurationHelper
+- <init>(com.intellij.openapi.project.Project):V
+- getTargets():java.util.List
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- <init>(Z,com.intellij.openapi.project.Project,Z,Z):V
+- b:<init>(Z,com.intellij.openapi.project.Project,Z,Z,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:build():com.intellij.execution.configurations.GeneralCommandLine
+- f:withEnvName(Z):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- bs:withEnvName$default(com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder,Z,I,java.lang.Object):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- f:withGdbHomeCompatibility():com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- f:withParams(java.util.List):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- f:withParams(java.lang.String[]):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- f:withRedirectErrorStream(Z):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- f:withVerboseAllowed(Z):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+- bs:withVerboseAllowed$default(com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder,Z,I,java.lang.Object):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilderKt
+- sf:ENV_PATH:java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionSettings
+- com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
+- <init>():V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget
+- com.intellij.execution.ExecutionTarget
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget$Companion
+- <init>(java.lang.String):V
+- canRun(com.intellij.execution.configurations.RunConfiguration):Z
+- getDisplayName():java.lang.String
+- getIcon():javax.swing.Icon
+- getId():java.lang.String
+- isExternallyManaged():Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTarget$Companion
+- f:isPlatformioRunConfiguration(com.intellij.execution.configurations.RunConfiguration):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTargetProvider
+- com.intellij.execution.ExecutionTargetProvider
+- <init>():V
+- getTargets(com.intellij.openapi.project.Project,com.intellij.execution.configurations.RunConfiguration):java.util.List
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioFileTypeDetector
+- com.intellij.openapi.fileTypes.impl.FileTypeOverrider
+- <init>():V
+- getOverriddenFileType(com.intellij.openapi.vfs.VirtualFile):com.intellij.openapi.fileTypes.FileType
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLibraryPathNodeDecorator
+- com.intellij.ide.projectView.ProjectViewNodeDecorator
+- <init>():V
+- decorate(com.intellij.ide.projectView.ProjectViewNode,com.intellij.ide.projectView.PresentationData):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLocalSettings
+- com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings
+- com.intellij.openapi.components.PersistentStateComponent
+- <init>(com.intellij.openapi.project.Project):V
+- f:getProject():com.intellij.openapi.project.Project
+- loadState(com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLocalSettingsState):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLocalSettingsState
+- com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings$State
+- java.io.Serializable
+- <init>():V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioManager
+- com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
+- com.intellij.openapi.externalSystem.ExternalSystemManager
+- com.intellij.openapi.startup.StartupActivity
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioManager$Companion
+- <init>():V
+- enhanceRemoteProcessing(com.intellij.execution.configurations.SimpleJavaParameters):V
+- getAffectedExternalProjectFilePaths(java.lang.String,com.intellij.openapi.project.Project):java.util.List
+- getAffectedExternalProjectFiles(java.lang.String,com.intellij.openapi.project.Project):java.util.List
+- getAffectedExternalProjectPath(java.lang.String,com.intellij.openapi.project.Project):java.lang.String
+- getExecutionSettingsProvider():com.intellij.util.Function
+- getExternalProjectDescriptor():com.intellij.openapi.fileChooser.FileChooserDescriptor
+- getLocalSettingsProvider():com.intellij.util.Function
+- getProjectResolverClass():java.lang.Class
+- getSettingsProvider():com.intellij.util.Function
+- getSystemId():com.intellij.openapi.externalSystem.model.ProjectSystemId
+- runActivity(com.intellij.openapi.project.Project):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioManager$Companion
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectFixesProvider
+- com.intellij.clion.projectStatus.popup.ProjectFixesProvider
+- <init>():V
+- collectFixes(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile,com.intellij.openapi.actionSystem.DataContext,kotlin.coroutines.Continuation):java.lang.Object
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator
+- com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CLionProjectGenerator
+- com.intellij.ide.util.projectWizard.CustomStepProjectGenerator
+- <init>():V
+- createPeer():com.intellij.platform.ProjectGeneratorPeer
+- createStep(com.intellij.platform.DirectoryProjectGenerator,com.intellij.ide.util.projectWizard.AbstractNewProjectStep$AbstractCallback):com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
+- generateProject(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile,com.intellij.openapi.util.Ref,com.intellij.openapi.module.Module):V
+- getDescription():java.lang.String
+- getGroupDisplayName():java.lang.String
+- getGroupName():java.lang.String
+- getGroupOrder():I
+- getLogo():javax.swing.Icon
+- getName():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGeneratorKt
+- sf:getPROJECT_INIT_KEY():com.intellij.openapi.util.Key
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor
+- com.jetbrains.cidr.CidrProjectOpenProcessor
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion
+- <init>():V
+- getName():java.lang.String
+- f:linkPlatformioProject(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile):V
+- openProjectAsync(com.intellij.openapi.vfs.VirtualFile,com.intellij.projectImport.ProjectOpenProcessor$ProjectOpenOptions,kotlin.coroutines.Continuation):java.lang.Object
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion
+- f:isNewlyLinkedPlatformioProject(com.intellij.openapi.project.Project):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$OpenProjectSpec
+- <init>(com.intellij.openapi.vfs.VirtualFile):V
+- f:component1():com.intellij.openapi.vfs.VirtualFile
+- f:copy(com.intellij.openapi.vfs.VirtualFile):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$OpenProjectSpec
+- bs:copy$default(com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$OpenProjectSpec,com.intellij.openapi.vfs.VirtualFile,I,java.lang.Object):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$OpenProjectSpec
+- equals(java.lang.Object):Z
+- f:getPlatformioIni():com.intellij.openapi.vfs.VirtualFile
+- hashCode():I
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$PlatformioProjectOpenHelper
+- com.jetbrains.cidr.ProjectOpenHelper
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$PlatformioProjectOpenHelper
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$SupportedFileChecker
+- com.jetbrains.cidr.ProjectOpenHelper$SupportedFileChecker
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor$Companion$SupportedFileChecker
+- isSupportedFile(com.intellij.openapi.vfs.VirtualFile):Z
+c:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver
+- com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver$Companion
+- <init>():V
+- cancelTask(com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId,com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener):Z
+- p:createRunConfigurationIfRequired(com.intellij.openapi.project.Project):V
+- p:gatherCompDB(com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId,java.lang.String,com.intellij.openapi.project.Project,java.lang.String,com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener,java.lang.String):java.lang.String
+- p:gatherConfigJson(com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId,java.lang.String,com.intellij.openapi.project.Project,com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener):java.lang.String
+- p:gatherEnvMetadata(com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId,java.lang.String,com.intellij.openapi.project.Project,java.lang.String,com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener):java.lang.String
+- resolveProjectInfo(com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId,java.lang.String,Z,com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionSettings,com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy,com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener):com.intellij.openapi.externalSystem.model.DataNode
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectResolver$Companion
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettings
+- com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettings$Companion
+- clone():com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettings$Companion
+- f:default():com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettings
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettingsStep
+- com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase
+- <init>(com.intellij.platform.DirectoryProjectGenerator,com.intellij.ide.util.projectWizard.AbstractNewProjectStep$AbstractCallback):V
+- checkValid():Z
+- createPanel():javax.swing.JPanel
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettingsStep$WatchPlatformioService
+- <init>(kotlinx.coroutines.CoroutineScope):V
+- f:watch(com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioProjectSettingsStepBase$Presense,com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectSettingsStep):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
+- com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManagerHelper
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioRunConfigurationManagerHelper
+- getBuildHelper(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioBuildConfigurationHelper
+- getConfigurationFactory(com.jetbrains.cidr.execution.CidrBuildConfigurationHelper,com.jetbrains.cidr.execution.CidrBuildTarget):com.intellij.execution.configurations.ConfigurationFactory
+- getRunConfigurationTypeFilter():java.util.function.Predicate
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettings
+- com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings
+- com.intellij.openapi.components.PersistentStateComponent
+- <init>(com.intellij.openapi.project.Project):V
+- getState():com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettingsState
+- loadState(com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettingsState):V
+- subscribe(com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListener,com.intellij.openapi.Disposable):V
+com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettingsListener
+- com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListener
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettingsListener$Companion
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettingsListener$Companion
+- f:getTOPIC():com.intellij.util.messages.Topic
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSettingsState
+- com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings$State
+- <init>():V
+- getLinkedExternalProjectsSettings():java.util.Set
+- setLinkedExternalProjectsSettings(java.util.Set):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider
+- com.intellij.ide.projectView.TreeStructureProvider
+- <init>():V
+- modify(com.intellij.ide.util.treeView.AbstractTreeNode,java.util.Collection,com.intellij.ide.projectView.ViewSettings):java.util.Collection
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider$LibraryNode
+- com.intellij.ide.util.treeView.AbstractTreeNode
+- <init>(com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider,com.intellij.openapi.project.Project,java.lang.String):V
+- getChildren():java.util.Collection
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceInitializationUtil
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceInitializationUtil
+- f:isPlatformioWorkspaceInitialized(com.intellij.openapi.project.Project):Z
+- f:runAfterPlatformioInitialized(com.intellij.openapi.project.Project,kotlin.jvm.functions.Function0):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceKt
+- sf:getID():com.intellij.openapi.externalSystem.model.ProjectSystemId
+e:com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- java.lang.Enum
+- sf:ARDUINO:com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate$Companion
+- sf:GENERIC:com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- sf:NONE:com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- f:getContent():java.lang.String
+- s:getEntries():kotlin.enums.EnumEntries
+- f:getFileName():java.lang.String
+- s:valueOf(java.lang.String):com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- s:values():com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate[]
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate$Companion
+- f:byFrameworkName(java.lang.String):com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- f:byFrameworkName(java.util.Collection):com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate
+- f:getEMPTY_BOARD_INFO():com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfiguration
+- com.jetbrains.cidr.execution.CidrBuildConfiguration
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfiguration
+- getExternalSource():com.intellij.openapi.roots.ProjectModelExternalSource
+- getName():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfigurationProvider
+- com.jetbrains.cidr.execution.build.CidrBuildConfigurationProvider
+- <init>():V
+- getBuildableConfigurations(com.intellij.openapi.project.Project):java.util.List
+- getCleanableConfigurations(com.intellij.openapi.project.Project):java.util.List
+- hasBuildableConfigurations(com.intellij.openapi.project.Project):Z
+- hasCleanableConfigurations(com.intellij.openapi.project.Project):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfigurationProviderKt
+- sf:getPlatformioBuildConfigurations():java.util.List
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildDescriptor
+- com.intellij.build.DefaultBuildDescriptor
+- com.intellij.build.progress.BuildProgressDescriptor
+- <init>(com.intellij.openapi.project.Project,java.lang.String,java.lang.String,com.intellij.execution.process.ProcessHandler,com.intellij.openapi.progress.ProgressIndicator):V
+- getBuildDescriptor():com.intellij.build.BuildDescriptor
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildTarget
+- com.jetbrains.cidr.execution.CidrBuildTarget
+- <init>(java.lang.String):V
+- getBuildConfigurations():java.util.List
+- getIcon():javax.swing.Icon
+- getName():java.lang.String
+- getProjectName():java.lang.String
+- isExecutable():Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioCompileTaskRunner
+- com.jetbrains.cidr.cpp.execution.build.runners.CLionCompileResolveConfigurationTaskRunner
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioCompileTaskRunner
+- canRun(com.intellij.openapi.project.Project):Z
+- environment(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
+- externalSource(com.intellij.openapi.project.Project):com.intellij.openapi.roots.ProjectModelExternalSource
+- projectDir(com.intellij.openapi.project.Project):java.nio.file.Path
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioConfigurationContext
+- com.jetbrains.cidr.cpp.execution.compound.CidrCompoundConfigurationContextBase
+- <init>():V
+- canRunOn(com.intellij.execution.ExecutionTarget):Z
+- executeBuildTask(com.intellij.openapi.actionSystem.DataContext,com.intellij.execution.configurations.RunConfiguration,com.intellij.execution.runners.ExecutionEnvironment,com.intellij.execution.BeforeRunTask):Z
+- getHelper(com.intellij.openapi.project.Project):com.jetbrains.cidr.execution.CidrBuildConfigurationHelper
+- getId():java.lang.String
+- getProjectBaseDir(com.intellij.openapi.project.Project,com.jetbrains.cidr.cpp.execution.CLionLauncher):java.io.File
+- getRunFileAndEnvironment(com.jetbrains.cidr.cpp.execution.CLionLauncher):kotlin.Pair
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioProjectTaskRunner
+- com.jetbrains.cidr.execution.build.runners.CidrProjectTaskRunner
+- <init>():V
+- canRun(com.intellij.openapi.project.Project,com.intellij.task.ProjectTask,com.intellij.task.ProjectTaskContext):Z
+- getBuildSystemId():java.lang.String
+- runnerForTask(com.intellij.task.ProjectTask,com.intellij.openapi.project.Project):com.jetbrains.cidr.execution.build.runners.CidrTaskRunner
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioProjectTaskRunnerKt
+- sf:EXECUTION_TIMEOUT_MS:I
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioTargetTask
+- com.jetbrains.cidr.execution.build.tasks.CidrAbstractConfigurationTask
+- <init>(java.lang.String,java.lang.String[]):V
+- f:getArgs():java.lang.String[]
+- getPresentableName():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioTaskRunner
+- com.jetbrains.cidr.execution.build.runners.CidrTaskRunner
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioTaskRunner$Companion
+- <init>():V
+- executeTask(com.intellij.openapi.project.Project,com.intellij.task.ProjectTask,java.lang.Object,com.intellij.task.ProjectTaskContext,kotlin.coroutines.Continuation):java.lang.Object
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioTaskRunner$Companion
+f:com.jetbrains.cidr.cpp.embedded.platformio.project.migration.PlatformioProjectMigrationProvider
+- com.intellij.conversion.ConverterProvider
+- <init>():V
+- createConverter(com.intellij.conversion.ConversionContext):com.intellij.conversion.ProjectConverter
+- getConversionDescription():java.lang.String
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenInstallGuide
+- java.awt.event.ActionListener
+- java.lang.Runnable
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenInstallGuide
+- sf:URL:java.lang.String
+- actionPerformed(java.awt.event.ActionEvent):V
+- run():V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.OpenSettings
+- java.awt.event.ActionListener
+- java.lang.Runnable
+- <init>(com.intellij.openapi.project.Project):V
+- actionPerformed(java.awt.event.ActionEvent):V
+- run():V
+a:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase
+- <init>(kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0,javax.swing.Icon):V
+- b:<init>(kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0,javax.swing.Icon,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- update(com.intellij.openapi.actionSystem.AnActionEvent):V
+a:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase
+- com.intellij.openapi.project.DumbAwareAction
+- sf:Companion:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase$Companion
+- <init>(kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0,javax.swing.Icon):V
+- pf:actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent,Z,Z,Z,java.lang.String[]):V
+- pf:actionPerformedKillAlreadyRunning(com.intellij.openapi.actionSystem.AnActionEvent,Z,Z,Z,java.lang.String[]):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- f:getToolTip():kotlin.jvm.functions.Function0
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase$Companion
+- f:pioIcon(javax.swing.Icon):javax.swing.Icon
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBaseKt
+- sf:notifyPlatformioNotFound(com.intellij.openapi.project.Project):V
+- sf:notifyUploadUnavailable(com.intellij.openapi.project.Project):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup
+- com.intellij.openapi.actionSystem.DefaultActionGroup
+- com.intellij.openapi.project.DumbAware
+- <init>():V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- update(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioAction
+- <init>():V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioLoadProjectAction
+- com.jetbrains.cidr.cpp.external.system.actions.AbstractCLionExternalLoadProjectAction
+- <init>():V
+- canLinkFile(com.intellij.openapi.vfs.VirtualFile):Z
+- getSystemId():com.intellij.openapi.externalSystem.model.ProjectSystemId
+- performLink(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioMonitorAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioAction
+- <init>():V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioPkgUpdateAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioAction
+- <init>():V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
+- com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
+- <init>(Z,Z):V
+- f:getCleanCache():Z
+- f:isInitial():Z
+- isPartialDataResolveAllowed():Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioRefreshAction
+- com.intellij.openapi.actionSystem.AnAction
+- <init>():V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- update(com.intellij.openapi.actionSystem.AnActionEvent):V
+c:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioAction
+- <init>(java.lang.String,kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0,javax.swing.Icon):V
+- b:<init>(java.lang.String,kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0,javax.swing.Icon,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+- f:getTarget():java.lang.String
+- update(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTerminalKt
+- sf:doRun(com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService,java.lang.String,com.intellij.execution.configurations.GeneralCommandLine,Z):V
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioToolWindowFactory
+- com.intellij.openapi.project.DumbAware
+- com.intellij.openapi.wm.ToolWindowFactory
+- <init>():V
+- createToolWindowContent(com.intellij.openapi.project.Project,com.intellij.openapi.wm.ToolWindow):V
+- shouldBeAvailable(com.intellij.openapi.project.Project):Z
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTrustedProjectsNotificationsKt
+- sf:ensureProjectIsTrusted(com.intellij.openapi.project.Project,kotlin.coroutines.Continuation):java.lang.Object
+- sf:showUntrustedProjectLoadDialog(com.intellij.openapi.project.Project,kotlin.coroutines.Continuation):java.lang.Object
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadAction
+f:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction
+- com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
+- sf:INSTANCE:com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:icons.ClionEmbeddedPlatformioIcons
+- sf:CleanPlatformIO:javax.swing.Icon
+- sf:ComponentVendor:javax.swing.Icon
+- sf:ElectronicBoard:javax.swing.Icon
+- sf:LogoPlatformIO:javax.swing.Icon
+- sf:ModPlatformIO:javax.swing.Icon
+- sf:SoftwareFramework:javax.swing.Icon
+- sf:ToolWindowPlatformIO:javax.swing.Icon
+- sf:ToolWindowPlatformIO_20x20:javax.swing.Icon
+- <init>():V

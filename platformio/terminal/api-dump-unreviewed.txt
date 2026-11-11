@@ -1,0 +1,4 @@
+f:com.jetbrains.cidr.cpp.embedded.platformio.terminal.PlatformioShellExecOptionCustomizer
+- org.jetbrains.plugins.terminal.startup.ShellExecOptionsCustomizer
+- <init>():V
+- customizeExecOptions(com.intellij.openapi.project.Project,org.jetbrains.plugins.terminal.startup.MutableShellExecOptions):V

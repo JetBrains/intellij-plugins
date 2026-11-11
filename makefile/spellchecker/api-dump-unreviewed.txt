@@ -1,0 +1,13 @@
+f:com.jetbrains.lang.makefile.MakefileCommentTokenizer
+- com.intellij.spellchecker.tokenizer.Tokenizer
+- sf:INSTANCE:com.jetbrains.lang.makefile.MakefileCommentTokenizer
+- tokenize(com.jetbrains.lang.makefile.psi.MakefileComment,com.intellij.spellchecker.tokenizer.TokenConsumer):V
+f:com.jetbrains.lang.makefile.MakefileDocCommentTokenizer
+- com.intellij.spellchecker.tokenizer.Tokenizer
+- sf:INSTANCE:com.jetbrains.lang.makefile.MakefileDocCommentTokenizer
+- tokenize(com.jetbrains.lang.makefile.psi.MakefileDocComment,com.intellij.spellchecker.tokenizer.TokenConsumer):V
+f:com.jetbrains.lang.makefile.MakefileSpellcheckingStrategy
+- com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
+- com.intellij.openapi.project.DumbAware
+- <init>():V
+- getTokenizer(com.intellij.psi.PsiElement):com.intellij.spellchecker.tokenizer.Tokenizer

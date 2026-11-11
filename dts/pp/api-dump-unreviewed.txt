@@ -1,0 +1,246 @@
+a:com.intellij.dts.pp.completion.PpAngularBraceBackspaceHandler
+- com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate
+- <init>():V
+- beforeCharDeleted(C,com.intellij.psi.PsiFile,com.intellij.openapi.editor.Editor):V
+- charDeleted(C,com.intellij.psi.PsiFile,com.intellij.openapi.editor.Editor):Z
+- pa:getLanguage():com.intellij.lang.Language
+- pa:getPairs():java.util.List
+a:com.intellij.dts.pp.completion.PpAngularBraceTypedHandler
+- com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+- <init>():V
+- beforeCharTyped(C,com.intellij.openapi.project.Project,com.intellij.openapi.editor.Editor,com.intellij.psi.PsiFile,com.intellij.openapi.fileTypes.FileType):com.intellij.codeInsight.editorActions.TypedHandlerDelegate$Result
+- charTyped(C,com.intellij.openapi.project.Project,com.intellij.openapi.editor.Editor,com.intellij.psi.PsiFile):com.intellij.codeInsight.editorActions.TypedHandlerDelegate$Result
+- pa:getLanguage():com.intellij.lang.Language
+- pa:getPairs():java.util.List
+a:com.intellij.dts.pp.highlighting.PpHighlightAnnotator
+- com.intellij.lang.annotation.Annotator
+- com.intellij.openapi.project.DumbAware
+- <init>():V
+- annotate(com.intellij.psi.PsiElement,com.intellij.lang.annotation.AnnotationHolder):V
+- pa:getInactiveAttribute():com.intellij.openapi.editor.colors.TextAttributesKey
+- pa:getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+f:com.intellij.dts.pp.highlighting.PpParserErrorInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+a:com.intellij.dts.pp.lang.PpTokenTypes
+- <init>():V
+- f:createElement(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+- a:createScopeSet():com.intellij.psi.tree.TokenSet
+- a:getCharLiteral():com.intellij.psi.tree.IElementType
+- a:getComment():com.intellij.psi.tree.IElementType
+- a:getDirective():com.intellij.psi.tree.IElementType
+- a:getFloatLiteral():com.intellij.psi.tree.IElementType
+- a:getHeaderName():com.intellij.psi.tree.IElementType
+- a:getIdentifier():com.intellij.psi.tree.IElementType
+- a:getInactive():com.intellij.psi.tree.IElementType
+- a:getIntegerLiteral():com.intellij.psi.tree.IElementType
+- a:getLineBreak():com.intellij.psi.tree.IElementType
+- a:getOperatorOrPunctuator():com.intellij.psi.tree.IElementType
+- a:getStatement():com.intellij.psi.tree.IElementType
+- a:getStatementEnd():com.intellij.psi.tree.IElementType
+- a:getStatementMarker():com.intellij.psi.tree.IElementType
+- a:getStringLiteral():com.intellij.psi.tree.IElementType
+- a:hostElementFactory(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+- statementElementFactory(com.intellij.lang.ASTNode,com.intellij.dts.pp.lang.parser.PpAdHocParser):com.intellij.dts.pp.lang.psi.PpStatementPsiElement
+c:com.intellij.dts.pp.lang.lexer.PpHighlightingLexerAdapter
+- com.intellij.dts.pp.lang.lexer.PpLexerAdapterBase
+- <init>(com.intellij.dts.pp.lang.PpTokenTypes,com.intellij.lexer.Lexer):V
+- getState():I
+- p:processMarker(com.intellij.lexer.Lexer):V
+- start(java.lang.CharSequence,I,I,I):V
+a:com.intellij.dts.pp.lang.lexer.PpLexerAdapterBase
+- com.intellij.lexer.LookAheadLexer
+- <init>(com.intellij.dts.pp.lang.PpTokenTypes,com.intellij.lexer.Lexer):V
+- pf:addStatementsTokens(I,java.util.List):V
+- pf:getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- pf:lookAhead(com.intellij.lexer.Lexer):V
+- pf:parseStatement(java.util.List):com.intellij.dts.pp.lang.psi.PpStatement
+- pa:processMarker(com.intellij.lexer.Lexer):V
+- pf:restoreState(com.intellij.lexer.Lexer,I):V
+- start(java.lang.CharSequence,I,I,I):V
+- pf:tokenizeStatement(com.intellij.lexer.Lexer):java.util.List
+c:com.intellij.dts.pp.lang.lexer.PpParserLexerAdapter
+- com.intellij.dts.pp.lang.lexer.PpLexerAdapterBase
+- <init>(com.intellij.dts.pp.lang.PpTokenTypes,com.intellij.lexer.Lexer):V
+- p:processMarker(com.intellij.lexer.Lexer):V
+- start(java.lang.CharSequence,I,I,I):V
+c:com.intellij.dts.pp.lang.parser.FixedGeneratedBuilder
+- com.intellij.lang.parser.GeneratedParserUtilBase$Builder
+- <init>(com.intellij.lang.PsiBuilder,com.intellij.lang.parser.GeneratedParserUtilBase$ErrorState,com.intellij.lang.PsiParser):V
+- getDelegate():com.intellij.lang.PsiBuilder
+- getLexer():com.intellij.lexer.Lexer
+- getProductions():java.util.List
+f:com.intellij.dts.pp.lang.parser.PpAdHocParser
+- <init>(com.intellij.dts.pp.lang.PpTokenTypes):V
+- f:parse(java.util.List):com.intellij.dts.pp.lang.psi.PpStatement
+f:com.intellij.dts.pp.lang.parser.PpBuildAdapter
+- com.intellij.dts.pp.lang.parser.FixedGeneratedBuilder
+- <init>(com.intellij.lang.PsiBuilder,com.intellij.lang.parser.GeneratedParserUtilBase$ErrorState,com.intellij.lang.PsiParser,com.intellij.dts.pp.lang.PpTokenTypes,java.util.List):V
+- b:<init>(com.intellij.lang.PsiBuilder,com.intellij.lang.parser.GeneratedParserUtilBase$ErrorState,com.intellij.lang.PsiParser,com.intellij.dts.pp.lang.PpTokenTypes,java.util.List,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- advanceLexer():V
+- eof():Z
+- error(java.lang.String):V
+- getCurrentOffset():I
+- getTokenText():java.lang.String
+- getTokenType():com.intellij.psi.tree.IElementType
+- lookAhead(I):com.intellij.psi.tree.IElementType
+- rawLookup(I):com.intellij.psi.tree.IElementType
+- rawTokenIndex():I
+- rawTokenTypeStart(I):I
+f:com.intellij.dts.pp.lang.parser.PpParserUtil
+- sf:INSTANCE:com.intellij.dts.pp.lang.parser.PpParserUtil
+- f:backupMarker(com.intellij.lang.LighterASTNode):kotlin.Pair
+- f:rollbackPreprocessorStatements(com.intellij.dts.pp.lang.parser.PpBuildAdapter,com.intellij.lang.PsiBuilder$Marker):V
+c:com.intellij.dts.pp.lang.parser.PpParserUtilBase
+- com.intellij.lang.parser.GeneratedParserUtilBase
+- <init>():V
+- s:exit_section_(com.intellij.lang.PsiBuilder,I,com.intellij.lang.PsiBuilder$Marker,com.intellij.psi.tree.IElementType,Z,Z,com.intellij.lang.parser.GeneratedParserUtilBase$Parser):V
+- s:exit_section_(com.intellij.lang.PsiBuilder,I,com.intellij.lang.PsiBuilder$Marker,Z,Z,com.intellij.lang.parser.GeneratedParserUtilBase$Parser):V
+com.intellij.dts.pp.lang.parser.PpStatementParser
+- a:getStatementTokens():com.intellij.psi.tree.TokenSet
+- a:parseStatement(com.intellij.psi.tree.IElementType,kotlin.jvm.functions.Function0):Z
+f:com.intellij.dts.pp.lang.psi.PpElifDefStatement
+- com.intellij.dts.pp.lang.psi.PpElifStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+f:com.intellij.dts.pp.lang.psi.PpElifExprStatement
+- com.intellij.dts.pp.lang.psi.PpElifStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+f:com.intellij.dts.pp.lang.psi.PpElifNdefStatement
+- com.intellij.dts.pp.lang.psi.PpElifStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+com.intellij.dts.pp.lang.psi.PpElifStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- a:evaluate(java.util.List):Z
+f:com.intellij.dts.pp.lang.psi.PpElseStatement
+- com.intellij.dts.pp.lang.psi.PpElifStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+f:com.intellij.dts.pp.lang.psi.PpError
+- <init>(java.lang.String,com.intellij.openapi.util.TextRange):V
+- f:component1():java.lang.String
+- f:component2():com.intellij.openapi.util.TextRange
+- f:copy(java.lang.String,com.intellij.openapi.util.TextRange):com.intellij.dts.pp.lang.psi.PpError
+- bs:copy$default(com.intellij.dts.pp.lang.psi.PpError,java.lang.String,com.intellij.openapi.util.TextRange,I,java.lang.Object):com.intellij.dts.pp.lang.psi.PpError
+- equals(java.lang.Object):Z
+- f:getMessage():java.lang.String
+- f:getRange():com.intellij.openapi.util.TextRange
+- hashCode():I
+f:com.intellij.dts.pp.lang.psi.PpIfDefStatement
+- com.intellij.dts.pp.lang.psi.PpIfStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+f:com.intellij.dts.pp.lang.psi.PpIfExprStatement
+- com.intellij.dts.pp.lang.psi.PpIfStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+f:com.intellij.dts.pp.lang.psi.PpIfNdefStatement
+- com.intellij.dts.pp.lang.psi.PpIfStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- evaluate(java.util.List):Z
+- getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+com.intellij.dts.pp.lang.psi.PpIfStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- a:evaluate(java.util.List):Z
+f:com.intellij.dts.pp.lang.psi.PpIncludeStatement
+- com.intellij.dts.pp.lang.psi.PpStatement
+- <init>(com.intellij.dts.pp.lang.psi.PpStatement):V
+- getErrors():java.util.List
+- f:getHeaderName():com.intellij.dts.pp.lang.psi.PpToken
+- getRange():com.intellij.openapi.util.TextRange
+- getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- getTokens():java.util.List
+- getType():com.intellij.dts.pp.lang.psi.PpStatementType
+com.intellij.dts.pp.lang.psi.PpStatement
+- a:getErrors():java.util.List
+- getRange():com.intellij.openapi.util.TextRange
+- a:getTokenTypes():com.intellij.dts.pp.lang.PpTokenTypes
+- a:getTokens():java.util.List
+- a:getType():com.intellij.dts.pp.lang.psi.PpStatementType
+f:com.intellij.dts.pp.lang.psi.PpStatementKt
+- sf:findFirstOrNullToken(com.intellij.dts.pp.lang.psi.PpStatement,com.intellij.psi.tree.IElementType):com.intellij.dts.pp.lang.psi.PpToken
+- sf:findFirstToken(com.intellij.dts.pp.lang.psi.PpStatement,com.intellij.psi.tree.IElementType):com.intellij.dts.pp.lang.psi.PpToken
+- sf:getDirective(com.intellij.dts.pp.lang.psi.PpStatement):com.intellij.dts.pp.lang.psi.PpToken
+- sf:getIdentifier(com.intellij.dts.pp.lang.psi.PpStatement):com.intellij.dts.pp.lang.psi.PpToken
+c:com.intellij.dts.pp.lang.psi.PpStatementPsiElement
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- <init>(com.intellij.lang.ASTNode,com.intellij.dts.pp.lang.parser.PpAdHocParser):V
+- f:getStatement():com.intellij.dts.pp.lang.psi.PpStatement
+e:com.intellij.dts.pp.lang.psi.PpStatementType
+- java.lang.Enum
+- sf:Define:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Elif:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:ElifDef:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:ElifNdef:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Else:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Endif:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Error:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:If:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:IfDef:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:IfNdef:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Include:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Line:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Pragma:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Undef:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Unknown:com.intellij.dts.pp.lang.psi.PpStatementType
+- sf:Warning:com.intellij.dts.pp.lang.psi.PpStatementType
+- f:getDirective():java.lang.String
+- s:getEntries():kotlin.enums.EnumEntries
+- s:valueOf(java.lang.String):com.intellij.dts.pp.lang.psi.PpStatementType
+- s:values():com.intellij.dts.pp.lang.psi.PpStatementType[]
+f:com.intellij.dts.pp.lang.psi.PpToken
+- <init>(com.intellij.psi.tree.IElementType,java.lang.CharSequence,com.intellij.openapi.util.TextRange):V
+- f:component1():com.intellij.psi.tree.IElementType
+- f:component2():java.lang.CharSequence
+- f:component3():com.intellij.openapi.util.TextRange
+- f:copy(com.intellij.psi.tree.IElementType,java.lang.CharSequence,com.intellij.openapi.util.TextRange):com.intellij.dts.pp.lang.psi.PpToken
+- bs:copy$default(com.intellij.dts.pp.lang.psi.PpToken,com.intellij.psi.tree.IElementType,java.lang.CharSequence,com.intellij.openapi.util.TextRange,I,java.lang.Object):com.intellij.dts.pp.lang.psi.PpToken
+- equals(java.lang.Object):Z
+- f:getRange():com.intellij.openapi.util.TextRange
+- f:getText():java.lang.CharSequence
+- f:getType():com.intellij.psi.tree.IElementType
+- hashCode():I

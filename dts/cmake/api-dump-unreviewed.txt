@@ -1,0 +1,24 @@
+f:com.intellij.dts.cmake.impl.DefaultDtsCMakeProfileProvider
+- com.intellij.dts.cmake.impl.DtsCMakeModelConfigurationDataProvider
+- <init>():V
+- getCMakeModelConfigurationData(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData
+com.intellij.dts.cmake.impl.DtsCMakeModelConfigurationDataProvider
+- sf:Companion:com.intellij.dts.cmake.impl.DtsCMakeModelConfigurationDataProvider$Companion
+- a:getCMakeModelConfigurationData(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData
+f:com.intellij.dts.cmake.impl.DtsCMakeModelConfigurationDataProvider$Companion
+- f:getFirstCMakeModelConfigurationData(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData
+f:com.intellij.dts.cmake.impl.DtsCMakeUtilImpl
+- com.intellij.dts.core.cmake.DtsCMakeUtil
+- <init>():V
+- isCMakeAvailable(com.intellij.openapi.project.Project):Z
+f:com.intellij.dts.cmake.impl.DtsZephyrCMakeSync
+- com.intellij.dts.core.settings.DtsSettings$ChangeListener
+- com.intellij.execution.ExecutionTargetListener
+- com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
+- sf:Companion:com.intellij.dts.cmake.impl.DtsZephyrCMakeSync$Companion
+- <init>(com.intellij.openapi.project.Project,kotlinx.coroutines.CoroutineScope):V
+- activeTargetChanged(com.intellij.execution.ExecutionTarget):V
+- f:getProject():com.intellij.openapi.project.Project
+- reloadingFinished(Z):V
+- settingsChanged(com.intellij.dts.core.settings.DtsSettings):V
+f:com.intellij.dts.cmake.impl.DtsZephyrCMakeSync$Companion

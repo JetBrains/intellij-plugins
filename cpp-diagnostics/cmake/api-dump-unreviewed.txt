@@ -1,0 +1,4 @@
+f:com.intellij.clion.diagnostics.cmake.workspace.CMakeWorkspaceDescriptionProvider
+- com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider
+- <init>():V
+- describe(com.jetbrains.cidr.project.workspace.CidrWorkspace):com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection

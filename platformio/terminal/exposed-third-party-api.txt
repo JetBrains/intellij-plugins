@@ -1,0 +1,2 @@
+org/jetbrains/plugins/terminal/startup/MutableShellExecOptions
+org/jetbrains/plugins/terminal/startup/ShellExecOptionsCustomizer

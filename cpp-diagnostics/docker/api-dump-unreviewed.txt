@@ -1,0 +1,4 @@
+f:com.intellij.clion.diagnostics.docker.toolchain.DockerToolchainDescriptionProvider
+- com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider
+- <init>():V
+- describe(com.jetbrains.cidr.cpp.toolchains.CPPToolchains$Toolchain,com.jetbrains.cidr.system.HostMachine):com.jetbrains.cidr.cpp.diagnostics.model.LinesSection

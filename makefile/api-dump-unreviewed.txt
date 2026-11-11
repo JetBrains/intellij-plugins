@@ -1,0 +1,1331 @@
+f:com.jetbrains.lang.makefile.MakeConfigurable
+- com.intellij.openapi.options.Configurable
+- <init>(com.intellij.openapi.project.Project):V
+- apply():V
+- createComponent():javax.swing.JComponent
+- getDisplayName():java.lang.String
+- getHelpTopic():java.lang.String
+- isModified():Z
+- reset():V
+f:com.jetbrains.lang.makefile.MakeKt
+- sf:DEFAULT_MAKE_PATH:java.lang.String
+f:com.jetbrains.lang.makefile.MakeSettings
+- <init>():V
+- f:getAutoScrollToSourceInToolWindow():Z
+- f:getPath():java.lang.String
+- f:getShowHiddenInToolWindow():Z
+- f:getSortAlphabeticallyInToolWindow():Z
+- f:getUseCygwin():Z
+- f:setAutoScrollToSourceInToolWindow(Z):V
+- f:setPath(java.lang.String):V
+- f:setShowHiddenInToolWindow(Z):V
+- f:setSortAlphabeticallyInToolWindow(Z):V
+- f:setUseCygwin(Z):V
+f:com.jetbrains.lang.makefile.MakefileAnnotator
+- com.intellij.lang.annotation.Annotator
+- com.intellij.openapi.project.DumbAware
+- <init>():V
+- annotate(com.intellij.psi.PsiElement,com.intellij.lang.annotation.AnnotationHolder):V
+f:com.jetbrains.lang.makefile.MakefileBraceMatcherProvider
+- com.intellij.lang.PairedBraceMatcher
+- <init>():V
+- getCodeConstructStart(com.intellij.psi.PsiFile,I):I
+- getPairs():com.intellij.lang.BracePair[]
+- isPairedBracesAllowedBeforeType(com.intellij.psi.tree.IElementType,com.intellij.psi.tree.IElementType):Z
+f:com.jetbrains.lang.makefile.MakefileChooseByNameContributor
+- com.intellij.navigation.ChooseByNameContributor
+- <init>():V
+- getItemsByName(java.lang.String,java.lang.String,com.intellij.openapi.project.Project,Z):com.jetbrains.lang.makefile.psi.MakefileTarget[]
+- getNames(com.intellij.openapi.project.Project,Z):java.lang.String[]
+f:com.jetbrains.lang.makefile.MakefileCodeBlockSupportHandler
+- com.intellij.codeInsight.highlighting.AbstractCodeBlockSupportHandler
+- <init>():V
+f:com.jetbrains.lang.makefile.MakefileCodeStyleSettings
+- com.intellij.psi.codeStyle.CustomCodeStyleSettings
+- <init>(com.intellij.psi.codeStyle.CodeStyleSettings):V
+f:com.jetbrains.lang.makefile.MakefileCommenter
+- com.intellij.lang.Commenter
+- <init>():V
+- getBlockCommentPrefix():java.lang.Void
+- getBlockCommentSuffix():java.lang.Void
+- getCommentedBlockCommentPrefix():java.lang.String
+- getCommentedBlockCommentSuffix():java.lang.Void
+- getLineCommentPrefix():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileCompletionContributor
+- com.intellij.codeInsight.completion.CompletionContributor
+- <init>():V
+f:com.jetbrains.lang.makefile.MakefileDocumentationProvider
+- com.intellij.lang.documentation.DocumentationProviderEx
+- <init>():V
+- generateDoc(com.intellij.psi.PsiElement,com.intellij.psi.PsiElement):java.lang.String
+- getQuickNavigateInfo(com.intellij.psi.PsiElement,com.intellij.psi.PsiElement):java.lang.String
+f:com.jetbrains.lang.makefile.MakefileFile
+- com.intellij.extapi.psi.PsiFileBase
+- <init>(com.intellij.psi.FileViewProvider):V
+- f:getAllTargets():java.util.Collection
+- getFileType():com.jetbrains.lang.makefile.MakefileFileType
+- f:getPhonyRules():java.util.Collection
+- f:getRules():java.util.Collection
+- f:getSpecialTargets():java.util.Collection
+- f:getTargets():java.util.Collection
+- f:getVariables():java.util.Collection
+f:com.jetbrains.lang.makefile.MakefileFileType
+- com.intellij.openapi.fileTypes.LanguageFileType
+- sf:INSTANCE:com.jetbrains.lang.makefile.MakefileFileType
+- getDefaultExtension():java.lang.String
+- getDescription():java.lang.String
+- getIcon():javax.swing.Icon
+- getName():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder
+- com.intellij.lang.folding.FoldingBuilderEx
+- com.intellij.openapi.project.DumbAware
+- sf:Companion:com.jetbrains.lang.makefile.MakefileFoldingBuilder$Companion
+- <init>():V
+- buildFoldRegions(com.intellij.psi.PsiElement,com.intellij.openapi.editor.Document,Z):com.intellij.lang.folding.FoldingDescriptor[]
+- getPlaceholderText(com.intellij.lang.ASTNode):java.lang.String
+- isCollapsedByDefault(com.intellij.lang.ASTNode):Z
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder$Companion
+- f:cutValue(java.lang.String):java.lang.String
+- f:trimmedTextRange(com.intellij.psi.PsiElement):com.intellij.openapi.util.TextRange
+- f:withoutFirstNode(com.intellij.psi.PsiElement):com.intellij.openapi.util.TextRange
+- f:withoutFirstNodeWithNextSiblingOfType(com.intellij.psi.PsiElement,com.intellij.psi.tree.IElementType):com.intellij.openapi.util.TextRange
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder$MakefileConditionalElseFoldingDescriptor
+- com.intellij.lang.folding.FoldingDescriptor
+- <init>(com.jetbrains.lang.makefile.psi.MakefileConditionalElse,com.intellij.openapi.util.TextRange):V
+- getPlaceholderText():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder$MakefileConditionalFoldingDescriptor
+- com.intellij.lang.folding.FoldingDescriptor
+- <init>(com.jetbrains.lang.makefile.psi.MakefileConditional,com.intellij.openapi.util.TextRange):V
+- getPlaceholderText():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder$MakefileDefineFoldingDescriptor
+- com.intellij.lang.folding.FoldingDescriptor
+- <init>(com.jetbrains.lang.makefile.psi.MakefileDefine):V
+- getPlaceholderText():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder$MakefileRuleFoldingDescriptor
+- com.intellij.lang.folding.FoldingDescriptor
+- <init>(com.jetbrains.lang.makefile.psi.MakefileRule):V
+- getPlaceholderText():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileFoldingBuilder$MakefileVariableFoldingDescriptor
+- com.intellij.lang.folding.FoldingDescriptor
+- <init>(com.jetbrains.lang.makefile.psi.MakefileVariableAssignment):V
+- getPlaceholderText():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileLangBundle
+- s:message(java.lang.String,java.lang.Object[]):java.lang.String
+- s:messagePointer(java.lang.String,java.lang.Object[]):java.util.function.Supplier
+f:com.jetbrains.lang.makefile.MakefileLangCodeStyleSettingsProvider
+- com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+- <init>():V
+- customizeSettings(com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable,com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider$SettingsType):V
+- getCodeSample(com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider$SettingsType):java.lang.String
+- getIndentOptionsEditor():com.intellij.application.options.IndentOptionsEditor
+- getLanguage():com.jetbrains.lang.makefile.MakefileLanguage
+f:com.jetbrains.lang.makefile.MakefileLanguage
+- com.intellij.lang.Language
+- sf:INSTANCE:com.jetbrains.lang.makefile.MakefileLanguage
+f:com.jetbrains.lang.makefile.MakefileLexerAdapter
+- com.intellij.lexer.FlexAdapter
+- <init>():V
+c:com.jetbrains.lang.makefile.MakefileParser
+- com.intellij.lang.LightPsiParser
+- com.intellij.lang.PsiParser
+- <init>():V
+- s:block(com.intellij.lang.PsiBuilder,I):Z
+- s:command(com.intellij.lang.PsiBuilder,I):Z
+- s:comment(com.intellij.lang.PsiBuilder,I):Z
+- s:condition(com.intellij.lang.PsiBuilder,I):Z
+- s:conditional(com.intellij.lang.PsiBuilder,I):Z
+- s:conditional_else(com.intellij.lang.PsiBuilder,I):Z
+- s:define(com.intellij.lang.PsiBuilder,I):Z
+- s:directive(com.intellij.lang.PsiBuilder,I):Z
+- s:directory(com.intellij.lang.PsiBuilder,I):Z
+- s:doc_comment(com.intellij.lang.PsiBuilder,I):Z
+- s:export(com.intellij.lang.PsiBuilder,I):Z
+- s:filename(com.intellij.lang.PsiBuilder,I):Z
+- s:function(com.intellij.lang.PsiBuilder,I):Z
+- s:function_name(com.intellij.lang.PsiBuilder,I):Z
+- s:function_param(com.intellij.lang.PsiBuilder,I):Z
+- s:identifier(com.intellij.lang.PsiBuilder,I):Z
+- s:include(com.intellij.lang.PsiBuilder,I):Z
+- s:inline_command(com.intellij.lang.PsiBuilder,I):Z
+- s:normal_prerequisites(com.intellij.lang.PsiBuilder,I):Z
+- s:order_only_prerequisites(com.intellij.lang.PsiBuilder,I):Z
+- s:override(com.intellij.lang.PsiBuilder,I):Z
+- parse(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder):com.intellij.lang.ASTNode
+- parseLight(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder):V
+- p:parse_root_(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder):Z
+- s:pattern(com.intellij.lang.PsiBuilder,I):Z
+- s:prerequisite(com.intellij.lang.PsiBuilder,I):Z
+- s:prerequisites(com.intellij.lang.PsiBuilder,I):Z
+- s:privatevar(com.intellij.lang.PsiBuilder,I):Z
+- s:recipe(com.intellij.lang.PsiBuilder,I):Z
+- s:rule(com.intellij.lang.PsiBuilder,I):Z
+- s:string(com.intellij.lang.PsiBuilder,I):Z
+- s:substitution(com.intellij.lang.PsiBuilder,I):Z
+- s:target(com.intellij.lang.PsiBuilder,I):Z
+- s:target_line(com.intellij.lang.PsiBuilder,I):Z
+- s:target_pattern(com.intellij.lang.PsiBuilder,I):Z
+- s:targets(com.intellij.lang.PsiBuilder,I):Z
+- s:undefine(com.intellij.lang.PsiBuilder,I):Z
+- s:unexport(com.intellij.lang.PsiBuilder,I):Z
+- s:variable(com.intellij.lang.PsiBuilder,I):Z
+- s:variable_assignment(com.intellij.lang.PsiBuilder,I):Z
+- s:variable_usage(com.intellij.lang.PsiBuilder,I):Z
+- s:variable_value(com.intellij.lang.PsiBuilder,I):Z
+- s:vpath(com.intellij.lang.PsiBuilder,I):Z
+f:com.jetbrains.lang.makefile.MakefileParserDefinition
+- com.intellij.lang.ParserDefinition
+- sf:Companion:com.jetbrains.lang.makefile.MakefileParserDefinition$Companion
+- <init>():V
+- createElement(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+- createFile(com.intellij.psi.FileViewProvider):com.jetbrains.lang.makefile.MakefileFile
+- createLexer(com.intellij.openapi.project.Project):com.jetbrains.lang.makefile.MakefileLexerAdapter
+- createParser(com.intellij.openapi.project.Project):com.jetbrains.lang.makefile.MakefileParser
+- getCommentTokens():com.intellij.psi.tree.TokenSet
+- getFileNodeType():com.intellij.psi.tree.IFileElementType
+- getStringLiteralElements():com.intellij.psi.tree.TokenSet
+- getWhitespaceTokens():com.intellij.psi.tree.TokenSet
+f:com.jetbrains.lang.makefile.MakefileParserDefinition$Companion
+- f:getFILE():com.intellij.psi.tree.IFileElementType
+f:com.jetbrains.lang.makefile.MakefileParserUtil
+- com.intellij.lang.parser.GeneratedParserUtilBase
+- sf:INSTANCE:com.jetbrains.lang.makefile.MakefileParserUtil
+- sf:parseDoubleQuotedString(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseLine(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseLineNotEndef(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseNoWhitespace(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseNoWhitespaceBehind(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseNoWhitespaceOrColon(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseNoWhitespaceOrColonBehind(com.intellij.lang.PsiBuilder,I):Z
+- sf:parsePrereqNoWhitespace(com.intellij.lang.PsiBuilder,I):Z
+- sf:parsePrereqNoWhitespaceBehind(com.intellij.lang.PsiBuilder,I):Z
+- sf:parsePrereqToDollarNoWhitespace(com.intellij.lang.PsiBuilder,I):Z
+- sf:parsePrereqToDollarNoWhitespaceBehind(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseSingleQuotedString(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseToDollarNoWhitespace(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseToDollarNoWhitespaceBehind(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseToDollarNoWhitespaceOrColon(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseToDollarNoWhitespaceOrColonBehind(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseVariableUsage(com.intellij.lang.PsiBuilder,I,Z,com.intellij.psi.tree.IElementType):Z
+- sf:parseVariableUsageCurly(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseVariableUsageParen(com.intellij.lang.PsiBuilder,I):Z
+f:com.jetbrains.lang.makefile.MakefileProjectSettings
+- com.intellij.openapi.components.PersistentStateComponent
+- <init>():V
+- f:getSettings():com.jetbrains.lang.makefile.MakeSettings
+- getState():com.jetbrains.lang.makefile.MakeSettings
+- loadState(com.jetbrains.lang.makefile.MakeSettings):V
+- f:setSettings(com.jetbrains.lang.makefile.MakeSettings):V
+f:com.jetbrains.lang.makefile.MakefileRunConfiguration
+- com.intellij.execution.configurations.LocatableConfigurationBase
+- sf:ARGUMENTS:java.lang.String
+- sf:FILENAME:java.lang.String
+- sf:MAKEFILE:java.lang.String
+- sf:TARGET:java.lang.String
+- sf:WORKING_DIRECTORY:java.lang.String
+- <init>(com.intellij.openapi.project.Project,com.jetbrains.lang.makefile.MakefileRunConfigurationFactory,java.lang.String):V
+- checkConfiguration():V
+- f:getArguments():java.lang.String
+- getConfigurationEditor():com.jetbrains.lang.makefile.MakefileRunConfigurationEditor
+- f:getEnvironmentVariables():com.intellij.execution.configuration.EnvironmentVariablesData
+- f:getFilename():java.lang.String
+- getState(com.intellij.execution.Executor,com.intellij.execution.runners.ExecutionEnvironment):com.intellij.execution.configurations.RunProfileState
+- f:getTarget():java.lang.String
+- f:getWorkingDirectory():java.lang.String
+- readExternal(org.jdom.Element):V
+- f:setArguments(java.lang.String):V
+- f:setEnvironmentVariables(com.intellij.execution.configuration.EnvironmentVariablesData):V
+- f:setFilename(java.lang.String):V
+- f:setTarget(java.lang.String):V
+- f:setWorkingDirectory(java.lang.String):V
+- writeExternal(org.jdom.Element):V
+com.jetbrains.lang.makefile.MakefileRunConfigurationCustomizer
+- sf:Companion:com.jetbrains.lang.makefile.MakefileRunConfigurationCustomizer$Companion
+- a:customizeCommandAndEnvironment(com.intellij.openapi.project.Project,java.lang.String[],java.util.Map):java.lang.String[]
+f:com.jetbrains.lang.makefile.MakefileRunConfigurationCustomizer$Companion
+- f:getEP_NAME():com.intellij.openapi.extensions.ExtensionPointName
+f:com.jetbrains.lang.makefile.MakefileRunConfigurationEditor
+- com.intellij.openapi.options.SettingsEditor
+- <init>(com.intellij.openapi.project.Project):V
+- f:updateTargetCompletion(java.lang.String):V
+f:com.jetbrains.lang.makefile.MakefileRunConfigurationFactory
+- com.intellij.execution.configurations.ConfigurationFactory
+- <init>(com.jetbrains.lang.makefile.MakefileRunConfigurationType):V
+- f:createConfigurationFromTarget(com.jetbrains.lang.makefile.psi.MakefileTarget):com.jetbrains.lang.makefile.MakefileRunConfiguration
+- createTemplateConfiguration(com.intellij.openapi.project.Project):com.jetbrains.lang.makefile.MakefileRunConfiguration
+- getId():java.lang.String
+- getName():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileRunConfigurationProducer
+- com.intellij.execution.actions.LazyRunConfigurationProducer
+- <init>():V
+- getConfigurationFactory():com.intellij.execution.configurations.ConfigurationFactory
+- isConfigurationFromContext(com.jetbrains.lang.makefile.MakefileRunConfiguration,com.intellij.execution.actions.ConfigurationContext):Z
+f:com.jetbrains.lang.makefile.MakefileRunConfigurationType
+- com.intellij.execution.configurations.ConfigurationType
+- sf:Companion:com.jetbrains.lang.makefile.MakefileRunConfigurationType$Companion
+- <init>():V
+- getConfigurationFactories():com.jetbrains.lang.makefile.MakefileRunConfigurationFactory[]
+- getConfigurationTypeDescription():java.lang.String
+- getDisplayName():java.lang.String
+- getHelpTopic():java.lang.String
+- getIcon():javax.swing.Icon
+- getId():java.lang.String
+- sf:getInstance():com.jetbrains.lang.makefile.MakefileRunConfigurationType
+f:com.jetbrains.lang.makefile.MakefileRunConfigurationType$Companion
+- f:getInstance():com.jetbrains.lang.makefile.MakefileRunConfigurationType
+f:com.jetbrains.lang.makefile.MakefileShellLanguageInjector
+- com.intellij.lang.injection.MultiHostInjector
+- <init>():V
+- elementsToInjectIn():java.util.List
+- getLanguagesToInject(com.intellij.lang.injection.MultiHostRegistrar,com.intellij.psi.PsiElement):V
+f:com.jetbrains.lang.makefile.MakefileStructureViewElement
+- com.intellij.ide.structureView.StructureViewTreeElement
+- <init>(com.intellij.psi.PsiElement):V
+- canNavigate():Z
+- canNavigateToSource():Z
+- getChildren():com.intellij.ide.util.treeView.smartTree.TreeElement[]
+- getPresentation():com.intellij.navigation.ItemPresentation
+- getValue():com.intellij.psi.PsiElement
+- getValueForComparison():com.intellij.psi.PsiElement
+- navigate(Z):V
+f:com.jetbrains.lang.makefile.MakefileStructureViewFactory
+- com.intellij.lang.PsiStructureViewFactory
+- <init>():V
+- getStructureViewBuilder(com.intellij.psi.PsiFile):com.intellij.ide.structureView.TreeBasedStructureViewBuilder
+f:com.jetbrains.lang.makefile.MakefileStructureViewModel
+- com.intellij.ide.structureView.StructureViewModelBase
+- <init>(com.intellij.psi.PsiFile):V
+f:com.jetbrains.lang.makefile.MakefileStubFileElementType
+- com.intellij.psi.tree.IStubFileElementType
+- <init>():V
+f:com.jetbrains.lang.makefile.MakefileSyntaxHighlighter
+- com.intellij.openapi.fileTypes.SyntaxHighlighterBase
+- sf:Companion:com.jetbrains.lang.makefile.MakefileSyntaxHighlighter$Companion
+- <init>():V
+- getHighlightingLexer():com.jetbrains.lang.makefile.MakefileLexerAdapter
+- getTokenHighlights(com.intellij.psi.tree.IElementType):com.intellij.openapi.editor.colors.TextAttributesKey[]
+f:com.jetbrains.lang.makefile.MakefileSyntaxHighlighter$Companion
+- f:getBRACES():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getCOMMENT():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getDOCCOMMENT():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getFUNCTION():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getFUNCTION_PARAM():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getKEYWORD():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getLINE_SPLIT():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getPREREQUISITE():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getSEPARATOR():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getSPECIAL_TARGET():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getSTRING():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getTAB():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getTARGET():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getVARIABLE():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getVARIABLE_VALUE():com.intellij.openapi.editor.colors.TextAttributesKey
+f:com.jetbrains.lang.makefile.MakefileSyntaxHighlighterFactory
+- com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
+- <init>():V
+- getSyntaxHighlighter(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile):com.jetbrains.lang.makefile.MakefileSyntaxHighlighter
+f:com.jetbrains.lang.makefile.MakefileTargetIndex
+- com.intellij.psi.stubs.StringStubIndexExtension
+- sf:Companion:com.jetbrains.lang.makefile.MakefileTargetIndex$Companion
+- <init>():V
+- f:allTargets(com.intellij.openapi.project.Project):java.util.List
+- get(java.lang.String,com.intellij.openapi.project.Project,com.intellij.psi.search.GlobalSearchScope):java.util.Collection
+- getKey():com.intellij.psi.stubs.StubIndexKey
+- f:getTargets(java.lang.String,com.intellij.openapi.project.Project,com.intellij.psi.search.GlobalSearchScope):java.util.Collection
+f:com.jetbrains.lang.makefile.MakefileTargetIndex$Companion
+- f:getInstance():com.jetbrains.lang.makefile.MakefileTargetIndex
+f:com.jetbrains.lang.makefile.MakefileTargetKeyIndexKt
+- sf:getTARGET_INDEX_KEY():com.intellij.psi.stubs.StubIndexKey
+f:com.jetbrains.lang.makefile.MakefileTargetReference
+- com.intellij.psi.PsiPolyVariantReferenceBase
+- <init>(com.jetbrains.lang.makefile.psi.MakefilePrerequisite):V
+- f:getRule():com.jetbrains.lang.makefile.psi.MakefileRule
+- getVariants():com.intellij.codeInsight.lookup.LookupElementBuilder[]
+- handleElementRename(java.lang.String):com.intellij.psi.PsiElement
+- isReferenceTo(com.intellij.psi.PsiElement):Z
+- multiResolve(Z):com.intellij.psi.ResolveResult[]
+f:com.jetbrains.lang.makefile.MakefileTargetRunLineMarkerContributor
+- com.intellij.execution.lineMarker.RunLineMarkerContributor
+- <init>():V
+- getInfo(com.intellij.psi.PsiElement):com.intellij.execution.lineMarker.RunLineMarkerContributor$Info
+f:com.jetbrains.lang.makefile.MakefileTargetStructureViewPresentation
+- com.intellij.navigation.ItemPresentation
+- <init>(com.jetbrains.lang.makefile.psi.MakefileTarget):V
+- getIcon(Z):javax.swing.Icon
+- getLocationString():java.lang.String
+- getPresentableText():java.lang.String
+f:com.jetbrains.lang.makefile.MakefileVariableReference
+- com.intellij.psi.PsiPolyVariantReferenceBase
+- <init>(com.jetbrains.lang.makefile.psi.MakefileVariableUsage):V
+- getRangeInElement():com.intellij.openapi.util.TextRange
+- getVariants():com.intellij.codeInsight.lookup.LookupElementBuilder[]
+- isReferenceTo(com.intellij.psi.PsiElement):Z
+- multiResolve(Z):com.intellij.psi.ResolveResult[]
+f:com.jetbrains.lang.makefile.UtilsKt
+- sf:findAllTargets(com.intellij.openapi.project.Project):java.util.Collection
+- sf:findTargetLine(com.jetbrains.lang.makefile.psi.MakefilePrerequisite):com.jetbrains.lang.makefile.psi.MakefileTargetLine
+- sf:findTargets(com.intellij.openapi.project.Project,java.lang.String):java.util.Collection
+- sf:findTargets(com.intellij.psi.PsiFile):java.lang.Iterable
+- sf:getMakefileTargetIcon():javax.swing.Icon
+c:com.jetbrains.lang.makefile._MakefileLexer
+- com.intellij.lexer.FlexLexer
+- sf:DEFINE:I
+- sf:DQSTRING:I
+- sf:LINE:I
+- sf:SQSTRING:I
+- sf:YYEOF:I
+- sf:YYINITIAL:I
+- p:yycolumn:I
+- <init>():V
+- <init>(java.io.Reader):V
+- advance():com.intellij.psi.tree.IElementType
+- f:getTokenEnd():I
+- f:getTokenStart():I
+- reset(java.lang.CharSequence,I,I,I):V
+- f:yybegin(I):V
+- f:yycharat(I):C
+- f:yylength():I
+- yypushback(I):V
+- f:yystate():I
+- f:yytext():java.lang.CharSequence
+f:com.jetbrains.lang.makefile.inspections.CreateRuleFix
+- com.intellij.codeInspection.LocalQuickFix
+- <init>():V
+- applyFix(com.intellij.openapi.project.Project,com.intellij.codeInspection.ProblemDescriptor):V
+- getFamilyName():java.lang.String
+- getName():java.lang.String
+- startInWriteAction():Z
+f:com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z,com.intellij.codeInspection.LocalInspectionToolSession):com.intellij.psi.PsiElementVisitor
+com.jetbrains.lang.makefile.psi.MakefileBlock
+- com.intellij.psi.PsiElement
+- a:getCommandList():java.util.List
+- a:getConditionalList():java.util.List
+- a:getDirectiveList():java.util.List
+- a:getFunctionList():java.util.List
+- a:getRuleList():java.util.List
+- a:getVariableAssignmentList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileCommand
+- com.jetbrains.lang.makefile.psi.impl.IMakeFileCommand
+- a:getFunctionList():java.util.List
+- a:getStringList():java.util.List
+- a:getSubstitutionList():java.util.List
+- a:getVariableUsageList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileComment
+- com.intellij.psi.PsiElement
+com.jetbrains.lang.makefile.psi.MakefileCondition
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getIdentifierList():java.util.List
+- a:getStringList():java.util.List
+- a:getVariableUsageList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileConditional
+- com.intellij.psi.PsiElement
+- a:getBlock():com.jetbrains.lang.makefile.psi.MakefileBlock
+- a:getCondition():com.jetbrains.lang.makefile.psi.MakefileCondition
+- a:getConditionalElseList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileConditionalElse
+- com.intellij.psi.PsiElement
+- a:getBlock():com.jetbrains.lang.makefile.psi.MakefileBlock
+- a:getCondition():com.jetbrains.lang.makefile.psi.MakefileCondition
+com.jetbrains.lang.makefile.psi.MakefileDefine
+- com.intellij.psi.PsiElement
+- a:getAssignment():com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getStringList():java.util.List
+- a:getSubstitutionList():java.util.List
+- a:getValue():java.lang.String
+- a:getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- a:getVariableUsageList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileDirective
+- com.intellij.psi.PsiElement
+- a:getDefine():com.jetbrains.lang.makefile.psi.MakefileDefine
+- a:getExport():com.jetbrains.lang.makefile.psi.MakefileExport
+- a:getInclude():com.jetbrains.lang.makefile.psi.MakefileInclude
+- a:getOverride():com.jetbrains.lang.makefile.psi.MakefileOverride
+- a:getPrivatevar():com.jetbrains.lang.makefile.psi.MakefilePrivatevar
+- a:getUndefine():com.jetbrains.lang.makefile.psi.MakefileUndefine
+- a:getUnexport():com.jetbrains.lang.makefile.psi.MakefileUnexport
+- a:getVpath():com.jetbrains.lang.makefile.psi.MakefileVpath
+com.jetbrains.lang.makefile.psi.MakefileDirectory
+- com.intellij.psi.PsiElement
+- a:getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+com.jetbrains.lang.makefile.psi.MakefileDocComment
+- com.intellij.psi.PsiElement
+f:com.jetbrains.lang.makefile.psi.MakefileElementFactory
+- sf:INSTANCE:com.jetbrains.lang.makefile.psi.MakefileElementFactory
+- f:createChars(com.intellij.openapi.project.Project,java.lang.String):com.intellij.lang.ASTNode
+- f:createEOL(com.intellij.openapi.project.Project,java.lang.String):com.intellij.psi.PsiElement
+- f:createFunction(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileFunction
+- f:createPrerequisite(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+- f:createRecipe(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileRecipe
+- f:createRule(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileRule
+- f:createSubstitution(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileSubstitution
+- f:createTarget(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileTarget
+- f:createVariable(com.intellij.openapi.project.Project,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileVariable
+- f:createWhiteSpace(com.intellij.openapi.project.Project,java.lang.String):com.intellij.psi.PsiWhiteSpace
+c:com.jetbrains.lang.makefile.psi.MakefileElementType
+- com.intellij.psi.tree.IElementType
+- <init>(java.lang.String):V
+com.jetbrains.lang.makefile.psi.MakefileExport
+- com.intellij.psi.PsiElement
+- a:getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- a:getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+com.jetbrains.lang.makefile.psi.MakefileFilename
+- com.intellij.psi.PsiElement
+- a:getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+com.jetbrains.lang.makefile.psi.MakefileFunction
+- com.intellij.psi.PsiLanguageInjectionHost
+- a:getFunctionName():com.jetbrains.lang.makefile.psi.MakefileFunctionName
+- a:getFunctionParamList():java.util.List
+a:com.jetbrains.lang.makefile.psi.MakefileFunctionElementImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileFunction
+- <init>(com.intellij.lang.ASTNode):V
+- createLiteralTextEscaper():com.intellij.psi.LiteralTextEscaper
+- isValidHost():Z
+- updateText(java.lang.String):com.jetbrains.lang.makefile.psi.MakefileFunction
+f:com.jetbrains.lang.makefile.psi.MakefileFunctionManipulator
+- com.intellij.psi.AbstractElementManipulator
+- <init>():V
+- handleContentChange(com.jetbrains.lang.makefile.psi.MakefileFunction,com.intellij.openapi.util.TextRange,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileFunction
+com.jetbrains.lang.makefile.psi.MakefileFunctionName
+- com.intellij.psi.PsiElement
+com.jetbrains.lang.makefile.psi.MakefileFunctionParam
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getFunctionNameList():java.util.List
+- a:getFunctionParamList():java.util.List
+- a:getStringList():java.util.List
+- a:getSubstitutionList():java.util.List
+- a:getVariableUsageList():java.util.List
+f:com.jetbrains.lang.makefile.psi.MakefileFunctionTextEscaper
+- com.intellij.psi.LiteralTextEscaper
+- <init>(com.jetbrains.lang.makefile.psi.MakefileFunction):V
+- decode(com.intellij.openapi.util.TextRange,java.lang.StringBuilder):Z
+- getOffsetInHost(I,com.intellij.openapi.util.TextRange):I
+- isOneLine():Z
+com.jetbrains.lang.makefile.psi.MakefileIdentifier
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getVariableUsageList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileInclude
+- com.intellij.psi.PsiElement
+- a:getFilenameList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileInlineCommand
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getStringList():java.util.List
+- a:getSubstitutionList():java.util.List
+- a:getVariableUsageList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileNamedElement
+- com.intellij.psi.PsiNameIdentifierOwner
+- com.intellij.psi.PsiNamedElement
+com.jetbrains.lang.makefile.psi.MakefileNormalPrerequisites
+- com.intellij.psi.PsiElement
+- a:getPrerequisiteList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileOrderOnlyPrerequisites
+- com.intellij.psi.PsiElement
+- a:getPrerequisiteList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileOverride
+- com.intellij.psi.PsiElement
+- a:getUndefine():com.jetbrains.lang.makefile.psi.MakefileUndefine
+- a:getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+com.jetbrains.lang.makefile.psi.MakefilePattern
+- com.intellij.psi.PsiElement
+- a:getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getVariableUsageList():java.util.List
+- a:isPhonyTarget():Z
+- a:updateText(java.lang.String):com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl
+f:com.jetbrains.lang.makefile.psi.MakefilePrerequisiteManipulator
+- com.intellij.psi.AbstractElementManipulator
+- <init>():V
+- handleContentChange(com.jetbrains.lang.makefile.psi.MakefilePrerequisite,com.intellij.openapi.util.TextRange,java.lang.String):com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+com.jetbrains.lang.makefile.psi.MakefilePrerequisites
+- com.intellij.psi.PsiElement
+- a:getNormalPrerequisites():com.jetbrains.lang.makefile.psi.MakefileNormalPrerequisites
+- a:getOrderOnlyPrerequisites():com.jetbrains.lang.makefile.psi.MakefileOrderOnlyPrerequisites
+com.jetbrains.lang.makefile.psi.MakefilePrivatevar
+- com.intellij.psi.PsiElement
+- a:getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+f:com.jetbrains.lang.makefile.psi.MakefilePsiImplUtil
+- sf:INSTANCE:com.jetbrains.lang.makefile.psi.MakefilePsiImplUtil
+- sf:getAssignment(com.jetbrains.lang.makefile.psi.MakefileDefine):com.intellij.psi.PsiElement
+- sf:getAssignment(com.jetbrains.lang.makefile.psi.MakefileVariableAssignment):com.intellij.psi.PsiElement
+- sf:getDocComment(com.jetbrains.lang.makefile.psi.MakefileTarget):java.lang.String
+- sf:getName(com.jetbrains.lang.makefile.psi.MakefileTarget):java.lang.String
+- sf:getName(com.jetbrains.lang.makefile.psi.MakefileVariable):java.lang.String
+- sf:getNameIdentifier(com.jetbrains.lang.makefile.psi.MakefileTarget):com.intellij.psi.PsiElement
+- sf:getNameIdentifier(com.jetbrains.lang.makefile.psi.MakefileVariable):com.intellij.psi.PsiElement
+- sf:getPresentation(com.jetbrains.lang.makefile.psi.MakefileTarget):com.intellij.navigation.ItemPresentation
+- sf:getTargetName(com.jetbrains.lang.makefile.psi.MakefileTargetLine):java.lang.String
+- sf:getTargets(com.jetbrains.lang.makefile.psi.MakefileRule):java.util.List
+- sf:getValue(com.jetbrains.lang.makefile.psi.MakefileDefine):java.lang.String
+- sf:getValue(com.jetbrains.lang.makefile.psi.MakefileVariableAssignment):java.lang.String
+- sf:isEmpty(com.jetbrains.lang.makefile.psi.MakefileRecipe):Z
+- sf:isPatternTarget(com.jetbrains.lang.makefile.psi.MakefileTarget):Z
+- sf:isPhonyTarget(com.jetbrains.lang.makefile.psi.MakefilePrerequisite):Z
+- sf:isSpecialTarget(com.jetbrains.lang.makefile.psi.MakefileTarget):Z
+- sf:matches(com.jetbrains.lang.makefile.psi.MakefileTarget,java.lang.String):Z
+- sf:setName(com.jetbrains.lang.makefile.psi.MakefileTarget,java.lang.String):com.intellij.psi.PsiElement
+- sf:setName(com.jetbrains.lang.makefile.psi.MakefileVariable,java.lang.String):com.intellij.psi.PsiElement
+- sf:updateText(com.jetbrains.lang.makefile.psi.MakefilePrerequisite,java.lang.String):com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl
+com.jetbrains.lang.makefile.psi.MakefileRecipe
+- com.intellij.psi.PsiLanguageInjectionHost
+- a:getCommandList():java.util.List
+- a:getConditionalList():java.util.List
+- a:isEmpty():Z
+a:com.jetbrains.lang.makefile.psi.MakefileRecipeElementImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileRecipe
+- <init>(com.intellij.lang.ASTNode):V
+- createLiteralTextEscaper():com.intellij.psi.LiteralTextEscaper
+- isValidHost():Z
+- updateText(java.lang.String):com.jetbrains.lang.makefile.psi.MakefileRecipe
+f:com.jetbrains.lang.makefile.psi.MakefileRecipeManipulator
+- com.intellij.psi.AbstractElementManipulator
+- <init>():V
+- handleContentChange(com.jetbrains.lang.makefile.psi.MakefileRecipe,com.intellij.openapi.util.TextRange,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileRecipe
+f:com.jetbrains.lang.makefile.psi.MakefileRecipeTextEscaper
+- com.intellij.psi.LiteralTextEscaper
+- <init>(com.jetbrains.lang.makefile.psi.MakefileRecipe):V
+- decode(com.intellij.openapi.util.TextRange,java.lang.StringBuilder):Z
+- getOffsetInHost(I,com.intellij.openapi.util.TextRange):I
+- isOneLine():Z
+com.jetbrains.lang.makefile.psi.MakefileRule
+- com.intellij.psi.PsiElement
+- a:getRecipe():com.jetbrains.lang.makefile.psi.MakefileRecipe
+- a:getTargetLine():com.jetbrains.lang.makefile.psi.MakefileTargetLine
+- a:getTargets():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileString
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getVariableUsageList():java.util.List
+com.jetbrains.lang.makefile.psi.MakefileSubstitution
+- com.intellij.psi.PsiLanguageInjectionHost
+- a:getFunctionList():java.util.List
+- a:getStringList():java.util.List
+- a:getVariableUsageList():java.util.List
+a:com.jetbrains.lang.makefile.psi.MakefileSubstitutionInjectionHost
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileSubstitution
+- <init>(com.intellij.lang.ASTNode):V
+- createLiteralTextEscaper():com.intellij.psi.LiteralTextEscaper
+- isValidHost():Z
+- updateText(java.lang.String):com.jetbrains.lang.makefile.psi.MakefileSubstitution
+f:com.jetbrains.lang.makefile.psi.MakefileSubstitutionManipulator
+- com.intellij.psi.AbstractElementManipulator
+- <init>():V
+- handleContentChange(com.jetbrains.lang.makefile.psi.MakefileSubstitution,com.intellij.openapi.util.TextRange,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileSubstitution
+f:com.jetbrains.lang.makefile.psi.MakefileSubstitutionTextEscaper
+- com.intellij.psi.LiteralTextEscaper
+- <init>(com.jetbrains.lang.makefile.psi.MakefileSubstitution):V
+- decode(com.intellij.openapi.util.TextRange,java.lang.StringBuilder):Z
+- getOffsetInHost(I,com.intellij.openapi.util.TextRange):I
+- isOneLine():Z
+com.jetbrains.lang.makefile.psi.MakefileTarget
+- com.intellij.navigation.NavigationItem
+- com.intellij.psi.StubBasedPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileNamedElement
+- a:getDocComment():java.lang.String
+- a:getFunctionList():java.util.List
+- a:getName():java.lang.String
+- a:getNameIdentifier():com.intellij.psi.PsiElement
+- a:getPresentation():com.intellij.navigation.ItemPresentation
+- a:getVariableUsageList():java.util.List
+- a:isPatternTarget():Z
+- a:isSpecialTarget():Z
+- a:matches(java.lang.String):Z
+- a:setName(java.lang.String):com.intellij.psi.PsiElement
+com.jetbrains.lang.makefile.psi.MakefileTargetLine
+- com.intellij.psi.PsiElement
+- a:getInlineCommand():com.jetbrains.lang.makefile.psi.MakefileInlineCommand
+- a:getOverride():com.jetbrains.lang.makefile.psi.MakefileOverride
+- a:getPrerequisites():com.jetbrains.lang.makefile.psi.MakefilePrerequisites
+- a:getPrivatevar():com.jetbrains.lang.makefile.psi.MakefilePrivatevar
+- a:getTargetName():java.lang.String
+- a:getTargetPattern():com.jetbrains.lang.makefile.psi.MakefileTargetPattern
+- a:getTargets():com.jetbrains.lang.makefile.psi.MakefileTargets
+- a:getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+com.jetbrains.lang.makefile.psi.MakefileTargetPattern
+- com.intellij.psi.PsiElement
+- a:getTarget():com.jetbrains.lang.makefile.psi.MakefileTarget
+f:com.jetbrains.lang.makefile.psi.MakefileTargetPresentation
+- com.intellij.navigation.ItemPresentation
+- <init>(com.jetbrains.lang.makefile.psi.MakefileTarget):V
+- getIcon(Z):javax.swing.Icon
+- getLocationString():java.lang.String
+- getPresentableText():java.lang.String
+com.jetbrains.lang.makefile.psi.MakefileTargets
+- com.intellij.psi.PsiElement
+- a:getTargetList():java.util.List
+c:com.jetbrains.lang.makefile.psi.MakefileTokenType
+- com.intellij.psi.tree.IElementType
+- <init>(java.lang.String):V
+com.jetbrains.lang.makefile.psi.MakefileTypes
+- sf:ASSIGN:com.intellij.psi.tree.IElementType
+- sf:BACKTICK:com.intellij.psi.tree.IElementType
+- sf:BLOCK:com.intellij.psi.tree.IElementType
+- sf:CHARS:com.intellij.psi.tree.IElementType
+- sf:CLOSE_CURLY:com.intellij.psi.tree.IElementType
+- sf:CLOSE_PAREN:com.intellij.psi.tree.IElementType
+- sf:COLON:com.intellij.psi.tree.IElementType
+- sf:COMMA:com.intellij.psi.tree.IElementType
+- sf:COMMAND:com.intellij.psi.tree.IElementType
+- sf:COMMENT:com.intellij.psi.tree.IElementType
+- sf:CONDITION:com.intellij.psi.tree.IElementType
+- sf:CONDITIONAL:com.intellij.psi.tree.IElementType
+- sf:CONDITIONAL_ELSE:com.intellij.psi.tree.IElementType
+- sf:DEFINE:com.intellij.psi.tree.IElementType
+- sf:DIRECTIVE:com.intellij.psi.tree.IElementType
+- sf:DIRECTORY:com.intellij.psi.tree.IElementType
+- sf:DOC_COMMENT:com.intellij.psi.tree.IElementType
+- sf:DOLLAR:com.intellij.psi.tree.IElementType
+- sf:DOUBLEQUOTE:com.intellij.psi.tree.IElementType
+- sf:EOL:com.intellij.psi.tree.IElementType
+- sf:ESCAPED_DOUBLEQUOTE:com.intellij.psi.tree.IElementType
+- sf:EXPORT:com.intellij.psi.tree.IElementType
+- sf:FILENAME:com.intellij.psi.tree.IElementType
+- sf:FUNCTION:com.intellij.psi.tree.IElementType
+- sf:FUNCTION_NAME:com.intellij.psi.tree.IElementType
+- sf:FUNCTION_PARAM:com.intellij.psi.tree.IElementType
+- sf:IDENTIFIER:com.intellij.psi.tree.IElementType
+- sf:INCLUDE:com.intellij.psi.tree.IElementType
+- sf:INLINE_COMMAND:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_DEFINE:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_ELSE:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_ENDEF:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_ENDIF:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_EXPORT:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_IFDEF:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_IFEQ:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_IFNDEF:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_IFNEQ:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_INCLUDE:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_OVERRIDE:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_PRIVATE:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_UNDEFINE:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_UNEXPORT:com.intellij.psi.tree.IElementType
+- sf:KEYWORD_VPATH:com.intellij.psi.tree.IElementType
+- sf:MACRO:com.intellij.psi.tree.IElementType
+- sf:NORMAL_PREREQUISITES:com.intellij.psi.tree.IElementType
+- sf:OPEN_CURLY:com.intellij.psi.tree.IElementType
+- sf:OPEN_PAREN:com.intellij.psi.tree.IElementType
+- sf:ORDER_ONLY_PREREQUISITES:com.intellij.psi.tree.IElementType
+- sf:OVERRIDE:com.intellij.psi.tree.IElementType
+- sf:PATTERN:com.intellij.psi.tree.IElementType
+- sf:PIPE:com.intellij.psi.tree.IElementType
+- sf:PREREQUISITE:com.intellij.psi.tree.IElementType
+- sf:PREREQUISITES:com.intellij.psi.tree.IElementType
+- sf:PRIVATEVAR:com.intellij.psi.tree.IElementType
+- sf:QUOTE:com.intellij.psi.tree.IElementType
+- sf:RECIPE:com.intellij.psi.tree.IElementType
+- sf:RECIPE_PREFIX:com.intellij.psi.tree.IElementType
+- sf:RULE:com.intellij.psi.tree.IElementType
+- sf:SEMICOLON:com.intellij.psi.tree.IElementType
+- sf:SPLIT:com.intellij.psi.tree.IElementType
+- sf:STRING:com.intellij.psi.tree.IElementType
+- sf:SUBSTITUTION:com.intellij.psi.tree.IElementType
+- sf:TAB:com.intellij.psi.tree.IElementType
+- sf:TARGET:com.intellij.psi.tree.IElementType
+- sf:TARGETS:com.intellij.psi.tree.IElementType
+- sf:TARGET_LINE:com.intellij.psi.tree.IElementType
+- sf:TARGET_PATTERN:com.intellij.psi.tree.IElementType
+- sf:UNDEFINE:com.intellij.psi.tree.IElementType
+- sf:UNEXPORT:com.intellij.psi.tree.IElementType
+- sf:VARIABLE:com.intellij.psi.tree.IElementType
+- sf:VARIABLE_ASSIGNMENT:com.intellij.psi.tree.IElementType
+- sf:VARIABLE_USAGE:com.intellij.psi.tree.IElementType
+- sf:VARIABLE_VALUE:com.intellij.psi.tree.IElementType
+- sf:VPATH:com.intellij.psi.tree.IElementType
+c:com.jetbrains.lang.makefile.psi.MakefileTypes$Factory
+- <init>():V
+- s:createElement(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+com.jetbrains.lang.makefile.psi.MakefileUndefine
+- com.intellij.psi.PsiElement
+- a:getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+com.jetbrains.lang.makefile.psi.MakefileUnexport
+- com.intellij.psi.PsiElement
+- a:getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- a:getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+com.jetbrains.lang.makefile.psi.MakefileVariable
+- com.intellij.navigation.NavigationItem
+- com.jetbrains.lang.makefile.psi.MakefileNamedElement
+- a:getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+- a:getName():java.lang.String
+- a:getNameIdentifier():com.intellij.psi.PsiElement
+- a:setName(java.lang.String):com.intellij.psi.PsiElement
+com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+- com.intellij.psi.PsiElement
+- a:getAssignment():com.intellij.psi.PsiElement
+- a:getValue():java.lang.String
+- a:getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- a:getVariableValue():com.jetbrains.lang.makefile.psi.MakefileVariableValue
+com.jetbrains.lang.makefile.psi.MakefileVariableUsage
+- com.intellij.psi.PsiElement
+f:com.jetbrains.lang.makefile.psi.MakefileVariableUsageManipulator
+- com.intellij.psi.AbstractElementManipulator
+- <init>():V
+- handleContentChange(com.jetbrains.lang.makefile.psi.MakefileVariableUsage,com.intellij.openapi.util.TextRange,java.lang.String):com.jetbrains.lang.makefile.psi.MakefileVariableUsage
+com.jetbrains.lang.makefile.psi.MakefileVariableValue
+- com.intellij.psi.PsiElement
+- a:getFunctionList():java.util.List
+- a:getStringList():java.util.List
+- a:getSubstitutionList():java.util.List
+- a:getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.MakefileVisitor
+- com.intellij.psi.PsiElementVisitor
+- <init>():V
+- visitBlock(com.jetbrains.lang.makefile.psi.MakefileBlock):V
+- visitCommand(com.jetbrains.lang.makefile.psi.MakefileCommand):V
+- visitComment(com.jetbrains.lang.makefile.psi.MakefileComment):V
+- visitCondition(com.jetbrains.lang.makefile.psi.MakefileCondition):V
+- visitConditional(com.jetbrains.lang.makefile.psi.MakefileConditional):V
+- visitConditionalElse(com.jetbrains.lang.makefile.psi.MakefileConditionalElse):V
+- visitDefine(com.jetbrains.lang.makefile.psi.MakefileDefine):V
+- visitDirective(com.jetbrains.lang.makefile.psi.MakefileDirective):V
+- visitDirectory(com.jetbrains.lang.makefile.psi.MakefileDirectory):V
+- visitDocComment(com.jetbrains.lang.makefile.psi.MakefileDocComment):V
+- visitExport(com.jetbrains.lang.makefile.psi.MakefileExport):V
+- visitFilename(com.jetbrains.lang.makefile.psi.MakefileFilename):V
+- visitFunction(com.jetbrains.lang.makefile.psi.MakefileFunction):V
+- visitFunctionName(com.jetbrains.lang.makefile.psi.MakefileFunctionName):V
+- visitFunctionParam(com.jetbrains.lang.makefile.psi.MakefileFunctionParam):V
+- visitIMakeFileCommand(com.jetbrains.lang.makefile.psi.impl.IMakeFileCommand):V
+- visitIdentifier(com.jetbrains.lang.makefile.psi.MakefileIdentifier):V
+- visitInclude(com.jetbrains.lang.makefile.psi.MakefileInclude):V
+- visitInlineCommand(com.jetbrains.lang.makefile.psi.MakefileInlineCommand):V
+- visitNamedElement(com.jetbrains.lang.makefile.psi.MakefileNamedElement):V
+- visitNormalPrerequisites(com.jetbrains.lang.makefile.psi.MakefileNormalPrerequisites):V
+- visitOrderOnlyPrerequisites(com.jetbrains.lang.makefile.psi.MakefileOrderOnlyPrerequisites):V
+- visitOverride(com.jetbrains.lang.makefile.psi.MakefileOverride):V
+- visitPattern(com.jetbrains.lang.makefile.psi.MakefilePattern):V
+- visitPrerequisite(com.jetbrains.lang.makefile.psi.MakefilePrerequisite):V
+- visitPrerequisites(com.jetbrains.lang.makefile.psi.MakefilePrerequisites):V
+- visitPrivatevar(com.jetbrains.lang.makefile.psi.MakefilePrivatevar):V
+- visitPsiElement(com.intellij.psi.PsiElement):V
+- visitPsiLanguageInjectionHost(com.intellij.psi.PsiLanguageInjectionHost):V
+- visitRecipe(com.jetbrains.lang.makefile.psi.MakefileRecipe):V
+- visitRule(com.jetbrains.lang.makefile.psi.MakefileRule):V
+- visitString(com.jetbrains.lang.makefile.psi.MakefileString):V
+- visitSubstitution(com.jetbrains.lang.makefile.psi.MakefileSubstitution):V
+- visitTarget(com.jetbrains.lang.makefile.psi.MakefileTarget):V
+- visitTargetLine(com.jetbrains.lang.makefile.psi.MakefileTargetLine):V
+- visitTargetPattern(com.jetbrains.lang.makefile.psi.MakefileTargetPattern):V
+- visitTargets(com.jetbrains.lang.makefile.psi.MakefileTargets):V
+- visitUndefine(com.jetbrains.lang.makefile.psi.MakefileUndefine):V
+- visitUnexport(com.jetbrains.lang.makefile.psi.MakefileUnexport):V
+- visitVariable(com.jetbrains.lang.makefile.psi.MakefileVariable):V
+- visitVariableAssignment(com.jetbrains.lang.makefile.psi.MakefileVariableAssignment):V
+- visitVariableUsage(com.jetbrains.lang.makefile.psi.MakefileVariableUsage):V
+- visitVariableValue(com.jetbrains.lang.makefile.psi.MakefileVariableValue):V
+- visitVpath(com.jetbrains.lang.makefile.psi.MakefileVpath):V
+com.jetbrains.lang.makefile.psi.MakefileVpath
+- com.intellij.psi.PsiElement
+- a:getDirectoryList():java.util.List
+- a:getPattern():com.jetbrains.lang.makefile.psi.MakefilePattern
+com.jetbrains.lang.makefile.psi.impl.IMakeFileCommand
+- com.intellij.psi.PsiElement
+- a:getShellCommandRange():com.intellij.openapi.util.TextRange
+c:com.jetbrains.lang.makefile.psi.impl.MakefileBlockImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileBlock
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getCommandList():java.util.List
+- getConditionalList():java.util.List
+- getDirectiveList():java.util.List
+- getFunctionList():java.util.List
+- getRuleList():java.util.List
+- getVariableAssignmentList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileCommandImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefileCommandMixin
+- com.jetbrains.lang.makefile.psi.MakefileCommand
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getStringList():java.util.List
+- getSubstitutionList():java.util.List
+- getVariableUsageList():java.util.List
+a:com.jetbrains.lang.makefile.psi.impl.MakefileCommandMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.impl.IMakeFileCommand
+- <init>(com.intellij.lang.ASTNode):V
+- getShellCommandRange():com.intellij.openapi.util.TextRange
+c:com.jetbrains.lang.makefile.psi.impl.MakefileCommentImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileComment
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+c:com.jetbrains.lang.makefile.psi.impl.MakefileConditionImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileCondition
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getIdentifierList():java.util.List
+- getStringList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileConditionalElseImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileConditionalElse
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getBlock():com.jetbrains.lang.makefile.psi.MakefileBlock
+- getCondition():com.jetbrains.lang.makefile.psi.MakefileCondition
+c:com.jetbrains.lang.makefile.psi.impl.MakefileConditionalImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileConditional
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getBlock():com.jetbrains.lang.makefile.psi.MakefileBlock
+- getCondition():com.jetbrains.lang.makefile.psi.MakefileCondition
+- getConditionalElseList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileDefineImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileDefine
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getAssignment():com.intellij.psi.PsiElement
+- getFunctionList():java.util.List
+- getStringList():java.util.List
+- getSubstitutionList():java.util.List
+- getValue():java.lang.String
+- getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileDirectiveImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileDirective
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getDefine():com.jetbrains.lang.makefile.psi.MakefileDefine
+- getExport():com.jetbrains.lang.makefile.psi.MakefileExport
+- getInclude():com.jetbrains.lang.makefile.psi.MakefileInclude
+- getOverride():com.jetbrains.lang.makefile.psi.MakefileOverride
+- getPrivatevar():com.jetbrains.lang.makefile.psi.MakefilePrivatevar
+- getUndefine():com.jetbrains.lang.makefile.psi.MakefileUndefine
+- getUnexport():com.jetbrains.lang.makefile.psi.MakefileUnexport
+- getVpath():com.jetbrains.lang.makefile.psi.MakefileVpath
+c:com.jetbrains.lang.makefile.psi.impl.MakefileDirectoryImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefileFilenameMixin
+- com.jetbrains.lang.makefile.psi.MakefileDirectory
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+c:com.jetbrains.lang.makefile.psi.impl.MakefileDocCommentImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileDocComment
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+c:com.jetbrains.lang.makefile.psi.impl.MakefileExportImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileExport
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+c:com.jetbrains.lang.makefile.psi.impl.MakefileFilenameImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefileFilenameMixin
+- com.jetbrains.lang.makefile.psi.MakefileFilename
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+c:com.jetbrains.lang.makefile.psi.impl.MakefileFilenameMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- getReferences():com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference[]
+c:com.jetbrains.lang.makefile.psi.impl.MakefileFunctionImpl
+- com.jetbrains.lang.makefile.psi.MakefileFunctionElementImpl
+- com.jetbrains.lang.makefile.psi.MakefileFunction
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionName():com.jetbrains.lang.makefile.psi.MakefileFunctionName
+- getFunctionParamList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileFunctionNameImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileFunctionName
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+c:com.jetbrains.lang.makefile.psi.impl.MakefileFunctionParamImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileFunctionParam
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getFunctionNameList():java.util.List
+- getFunctionParamList():java.util.List
+- getStringList():java.util.List
+- getSubstitutionList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileIdentifierImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileIdentifier
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileIncludeImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileInclude
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFilenameList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileInlineCommandImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileInlineCommand
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getStringList():java.util.List
+- getSubstitutionList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileNormalPrerequisitesImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileNormalPrerequisites
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getPrerequisiteList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileOrderOnlyPrerequisitesImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileOrderOnlyPrerequisites
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getPrerequisiteList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileOverrideImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileOverride
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getUndefine():com.jetbrains.lang.makefile.psi.MakefileUndefine
+- getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+c:com.jetbrains.lang.makefile.psi.impl.MakefilePatternImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefilePattern
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+c:com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteMixin
+- com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getVariableUsageList():java.util.List
+- isPhonyTarget():Z
+- updateText(java.lang.String):com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl
+a:com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefilePrerequisite
+- getReferences():com.intellij.psi.PsiReference[]
+c:com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisitesImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefilePrerequisites
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getNormalPrerequisites():com.jetbrains.lang.makefile.psi.MakefileNormalPrerequisites
+- getOrderOnlyPrerequisites():com.jetbrains.lang.makefile.psi.MakefileOrderOnlyPrerequisites
+c:com.jetbrains.lang.makefile.psi.impl.MakefilePrivatevarImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefilePrivatevar
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+c:com.jetbrains.lang.makefile.psi.impl.MakefileRecipeImpl
+- com.jetbrains.lang.makefile.psi.MakefileRecipeElementImpl
+- com.jetbrains.lang.makefile.psi.MakefileRecipe
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getCommandList():java.util.List
+- getConditionalList():java.util.List
+- isEmpty():Z
+c:com.jetbrains.lang.makefile.psi.impl.MakefileRuleImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileRule
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getRecipe():com.jetbrains.lang.makefile.psi.MakefileRecipe
+- getTargetLine():com.jetbrains.lang.makefile.psi.MakefileTargetLine
+- getTargets():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileStringImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileString
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileSubstitutionImpl
+- com.jetbrains.lang.makefile.psi.MakefileSubstitutionInjectionHost
+- com.jetbrains.lang.makefile.psi.MakefileSubstitution
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getStringList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileTargetImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefileTargetNamedElementImpl
+- com.jetbrains.lang.makefile.psi.MakefileTarget
+- <init>(com.intellij.lang.ASTNode):V
+- <init>(com.jetbrains.lang.makefile.stub.MakefileTargetStubElement,com.intellij.psi.stubs.IStubElementType):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getDocComment():java.lang.String
+- getFunctionList():java.util.List
+- getName():java.lang.String
+- getNameIdentifier():com.intellij.psi.PsiElement
+- getPresentation():com.intellij.navigation.ItemPresentation
+- getVariableUsageList():java.util.List
+- isPatternTarget():Z
+- isSpecialTarget():Z
+- matches(java.lang.String):Z
+- setName(java.lang.String):com.intellij.psi.PsiElement
+c:com.jetbrains.lang.makefile.psi.impl.MakefileTargetLineImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileTargetLine
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getInlineCommand():com.jetbrains.lang.makefile.psi.MakefileInlineCommand
+- getOverride():com.jetbrains.lang.makefile.psi.MakefileOverride
+- getPrerequisites():com.jetbrains.lang.makefile.psi.MakefilePrerequisites
+- getPrivatevar():com.jetbrains.lang.makefile.psi.MakefilePrivatevar
+- getTargetName():java.lang.String
+- getTargetPattern():com.jetbrains.lang.makefile.psi.MakefileTargetPattern
+- getTargets():com.jetbrains.lang.makefile.psi.MakefileTargets
+- getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+a:com.jetbrains.lang.makefile.psi.impl.MakefileTargetNamedElementImpl
+- com.intellij.extapi.psi.StubBasedPsiElementBase
+- com.jetbrains.lang.makefile.psi.MakefileNamedElement
+- <init>(com.intellij.lang.ASTNode):V
+- <init>(com.jetbrains.lang.makefile.stub.MakefileTargetStubElement,com.intellij.psi.stubs.IStubElementType):V
+c:com.jetbrains.lang.makefile.psi.impl.MakefileTargetPatternImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileTargetPattern
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getTarget():com.jetbrains.lang.makefile.psi.MakefileTarget
+c:com.jetbrains.lang.makefile.psi.impl.MakefileTargetsImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileTargets
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getTargetList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileUndefineImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileUndefine
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+c:com.jetbrains.lang.makefile.psi.impl.MakefileUnexportImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileUnexport
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- getVariableAssignment():com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+c:com.jetbrains.lang.makefile.psi.impl.MakefileVariableAssignmentImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileVariableAssignment
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getAssignment():com.intellij.psi.PsiElement
+- getValue():java.lang.String
+- getVariable():com.jetbrains.lang.makefile.psi.MakefileVariable
+- getVariableValue():com.jetbrains.lang.makefile.psi.MakefileVariableValue
+c:com.jetbrains.lang.makefile.psi.impl.MakefileVariableImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefileVariableNamedElementImpl
+- com.jetbrains.lang.makefile.psi.MakefileVariable
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getIdentifier():com.jetbrains.lang.makefile.psi.MakefileIdentifier
+- getName():java.lang.String
+- getNameIdentifier():com.intellij.psi.PsiElement
+- setName(java.lang.String):com.intellij.psi.PsiElement
+a:com.jetbrains.lang.makefile.psi.impl.MakefileVariableNamedElementImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileNamedElement
+- <init>(com.intellij.lang.ASTNode):V
+- getNode():com.intellij.lang.ASTNode
+c:com.jetbrains.lang.makefile.psi.impl.MakefileVariableUsageImpl
+- com.jetbrains.lang.makefile.psi.impl.MakefileVariableUsageMixin
+- com.jetbrains.lang.makefile.psi.MakefileVariableUsage
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+a:com.jetbrains.lang.makefile.psi.impl.MakefileVariableUsageMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileVariableUsage
+- getReferences():com.intellij.psi.PsiReference[]
+c:com.jetbrains.lang.makefile.psi.impl.MakefileVariableValueImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileVariableValue
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getFunctionList():java.util.List
+- getStringList():java.util.List
+- getSubstitutionList():java.util.List
+- getVariableUsageList():java.util.List
+c:com.jetbrains.lang.makefile.psi.impl.MakefileVpathImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.jetbrains.lang.makefile.psi.MakefileVpath
+- <init>(com.intellij.lang.ASTNode):V
+- accept(com.intellij.psi.PsiElementVisitor):V
+- accept(com.jetbrains.lang.makefile.psi.MakefileVisitor):V
+- getDirectoryList():java.util.List
+- getPattern():com.jetbrains.lang.makefile.psi.MakefilePattern
+com.jetbrains.lang.makefile.stub.MakefileTargetStubElement
+- com.intellij.psi.stubs.NamedStub
+f:com.jetbrains.lang.makefile.stub.MakefileTargetStubElementImpl
+- com.intellij.psi.stubs.NamedStubBase
+- com.jetbrains.lang.makefile.stub.MakefileTargetStubElement
+- <init>(com.intellij.psi.stubs.StubElement,java.lang.String):V
+f:com.jetbrains.lang.makefile.stub.MakefileTargetStubElementType
+- com.intellij.psi.stubs.IStubElementType
+- sf:INSTANCE:com.jetbrains.lang.makefile.stub.MakefileTargetStubElementType
+- createPsi(com.jetbrains.lang.makefile.stub.MakefileTargetStubElement):com.jetbrains.lang.makefile.psi.impl.MakefileTargetImpl
+- createStub(com.jetbrains.lang.makefile.psi.MakefileTarget,com.intellij.psi.stubs.StubElement):com.jetbrains.lang.makefile.stub.MakefileTargetStubElementImpl
+- deserialize(com.intellij.psi.stubs.StubInputStream,com.intellij.psi.stubs.StubElement):com.jetbrains.lang.makefile.stub.MakefileTargetStubElementImpl
+- getExternalId():java.lang.String
+- sf:getInstance(java.lang.String):com.jetbrains.lang.makefile.stub.MakefileTargetStubElementType
+- indexStub(com.jetbrains.lang.makefile.stub.MakefileTargetStubElement,com.intellij.psi.stubs.IndexSink):V
+- serialize(com.jetbrains.lang.makefile.stub.MakefileTargetStubElement,com.intellij.psi.stubs.StubOutputStream):V
+f:com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory
+- com.intellij.openapi.wm.ToolWindowFactory
+- sf:Companion:com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory$Companion
+- <init>():V
+- createToolWindowContent(com.intellij.openapi.project.Project,com.intellij.openapi.wm.ToolWindow):V
+- init(com.intellij.openapi.wm.ToolWindow):V
+f:com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory$Companion
+- f:updateStripeButton(com.intellij.openapi.project.Project):V
+f:com.jetbrains.lang.makefile.toolWindow.MakefileCellRenderer
+- com.intellij.ui.ColoredTreeCellRenderer
+- <init>(com.intellij.openapi.project.Project):V
+- customizeCellRenderer(javax.swing.JTree,java.lang.Object,Z,Z,Z,I,Z):V
+f:com.jetbrains.lang.makefile.toolWindow.MakefileFileNode
+- com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode
+- <init>(com.intellij.psi.PsiFile,java.util.List):V
+- children():java.util.Enumeration
+- getAllowsChildren():Z
+- getChildAt(I):com.jetbrains.lang.makefile.toolWindow.MakefileTargetNode
+- getChildCount():I
+- getIcon():javax.swing.Icon
+- getIndex(javax.swing.tree.TreeNode):I
+- getParent():com.jetbrains.lang.makefile.toolWindow.MakefileRootNode
+- f:getPsiFile():com.intellij.psi.PsiFile
+- isLeaf():Z
+f:com.jetbrains.lang.makefile.toolWindow.MakefileRootNode
+- com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode
+- <init>(java.util.List):V
+- children():java.util.Enumeration
+- getAllowsChildren():Z
+- getChildAt(I):com.jetbrains.lang.makefile.toolWindow.MakefileFileNode
+- getChildCount():I
+- getIcon():javax.swing.Icon
+- getIndex(javax.swing.tree.TreeNode):I
+- getParent():java.lang.Void
+- isLeaf():Z
+f:com.jetbrains.lang.makefile.toolWindow.MakefileTargetNode
+- com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode
+- <init>(com.jetbrains.lang.makefile.psi.MakefileTarget):V
+- children():java.util.Enumeration
+- getAllowsChildren():Z
+- getChildAt(I):java.lang.Void
+- getChildCount():I
+- getIcon():javax.swing.Icon
+- getIndex(javax.swing.tree.TreeNode):I
+- getParent():com.jetbrains.lang.makefile.toolWindow.MakefileFileNode
+- isLeaf():Z
+- f:isSpecialTarget():Z
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowAutoscrollToSourceAction
+- com.intellij.openapi.actionSystem.ToggleAction
+- <init>(com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowOptions,com.intellij.ui.AutoScrollToSourceHandler,javax.swing.JComponent):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- isSelected(com.intellij.openapi.actionSystem.AnActionEvent):Z
+- setSelected(com.intellij.openapi.actionSystem.AnActionEvent,Z):V
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowGoToTargetAction
+- com.intellij.openapi.actionSystem.AnAction
+- <init>(com.intellij.ui.treeStructure.Tree,com.intellij.openapi.project.Project):V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowOptions
+- <init>(com.intellij.openapi.project.Project):V
+- f:getAutoScrollToSource():Z
+- f:getProject():com.intellij.openapi.project.Project
+- f:getRootNode():javax.swing.tree.TreeNode
+- f:getShowSpecialTargets():Z
+- f:getSortAlphabetically():Z
+- f:setAutoScrollToSource(Z):V
+- f:setShowSpecialTargets(Z):V
+- f:setSortAlphabetically(Z):V
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowRefreshAction
+- com.intellij.openapi.actionSystem.AnAction
+- <init>(javax.swing.tree.DefaultTreeModel,com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowOptions):V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowShowSpecialAction
+- com.intellij.openapi.actionSystem.ToggleAction
+- <init>(com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowOptions,javax.swing.tree.DefaultTreeModel):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- isSelected(com.intellij.openapi.actionSystem.AnActionEvent):Z
+- setSelected(com.intellij.openapi.actionSystem.AnActionEvent,Z):V
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowSortAlphabeticallyAction
+- com.intellij.openapi.actionSystem.ToggleAction
+- <init>(com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowOptions,javax.swing.tree.DefaultTreeModel):V
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- isSelected(com.intellij.openapi.actionSystem.AnActionEvent):Z
+- setSelected(com.intellij.openapi.actionSystem.AnActionEvent,Z):V
+com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowStripeController
+- sf:Companion:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowStripeController$Companion
+- a:shouldHideStripeIconFor(com.intellij.openapi.project.Project):Z
+f:com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowStripeController$Companion
+- f:getEP_NAME():com.intellij.openapi.extensions.ExtensionPointName
+a:com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode
+- javax.swing.tree.TreeNode
+- <init>(java.lang.String):V
+- a:getIcon():javax.swing.Icon
+- f:getName():java.lang.String
+f:com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode$Comparator
+- java.util.Comparator
+- sf:INSTANCE:com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode$Comparator
+- compare(com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode,com.jetbrains.lang.makefile.toolWindow.MakefileTreeNode):I
+f:icons.MakefileIcons
+- sf:Makefile:javax.swing.Icon
+- sf:MakefileToolWindow:javax.swing.Icon
+- <init>():V

@@ -1,0 +1,5 @@
+com/jediterm/terminal/Terminal
+com/jediterm/terminal/TerminalDataStream
+com/jediterm/terminal/emulator/JediEmulator
+com/jediterm/terminal/model/TerminalTextBuffer
+kotlin/jvm/internal/DefaultConstructorMarker

@@ -1,0 +1,524 @@
+f:com.jetbrains.cidr.cpp.diagnostics.CdCidrWorkspaceKt
+- sf:collectCidrWorkspaces(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- sf:collectOCWorkspaceEvents(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+f:com.jetbrains.cidr.cpp.diagnostics.CdDateUtilKt
+- sf:formatCurrentTime():java.lang.String
+- sf:formatCurrentTimeMS():java.lang.String
+f:com.jetbrains.cidr.cpp.diagnostics.CdIndenter
+- <init>():V
+- <init>(I):V
+- b:<init>(I,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:getResult():java.lang.String
+- f:indent():V
+- f:put(java.lang.Object[]):com.jetbrains.cidr.cpp.diagnostics.CdIndenter
+- f:scope(kotlin.jvm.functions.Function0):V
+- f:unIndent():V
+f:com.jetbrains.cidr.cpp.diagnostics.CdOCWorkspaceEventsListener
+- com.jetbrains.cidr.lang.workspace.OCWorkspaceListener
+- <init>(com.intellij.openapi.project.Project):V
+- selectedResolveConfigurationChanged():V
+- workspaceChanged(com.jetbrains.cidr.lang.workspace.OCWorkspaceListener$OCWorkspaceEvent):V
+f:com.jetbrains.cidr.cpp.diagnostics.CdOCWorkspaceKt
+- sf:collectOCWorkspace(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+f:com.jetbrains.cidr.cpp.diagnostics.CdToolchainsKt
+- sf:collectToolchains(com.intellij.openapi.project.Project):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- sf:processRemoteHost(com.jetbrains.cidr.cpp.diagnostics.CdIndenter,com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment):V
+- sf:processSystemInfo():com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- sf:stackTraceToString(java.lang.Throwable):java.lang.String
+f:com.jetbrains.cidr.cpp.diagnostics.CdWorkspaceEvents
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.CdWorkspaceEvents$Companion
+- <init>():V
+- f:getResult():java.lang.String
+- f:selectedResolveConfigurationChanged():V
+- f:workspaceChanged(com.jetbrains.cidr.lang.workspace.OCWorkspaceListener$OCWorkspaceEvent):V
+f:com.jetbrains.cidr.cpp.diagnostics.CdWorkspaceEvents$Companion
+f:com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction
+- com.intellij.openapi.project.DumbAwareAction
+- com.intellij.troubleshooting.TroubleInfoCollector
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction$Companion
+- <init>():V
+- actionPerformed(com.intellij.openapi.actionSystem.AnActionEvent):V
+- collectInfo(com.intellij.openapi.project.Project):java.lang.String
+- getActionUpdateThread():com.intellij.openapi.actionSystem.ActionUpdateThread
+- update(com.intellij.openapi.actionSystem.AnActionEvent):V
+f:com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction$Companion
+f:com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsBundle
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsBundle
+- f:message(java.lang.String,java.lang.Object[]):java.lang.String
+f:com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo$Companion
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.lang.String
+- f:component5():java.lang.String
+- f:component6():java.lang.String
+- f:component7():java.lang.String
+- f:component8():java.lang.String
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo
+- equals(java.lang.Object):Z
+- f:getBuildOptions():java.lang.String
+- f:getBuildType():java.lang.String
+- f:getEffectiveGenerationDir():java.lang.String
+- f:getEffectiveToolchain():java.lang.String
+- f:getGenerationDir():java.lang.String
+- f:getGenerationOptions():java.lang.String
+- f:getName():java.lang.String
+- f:getToolchainName():java.lang.String
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.CMakeProfileInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection
+- com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection$Companion
+- <init>(Z,java.util.List):V
+- appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():Z
+- f:component2():java.util.List
+- f:copy(Z,java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection,Z,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection
+- equals(java.lang.Object):Z
+- f:getAutoReloadEnabled():Z
+- f:getProfiles():java.util.List
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.CMakeSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection$Companion
+- <init>(java.util.List):V
+- f:component1():java.util.List
+- f:copy(java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- equals(java.lang.Object):Z
+- f:getWorkspaces():java.util.List
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo$Companion
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.lang.String,java.util.List,java.util.List,java.util.List,java.lang.String,java.lang.String,java.lang.String):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component10():java.util.List
+- f:component11():java.lang.String
+- f:component12():java.lang.String
+- f:component13():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.lang.String
+- f:component5():java.util.List
+- f:component6():java.lang.String
+- f:component7():java.lang.String
+- f:component8():java.util.List
+- f:component9():java.util.List
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.lang.String,java.util.List,java.util.List,java.util.List,java.lang.String,java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.lang.String,java.util.List,java.util.List,java.util.List,java.lang.String,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo
+- equals(java.lang.Object):Z
+- f:getCustomCCompilerPath():java.lang.String
+- f:getCustomCXXCompilerPath():java.lang.String
+- f:getDescriptionExtras():java.util.List
+- f:getEnvironmentFile():java.lang.String
+- f:getHeaderRootsCache():java.lang.String
+- f:getKind():java.lang.String
+- f:getOptions():java.util.List
+- f:getOsType():java.lang.String
+- f:getPathMappings():java.util.List
+- f:getRootPath():java.lang.String
+- f:getToolSetPath():java.lang.String
+- f:getToolchainName():java.lang.String
+- f:getTools():java.util.List
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.DevOptions
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.DevOptions$Companion
+- <init>(Z,I,Z,Z):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():Z
+- f:component2():I
+- f:component3():Z
+- f:component4():Z
+- f:copy(Z,I,Z,Z):com.jetbrains.cidr.cpp.diagnostics.model.DevOptions
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.DevOptions,Z,I,Z,Z,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.DevOptions
+- equals(java.lang.Object):Z
+- f:getCompressTar():Z
+- f:getResyncSystemCache():Z
+- f:getTarTimeoutMs():I
+- f:getUploadExternalChanges():Z
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.DevOptions$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.DevOptions$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.DevOptions
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.DevOptions):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.DevOptions$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle$Companion
+- <init>(com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection,com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection):V
+- f:component1():com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- f:component2():com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- f:component3():com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+- f:component4():com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+- f:copy(com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection,com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection):com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle,com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection,com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle
+- equals(java.lang.Object):Z
+- f:files():java.util.List
+- f:getOcWorkspace():com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+- f:getOcWorkspaceEvents():com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+- f:getToolchains():com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- f:getWorkspaces():com.jetbrains.cidr.cpp.diagnostics.model.CidrWorkspacesSection
+- hashCode():I
+- f:summaryText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsBundle$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile$Companion
+- <init>(java.lang.String,java.lang.String):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:copy(java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile
+- equals(java.lang.Object):Z
+- f:getContents():java.lang.String
+- f:getFilename():java.lang.String
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.DiagnosticsFile$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo$Companion
+- <init>(java.lang.String,java.lang.String,java.lang.String):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:copy(java.lang.String,java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo,java.lang.String,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo
+- equals(java.lang.Object):Z
+- f:getExecutablePath():java.lang.String
+- f:getName():java.lang.String
+- f:getVersion():java.lang.String
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.LinesSection
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.LinesSection$Companion
+- <init>(java.util.List):V
+- f:component1():java.util.List
+- f:copy(java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.LinesSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.LinesSection,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.LinesSection
+- equals(java.lang.Object):Z
+- f:getLines():java.util.List
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.LinesSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.LinesSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.LinesSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.LinesSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.LinesSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection$Companion
+- <init>(Z,java.lang.String):V
+- f:component1():Z
+- f:component2():java.lang.String
+- f:copy(Z,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection,Z,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+- equals(java.lang.Object):Z
+- f:getEnabled():Z
+- f:getRawText():java.lang.String
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceEventsSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection$Companion
+- <init>(java.util.List):V
+- f:component1():java.util.List
+- f:copy(java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+- equals(java.lang.Object):Z
+- f:getConfigurations():java.util.List
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.OCWorkspaceSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem$Companion
+- <init>(java.lang.String,java.lang.String):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:copy(java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem
+- equals(java.lang.Object):Z
+- f:getLocalRoot():java.lang.String
+- f:getRemoteRoot():java.lang.String
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- a:toText():java.lang.String
+f:com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo$Companion
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.util.List):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.util.List
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo,java.lang.String,java.lang.String,java.lang.String,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo
+- equals(java.lang.Object):Z
+- f:getDisplayName():java.lang.String
+- f:getName():java.lang.String
+- f:getSources():java.util.List
+- f:getVariant():java.lang.String
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.ResolveConfigurationInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo$Companion
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.lang.String
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String):com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo,java.lang.String,java.lang.String,java.lang.String,java.lang.String,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo
+- equals(java.lang.Object):Z
+- f:getCompilerExecutablePath():java.lang.String
+- f:getCompilerSwitches():java.lang.String
+- f:getKind():java.lang.String
+- f:getPath():java.lang.String
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.SourceInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo$Companion
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,com.jetbrains.cidr.cpp.diagnostics.model.DevOptions):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.lang.String
+- f:component5():java.lang.String
+- f:component6():java.lang.String
+- f:component7():com.jetbrains.cidr.cpp.diagnostics.model.DevOptions
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,com.jetbrains.cidr.cpp.diagnostics.model.DevOptions):com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,com.jetbrains.cidr.cpp.diagnostics.model.DevOptions,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- equals(java.lang.Object):Z
+- f:getDefaultToolchainName():java.lang.String
+- f:getDevOptions():com.jetbrains.cidr.cpp.diagnostics.model.DevOptions
+- f:getIdeBuild():java.lang.String
+- f:getIdeFullProductName():java.lang.String
+- f:getOsArch():java.lang.String
+- f:getOsName():java.lang.String
+- f:getOsVersion():java.lang.String
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection
+- com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection$Companion
+- <init>(java.util.List):V
+- appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.util.List
+- f:copy(java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection
+- equals(java.lang.Object):Z
+- f:getToolchainNames():java.util.List
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsNamesSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection$Companion
+- <init>(com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo,java.util.List):V
+- f:component1():com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- f:component2():java.util.List
+- f:copy(com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo,java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection,com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- equals(java.lang.Object):Z
+- f:getEnvironments():java.util.List
+- f:getSystemInfo():com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo
+- hashCode():I
+- toText():java.lang.String
+bf:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+f:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo$Companion
+- <init>(java.lang.String,com.jetbrains.cidr.project.workspace.CidrWorkspaceState,java.lang.String,java.lang.String,java.util.List):V
+- f:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- f:component1():java.lang.String
+- f:component2():com.jetbrains.cidr.project.workspace.CidrWorkspaceState
+- f:component3():java.lang.String
+- f:component4():java.lang.String
+- f:component5():java.util.List
+- f:copy(java.lang.String,com.jetbrains.cidr.project.workspace.CidrWorkspaceState,java.lang.String,java.lang.String,java.util.List):com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo
+- bs:copy$default(com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo,java.lang.String,com.jetbrains.cidr.project.workspace.CidrWorkspaceState,java.lang.String,java.lang.String,java.util.List,I,java.lang.Object):com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo
+- equals(java.lang.Object):Z
+- f:getClassName():java.lang.String
+- f:getContentRoot():java.lang.String
+- f:getProjectPath():java.lang.String
+- f:getSections():java.util.List
+- f:getState():com.jetbrains.cidr.project.workspace.CidrWorkspaceState
+- hashCode():I
+bf:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo$$serializer
+- kotlinx.serialization.internal.GeneratedSerializer
+- sf:INSTANCE:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo$$serializer
+- f:childSerializers():kotlinx.serialization.KSerializer[]
+- f:deserialize(kotlinx.serialization.encoding.Decoder):com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo
+- f:getDescriptor():kotlinx.serialization.descriptors.SerialDescriptor
+- f:serialize(kotlinx.serialization.encoding.Encoder,com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceInfo$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+a:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection$Companion
+- b:<init>(I,kotlinx.serialization.internal.SerializationConstructorMarker):V
+- a:appendTo(com.jetbrains.cidr.cpp.diagnostics.CdIndenter):V
+- bsf:write$Self(com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection,kotlinx.serialization.encoding.CompositeEncoder,kotlinx.serialization.descriptors.SerialDescriptor):V
+f:com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection$Companion
+- f:serializer():kotlinx.serialization.KSerializer
+com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider$Companion
+- a:describe(com.jetbrains.cidr.cpp.toolchains.CPPToolchains$Toolchain,com.jetbrains.cidr.system.HostMachine):com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+f:com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider$Companion
+- f:describe(com.jetbrains.cidr.cpp.toolchains.CPPToolchains$Toolchain,com.jetbrains.cidr.system.HostMachine):com.jetbrains.cidr.cpp.diagnostics.model.Reportable
+- f:getEP_NAME():com.intellij.openapi.extensions.ExtensionPointName
+com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider
+- sf:Companion:com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider$Companion
+- a:describe(com.jetbrains.cidr.project.workspace.CidrWorkspace):com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection
+f:com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider$Companion
+- f:describe(com.jetbrains.cidr.project.workspace.CidrWorkspace):java.util.List
+- f:getEP_NAME():com.intellij.openapi.extensions.ExtensionPointName
+f:com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceWithEnvironmentDescriptionProvider
+- com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider
+- <init>():V
+- describe(com.jetbrains.cidr.project.workspace.CidrWorkspace):com.jetbrains.cidr.cpp.diagnostics.model.WorkspaceSection

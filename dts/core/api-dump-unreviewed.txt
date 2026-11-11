@@ -1,0 +1,1844 @@
+f:com.intellij.dts.core.DtsBundle
+- sf:BUNDLE:java.lang.String
+- sf:INSTANCE:com.intellij.dts.core.DtsBundle
+- sf:message(java.lang.String,java.lang.Object[]):java.lang.String
+com.intellij.dts.core.api.DtsFileVisitor
+- visit(com.intellij.dts.core.lang.DtsFile):Z
+- visitDeleteNode(com.intellij.dts.core.lang.psi.DtsNode):V
+- visitInclude(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.lang.psi.FileInclude):V
+- visitRefNode(com.intellij.dts.core.lang.psi.DtsRefNode,java.lang.Integer):V
+- visitRootNode(com.intellij.dts.core.lang.psi.DtsRootNode,java.lang.Integer):V
+f:com.intellij.dts.core.api.DtsFileVisitorKt
+- sf:dtsAccept(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.api.DtsFileVisitor,Z,java.lang.Integer):Z
+- bs:dtsAccept$default(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.api.DtsFileVisitor,Z,java.lang.Integer,I,java.lang.Object):Z
+com.intellij.dts.core.api.DtsNodeVisitor
+- visit(com.intellij.dts.core.lang.psi.DtsNode):Z
+- visitDelete():V
+- visitDeleteProperty(java.lang.String):V
+- visitDeleteSubNode(java.lang.String):V
+- visitProperty(com.intellij.dts.core.lang.psi.DtsProperty):V
+- visitSubNode(com.intellij.dts.core.lang.psi.DtsSubNode):V
+f:com.intellij.dts.core.api.DtsNodeVisitorKt
+- sf:dtsAccept(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.api.DtsNodeVisitor,com.intellij.dts.core.api.DtsPath,Z,java.lang.Integer):Z
+- sf:dtsAccept(com.intellij.dts.core.lang.psi.DtsNode,com.intellij.dts.core.api.DtsNodeVisitor,Z,Z):Z
+- bs:dtsAccept$default(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.api.DtsNodeVisitor,com.intellij.dts.core.api.DtsPath,Z,java.lang.Integer,I,java.lang.Object):Z
+- bs:dtsAccept$default(com.intellij.dts.core.lang.psi.DtsNode,com.intellij.dts.core.api.DtsNodeVisitor,Z,Z,I,java.lang.Object):Z
+f:com.intellij.dts.core.api.DtsPath
+- sf:Companion:com.intellij.dts.core.api.DtsPath$Companion
+- <init>(Z,java.util.List):V
+- f:component1():Z
+- f:component2():java.util.List
+- f:copy(Z,java.util.List):com.intellij.dts.core.api.DtsPath
+- bs:copy$default(com.intellij.dts.core.api.DtsPath,Z,java.util.List,I,java.lang.Object):com.intellij.dts.core.api.DtsPath
+- equals(java.lang.Object):Z
+- f:getAbsolut():Z
+- f:getSegments():java.util.List
+- hashCode():I
+- f:name():java.lang.String
+- f:nameWithoutUnit():java.lang.String
+- f:parent():com.intellij.dts.core.api.DtsPath
+- f:relativize(com.intellij.dts.core.api.DtsPath):com.intellij.dts.core.api.DtsPath
+f:com.intellij.dts.core.api.DtsPath$Companion
+- f:from(java.lang.String):com.intellij.dts.core.api.DtsPath
+- f:getRoot():com.intellij.dts.core.api.DtsPath
+f:com.intellij.dts.core.api.DtsTreeSearchKt
+- sf:dtsSearch(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.api.DtsPath,Z,java.lang.Integer,kotlin.jvm.functions.Function1):java.lang.Object
+- sf:dtsSearch(com.intellij.dts.core.lang.psi.DtsNode,Z,java.lang.Integer,kotlin.jvm.functions.Function1):java.lang.Object
+- bs:dtsSearch$default(com.intellij.dts.core.lang.DtsFile,com.intellij.dts.core.api.DtsPath,Z,java.lang.Integer,kotlin.jvm.functions.Function1,I,java.lang.Object):java.lang.Object
+- bs:dtsSearch$default(com.intellij.dts.core.lang.psi.DtsNode,Z,java.lang.Integer,kotlin.jvm.functions.Function1,I,java.lang.Object):java.lang.Object
+f:com.intellij.dts.core.api.DtsVisitorCanceledException
+- java.lang.Exception
+- <init>():V
+com.intellij.dts.core.cmake.DtsCMakeUtil
+- sf:Companion:com.intellij.dts.core.cmake.DtsCMakeUtil$Companion
+- a:isCMakeAvailable(com.intellij.openapi.project.Project):Z
+f:com.intellij.dts.core.cmake.DtsCMakeUtil$Companion
+- f:getEP_NAME():com.intellij.openapi.extensions.ExtensionPointName
+- f:isCMakeAvailable(com.intellij.openapi.project.Project):Z
+f:com.intellij.dts.core.completion.DtsBraceMatcher
+- com.intellij.lang.PairedBraceMatcher
+- <init>():V
+- getCodeConstructStart(com.intellij.psi.PsiFile,I):I
+- getPairs():com.intellij.lang.BracePair[]
+- isPairedBracesAllowedBeforeType(com.intellij.psi.tree.IElementType,com.intellij.psi.tree.IElementType):Z
+f:com.intellij.dts.core.completion.DtsCharFilter
+- com.intellij.codeInsight.lookup.CharFilter
+- <init>():V
+- acceptChar(C,I,com.intellij.codeInsight.lookup.Lookup):com.intellij.codeInsight.lookup.CharFilter$Result
+f:com.intellij.dts.core.completion.DtsCommenter
+- com.intellij.lang.Commenter
+- <init>():V
+- getBlockCommentPrefix():java.lang.String
+- getBlockCommentSuffix():java.lang.String
+- getCommentedBlockCommentPrefix():java.lang.String
+- getCommentedBlockCommentSuffix():java.lang.String
+- getLineCommentPrefix():java.lang.String
+f:com.intellij.dts.core.completion.DtsCompletionContributor
+- com.intellij.codeInsight.completion.CompletionContributor
+- <init>():V
+f:com.intellij.dts.core.completion.DtsCompletionContributor$AutoPopup
+- com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+- <init>():V
+- checkAutoPopup(C,com.intellij.openapi.project.Project,com.intellij.openapi.editor.Editor,com.intellij.psi.PsiFile):com.intellij.codeInsight.editorActions.TypedHandlerDelegate$Result
+f:com.intellij.dts.core.completion.DtsPatternsKt
+- sf:dtsBasePattern():com.intellij.patterns.PsiElementPattern$Capture
+- sf:dtsFirstCell():com.intellij.patterns.PsiElementPattern$Capture
+- sf:dtsFirstValue():com.intellij.patterns.PsiElementPattern$Capture
+- sf:dtsInsideContainer():com.intellij.patterns.PsiElementPattern$Capture
+- sf:dtsProperty():com.intellij.patterns.PsiElementPattern$Capture
+- sf:dtsSubNode():com.intellij.patterns.PsiElementPattern$Capture
+- sf:getDtsContainer(com.intellij.util.ProcessingContext):com.intellij.dts.core.lang.psi.DtsContainer
+- sf:getDtsProperty(com.intellij.util.ProcessingContext):com.intellij.dts.core.lang.psi.DtsProperty
+f:com.intellij.dts.core.completion.DtsQuoteHandler
+- com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
+- <init>():V
+- isClosingQuote(com.intellij.openapi.editor.highlighter.HighlighterIterator,I):Z
+f:com.intellij.dts.core.completion.DtsSemicolonEnterHandler
+- com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
+- <init>():V
+- postProcessEnter(com.intellij.psi.PsiFile,com.intellij.openapi.editor.Editor,com.intellij.openapi.actionSystem.DataContext):com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate$Result
+com.intellij.dts.core.completion.insert.DtsInsertBackend
+- a:moveCaret(I):V
+- a:openAutocomplete():V
+- a:shouldWrite(C):I
+- a:write(java.lang.String):V
+com.intellij.dts.core.completion.insert.DtsInsertMetaData
+- a:getOffset():I
+- a:getRequestedAutocomplete():Z
+f:com.intellij.dts.core.completion.insert.DtsInsertSession
+- <init>(com.intellij.dts.core.completion.insert.DtsInsertBackend):V
+- f:abort():V
+- f:canWrite(C):Z
+- f:openAutocomplete(Z):V
+- bs:openAutocomplete$default(com.intellij.dts.core.completion.insert.DtsInsertSession,Z,I,java.lang.Object):V
+- f:setThreshold(I):V
+- f:write(java.lang.String,Z):V
+- bs:write$default(com.intellij.dts.core.completion.insert.DtsInsertSession,java.lang.String,Z,I,java.lang.Object):V
+- f:writeAssign():V
+- f:writePair(C,C,java.lang.String):V
+- f:writeSemicolon(Z):V
+- bs:writeSemicolon$default(com.intellij.dts.core.completion.insert.DtsInsertSession,Z,I,java.lang.Object):V
+- f:writeSpace():V
+f:com.intellij.dts.core.completion.insert.DtsInsertSessionKt
+- sf:dtsRunInsertSession(com.intellij.dts.core.completion.insert.DtsInsertSession,kotlin.jvm.functions.Function1):V
+f:com.intellij.dts.core.completion.insert.InsertBackendImplKt
+- sf:dtsInsertIntoDocument(com.intellij.codeInsight.completion.InsertionContext,kotlin.jvm.functions.Function1):V
+f:com.intellij.dts.core.completion.insert.InsertMetaDataBackendKt
+- sf:dtsInsertMetaData(kotlin.jvm.functions.Function1):com.intellij.dts.core.completion.insert.DtsInsertMetaData
+f:com.intellij.dts.core.completion.insert.InsertNodeKt
+- sf:writeNodeContent(com.intellij.dts.core.completion.insert.DtsInsertSession):V
+f:com.intellij.dts.core.completion.insert.InsertPropertyKt
+- sf:writePropertyValue(com.intellij.dts.core.completion.insert.DtsInsertSession,com.intellij.dts.core.lang.symbols.DtsPropertySymbol):V
+f:com.intellij.dts.core.completion.insert.InsertStringBackendKt
+- sf:dtsInsertIntoString(kotlin.jvm.functions.Function1):java.lang.String
+f:com.intellij.dts.core.completion.provider.DtsCompilerDirectiveProvider
+- com.intellij.codeInsight.completion.CompletionProvider
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsCompilerDirectiveProvider
+f:com.intellij.dts.core.completion.provider.DtsCompletionPrefixKt
+- sf:withDtsIntPrefixMatcher(com.intellij.codeInsight.completion.CompletionResultSet,com.intellij.codeInsight.completion.CompletionParameters):com.intellij.codeInsight.completion.CompletionResultSet
+- sf:withDtsPrefixMatcher(com.intellij.codeInsight.completion.CompletionResultSet,com.intellij.codeInsight.completion.CompletionParameters):com.intellij.codeInsight.completion.CompletionResultSet
+f:com.intellij.dts.core.completion.provider.DtsInsertHandler
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsInsertHandler
+- f:getPROPERTY():com.intellij.codeInsight.completion.InsertHandler
+- f:getROOT_NODE():com.intellij.codeInsight.completion.InsertHandler
+- f:getSUB_NODE():com.intellij.codeInsight.completion.InsertHandler
+f:com.intellij.dts.core.completion.provider.DtsIntValueProvider
+- com.intellij.codeInsight.completion.CompletionProvider
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsIntValueProvider
+f:com.intellij.dts.core.completion.provider.DtsLookupPriority
+- sf:COMPILER_DIRECTIVE:D
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsLookupPriority
+- sf:PROPERTY:D
+- sf:ROOT_NODE:D
+- sf:SUB_NODE:D
+f:com.intellij.dts.core.completion.provider.DtsNodeNameProvider
+- com.intellij.codeInsight.completion.CompletionProvider
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsNodeNameProvider
+f:com.intellij.dts.core.completion.provider.DtsPropertyNameProvider
+- com.intellij.codeInsight.completion.CompletionProvider
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsPropertyNameProvider
+f:com.intellij.dts.core.completion.provider.DtsRootNodeProvider
+- com.intellij.codeInsight.completion.CompletionProvider
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsRootNodeProvider
+f:com.intellij.dts.core.completion.provider.DtsStringValueProvider
+- com.intellij.codeInsight.completion.CompletionProvider
+- sf:INSTANCE:com.intellij.dts.core.completion.provider.DtsStringValueProvider
+f:com.intellij.dts.core.documentation.DtsBindingDocumentation
+- com.intellij.dts.core.documentation.DtsDocumentationTarget
+- <init>(com.intellij.openapi.project.Project,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding):V
+- computePresentation():com.intellij.platform.backend.presentation.TargetPresentation
+- createPointer():com.intellij.model.Pointer
+f:com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder
+- <init>():V
+- f:appendToDefinition(com.intellij.openapi.util.text.HtmlChunk[]):V
+- f:build():java.lang.String
+- f:content(com.intellij.openapi.util.text.HtmlChunk[]):V
+- f:definition(com.intellij.openapi.util.text.HtmlChunk[]):V
+f:com.intellij.dts.core.documentation.DtsDocumentationProvider
+- com.intellij.platform.backend.documentation.DocumentationTargetProvider
+- com.intellij.platform.backend.documentation.PsiDocumentationTargetProvider
+- <init>():V
+- documentationTarget(com.intellij.psi.PsiElement,com.intellij.psi.PsiElement):com.intellij.platform.backend.documentation.DocumentationTarget
+- documentationTargets(com.intellij.psi.PsiFile,I):java.util.List
+a:com.intellij.dts.core.documentation.DtsDocumentationTarget
+- com.intellij.platform.backend.documentation.DocumentationTarget
+- <init>(com.intellij.openapi.project.Project):V
+- pf:buildDeclaredIn(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder,com.intellij.dts.core.lang.psi.DtsNode):V
+- pa:buildDocumentation(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder):V
+- pf:buildNodeBinding(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding):V
+- pf:buildNodeName(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder,com.intellij.dts.core.lang.psi.DtsNode):V
+- pf:buildNodeName(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder,java.lang.String):V
+- pf:buildPropertyBinding(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder,com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding):V
+- pf:buildPropertyName(com.intellij.dts.core.documentation.DtsDocumentationHtmlBuilder,java.lang.String):V
+- f:computeDocumentation():com.intellij.platform.backend.documentation.DocumentationResult
+- pf:getProject():com.intellij.openapi.project.Project
+f:com.intellij.dts.core.documentation.DtsNodeBindingDocumentationTarget
+- com.intellij.dts.core.documentation.DtsDocumentationTarget
+- <init>(com.intellij.openapi.project.Project,java.lang.String,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding):V
+- computePresentation():com.intellij.platform.backend.presentation.TargetPresentation
+- createPointer():com.intellij.model.Pointer
+f:com.intellij.dts.core.documentation.DtsNodeDocumentationTarget
+- com.intellij.dts.core.documentation.DtsDocumentationTarget
+- <init>(com.intellij.dts.core.lang.psi.DtsNode):V
+- computePresentation():com.intellij.platform.backend.presentation.TargetPresentation
+- createPointer():com.intellij.model.Pointer
+f:com.intellij.dts.core.documentation.DtsPropertyBindingDocumentationTarget
+- com.intellij.dts.core.documentation.DtsDocumentationTarget
+- <init>(com.intellij.openapi.project.Project,com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding):V
+- computePresentation():com.intellij.platform.backend.presentation.TargetPresentation
+- createPointer():com.intellij.model.Pointer
+f:com.intellij.dts.core.documentation.DtsPropertyDocumentationTarget
+- com.intellij.dts.core.documentation.DtsDocumentationTarget
+- <init>(com.intellij.dts.core.lang.psi.DtsProperty):V
+- computePresentation():com.intellij.platform.backend.presentation.TargetPresentation
+- createPointer():com.intellij.model.Pointer
+f:com.intellij.dts.core.formatting.DtsBlock
+- com.intellij.psi.formatter.common.AbstractBlock
+- sf:Companion:com.intellij.dts.core.formatting.DtsBlock$Companion
+- <init>(com.intellij.lang.ASTNode,com.intellij.dts.core.formatting.DtsWrappingBuilder,com.intellij.dts.core.formatting.DtsSpacingBuilder,com.intellij.dts.core.formatting.DtsBlock):V
+- getChildAttributes(I):com.intellij.formatting.ChildAttributes
+- getDebugName():java.lang.String
+- getIndent():com.intellij.formatting.Indent
+- getSpacing(com.intellij.formatting.Block,com.intellij.formatting.Block):com.intellij.formatting.Spacing
+- isLeaf():Z
+f:com.intellij.dts.core.formatting.DtsBlock$Companion
+- f:isValidForBlock(com.intellij.lang.ASTNode):Z
+f:com.intellij.dts.core.formatting.DtsFormattingBuilder
+- com.intellij.formatting.FormattingModelBuilder
+- <init>():V
+- createModel(com.intellij.formatting.FormattingContext):com.intellij.formatting.FormattingModel
+f:com.intellij.dts.core.formatting.DtsIndentingBuilder
+- <init>():V
+- f:getChildIndenting(com.intellij.formatting.Block,I):com.intellij.formatting.Indent
+- f:getIndenting(com.intellij.formatting.Block,com.intellij.formatting.Block):com.intellij.formatting.Indent
+f:com.intellij.dts.core.formatting.DtsSpacingBuilder
+- sf:Companion:com.intellij.dts.core.formatting.DtsSpacingBuilder$Companion
+- <init>(com.intellij.psi.codeStyle.CodeStyleSettings):V
+- f:getSpacing(com.intellij.formatting.Block,com.intellij.formatting.Block,com.intellij.formatting.Block):com.intellij.formatting.Spacing
+f:com.intellij.dts.core.formatting.DtsSpacingBuilder$Companion
+a:com.intellij.dts.core.formatting.DtsWrappingBuilder
+- sf:Companion:com.intellij.dts.core.formatting.DtsWrappingBuilder$Companion
+- <init>(com.intellij.dts.core.settings.DtsCodeStyleSettings):V
+- f:getAlignment(com.intellij.formatting.Block,com.intellij.lang.ASTNode):com.intellij.formatting.Alignment
+- pa:getAlignment(com.intellij.psi.PsiElement,com.intellij.psi.PsiElement):com.intellij.formatting.Alignment
+- pf:getSettings():com.intellij.dts.core.settings.DtsCodeStyleSettings
+- f:getWrap(com.intellij.formatting.Block,com.intellij.lang.ASTNode):com.intellij.formatting.Wrap
+- pa:getWrap(com.intellij.psi.PsiElement,com.intellij.psi.PsiElement):com.intellij.formatting.Wrap
+f:com.intellij.dts.core.formatting.DtsWrappingBuilder$Companion
+- f:childBuilder(com.intellij.formatting.Block,com.intellij.dts.core.formatting.DtsWrappingBuilder):com.intellij.dts.core.formatting.DtsWrappingBuilder
+- f:childBuilder(com.intellij.psi.codeStyle.CodeStyleSettings):com.intellij.dts.core.formatting.DtsWrappingBuilder
+f:com.intellij.dts.core.highlighting.DtsHighlightAnnotator
+- com.intellij.lang.annotation.Annotator
+- com.intellij.openapi.project.DumbAware
+- <init>():V
+- f:annotate(com.intellij.psi.PsiElement,com.intellij.dts.core.highlighting.DtsHighlightAnnotator$Holder):V
+- annotate(com.intellij.psi.PsiElement,com.intellij.lang.annotation.AnnotationHolder):V
+com.intellij.dts.core.highlighting.DtsHighlightAnnotator$Holder
+- a:newAnnotation(com.intellij.openapi.util.TextRange,com.intellij.dts.core.highlighting.DtsTextAttributes):V
+f:com.intellij.dts.core.highlighting.DtsPpHighlightAnnotator
+- com.intellij.dts.pp.highlighting.PpHighlightAnnotator
+- <init>():V
+f:com.intellij.dts.core.highlighting.DtsSyntaxAnnotator
+- com.intellij.lang.annotation.Annotator
+- <init>():V
+- annotate(com.intellij.psi.PsiElement,com.intellij.lang.annotation.AnnotationHolder):V
+f:com.intellij.dts.core.highlighting.DtsSyntaxHighlighter
+- com.intellij.openapi.fileTypes.SyntaxHighlighterBase
+- <init>():V
+- getHighlightingLexer():com.intellij.lexer.Lexer
+- getTokenHighlights(com.intellij.psi.tree.IElementType):com.intellij.openapi.editor.colors.TextAttributesKey[]
+f:com.intellij.dts.core.highlighting.DtsSyntaxHighlighter$Factory
+- com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
+- <init>():V
+- getSyntaxHighlighter(com.intellij.openapi.project.Project,com.intellij.openapi.vfs.VirtualFile):com.intellij.openapi.fileTypes.SyntaxHighlighter
+e:com.intellij.dts.core.highlighting.DtsTextAttributes
+- java.lang.Enum
+- sf:BAD_CHARACTER:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:BRACES:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:BRACKETS:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:COMMA:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:COMMENT:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:COMPILER_DIRECTIVE:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:INACTIVE:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:INCLUDE_PATH:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:LABEL:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:NODE_NAME:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:NODE_UNIT_ADDR:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:NUMBER:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:OPERATOR:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:PROPERTY_NAME:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:SEMICOLON:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:STRING:com.intellij.dts.core.highlighting.DtsTextAttributes
+- sf:STRING_ESCAPE:com.intellij.dts.core.highlighting.DtsTextAttributes
+- f:getAttribute():com.intellij.openapi.editor.colors.TextAttributesKey
+- f:getDescriptor():com.intellij.openapi.options.colors.AttributesDescriptor
+- s:getEntries():kotlin.enums.EnumEntries
+- s:valueOf(java.lang.String):com.intellij.dts.core.highlighting.DtsTextAttributes
+- s:values():com.intellij.dts.core.highlighting.DtsTextAttributes[]
+f:com.intellij.dts.core.icons.DtsCoreIcons
+- sf:Dts:javax.swing.Icon
+- sf:Node:javax.swing.Icon
+- sf:OverrideProperty:javax.swing.Icon
+- sf:Property:javax.swing.Icon
+- <init>():V
+f:com.intellij.dts.core.ide.DtsBreadcrumbsProvider
+- com.intellij.ui.breadcrumbs.BreadcrumbsProvider
+- <init>():V
+- acceptElement(com.intellij.psi.PsiElement):Z
+- getElementInfo(com.intellij.psi.PsiElement):java.lang.String
+- getLanguages():com.intellij.lang.Language[]
+f:com.intellij.dts.core.ide.DtsFoldingBuilder
+- com.intellij.lang.folding.CustomFoldingBuilder
+- com.intellij.openapi.project.DumbAware
+- <init>():V
+f:com.intellij.dts.core.ide.DtsNewFileAction
+- com.intellij.ide.actions.CreateFileFromTemplateAction
+- com.intellij.openapi.project.DumbAware
+- sf:Companion:com.intellij.dts.core.ide.DtsNewFileAction$Companion
+- <init>():V
+f:com.intellij.dts.core.ide.DtsNewFileAction$Companion
+f:com.intellij.dts.core.ide.DtsOverrideLineMarkerProvider
+- com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
+- <init>():V
+- getIcon():javax.swing.Icon
+- getName():java.lang.String
+- getOptions():com.intellij.codeInsight.daemon.GutterIconDescriptor$Option[]
+f:com.intellij.dts.core.ide.DtsProjectViewDecorator
+- com.intellij.ide.projectView.ProjectViewNodeDecorator
+- <init>(com.intellij.openapi.project.Project):V
+- decorate(com.intellij.ide.projectView.ProjectViewNode,com.intellij.ide.projectView.PresentationData):V
+f:com.intellij.dts.core.ide.DtsProjectViewDecorator$DtsSettingsListener
+- com.intellij.dts.core.settings.DtsSettings$ChangeListener
+- <init>(com.intellij.openapi.project.Project,kotlinx.coroutines.CoroutineScope):V
+- settingsChanged(com.intellij.dts.core.settings.DtsSettings):V
+f:com.intellij.dts.core.ide.DtsStructureViewFactory
+- com.intellij.lang.PsiStructureViewFactory
+- <init>():V
+- getStructureViewBuilder(com.intellij.psi.PsiFile):com.intellij.ide.structureView.StructureViewBuilder
+f:com.intellij.dts.core.inspections.DtsBitsInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsContainerInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsDuplicateElementInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsInspectionsRestarter
+- com.intellij.dts.core.settings.DtsSettings$ChangeListener
+- <init>(com.intellij.openapi.project.Project,kotlinx.coroutines.CoroutineScope):V
+- settingsChanged(com.intellij.dts.core.settings.DtsSettings):V
+f:com.intellij.dts.core.inspections.DtsInspectionsUtilKt
+- sf:firstNotMatching(java.lang.String,kotlin.text.Regex,kotlin.jvm.functions.Function1):Z
+- sf:propertyValueRange(com.intellij.dts.core.lang.psi.DtsProperty):com.intellij.openapi.util.TextRange
+- sf:registerProblem(com.intellij.codeInspection.ProblemsHolder,com.intellij.psi.PsiElement,java.lang.String,java.lang.Object,com.intellij.openapi.util.TextRange,com.intellij.codeInspection.LocalQuickFix):V
+- bs:registerProblem$default(com.intellij.codeInspection.ProblemsHolder,com.intellij.psi.PsiElement,java.lang.String,java.lang.Object,com.intellij.openapi.util.TextRange,com.intellij.codeInspection.LocalQuickFix,I,java.lang.Object):V
+f:com.intellij.dts.core.inspections.DtsLabelNameInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsNodeNameInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsPropertyConstInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsPropertyEnumInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsPropertyNameInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsPropertyTypeInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsRequiredPropertyInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsStatementOrderInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsUndeclaredPropertyInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.DtsUnitNameInspection
+- com.intellij.codeInspection.LocalInspectionTool
+- <init>():V
+- buildVisitor(com.intellij.codeInspection.ProblemsHolder,Z):com.intellij.psi.PsiElementVisitor
+f:com.intellij.dts.core.inspections.fixes.DtsCreatePropertyFix
+- com.intellij.modcommand.PsiUpdateModCommandQuickFix
+- <init>(java.util.List):V
+- getFamilyName():java.lang.String
+f:com.intellij.dts.core.inspections.fixes.DtsRemovePropertyFix
+- com.intellij.modcommand.PsiUpdateModCommandQuickFix
+- sf:INSTANCE:com.intellij.dts.core.inspections.fixes.DtsRemovePropertyFix
+- getFamilyName():java.lang.String
+f:com.intellij.dts.core.inspections.fixes.DtsRemoveSubNodeFix
+- com.intellij.modcommand.PsiUpdateModCommandQuickFix
+- sf:INSTANCE:com.intellij.dts.core.inspections.fixes.DtsRemoveSubNodeFix
+- getFamilyName():java.lang.String
+e:com.intellij.dts.core.lang.DtsAffiliation
+- java.lang.Enum
+- sf:NODE:com.intellij.dts.core.lang.DtsAffiliation
+- sf:ROOT:com.intellij.dts.core.lang.DtsAffiliation
+- sf:UNKNOWN:com.intellij.dts.core.lang.DtsAffiliation
+- s:getEntries():kotlin.enums.EnumEntries
+- f:isNode():Z
+- f:isRoot():Z
+- f:isUnknown():Z
+- s:valueOf(java.lang.String):com.intellij.dts.core.lang.DtsAffiliation
+- s:values():com.intellij.dts.core.lang.DtsAffiliation[]
+f:com.intellij.dts.core.lang.DtsElementType
+- com.intellij.psi.tree.IElementType
+- <init>(java.lang.String):V
+a:com.intellij.dts.core.lang.DtsFile
+- com.intellij.extapi.psi.PsiFileBase
+- com.intellij.dts.core.lang.psi.DtsContainer
+- getDtsEntries():java.util.List
+- getDtsTopLevelIncludes():java.util.List
+- getFileType():com.intellij.openapi.fileTypes.FileType
+- isDtsRootContainer():Z
+c:com.intellij.dts.core.lang.DtsFile$Include
+- com.intellij.dts.core.lang.DtsFile
+- <init>(com.intellij.psi.FileViewProvider):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+f:com.intellij.dts.core.lang.DtsFile$Overlay
+- com.intellij.dts.core.lang.DtsFile$Include
+- <init>(com.intellij.psi.FileViewProvider):V
+- getDtsTopLevelIncludes():java.util.List
+f:com.intellij.dts.core.lang.DtsFile$Source
+- com.intellij.dts.core.lang.DtsFile
+- <init>(com.intellij.psi.FileViewProvider):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+f:com.intellij.dts.core.lang.DtsFileType
+- com.intellij.openapi.fileTypes.LanguageFileType
+- sf:INSTANCE:com.intellij.dts.core.lang.DtsFileType
+- getDefaultExtension():java.lang.String
+- getDescription():java.lang.String
+- getIcon():javax.swing.Icon
+- getName():java.lang.String
+f:com.intellij.dts.core.lang.DtsLanguage
+- com.intellij.lang.Language
+- sf:INSTANCE:com.intellij.dts.core.lang.DtsLanguage
+- getDisplayName():java.lang.String
+f:com.intellij.dts.core.lang.DtsPpTokenTypes
+- com.intellij.dts.pp.lang.PpTokenTypes
+- sf:INSTANCE:com.intellij.dts.core.lang.DtsPpTokenTypes
+- createScopeSet():com.intellij.psi.tree.TokenSet
+- getCharLiteral():com.intellij.psi.tree.IElementType
+- getComment():com.intellij.psi.tree.IElementType
+- getDirective():com.intellij.psi.tree.IElementType
+- getFloatLiteral():com.intellij.psi.tree.IElementType
+- getHeaderName():com.intellij.psi.tree.IElementType
+- getIdentifier():com.intellij.psi.tree.IElementType
+- getInactive():com.intellij.psi.tree.IElementType
+- getIntegerLiteral():com.intellij.psi.tree.IElementType
+- getLineBreak():com.intellij.psi.tree.IElementType
+- getOperatorOrPunctuator():com.intellij.psi.tree.IElementType
+- getStatement():com.intellij.psi.tree.IElementType
+- getStatementEnd():com.intellij.psi.tree.IElementType
+- getStatementMarker():com.intellij.psi.tree.IElementType
+- getStringLiteral():com.intellij.psi.tree.IElementType
+- hostElementFactory(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+- statementElementFactory(com.intellij.lang.ASTNode,com.intellij.dts.pp.lang.parser.PpAdHocParser):com.intellij.dts.pp.lang.psi.PpStatementPsiElement
+e:com.intellij.dts.core.lang.DtsPropertyType
+- java.lang.Enum
+- sf:Boolean:com.intellij.dts.core.lang.DtsPropertyType
+- sf:Bytes:com.intellij.dts.core.lang.DtsPropertyType
+- sf:Companion:com.intellij.dts.core.lang.DtsPropertyType$Companion
+- sf:Compound:com.intellij.dts.core.lang.DtsPropertyType
+- sf:Int:com.intellij.dts.core.lang.DtsPropertyType
+- sf:Ints:com.intellij.dts.core.lang.DtsPropertyType
+- sf:PHandle:com.intellij.dts.core.lang.DtsPropertyType
+- sf:PHandleList:com.intellij.dts.core.lang.DtsPropertyType
+- sf:PHandles:com.intellij.dts.core.lang.DtsPropertyType
+- sf:Path:com.intellij.dts.core.lang.DtsPropertyType
+- sf:String:com.intellij.dts.core.lang.DtsPropertyType
+- sf:StringList:com.intellij.dts.core.lang.DtsPropertyType
+- s:getEntries():kotlin.enums.EnumEntries
+- f:getTypeName():java.lang.String
+- s:valueOf(java.lang.String):com.intellij.dts.core.lang.DtsPropertyType
+- s:values():com.intellij.dts.core.lang.DtsPropertyType[]
+f:com.intellij.dts.core.lang.DtsPropertyType$Companion
+- f:fromZephyr(java.lang.String):com.intellij.dts.core.lang.DtsPropertyType
+f:com.intellij.dts.core.lang.DtsPropertyTypeCheckKt
+- sf:dtsAssignableTo(com.intellij.dts.core.lang.psi.DtsProperty,com.intellij.dts.core.lang.DtsPropertyType):Z
+- sf:dtsAssignableTo(com.intellij.dts.core.lang.psi.DtsProperty,com.intellij.dts.core.lang.DtsPropertyValue):Z
+com.intellij.dts.core.lang.DtsPropertyValue
+- sf:Companion:com.intellij.dts.core.lang.DtsPropertyValue$Companion
+- a:getAssignableTo():java.util.Collection
+- a:getPresentableText(com.intellij.dts.core.lang.DtsPropertyType):java.lang.String
+f:com.intellij.dts.core.lang.DtsPropertyValue$Companion
+- f:fromZephyr(java.lang.Object):com.intellij.dts.core.lang.DtsPropertyValue
+f:com.intellij.dts.core.lang.DtsPropertyValue$Int
+- com.intellij.dts.core.lang.DtsPropertyValue
+- <init>(I):V
+- f:component1():I
+- f:copy(I):com.intellij.dts.core.lang.DtsPropertyValue$Int
+- bs:copy$default(com.intellij.dts.core.lang.DtsPropertyValue$Int,I,I,java.lang.Object):com.intellij.dts.core.lang.DtsPropertyValue$Int
+- equals(java.lang.Object):Z
+- getAssignableTo():java.util.Collection
+- getPresentableText(com.intellij.dts.core.lang.DtsPropertyType):java.lang.String
+- f:getValue():I
+- hashCode():I
+f:com.intellij.dts.core.lang.DtsPropertyValue$IntList
+- com.intellij.dts.core.lang.DtsPropertyValue
+- <init>(java.util.List):V
+- f:asByteList():java.util.List
+- f:asIntList():java.util.List
+- f:component1():java.util.List
+- f:copy(java.util.List):com.intellij.dts.core.lang.DtsPropertyValue$IntList
+- bs:copy$default(com.intellij.dts.core.lang.DtsPropertyValue$IntList,java.util.List,I,java.lang.Object):com.intellij.dts.core.lang.DtsPropertyValue$IntList
+- equals(java.lang.Object):Z
+- getAssignableTo():java.util.Collection
+- getPresentableText(com.intellij.dts.core.lang.DtsPropertyType):java.lang.String
+- f:getValue():java.util.List
+- hashCode():I
+f:com.intellij.dts.core.lang.DtsPropertyValue$String
+- com.intellij.dts.core.lang.DtsPropertyValue
+- <init>(java.lang.String):V
+- f:component1():java.lang.String
+- f:copy(java.lang.String):com.intellij.dts.core.lang.DtsPropertyValue$String
+- bs:copy$default(com.intellij.dts.core.lang.DtsPropertyValue$String,java.lang.String,I,java.lang.Object):com.intellij.dts.core.lang.DtsPropertyValue$String
+- equals(java.lang.Object):Z
+- getAssignableTo():java.util.Collection
+- getPresentableText(com.intellij.dts.core.lang.DtsPropertyType):java.lang.String
+- f:getValue():java.lang.String
+- hashCode():I
+f:com.intellij.dts.core.lang.DtsPropertyValue$StringList
+- com.intellij.dts.core.lang.DtsPropertyValue
+- <init>(java.util.List):V
+- f:component1():java.util.List
+- f:copy(java.util.List):com.intellij.dts.core.lang.DtsPropertyValue$StringList
+- bs:copy$default(com.intellij.dts.core.lang.DtsPropertyValue$StringList,java.util.List,I,java.lang.Object):com.intellij.dts.core.lang.DtsPropertyValue$StringList
+- equals(java.lang.Object):Z
+- getAssignableTo():java.util.Collection
+- getPresentableText(com.intellij.dts.core.lang.DtsPropertyType):java.lang.String
+- f:getValue():java.util.List
+- hashCode():I
+f:com.intellij.dts.core.lang.DtsTokenSets
+- sf:INSTANCE:com.intellij.dts.core.lang.DtsTokenSets
+- f:getComments():com.intellij.psi.tree.TokenSet
+- f:getCompilerDirectives():com.intellij.psi.tree.TokenSet
+- f:getIncludePath():com.intellij.psi.tree.TokenSet
+- f:getNumbers():com.intellij.psi.tree.TokenSet
+- f:getOperators():com.intellij.psi.tree.TokenSet
+- f:getStrings():com.intellij.psi.tree.TokenSet
+f:com.intellij.dts.core.lang.DtsTokenType
+- com.intellij.psi.tree.IElementType
+- <init>(java.lang.String):V
+f:com.intellij.dts.core.lang.lexer.DtsHighlightingLexerAdapter
+- com.intellij.dts.pp.lang.lexer.PpHighlightingLexerAdapter
+- <init>():V
+f:com.intellij.dts.core.lang.lexer.DtsParserLexerAdapter
+- com.intellij.dts.pp.lang.lexer.PpParserLexerAdapter
+- <init>():V
+f:com.intellij.dts.core.lang.parser.DtsHighlightingErrorFilter
+- com.intellij.codeInsight.highlighting.HighlightErrorFilter
+- <init>():V
+- shouldHighlightErrorElement(com.intellij.psi.PsiErrorElement):Z
+f:com.intellij.dts.core.lang.parser.DtsIncludeParser
+- com.intellij.dts.pp.lang.parser.PpStatementParser
+- <init>():V
+- getStatementTokens():com.intellij.psi.tree.TokenSet
+- parseStatement(com.intellij.psi.tree.IElementType,kotlin.jvm.functions.Function0):Z
+c:com.intellij.dts.core.lang.parser.DtsJavaParserUtil
+- com.intellij.dts.pp.lang.parser.PpParserUtilBase
+- <init>():V
+- s:adapt_builder_(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder,com.intellij.lang.PsiParser,com.intellij.psi.tree.TokenSet[]):com.intellij.lang.PsiBuilder
+c:com.intellij.dts.core.lang.parser.DtsParser
+- com.intellij.lang.LightPsiParser
+- com.intellij.lang.PsiParser
+- sf:EXTENDS_SETS_:com.intellij.psi.tree.TokenSet[]
+- <init>():V
+- s:bNotExpr(com.intellij.lang.PsiBuilder,I):Z
+- s:byteArray(com.intellij.lang.PsiBuilder,I):Z
+- s:byte_$(com.intellij.lang.PsiBuilder,I):Z
+- s:cellArray(com.intellij.lang.PsiBuilder,I):Z
+- s:cellArrayBits(com.intellij.lang.PsiBuilder,I):Z
+- s:charExpr(com.intellij.lang.PsiBuilder,I):Z
+- s:char_$(com.intellij.lang.PsiBuilder,I):Z
+- s:compilerDirective(com.intellij.lang.PsiBuilder,I,com.intellij.lang.parser.GeneratedParserUtilBase$Parser,com.intellij.lang.parser.GeneratedParserUtilBase$Parser):Z
+- s:entry(com.intellij.lang.PsiBuilder,I,com.intellij.lang.parser.GeneratedParserUtilBase$Parser):Z
+- s:expr(com.intellij.lang.PsiBuilder,I,I):Z
+- s:exprValue(com.intellij.lang.PsiBuilder,I):Z
+- s:expr_0(com.intellij.lang.PsiBuilder,I,I):Z
+- s:includeStatement(com.intellij.lang.PsiBuilder,I):Z
+- s:intExpr(com.intellij.lang.PsiBuilder,I):Z
+- s:int_$(com.intellij.lang.PsiBuilder,I):Z
+- s:lNotExpr(com.intellij.lang.PsiBuilder,I):Z
+- s:negExpr(com.intellij.lang.PsiBuilder,I):Z
+- s:nodeContent(com.intellij.lang.PsiBuilder,I):Z
+- s:pHandle(com.intellij.lang.PsiBuilder,I):Z
+- s:parenExpr(com.intellij.lang.PsiBuilder,I):Z
+- parse(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder):com.intellij.lang.ASTNode
+- parseLight(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder):V
+- p:parse_root_(com.intellij.psi.tree.IElementType,com.intellij.lang.PsiBuilder):Z
+- s:ppMacro(com.intellij.lang.PsiBuilder,I):Z
+- s:ppMacroExpr(com.intellij.lang.PsiBuilder,I):Z
+- s:property(com.intellij.lang.PsiBuilder,I):Z
+- s:propertyContent(com.intellij.lang.PsiBuilder,I):Z
+- s:refNode(com.intellij.lang.PsiBuilder,I):Z
+- s:rootNode(com.intellij.lang.PsiBuilder,I):Z
+- s:string(com.intellij.lang.PsiBuilder,I):Z
+- s:subNode(com.intellij.lang.PsiBuilder,I):Z
+c:com.intellij.dts.core.lang.parser.DtsParserDefinition
+- com.intellij.lang.ParserDefinition
+- <init>():V
+- createElement(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+- createFile(com.intellij.psi.FileViewProvider):com.intellij.psi.PsiFile
+- createLexer(com.intellij.openapi.project.Project):com.intellij.lexer.Lexer
+- createParser(com.intellij.openapi.project.Project):com.intellij.lang.PsiParser
+- getCommentTokens():com.intellij.psi.tree.TokenSet
+- getFileNodeType():com.intellij.psi.tree.IFileElementType
+- getStringLiteralElements():com.intellij.psi.tree.TokenSet
+f:com.intellij.dts.core.lang.parser.DtsParserUtil
+- com.intellij.dts.core.lang.parser.DtsJavaParserUtil
+- sf:INSTANCE:com.intellij.dts.core.lang.parser.DtsParserUtil
+- sf:leadingCommentsBinder:com.intellij.lang.WhitespacesAndCommentsBinder
+- sf:trailingCommentsBinder:com.intellij.lang.WhitespacesAndCommentsBinder
+- sf:parseAfterLineBreak(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseInvalidEntry(com.intellij.lang.PsiBuilder,I):Z
+- sf:parsePpMacro(com.intellij.lang.PsiBuilder,I):Z
+- sf:parsePropertyName(com.intellij.lang.PsiBuilder,I):Z
+- sf:parseTrailingLabels(com.intellij.lang.PsiBuilder,I):Z
+com.intellij.dts.core.lang.psi.DtsAddExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsArray
+- com.intellij.dts.core.lang.psi.DtsValue
+- a:getDtsValues():java.util.List
+com.intellij.dts.core.lang.psi.DtsArray$Byte
+- com.intellij.dts.core.lang.psi.DtsArray
+com.intellij.dts.core.lang.psi.DtsArray$Cell
+- com.intellij.dts.core.lang.psi.DtsArray
+- a:getDtsBits():java.lang.Integer
+com.intellij.dts.core.lang.psi.DtsBAndExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsBNotExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+com.intellij.dts.core.lang.psi.DtsBOrExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsByte
+- com.intellij.dts.core.lang.psi.DtsValue$Byte
+com.intellij.dts.core.lang.psi.DtsByteArray
+- com.intellij.dts.core.lang.psi.DtsArray$Byte
+- a:getByteList():java.util.List
+- a:getPpMacroList():java.util.List
+com.intellij.dts.core.lang.psi.DtsCellArray
+- com.intellij.dts.core.lang.psi.DtsArray$Cell
+- a:getCellArrayBits():com.intellij.dts.core.lang.psi.DtsCellArrayBits
+- a:getCharList():java.util.List
+- a:getExprValueList():java.util.List
+- a:getIntList():java.util.List
+- a:getPHandleList():java.util.List
+- a:getPpMacroList():java.util.List
+com.intellij.dts.core.lang.psi.DtsCellArrayBits
+- com.intellij.dts.core.lang.psi.mixin.IDtsCellArrayBits
+- a:getInt():com.intellij.dts.core.lang.psi.DtsInt
+- a:getPpMacro():com.intellij.dts.core.lang.psi.DtsPpMacro
+com.intellij.dts.core.lang.psi.DtsChar
+- com.intellij.dts.core.lang.psi.DtsValue$Char
+com.intellij.dts.core.lang.psi.DtsCharExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getChar():com.intellij.dts.core.lang.psi.DtsChar
+com.intellij.dts.core.lang.psi.DtsCompilerDirective
+- com.intellij.dts.core.lang.psi.DtsStatement$CompilerDirective
+com.intellij.dts.core.lang.psi.DtsContainer
+- com.intellij.psi.PsiElement
+- a:getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- a:getDtsEntries():java.util.List
+- getDtsNodes():java.util.List
+- getDtsProperties():java.util.List
+- getDtsStatements():java.util.List
+- a:isDtsRootContainer():Z
+com.intellij.dts.core.lang.psi.DtsDivExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsEntry
+- com.intellij.dts.core.lang.psi.mixin.IDtsEntry
+com.intellij.dts.core.lang.psi.DtsEqExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsExpr
+- com.intellij.psi.PsiElement
+com.intellij.dts.core.lang.psi.DtsExprValue
+- com.intellij.dts.core.lang.psi.DtsValue$Expression
+- com.intellij.dts.core.lang.psi.DtsValue$Int
+- a:getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+com.intellij.dts.core.lang.psi.DtsGeqExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsGrtExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsIncludeStatement
+- com.intellij.dts.core.lang.psi.PsiFileInclude
+com.intellij.dts.core.lang.psi.DtsInt
+- com.intellij.dts.core.lang.psi.DtsValue$Int
+com.intellij.dts.core.lang.psi.DtsIntExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getInt():com.intellij.dts.core.lang.psi.DtsInt
+com.intellij.dts.core.lang.psi.DtsLAndExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsLNotExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+com.intellij.dts.core.lang.psi.DtsLOrExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsLeqExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsLesExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsLshExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsModExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsMulExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsNegExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+com.intellij.dts.core.lang.psi.DtsNeqExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsNode
+- com.intellij.dts.core.lang.psi.DtsStatement$Node
+com.intellij.dts.core.lang.psi.DtsNode$Ref
+- com.intellij.dts.core.lang.psi.DtsNode
+- a:getDtsHandle():com.intellij.dts.core.lang.psi.DtsPHandle
+- a:getDtsLabels():java.util.List
+com.intellij.dts.core.lang.psi.DtsNode$Root
+- com.intellij.dts.core.lang.psi.DtsNode
+- a:getDtsSlash():com.intellij.psi.PsiElement
+com.intellij.dts.core.lang.psi.DtsNode$Sub
+- com.intellij.dts.core.lang.psi.DtsNode
+- a:getDtsLabels():java.util.List
+- a:getDtsName():java.lang.String
+- a:getDtsNameElement():com.intellij.psi.PsiElement
+com.intellij.dts.core.lang.psi.DtsNodeContent
+- com.intellij.dts.core.lang.psi.DtsContainer
+- a:getEntryList():java.util.List
+com.intellij.dts.core.lang.psi.DtsPHandle
+- com.intellij.dts.core.lang.psi.DtsValue$PHandle
+com.intellij.dts.core.lang.psi.DtsParenExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+com.intellij.dts.core.lang.psi.DtsPpMacro
+- com.intellij.dts.core.lang.psi.DtsValue$Macro
+com.intellij.dts.core.lang.psi.DtsPpMacroExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getPpMacro():com.intellij.dts.core.lang.psi.DtsPpMacro
+com.intellij.dts.core.lang.psi.DtsProperty
+- com.intellij.dts.core.lang.psi.DtsStatement$Property
+- a:getPropertyContent():com.intellij.dts.core.lang.psi.DtsPropertyContent
+com.intellij.dts.core.lang.psi.DtsPropertyContent
+- com.intellij.psi.PsiElement
+- a:getByteArrayList():java.util.List
+- a:getCellArrayList():java.util.List
+- a:getPHandleList():java.util.List
+- a:getPpMacroList():java.util.List
+- a:getStringList():java.util.List
+f:com.intellij.dts.core.lang.psi.DtsPsiFactory
+- sf:INSTANCE:com.intellij.dts.core.lang.psi.DtsPsiFactory
+- f:createNodeContent(com.intellij.openapi.project.Project):com.intellij.dts.core.lang.psi.DtsNodeContent
+- f:createProperty(com.intellij.openapi.project.Project,com.intellij.dts.core.lang.symbols.DtsPropertySymbol):com.intellij.dts.core.lang.psi.DtsEntry
+f:com.intellij.dts.core.lang.psi.DtsPsiUtilKt
+- sf:getDtsAnnotationTarget(com.intellij.dts.core.lang.psi.DtsNode):com.intellij.psi.PsiElement
+- sf:getDtsAnnotationTarget(com.intellij.dts.core.lang.psi.DtsStatement):com.intellij.psi.PsiElement
+- sf:getDtsCompatibleStrings(com.intellij.dts.core.lang.psi.DtsNode):java.util.List
+- sf:getDtsPath(com.intellij.dts.core.lang.psi.DtsNode):com.intellij.dts.core.api.DtsPath
+- sf:getDtsPresentableText(com.intellij.dts.core.lang.psi.DtsNode):java.lang.String
+- sf:getDtsPresentableText(com.intellij.dts.core.lang.psi.DtsStatement):java.lang.String
+- sf:getDtsReferenceTarget(com.intellij.dts.core.lang.psi.DtsNode$Ref):com.intellij.dts.core.lang.psi.DtsNode
+- sf:isDtsRootNode(com.intellij.dts.core.lang.psi.DtsNode):Z
+com.intellij.dts.core.lang.psi.DtsRefNode
+- com.intellij.dts.core.lang.psi.DtsNode$Ref
+- com.intellij.psi.StubBasedPsiElement
+- a:getNodeContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+- a:getPHandle():com.intellij.dts.core.lang.psi.DtsPHandle
+com.intellij.dts.core.lang.psi.DtsRootNode
+- com.intellij.dts.core.lang.psi.DtsNode$Root
+- com.intellij.psi.StubBasedPsiElement
+- a:getNodeContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+com.intellij.dts.core.lang.psi.DtsRshExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsStatement
+- com.intellij.psi.PsiElement
+- a:getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- a:getDtsIsComplete():Z
+- a:getDtsStatementKind():com.intellij.dts.core.lang.psi.DtsStatementKind
+com.intellij.dts.core.lang.psi.DtsStatement$CompilerDirective
+- com.intellij.dts.core.lang.psi.DtsStatement
+- a:getDtsDirective():com.intellij.psi.PsiElement
+- a:getDtsDirectiveArgs():java.util.List
+- a:getDtsDirectiveType():com.intellij.psi.tree.IElementType
+com.intellij.dts.core.lang.psi.DtsStatement$Node
+- com.intellij.dts.core.lang.psi.DtsStatement
+- com.intellij.openapi.util.Iconable
+- a:addDtsProperty(com.intellij.dts.core.lang.psi.DtsEntry):com.intellij.dts.core.lang.psi.DtsEntry
+- a:getDtsContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+- a:getDtsIsEmpty():Z
+- a:getDtsProperties():java.util.List
+- a:getDtsSubNodes():java.util.List
+com.intellij.dts.core.lang.psi.DtsStatement$Property
+- com.intellij.dts.core.lang.psi.DtsStatement
+- com.intellij.openapi.util.Iconable
+- a:getDtsName():java.lang.String
+- a:getDtsNameElement():com.intellij.psi.PsiElement
+- a:getDtsValues():java.util.List
+e:com.intellij.dts.core.lang.psi.DtsStatementKind
+- java.lang.Enum
+- sf:NODE:com.intellij.dts.core.lang.psi.DtsStatementKind
+- sf:PROPERTY:com.intellij.dts.core.lang.psi.DtsStatementKind
+- sf:UNKNOWN:com.intellij.dts.core.lang.psi.DtsStatementKind
+- s:getEntries():kotlin.enums.EnumEntries
+- f:isNode():Z
+- f:isProperty():Z
+- f:isUnknown():Z
+- s:valueOf(java.lang.String):com.intellij.dts.core.lang.psi.DtsStatementKind
+- s:values():com.intellij.dts.core.lang.psi.DtsStatementKind[]
+com.intellij.dts.core.lang.psi.DtsString
+- com.intellij.dts.core.lang.psi.DtsValue$String
+com.intellij.dts.core.lang.psi.DtsSubExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsSubNode
+- com.intellij.dts.core.lang.psi.DtsNode$Sub
+- com.intellij.psi.StubBasedPsiElement
+- a:getNodeContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+com.intellij.dts.core.lang.psi.DtsTernaryExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.DtsTypes
+- sf:ADD:com.intellij.psi.tree.IElementType
+- sf:ADD_EXPR:com.intellij.psi.tree.IElementType
+- sf:AND:com.intellij.psi.tree.IElementType
+- sf:ASSIGN:com.intellij.psi.tree.IElementType
+- sf:BITS:com.intellij.psi.tree.IElementType
+- sf:BYTE:com.intellij.psi.tree.IElementType
+- sf:BYTE_ARRAY:com.intellij.psi.tree.IElementType
+- sf:BYTE_LITERAL:com.intellij.psi.tree.IElementType
+- sf:B_AND_EXPR:com.intellij.psi.tree.IElementType
+- sf:B_NOT_EXPR:com.intellij.psi.tree.IElementType
+- sf:B_OR_EXPR:com.intellij.psi.tree.IElementType
+- sf:CELL_ARRAY:com.intellij.psi.tree.IElementType
+- sf:CELL_ARRAY_BITS:com.intellij.psi.tree.IElementType
+- sf:CHAR:com.intellij.psi.tree.IElementType
+- sf:CHAR_EXPR:com.intellij.psi.tree.IElementType
+- sf:CHAR_LITERAL:com.intellij.psi.tree.IElementType
+- sf:COLON:com.intellij.psi.tree.IElementType
+- sf:COMMA:com.intellij.psi.tree.IElementType
+- sf:COMMENT_C:com.intellij.psi.tree.IElementType
+- sf:COMMENT_EOL:com.intellij.psi.tree.IElementType
+- sf:COMPILER_DIRECTIVE:com.intellij.psi.tree.IElementType
+- sf:DELETE_NODE:com.intellij.psi.tree.IElementType
+- sf:DELETE_PROP:com.intellij.psi.tree.IElementType
+- sf:DIV:com.intellij.psi.tree.IElementType
+- sf:DIV_EXPR:com.intellij.psi.tree.IElementType
+- sf:ENTRY:com.intellij.psi.tree.IElementType
+- sf:EQ:com.intellij.psi.tree.IElementType
+- sf:EQ_EXPR:com.intellij.psi.tree.IElementType
+- sf:EXPR:com.intellij.psi.tree.IElementType
+- sf:EXPR_VALUE:com.intellij.psi.tree.IElementType
+- sf:GEQ:com.intellij.psi.tree.IElementType
+- sf:GEQ_EXPR:com.intellij.psi.tree.IElementType
+- sf:GRT:com.intellij.psi.tree.IElementType
+- sf:GRT_EXPR:com.intellij.psi.tree.IElementType
+- sf:HANDLE:com.intellij.psi.tree.IElementType
+- sf:INCLUDE:com.intellij.psi.tree.IElementType
+- sf:INCLUDE_PATH:com.intellij.psi.tree.IElementType
+- sf:INCLUDE_STATEMENT:com.intellij.psi.tree.IElementType
+- sf:INT:com.intellij.psi.tree.IElementType
+- sf:INT_EXPR:com.intellij.psi.tree.IElementType
+- sf:INT_LITERAL:com.intellij.psi.tree.IElementType
+- sf:LABEL:com.intellij.psi.tree.IElementType
+- sf:LANGL:com.intellij.psi.tree.IElementType
+- sf:LBRACE:com.intellij.psi.tree.IElementType
+- sf:LBRACKET:com.intellij.psi.tree.IElementType
+- sf:LEQ:com.intellij.psi.tree.IElementType
+- sf:LEQ_EXPR:com.intellij.psi.tree.IElementType
+- sf:LES:com.intellij.psi.tree.IElementType
+- sf:LES_EXPR:com.intellij.psi.tree.IElementType
+- sf:LPAREN:com.intellij.psi.tree.IElementType
+- sf:LSH:com.intellij.psi.tree.IElementType
+- sf:LSH_EXPR:com.intellij.psi.tree.IElementType
+- sf:L_AND:com.intellij.psi.tree.IElementType
+- sf:L_AND_EXPR:com.intellij.psi.tree.IElementType
+- sf:L_NOT:com.intellij.psi.tree.IElementType
+- sf:L_NOT_EXPR:com.intellij.psi.tree.IElementType
+- sf:L_OR:com.intellij.psi.tree.IElementType
+- sf:L_OR_EXPR:com.intellij.psi.tree.IElementType
+- sf:MEMRESERVE:com.intellij.psi.tree.IElementType
+- sf:MOD:com.intellij.psi.tree.IElementType
+- sf:MOD_EXPR:com.intellij.psi.tree.IElementType
+- sf:MUL:com.intellij.psi.tree.IElementType
+- sf:MUL_EXPR:com.intellij.psi.tree.IElementType
+- sf:NAME:com.intellij.psi.tree.IElementType
+- sf:NEG_EXPR:com.intellij.psi.tree.IElementType
+- sf:NEQ:com.intellij.psi.tree.IElementType
+- sf:NEQ_EXPR:com.intellij.psi.tree.IElementType
+- sf:NODE_CONTENT:com.intellij.psi.tree.IElementType
+- sf:NOT:com.intellij.psi.tree.IElementType
+- sf:OMIT_NODE:com.intellij.psi.tree.IElementType
+- sf:OR:com.intellij.psi.tree.IElementType
+- sf:PAREN_EXPR:com.intellij.psi.tree.IElementType
+- sf:PATH:com.intellij.psi.tree.IElementType
+- sf:PLUGIN:com.intellij.psi.tree.IElementType
+- sf:PP_CHAR_LITERAL:com.intellij.psi.tree.IElementType
+- sf:PP_COMMENT:com.intellij.psi.tree.IElementType
+- sf:PP_DIRECTIVE:com.intellij.psi.tree.IElementType
+- sf:PP_FLOAT_LITERAL:com.intellij.psi.tree.IElementType
+- sf:PP_HEADER_NAME:com.intellij.psi.tree.IElementType
+- sf:PP_IDENTIFIER:com.intellij.psi.tree.IElementType
+- sf:PP_INACTIVE:com.intellij.psi.tree.IElementType
+- sf:PP_INTEGER_LITERAL:com.intellij.psi.tree.IElementType
+- sf:PP_LINE_BRAK:com.intellij.psi.tree.IElementType
+- sf:PP_MACRO:com.intellij.psi.tree.IElementType
+- sf:PP_MACRO_ARG:com.intellij.psi.tree.IElementType
+- sf:PP_MACRO_EXPR:com.intellij.psi.tree.IElementType
+- sf:PP_OPERATOR_OR_PUNCTUATOR:com.intellij.psi.tree.IElementType
+- sf:PP_STATEMENT:com.intellij.psi.tree.IElementType
+- sf:PP_STATEMENT_END:com.intellij.psi.tree.IElementType
+- sf:PP_STATEMENT_MARKER:com.intellij.psi.tree.IElementType
+- sf:PP_STRING_LITERAL:com.intellij.psi.tree.IElementType
+- sf:PROPERTY:com.intellij.psi.tree.IElementType
+- sf:PROPERTY_CONTENT:com.intellij.psi.tree.IElementType
+- sf:P_HANDLE:com.intellij.psi.tree.IElementType
+- sf:RANGL:com.intellij.psi.tree.IElementType
+- sf:RBRACE:com.intellij.psi.tree.IElementType
+- sf:RBRACKET:com.intellij.psi.tree.IElementType
+- sf:REF_NODE:com.intellij.psi.tree.IElementType
+- sf:ROOT_NODE:com.intellij.psi.tree.IElementType
+- sf:RPAREN:com.intellij.psi.tree.IElementType
+- sf:RSH:com.intellij.psi.tree.IElementType
+- sf:RSH_EXPR:com.intellij.psi.tree.IElementType
+- sf:SEMICOLON:com.intellij.psi.tree.IElementType
+- sf:SLASH:com.intellij.psi.tree.IElementType
+- sf:STRING:com.intellij.psi.tree.IElementType
+- sf:STRING_LITERAL:com.intellij.psi.tree.IElementType
+- sf:SUB:com.intellij.psi.tree.IElementType
+- sf:SUB_EXPR:com.intellij.psi.tree.IElementType
+- sf:SUB_NODE:com.intellij.psi.tree.IElementType
+- sf:TERNARY:com.intellij.psi.tree.IElementType
+- sf:TERNARY_EXPR:com.intellij.psi.tree.IElementType
+- sf:V1:com.intellij.psi.tree.IElementType
+- sf:XOR:com.intellij.psi.tree.IElementType
+- sf:XOR_EXPR:com.intellij.psi.tree.IElementType
+c:com.intellij.dts.core.lang.psi.DtsTypes$Factory
+- <init>():V
+- s:createElement(com.intellij.lang.ASTNode):com.intellij.psi.PsiElement
+com.intellij.dts.core.lang.psi.DtsValue
+- com.intellij.psi.PsiElement
+- getDtsValueRange():com.intellij.openapi.util.TextRange
+com.intellij.dts.core.lang.psi.DtsValue$Byte
+- com.intellij.dts.core.lang.psi.DtsValue$Parseable
+com.intellij.dts.core.lang.psi.DtsValue$Char
+- com.intellij.dts.core.lang.psi.DtsValue$Parseable
+com.intellij.dts.core.lang.psi.DtsValue$Expression
+- com.intellij.dts.core.lang.psi.DtsValue$Int
+com.intellij.dts.core.lang.psi.DtsValue$Int
+- com.intellij.dts.core.lang.psi.DtsValue$Parseable
+com.intellij.dts.core.lang.psi.DtsValue$Macro
+- com.intellij.dts.core.lang.psi.DtsValue
+com.intellij.dts.core.lang.psi.DtsValue$PHandle
+- com.intellij.dts.core.lang.psi.DtsValue
+- a:getDtsPHandleLabel():com.intellij.psi.PsiElement
+- a:getDtsPHandlePath():com.intellij.psi.PsiElement
+com.intellij.dts.core.lang.psi.DtsValue$Parseable
+- com.intellij.dts.core.lang.psi.DtsValue
+- a:dtsParse():java.lang.Object
+com.intellij.dts.core.lang.psi.DtsValue$String
+- com.intellij.dts.core.lang.psi.DtsValue$Parseable
+f:com.intellij.dts.core.lang.psi.DtsVisitorKt
+- sf:dtsRecursiveVisitor(kotlin.reflect.KClass,kotlin.jvm.functions.Function1):com.intellij.psi.PsiElementVisitor
+- sf:dtsVisitor(com.intellij.psi.tree.IElementType,kotlin.jvm.functions.Function1):com.intellij.psi.PsiElementVisitor
+- sf:dtsVisitor(kotlin.reflect.KClass,kotlin.jvm.functions.Function1):com.intellij.psi.PsiElementVisitor
+com.intellij.dts.core.lang.psi.DtsXorExpr
+- com.intellij.dts.core.lang.psi.DtsExpr
+- a:getExprList():java.util.List
+com.intellij.dts.core.lang.psi.FileInclude
+- a:getOffset():java.lang.Integer
+- a:resolve(com.intellij.psi.PsiFile):com.intellij.psi.PsiFile
+com.intellij.dts.core.lang.psi.PsiFileInclude
+- com.intellij.psi.PsiElement
+- a:getFileInclude():com.intellij.dts.core.lang.psi.FileInclude
+- a:getFileIncludeRange():com.intellij.openapi.util.TextRange
+f:com.intellij.dts.core.lang.psi.PsiFileIncludeKt
+- sf:before(com.intellij.dts.core.lang.psi.FileInclude,java.lang.Integer):Z
+c:com.intellij.dts.core.lang.psi.impl.DtsAddExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsAddExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsBAndExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsBAndExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsBNotExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsBNotExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+c:com.intellij.dts.core.lang.psi.impl.DtsBOrExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsBOrExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsByteArrayImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsByteArrayMixin
+- com.intellij.dts.core.lang.psi.DtsByteArray
+- <init>(com.intellij.lang.ASTNode):V
+- getByteList():java.util.List
+- getPpMacroList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsByteImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsByteMixin
+- com.intellij.dts.core.lang.psi.DtsByte
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsCellArrayBitsImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsCellArrayBitsMixin
+- com.intellij.dts.core.lang.psi.DtsCellArrayBits
+- <init>(com.intellij.lang.ASTNode):V
+- getInt():com.intellij.dts.core.lang.psi.DtsInt
+- getPpMacro():com.intellij.dts.core.lang.psi.DtsPpMacro
+c:com.intellij.dts.core.lang.psi.impl.DtsCellArrayImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsCellArrayMixin
+- com.intellij.dts.core.lang.psi.DtsCellArray
+- <init>(com.intellij.lang.ASTNode):V
+- getCellArrayBits():com.intellij.dts.core.lang.psi.DtsCellArrayBits
+- getCharList():java.util.List
+- getExprValueList():java.util.List
+- getIntList():java.util.List
+- getPHandleList():java.util.List
+- getPpMacroList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsCharExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsCharExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getChar():com.intellij.dts.core.lang.psi.DtsChar
+c:com.intellij.dts.core.lang.psi.impl.DtsCharImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsCharMixin
+- com.intellij.dts.core.lang.psi.DtsChar
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsCompilerDirectiveImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsCompilerDirectiveMixin
+- com.intellij.dts.core.lang.psi.DtsCompilerDirective
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsDivExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsDivExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsEntryImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsEntryMixin
+- com.intellij.dts.core.lang.psi.DtsEntry
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsEqExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsEqExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+a:com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsExpr
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsExprValueImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsExpressionMixin
+- com.intellij.dts.core.lang.psi.DtsExprValue
+- <init>(com.intellij.lang.ASTNode):V
+- getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+c:com.intellij.dts.core.lang.psi.impl.DtsGeqExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsGeqExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsGrtExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsGrtExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsIncludeStatementImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsIncludeStatementMixin
+- com.intellij.dts.core.lang.psi.DtsIncludeStatement
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsIntExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsIntExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getInt():com.intellij.dts.core.lang.psi.DtsInt
+c:com.intellij.dts.core.lang.psi.impl.DtsIntImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsIntMixin
+- com.intellij.dts.core.lang.psi.DtsInt
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsLAndExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsLAndExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsLNotExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsLNotExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+c:com.intellij.dts.core.lang.psi.impl.DtsLOrExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsLOrExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsLeqExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsLeqExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsLesExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsLesExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsLshExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsLshExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsModExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsModExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsMulExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsMulExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsNegExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsNegExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+c:com.intellij.dts.core.lang.psi.impl.DtsNeqExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsNeqExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsNodeContentImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsNodeContentMixin
+- com.intellij.dts.core.lang.psi.DtsNodeContent
+- <init>(com.intellij.lang.ASTNode):V
+- getEntryList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsPHandleImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsPHandleMixin
+- com.intellij.dts.core.lang.psi.DtsPHandle
+- <init>(com.intellij.lang.ASTNode):V
+c:com.intellij.dts.core.lang.psi.impl.DtsParenExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsParenExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExpr():com.intellij.dts.core.lang.psi.DtsExpr
+c:com.intellij.dts.core.lang.psi.impl.DtsPpMacroExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsPpMacroExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getPpMacro():com.intellij.dts.core.lang.psi.DtsPpMacro
+c:com.intellij.dts.core.lang.psi.impl.DtsPpMacroImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsPpMacro
+- <init>(com.intellij.lang.ASTNode):V
+f:com.intellij.dts.core.lang.psi.impl.DtsPpStatementElement
+- com.intellij.dts.pp.lang.psi.PpStatementPsiElement
+- com.intellij.dts.core.lang.psi.DtsIncludeStatement
+- <init>(com.intellij.lang.ASTNode,com.intellij.dts.pp.lang.parser.PpAdHocParser):V
+- getFileInclude():com.intellij.dts.core.lang.psi.FileInclude
+- getFileIncludeRange():com.intellij.openapi.util.TextRange
+- getReference():com.intellij.psi.PsiReference
+c:com.intellij.dts.core.lang.psi.impl.DtsPropertyContentImpl
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsPropertyContent
+- <init>(com.intellij.lang.ASTNode):V
+- getByteArrayList():java.util.List
+- getCellArrayList():java.util.List
+- getPHandleList():java.util.List
+- getPpMacroList():java.util.List
+- getStringList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsPropertyImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsPropertyMixin
+- com.intellij.dts.core.lang.psi.DtsProperty
+- <init>(com.intellij.lang.ASTNode):V
+- getPropertyContent():com.intellij.dts.core.lang.psi.DtsPropertyContent
+c:com.intellij.dts.core.lang.psi.impl.DtsRefNodeImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsRefNodeMixin
+- com.intellij.dts.core.lang.psi.DtsRefNode
+- <init>(com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub,com.intellij.psi.stubs.IStubElementType):V
+- <init>(com.intellij.lang.ASTNode):V
+- getNodeContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+- getPHandle():com.intellij.dts.core.lang.psi.DtsPHandle
+c:com.intellij.dts.core.lang.psi.impl.DtsRootNodeImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsRootNodeMixin
+- com.intellij.dts.core.lang.psi.DtsRootNode
+- <init>(com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub,com.intellij.psi.stubs.IStubElementType):V
+- <init>(com.intellij.lang.ASTNode):V
+- getNodeContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+c:com.intellij.dts.core.lang.psi.impl.DtsRshExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsRshExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsStringImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsStringMixin
+- com.intellij.dts.core.lang.psi.DtsString
+- <init>(com.intellij.lang.ASTNode):V
+a:com.intellij.dts.core.lang.psi.impl.DtsStubBasedElement
+- com.intellij.extapi.psi.StubBasedPsiElementBase
+- <init>(com.intellij.lang.ASTNode):V
+- <init>(com.intellij.psi.stubs.StubElement,com.intellij.psi.stubs.IStubElementType):V
+c:com.intellij.dts.core.lang.psi.impl.DtsSubExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsSubExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsSubNodeImpl
+- com.intellij.dts.core.lang.psi.mixin.DtsSubNodeMixin
+- com.intellij.dts.core.lang.psi.DtsSubNode
+- <init>(com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub,com.intellij.psi.stubs.IStubElementType):V
+- <init>(com.intellij.lang.ASTNode):V
+- getNodeContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+c:com.intellij.dts.core.lang.psi.impl.DtsTernaryExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsTernaryExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+c:com.intellij.dts.core.lang.psi.impl.DtsXorExprImpl
+- com.intellij.dts.core.lang.psi.impl.DtsExprImpl
+- com.intellij.dts.core.lang.psi.DtsXorExpr
+- <init>(com.intellij.lang.ASTNode):V
+- getExprList():java.util.List
+a:com.intellij.dts.core.lang.psi.mixin.DtsByteArrayMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsByteArray
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsValueRange():com.intellij.openapi.util.TextRange
+- getDtsValues():java.util.List
+a:com.intellij.dts.core.lang.psi.mixin.DtsByteMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsByte
+- <init>(com.intellij.lang.ASTNode):V
+- dtsParse():java.lang.Integer
+a:com.intellij.dts.core.lang.psi.mixin.DtsCellArrayBitsMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsCellArrayBits
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsBitsValue():com.intellij.dts.core.lang.psi.DtsValue
+a:com.intellij.dts.core.lang.psi.mixin.DtsCellArrayMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsCellArray
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsBits():java.lang.Integer
+- getDtsValueRange():com.intellij.openapi.util.TextRange
+- getDtsValues():java.util.List
+a:com.intellij.dts.core.lang.psi.mixin.DtsCharMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsChar
+- <init>(com.intellij.lang.ASTNode):V
+- dtsParse():java.lang.Character
+- getDtsValueRange():com.intellij.openapi.util.TextRange
+a:com.intellij.dts.core.lang.psi.mixin.DtsCompilerDirectiveMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsCompilerDirective
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- getDtsDirective():com.intellij.psi.PsiElement
+- getDtsDirectiveArgs():java.util.List
+- getDtsDirectiveType():com.intellij.psi.tree.IElementType
+- getDtsIsComplete():Z
+- getDtsStatementKind():com.intellij.dts.core.lang.psi.DtsStatementKind
+a:com.intellij.dts.core.lang.psi.mixin.DtsEntryMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsEntry
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsContainer():com.intellij.dts.core.lang.psi.DtsContainer
+- getDtsStatement():com.intellij.dts.core.lang.psi.DtsStatement
+- getHasDtsSemicolon():Z
+a:com.intellij.dts.core.lang.psi.mixin.DtsExpressionMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsExprValue
+- <init>(com.intellij.lang.ASTNode):V
+- dtsParse():java.lang.Integer
+a:com.intellij.dts.core.lang.psi.mixin.DtsIncludeStatementMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsIncludeStatement
+- <init>(com.intellij.lang.ASTNode):V
+- getFileInclude():com.intellij.dts.core.lang.psi.FileInclude
+- getFileIncludeRange():com.intellij.openapi.util.TextRange
+- getReference():com.intellij.psi.PsiReference
+a:com.intellij.dts.core.lang.psi.mixin.DtsIntMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsInt
+- <init>(com.intellij.lang.ASTNode):V
+- dtsParse():java.lang.Integer
+a:com.intellij.dts.core.lang.psi.mixin.DtsNodeContentMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsNodeContent
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- getDtsEntries():java.util.List
+- isDtsRootContainer():Z
+a:com.intellij.dts.core.lang.psi.mixin.DtsNodeMixin
+- com.intellij.dts.core.lang.psi.impl.DtsStubBasedElement
+- com.intellij.dts.core.lang.psi.DtsStatement$Node
+- <init>(com.intellij.lang.ASTNode):V
+- <init>(com.intellij.psi.stubs.StubBase,com.intellij.psi.stubs.IStubElementType):V
+- addDtsProperty(com.intellij.dts.core.lang.psi.DtsEntry):com.intellij.dts.core.lang.psi.DtsEntry
+- getDtsContent():com.intellij.dts.core.lang.psi.DtsNodeContent
+- getDtsIsComplete():Z
+- getDtsIsEmpty():Z
+- getDtsProperties():java.util.List
+- getDtsStatementKind():com.intellij.dts.core.lang.psi.DtsStatementKind
+- getDtsSubNodes():java.util.List
+- getIcon(I):javax.swing.Icon
+- getPresentation():com.intellij.navigation.ItemPresentation
+a:com.intellij.dts.core.lang.psi.mixin.DtsPHandleMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsPHandle
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsPHandleLabel():com.intellij.psi.PsiElement
+- getDtsPHandlePath():com.intellij.psi.PsiElement
+- getReference():com.intellij.psi.PsiReference
+a:com.intellij.dts.core.lang.psi.mixin.DtsPropertyMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsProperty
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- getDtsIsComplete():Z
+- getDtsName():java.lang.String
+- getDtsNameElement():com.intellij.psi.PsiElement
+- getDtsStatementKind():com.intellij.dts.core.lang.psi.DtsStatementKind
+- getDtsValues():java.util.List
+- getIcon(I):javax.swing.Icon
+- getTextOffset():I
+a:com.intellij.dts.core.lang.psi.mixin.DtsRefNodeMixin
+- com.intellij.dts.core.lang.psi.mixin.DtsNodeMixin
+- com.intellij.dts.core.lang.psi.DtsRefNode
+- <init>(com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub,com.intellij.psi.stubs.IStubElementType):V
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- getDtsHandle():com.intellij.dts.core.lang.psi.DtsPHandle
+- getDtsLabels():java.util.List
+- getTextOffset():I
+a:com.intellij.dts.core.lang.psi.mixin.DtsRootNodeMixin
+- com.intellij.dts.core.lang.psi.mixin.DtsNodeMixin
+- com.intellij.dts.core.lang.psi.DtsRootNode
+- <init>(com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub,com.intellij.psi.stubs.IStubElementType):V
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- getDtsSlash():com.intellij.psi.PsiElement
+a:com.intellij.dts.core.lang.psi.mixin.DtsStringMixin
+- com.intellij.extapi.psi.ASTWrapperPsiElement
+- com.intellij.dts.core.lang.psi.DtsString
+- <init>(com.intellij.lang.ASTNode):V
+- dtsParse():java.lang.String
+- getDtsValueRange():com.intellij.openapi.util.TextRange
+- getOwnReferences():java.util.Collection
+a:com.intellij.dts.core.lang.psi.mixin.DtsSubNodeMixin
+- com.intellij.dts.core.lang.psi.mixin.DtsNodeMixin
+- com.intellij.dts.core.lang.psi.DtsSubNode
+- <init>(com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub,com.intellij.psi.stubs.IStubElementType):V
+- <init>(com.intellij.lang.ASTNode):V
+- getDtsAffiliation():com.intellij.dts.core.lang.DtsAffiliation
+- getDtsLabels():java.util.List
+- getDtsName():java.lang.String
+- getDtsNameElement():com.intellij.psi.PsiElement
+- getTextOffset():I
+com.intellij.dts.core.lang.psi.mixin.IDtsCellArrayBits
+- com.intellij.psi.PsiElement
+- a:getDtsBitsValue():com.intellij.dts.core.lang.psi.DtsValue
+com.intellij.dts.core.lang.psi.mixin.IDtsEntry
+- com.intellij.psi.PsiElement
+- a:getDtsContainer():com.intellij.dts.core.lang.psi.DtsContainer
+- a:getDtsStatement():com.intellij.dts.core.lang.psi.DtsStatement
+- a:getHasDtsSemicolon():Z
+f:com.intellij.dts.core.lang.resolve.DtsBindingReference
+- com.intellij.model.psi.PsiCompletableReference
+- com.intellij.model.psi.PsiSymbolReference
+- <init>(com.intellij.dts.core.lang.psi.DtsString):V
+- getCompletionVariants():java.util.Collection
+- getElement():com.intellij.psi.PsiElement
+- getRangeInElement():com.intellij.openapi.util.TextRange
+- resolveReference():java.util.Collection
+f:com.intellij.dts.core.lang.resolve.DtsLabelReference
+- com.intellij.psi.PsiPolyVariantReferenceBase
+- <init>(com.intellij.psi.PsiElement,com.intellij.openapi.util.TextRange,java.lang.String,Z):V
+- getVariants():java.lang.Object[]
+- multiResolve(Z):com.intellij.psi.ResolveResult[]
+f:com.intellij.dts.core.lang.resolve.DtsLabelReference$AutoPopup
+- com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+- <init>():V
+- checkAutoPopup(C,com.intellij.openapi.project.Project,com.intellij.openapi.editor.Editor,com.intellij.psi.PsiFile):com.intellij.codeInsight.editorActions.TypedHandlerDelegate$Result
+f:com.intellij.dts.core.lang.resolve.DtsPathReference
+- com.intellij.psi.PsiPolyVariantReferenceBase
+- <init>(com.intellij.psi.PsiElement,com.intellij.openapi.util.TextRange,com.intellij.dts.core.api.DtsPath,Z):V
+- getVariants():java.lang.Object[]
+- multiResolve(Z):com.intellij.psi.ResolveResult[]
+f:com.intellij.dts.core.lang.resolve.DtsPathReference$AutoPopup
+- com.intellij.codeInsight.editorActions.TypedHandlerDelegate
+- <init>():V
+- checkAutoPopup(C,com.intellij.openapi.project.Project,com.intellij.openapi.editor.Editor,com.intellij.psi.PsiFile):com.intellij.codeInsight.editorActions.TypedHandlerDelegate$Result
+f:com.intellij.dts.core.lang.resolve.FileIncludeReference
+- com.intellij.psi.PsiReferenceBase
+- sf:Companion:com.intellij.dts.core.lang.resolve.FileIncludeReference$Companion
+- f:getInclude():com.intellij.dts.core.lang.psi.FileInclude
+- resolve():com.intellij.psi.PsiElement
+f:com.intellij.dts.core.lang.resolve.FileIncludeReference$Companion
+- f:create(com.intellij.dts.core.lang.psi.PsiFileInclude):com.intellij.dts.core.lang.resolve.FileIncludeReference
+f:com.intellij.dts.core.lang.resolve.files.DtsIncludeFile
+- com.intellij.dts.core.lang.psi.FileInclude
+- <init>(java.lang.String,I):V
+- getOffset():java.lang.Integer
+- f:getPath():java.lang.String
+- resolve(com.intellij.psi.PsiFile):com.intellij.psi.PsiFile
+f:com.intellij.dts.core.lang.resolve.files.DtsOverlayFile
+- com.intellij.dts.core.lang.psi.FileInclude
+- sf:INSTANCE:com.intellij.dts.core.lang.resolve.files.DtsOverlayFile
+- getOffset():java.lang.Integer
+- resolve(com.intellij.psi.PsiFile):com.intellij.psi.PsiFile
+f:com.intellij.dts.core.lang.stubs.DtsFileStub
+- com.intellij.psi.stubs.PsiFileStubImpl
+- <init>(com.intellij.dts.core.lang.DtsFile):V
+- getType():com.intellij.dts.core.lang.stubs.DtsFileStub$Type
+f:com.intellij.dts.core.lang.stubs.DtsFileStub$Type
+- com.intellij.psi.tree.IStubFileElementType
+- sf:INSTANCE:com.intellij.dts.core.lang.stubs.DtsFileStub$Type
+- deserialize(com.intellij.psi.stubs.StubInputStream,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.DtsFileStub
+- getBuilder():com.intellij.psi.StubBuilder
+- getExternalId():java.lang.String
+- getStubVersion():I
+f:com.intellij.dts.core.lang.stubs.DtsNodeLabelIndex
+- com.intellij.psi.stubs.StringStubIndexExtension
+- <init>():V
+- getKey():com.intellij.psi.stubs.StubIndexKey
+- getVersion():I
+- traceKeyHashToVirtualFileMapping():Z
+f:com.intellij.dts.core.lang.stubs.DtsNodeLabelIndexKt
+- sf:getDTS_NODE_LABEL_INDEX():com.intellij.psi.stubs.StubIndexKey
+a:com.intellij.dts.core.lang.stubs.DtsStubElementType
+- com.intellij.psi.stubs.IStubElementType
+- <init>(java.lang.String):V
+- getExternalId():java.lang.String
+com.intellij.dts.core.lang.stubs.DtsStubElementTypes
+- sf:REF_NODE:com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub$Type
+- sf:ROOT_NODE:com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub$Type
+- sf:SUB_NODE:com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub$Type
+- s:factory(java.lang.String):com.intellij.psi.tree.IElementType
+f:com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub
+- com.intellij.psi.stubs.StubBase
+- <init>(com.intellij.psi.stubs.StubElement,com.intellij.psi.stubs.IStubElementType,java.util.List):V
+- f:getLabels():java.util.List
+f:com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub$Type
+- com.intellij.dts.core.lang.stubs.DtsStubElementType
+- <init>(java.lang.String):V
+- createPsi(com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub):com.intellij.dts.core.lang.psi.DtsRefNode
+- createStub(com.intellij.dts.core.lang.psi.DtsRefNode,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub
+- deserialize(com.intellij.psi.stubs.StubInputStream,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub
+- indexStub(com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub,com.intellij.psi.stubs.IndexSink):V
+- serialize(com.intellij.dts.core.lang.stubs.impl.DtsRefNodeStub,com.intellij.psi.stubs.StubOutputStream):V
+f:com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub
+- com.intellij.psi.stubs.StubBase
+- <init>(com.intellij.psi.stubs.StubElement,com.intellij.psi.stubs.IStubElementType):V
+f:com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub$Type
+- com.intellij.dts.core.lang.stubs.DtsStubElementType
+- <init>(java.lang.String):V
+- createPsi(com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub):com.intellij.dts.core.lang.psi.DtsRootNode
+- createStub(com.intellij.dts.core.lang.psi.DtsRootNode,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub
+- deserialize(com.intellij.psi.stubs.StubInputStream,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub
+- indexStub(com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub,com.intellij.psi.stubs.IndexSink):V
+- serialize(com.intellij.dts.core.lang.stubs.impl.DtsRootNodeStub,com.intellij.psi.stubs.StubOutputStream):V
+f:com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub
+- com.intellij.psi.stubs.StubBase
+- <init>(com.intellij.psi.stubs.StubElement,com.intellij.psi.stubs.IStubElementType,java.util.List):V
+- f:getLabels():java.util.List
+f:com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub$Type
+- com.intellij.dts.core.lang.stubs.DtsStubElementType
+- <init>(java.lang.String):V
+- createPsi(com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub):com.intellij.dts.core.lang.psi.DtsSubNode
+- createStub(com.intellij.dts.core.lang.psi.DtsSubNode,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub
+- deserialize(com.intellij.psi.stubs.StubInputStream,com.intellij.psi.stubs.StubElement):com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub
+- indexStub(com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub,com.intellij.psi.stubs.IndexSink):V
+- serialize(com.intellij.dts.core.lang.stubs.impl.DtsSubNodeStub,com.intellij.psi.stubs.StubOutputStream):V
+f:com.intellij.dts.core.lang.symbols.DtsBindingSymbol
+- com.intellij.dts.core.lang.symbols.DtsDocumentationSymbol
+- com.intellij.navigation.NavigatableSymbol
+- <init>(com.intellij.dts.core.zephyr.binding.DtsZephyrBinding):V
+- f:component1():com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:copy(com.intellij.dts.core.zephyr.binding.DtsZephyrBinding):com.intellij.dts.core.lang.symbols.DtsBindingSymbol
+- bs:copy$default(com.intellij.dts.core.lang.symbols.DtsBindingSymbol,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding,I,java.lang.Object):com.intellij.dts.core.lang.symbols.DtsBindingSymbol
+- createPointer():com.intellij.model.Pointer
+- equals(java.lang.Object):Z
+- f:getBinding():com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- getDocumentationTarget(com.intellij.openapi.project.Project):com.intellij.platform.backend.documentation.DocumentationTarget
+- getNavigationTargets(com.intellij.openapi.project.Project):java.util.Collection
+- hashCode():I
+com.intellij.dts.core.lang.symbols.DtsDocumentationSymbol
+- com.intellij.model.Symbol
+- sf:Companion:com.intellij.dts.core.lang.symbols.DtsDocumentationSymbol$Companion
+- a:getDocumentationTarget(com.intellij.openapi.project.Project):com.intellij.platform.backend.documentation.DocumentationTarget
+f:com.intellij.dts.core.lang.symbols.DtsDocumentationSymbol$Companion
+- f:from(com.intellij.platform.backend.documentation.DocumentationTarget):com.intellij.model.Pointer
+f:com.intellij.dts.core.lang.symbols.DtsDocumentationSymbol$Provider
+- com.intellij.platform.backend.documentation.SymbolDocumentationTargetProvider
+- <init>():V
+- documentationTarget(com.intellij.openapi.project.Project,com.intellij.model.Symbol):com.intellij.platform.backend.documentation.DocumentationTarget
+f:com.intellij.dts.core.lang.symbols.DtsPropertySymbol
+- com.intellij.dts.core.lang.symbols.DtsDocumentationSymbol
+- <init>(com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding):V
+- f:copy(com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding):com.intellij.dts.core.lang.symbols.DtsPropertySymbol
+- bs:copy$default(com.intellij.dts.core.lang.symbols.DtsPropertySymbol,com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding,I,java.lang.Object):com.intellij.dts.core.lang.symbols.DtsPropertySymbol
+- createPointer():com.intellij.model.Pointer
+- equals(java.lang.Object):Z
+- f:getDefaultValue():com.intellij.dts.core.lang.DtsPropertyValue
+- getDocumentationTarget(com.intellij.openapi.project.Project):com.intellij.platform.backend.documentation.DocumentationTarget
+- f:getEnum():java.util.List
+- f:getName():java.lang.String
+- f:getType():com.intellij.dts.core.lang.DtsPropertyType
+- hashCode():I
+f:com.intellij.dts.core.settings.Codesamples
+- sf:INSTANCE:com.intellij.dts.core.settings.Codesamples
+- sf:blankLines:java.lang.String
+- sf:coloring:java.lang.String
+- sf:indenting:java.lang.String
+- sf:spacing:java.lang.String
+- sf:wrapping:java.lang.String
+f:com.intellij.dts.core.settings.DtsCodeStyleSettings
+- com.intellij.psi.codeStyle.CustomCodeStyleSettings
+- ALIGN_PROPERTY_ASSIGNMENT:Z
+- ALIGN_PROPERTY_VALUES:Z
+- MAX_BLANK_LINES_BETWEEN_NODES:I
+- MAX_BLANK_LINES_BETWEEN_PROPERTIES:I
+- MIN_BLANK_LINES_BETWEEN_NODES:I
+- MIN_BLANK_LINES_BETWEEN_PROPERTIES:I
+- SPACE_AFTER_LABEL:Z
+- SPACE_BETWEEN_BYTES:Z
+- SPACE_WITHIN_ANGULAR_BRACKETS:Z
+- SPACE_WITHIN_EMPTY_NODE:Z
+- <init>(com.intellij.psi.codeStyle.CodeStyleSettings):V
+f:com.intellij.dts.core.settings.DtsColorSettingsPage
+- com.intellij.openapi.options.colors.ColorSettingsPage
+- <init>():V
+- getAdditionalHighlightingTagToDescriptorMap():java.util.Map
+- getAttributeDescriptors():com.intellij.openapi.options.colors.AttributesDescriptor[]
+- getColorDescriptors():com.intellij.openapi.options.colors.ColorDescriptor[]
+- getDemoText():java.lang.String
+- getDisplayName():java.lang.String
+- getHighlighter():com.intellij.openapi.fileTypes.SyntaxHighlighter
+- getIcon():javax.swing.Icon
+f:com.intellij.dts.core.settings.DtsHelpIds
+- sf:CODESTYLE_SETTINGS:java.lang.String
+- sf:INSTANCE:com.intellij.dts.core.settings.DtsHelpIds
+- sf:ZEPHYR_SETTINGS:java.lang.String
+f:com.intellij.dts.core.settings.DtsLangCodeStyleSettingsProvider
+- com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+- <init>():V
+- customizeSettings(com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable,com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider$SettingsType):V
+- getCodeSample(com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider$SettingsType):java.lang.String
+- getIndentOptionsEditor():com.intellij.application.options.IndentOptionsEditor
+- getLanguage():com.intellij.lang.Language
+- usesCommonKeepLineBreaks():Z
+f:com.intellij.dts.core.settings.DtsSettings
+- com.intellij.openapi.components.PersistentStateComponent
+- sf:Companion:com.intellij.dts.core.settings.DtsSettings$Companion
+- <init>(com.intellij.openapi.project.Project,kotlinx.coroutines.CoroutineScope):V
+- getState():com.intellij.dts.core.settings.DtsSettings$State
+- f:getZephyrBoard():java.lang.String
+- f:getZephyrCMakeSync():Z
+- f:getZephyrRoot():java.lang.String
+- loadState(com.intellij.dts.core.settings.DtsSettings$State):V
+- f:update(kotlin.jvm.functions.Function1):V
+com.intellij.dts.core.settings.DtsSettings$ChangeListener
+- sf:Companion:com.intellij.dts.core.settings.DtsSettings$ChangeListener$Companion
+- sf:TOPIC:com.intellij.util.messages.Topic
+- a:settingsChanged(com.intellij.dts.core.settings.DtsSettings):V
+f:com.intellij.dts.core.settings.DtsSettings$ChangeListener$Companion
+f:com.intellij.dts.core.settings.DtsSettings$Companion
+- f:of(com.intellij.openapi.project.Project):com.intellij.dts.core.settings.DtsSettings
+f:com.intellij.dts.core.settings.DtsSettings$State
+- <init>():V
+- <init>(java.lang.String,java.lang.String,Z):V
+- b:<init>(java.lang.String,java.lang.String,Z,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():Z
+- f:copy(java.lang.String,java.lang.String,Z):com.intellij.dts.core.settings.DtsSettings$State
+- bs:copy$default(com.intellij.dts.core.settings.DtsSettings$State,java.lang.String,java.lang.String,Z,I,java.lang.Object):com.intellij.dts.core.settings.DtsSettings$State
+- equals(java.lang.Object):Z
+- f:getZephyrBoard():java.lang.String
+- f:getZephyrCMakeSync():Z
+- f:getZephyrRoot():java.lang.String
+- hashCode():I
+- f:setZephyrBoard(java.lang.String):V
+- f:setZephyrCMakeSync(Z):V
+- f:setZephyrRoot(java.lang.String):V
+f:com.intellij.dts.core.settings.DtsSettingsConfigurable
+- com.intellij.openapi.options.BoundSearchableConfigurable
+- <init>(com.intellij.openapi.project.Project):V
+- apply():V
+- createPanel():com.intellij.openapi.ui.DialogPanel
+com.intellij.dts.core.settings.DtsSettingsDisabler
+- sf:Companion:com.intellij.dts.core.settings.DtsSettingsDisabler$Companion
+- a:disableSettings(com.intellij.openapi.project.Project):Z
+f:com.intellij.dts.core.settings.DtsSettingsDisabler$Companion
+a:com.intellij.dts.core.settings.DtsSettingsInputStatus
+- <init>(com.intellij.openapi.Disposable):V
+- pf:cancel():java.lang.Void
+- f:check():V
+- f:enableAndCheck():V
+- pf:error(java.lang.String):com.intellij.dts.core.util.Either
+- p:evaluate(java.lang.Object,com.intellij.dts.core.util.Either):com.intellij.openapi.ui.ValidationInfo
+- f:installOn(javax.swing.JComponent):V
+- pf:isEnabled():Z
+- pa:performCheck(java.lang.Object):com.intellij.dts.core.util.Either
+- pa:readState():java.lang.Object
+- pf:setEnabled(Z):V
+- pf:success(java.lang.Object):com.intellij.dts.core.util.Either
+a:com.intellij.dts.core.settings.DtsSettingsPathInput
+- com.intellij.openapi.ui.ComboBox
+- <init>(com.intellij.openapi.Disposable,java.lang.String):V
+- pf:configure():V
+- f:getText():java.lang.String
+- pf:getTextField():com.intellij.ui.components.fields.ExtendableTextField
+- f:onFocusLost(kotlin.jvm.functions.Function0):V
+- f:onTextChanged(kotlin.jvm.functions.Function0):V
+- f:setText(java.lang.String):V
+f:com.intellij.dts.core.util.CacheDelegate
+- <init>(kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0):V
+- f:getValue(java.lang.Object,kotlin.reflect.KProperty):java.lang.Object
+f:com.intellij.dts.core.util.CacheDelegateKt
+- sf:cached(kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0):com.intellij.dts.core.util.CacheDelegate
+f:com.intellij.dts.core.util.DtsHtmlChunk
+- sf:INSTANCE:com.intellij.dts.core.util.DtsHtmlChunk
+- f:binding(com.intellij.openapi.project.Project,java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+- f:bundle(java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+- f:definitionName(java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+- f:int(java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+- f:node(com.intellij.dts.core.lang.psi.DtsNode):com.intellij.openapi.util.text.HtmlChunk
+- f:nodeName(java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+- f:path(com.intellij.dts.core.api.DtsPath):com.intellij.openapi.util.text.HtmlChunk
+- f:propertyName(java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+- f:string(java.lang.String):com.intellij.openapi.util.text.HtmlChunk
+f:com.intellij.dts.core.util.DtsTextRangeKt
+- sf:relativeTo(com.intellij.openapi.util.TextRange,com.intellij.openapi.util.TextRange):com.intellij.openapi.util.TextRange
+- sf:trim(com.intellij.openapi.util.TextRange,java.lang.String,C[]):com.intellij.openapi.util.TextRange
+f:com.intellij.dts.core.util.DtsTreeUtil
+- sf:INSTANCE:com.intellij.dts.core.util.DtsTreeUtil
+- f:findParentNode(com.intellij.dts.core.lang.psi.DtsNode):com.intellij.dts.core.lang.psi.DtsNode
+- f:parentNode(com.intellij.psi.PsiElement):com.intellij.dts.core.lang.psi.DtsNode
+- f:parentProperty(com.intellij.psi.PsiElement):com.intellij.dts.core.lang.psi.DtsProperty
+- f:parentStatement(com.intellij.psi.PsiElement):com.intellij.dts.core.lang.psi.DtsStatement
+f:com.intellij.dts.core.util.DtsUtil
+- sf:INSTANCE:com.intellij.dts.core.util.DtsUtil
+- f:children(com.intellij.psi.PsiElement,Z,Z):kotlin.sequences.Sequence
+- bs:children$default(com.intellij.dts.core.util.DtsUtil,com.intellij.psi.PsiElement,Z,Z,I,java.lang.Object):kotlin.sequences.Sequence
+- f:findFile(java.lang.String,java.lang.String[]):com.intellij.openapi.vfs.VirtualFile
+- f:findFileAndRefresh(java.lang.String,java.lang.String[]):com.intellij.openapi.vfs.VirtualFile
+- f:isCMakeAvailable(com.intellij.openapi.project.Project):Z
+- f:iterateLeafs(com.intellij.psi.PsiElement,Z,Z):kotlin.sequences.Sequence
+- bs:iterateLeafs$default(com.intellij.dts.core.util.DtsUtil,com.intellij.psi.PsiElement,Z,Z,I,java.lang.Object):kotlin.sequences.Sequence
+- f:singleResult(kotlin.jvm.functions.Function0):java.util.List
+- f:splitName(java.lang.String):kotlin.Pair
+- f:toPath(java.lang.String,java.lang.String[]):java.nio.file.Path
+a:com.intellij.dts.core.util.Either
+- f:fold(kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):java.lang.Object
+- f:mapLeft(kotlin.jvm.functions.Function1):com.intellij.dts.core.util.Either
+- f:mapRight(kotlin.jvm.functions.Function1):com.intellij.dts.core.util.Either
+f:com.intellij.dts.core.util.Either$Left
+- com.intellij.dts.core.util.Either
+- <init>(java.lang.Object):V
+- f:component1():java.lang.Object
+- f:copy(java.lang.Object):com.intellij.dts.core.util.Either$Left
+- bs:copy$default(com.intellij.dts.core.util.Either$Left,java.lang.Object,I,java.lang.Object):com.intellij.dts.core.util.Either$Left
+- equals(java.lang.Object):Z
+- f:getValue():java.lang.Object
+- hashCode():I
+f:com.intellij.dts.core.util.Either$Right
+- com.intellij.dts.core.util.Either
+- <init>(java.lang.Object):V
+- f:component1():java.lang.Object
+- f:copy(java.lang.Object):com.intellij.dts.core.util.Either$Right
+- bs:copy$default(com.intellij.dts.core.util.Either$Right,java.lang.Object,I,java.lang.Object):com.intellij.dts.core.util.Either$Right
+- equals(java.lang.Object):Z
+- f:getValue():java.lang.Object
+- hashCode():I
+f:com.intellij.dts.core.zephyr.DtsZephyrBoard
+- <init>(java.nio.file.Path):V
+- f:component1():java.nio.file.Path
+- f:copy(java.nio.file.Path):com.intellij.dts.core.zephyr.DtsZephyrBoard
+- bs:copy$default(com.intellij.dts.core.zephyr.DtsZephyrBoard,java.nio.file.Path,I,java.lang.Object):com.intellij.dts.core.zephyr.DtsZephyrBoard
+- equals(java.lang.Object):Z
+- f:getArch():java.lang.String
+- f:getName():java.lang.String
+- f:getPath():java.nio.file.Path
+- hashCode():I
+f:com.intellij.dts.core.zephyr.DtsZephyrFileUtil
+- sf:INSTANCE:com.intellij.dts.core.zephyr.DtsZephyrFileUtil
+- f:getAllBoardDirs(java.nio.file.Path):kotlin.sequences.Sequence
+- f:getIncludeDirs(java.nio.file.Path,com.intellij.dts.core.zephyr.DtsZephyrBoard):java.util.List
+- f:isValid(java.nio.file.Path):Z
+- f:searchForRoot(com.intellij.openapi.project.Project):java.nio.file.Path
+f:com.intellij.dts.core.zephyr.binding.BindingFile
+- <init>(java.nio.file.Path,java.util.Map):V
+- f:component1():java.nio.file.Path
+- f:component2():java.util.Map
+- f:copy(java.nio.file.Path,java.util.Map):com.intellij.dts.core.zephyr.binding.BindingFile
+- bs:copy$default(com.intellij.dts.core.zephyr.binding.BindingFile,java.nio.file.Path,java.util.Map,I,java.lang.Object):com.intellij.dts.core.zephyr.binding.BindingFile
+- equals(java.lang.Object):Z
+- f:getData():java.util.Map
+- f:getPath():java.nio.file.Path
+- hashCode():I
+f:com.intellij.dts.core.zephyr.binding.BindingSource
+- <init>(java.util.Map,com.intellij.dts.core.zephyr.binding.BindingFile):V
+- f:component1():java.util.Map
+- f:component2():com.intellij.dts.core.zephyr.binding.BindingFile
+- f:copy(java.util.Map,com.intellij.dts.core.zephyr.binding.BindingFile):com.intellij.dts.core.zephyr.binding.BindingSource
+- bs:copy$default(com.intellij.dts.core.zephyr.binding.BindingSource,java.util.Map,com.intellij.dts.core.zephyr.binding.BindingFile,I,java.lang.Object):com.intellij.dts.core.zephyr.binding.BindingSource
+- equals(java.lang.Object):Z
+- f:getDefault():com.intellij.dts.core.zephyr.binding.BindingFile
+- f:getFiles():java.util.Map
+- hashCode():I
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- <init>(java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.util.Map,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding,Z,Z):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():java.lang.String
+- f:component4():java.util.List
+- f:component5():java.lang.String
+- f:component6():java.util.Map
+- f:component7():com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:component8():Z
+- f:component9():Z
+- f:copy(java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.util.Map,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding,Z,Z):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- bs:copy$default(com.intellij.dts.core.zephyr.binding.DtsZephyrBinding,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.util.Map,com.intellij.dts.core.zephyr.binding.DtsZephyrBinding,Z,Z,I,java.lang.Object):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- equals(java.lang.Object):Z
+- f:getAllowUndeclaredProperties():Z
+- f:getBuses():java.util.List
+- f:getChild():com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:getCompatible():java.lang.String
+- f:getDescription():java.lang.String
+- f:getOnBus():java.lang.String
+- f:getPath():java.lang.String
+- f:getProperties():java.util.Map
+- hashCode():I
+- f:isChild():Z
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- <init>():V
+- <init>(Z):V
+- b:<init>(Z,I,kotlin.jvm.internal.DefaultConstructorMarker):V
+- f:build():com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:getChildBuilder():com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- f:getPropertyBuilder(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
+- f:setAllowUndeclaredProperties(Z):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- f:setBusses(java.util.List):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- f:setCompatible(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- f:setDescription(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- f:setOnBus(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+- f:setPath(java.nio.file.Path):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding$Builder
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBindingLoaderKt
+- sf:loadBundledBindings(com.intellij.openapi.vfs.VirtualFile):java.util.Map
+- sf:loadExternalBindings(java.nio.file.Path):java.util.Map
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBindingParserKt
+- sf:parseBundledBindings(com.intellij.dts.core.zephyr.binding.BindingSource):java.util.Map
+- sf:parseExternalBindings(com.intellij.dts.core.zephyr.binding.BindingSource):com.intellij.util.containers.MultiMap
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBindingProvider
+- sf:Companion:com.intellij.dts.core.zephyr.binding.DtsZephyrBindingProvider$Companion
+- <init>(com.intellij.openapi.project.Project):V
+- f:getAllBindings():java.util.Collection
+- f:getBinding(com.intellij.dts.core.lang.psi.DtsNode):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:getBinding(com.intellij.dts.core.lang.psi.DtsNode,java.util.List):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:getBindings(java.lang.String):java.util.Collection
+- f:getProject():com.intellij.openapi.project.Project
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBindingProvider$Companion
+- f:bindingFor(com.intellij.dts.core.lang.psi.DtsNode,Z):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:bindingFor(com.intellij.dts.core.lang.psi.DtsProperty):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding
+- bs:bindingFor$default(com.intellij.dts.core.zephyr.binding.DtsZephyrBindingProvider$Companion,com.intellij.dts.core.lang.psi.DtsNode,Z,I,java.lang.Object):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- f:of(com.intellij.openapi.project.Project):com.intellij.dts.core.zephyr.binding.DtsZephyrBindingProvider
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBindingSerachKt
+- sf:searchBinding(com.intellij.util.containers.MultiMap,com.intellij.dts.core.lang.psi.DtsNode,java.util.List):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+- sf:Companion:com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings$Companion
+- sf:DEFAULT_BINDING:java.lang.String
+- sf:FALLBACK_BINDING:java.lang.String
+- <init>(kotlinx.coroutines.CoroutineScope):V
+- f:awaitInit(kotlin.coroutines.Continuation):java.lang.Object
+- f:getBinding(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrBinding
+- sf:getInstance():com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+- f:getSource():com.intellij.dts.core.zephyr.binding.BindingSource
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings$Companion
+- f:getInstance():com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
+- f:getNODE_BINDINGS():java.util.List
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding
+- <init>(java.lang.String,java.lang.String,com.intellij.dts.core.lang.DtsPropertyType,com.intellij.dts.core.lang.DtsPropertyValue,com.intellij.dts.core.lang.DtsPropertyValue,java.util.List,Z):V
+- f:component1():java.lang.String
+- f:component2():java.lang.String
+- f:component3():com.intellij.dts.core.lang.DtsPropertyType
+- f:component4():com.intellij.dts.core.lang.DtsPropertyValue
+- f:component5():com.intellij.dts.core.lang.DtsPropertyValue
+- f:component6():java.util.List
+- f:component7():Z
+- f:copy(java.lang.String,java.lang.String,com.intellij.dts.core.lang.DtsPropertyType,com.intellij.dts.core.lang.DtsPropertyValue,com.intellij.dts.core.lang.DtsPropertyValue,java.util.List,Z):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding
+- bs:copy$default(com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding,java.lang.String,java.lang.String,com.intellij.dts.core.lang.DtsPropertyType,com.intellij.dts.core.lang.DtsPropertyValue,com.intellij.dts.core.lang.DtsPropertyValue,java.util.List,Z,I,java.lang.Object):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding
+- equals(java.lang.Object):Z
+- f:getConst():com.intellij.dts.core.lang.DtsPropertyValue
+- f:getDefault():com.intellij.dts.core.lang.DtsPropertyValue
+- f:getDescription():java.lang.String
+- f:getEnum():java.util.List
+- f:getName():java.lang.String
+- f:getRequired():Z
+- f:getType():com.intellij.dts.core.lang.DtsPropertyType
+- hashCode():I
+f:com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
+- <init>(java.lang.String):V
+- f:build():com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding
+- f:setConst(java.lang.Object):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
+- f:setDefault(java.lang.Object):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
+- f:setDescription(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
+- f:setEnum(java.util.List):V
+- f:setRequired(Z):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
+- f:setType(java.lang.String):com.intellij.dts.core.zephyr.binding.DtsZephyrPropertyBinding$Builder
