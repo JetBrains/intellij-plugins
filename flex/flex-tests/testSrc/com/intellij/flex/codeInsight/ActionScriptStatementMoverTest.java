@@ -1,52 +1,67 @@
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSStatementMoverTestBase;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.JSStatementMoverFixture;
 import com.intellij.lang.javascript.JSTestUtils;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
-  @Override
-  protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "statementMover/");
-    super.setUp();
+import static com.intellij.lang.javascript.JSStatementMoverFixture.jsStatementMoverFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+
+@TestApplication
+public class ActionScriptStatementMoverTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSStatementMoverFixture> mover =
+    jsStatementMoverFixture(projectFixture, new JSFixtureOptions(FlexTestUtils.getTestDataPath("statementMover/")));
+
+  @BeforeEach
+  void setUp() {
+    FlexTestUtils.allowFlexVfsRootsFor(mover.get().getTestRootDisposable(), "statementMover/");
   }
 
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("statementMover/");
-  }
-
+  @Test
   public void testMoveStatement7() {
-    doMoveStatementTest("js2");
+    mover.get().doMoveStatementTest("js2");
   }
 
+  @Test
   public void testMoveStatementInMxml() {
-    FlexTestUtils.setupFlexSdk(myFixture.getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
-    JSTestUtils.initJSIndexes(getProject());
+    JSStatementMoverFixture moverFixture = mover.get();
+    FlexTestUtils.setupFlexSdk(moverFixture.getFixture().getModule(), moverFixture.getTestName(false), this.getClass(),
+                               moverFixture.getTestRootDisposable());
+    JSTestUtils.initJSIndexes(moverFixture.getProject());
 
-    myFixture.setCaresAboutInjection(false);
-    doMoveStatementTest("mxml");
+    moverFixture.getFixture().setCaresAboutInjection(false);
+    moverFixture.doMoveStatementTest("mxml");
   }
 
+  @Test
   public void testMoveFunctionInClass() {
-    doMoveStatementTest("js2");
+    mover.get().doMoveStatementTest("js2");
   }
 
+  @Test
   public void testMoveAttribute() {
-    doMoveStatementTest("js2");
+    mover.get().doMoveStatementTest("js2");
   }
 
+  @Test
   public void testIdea_70049() {
-    doMoveStatementTest("as");
+    mover.get().doMoveStatementTest("as");
   }
 
+  @Test
   public void testMoveStatement11() {
-    doMoveStatementTest("js2");
+    mover.get().doMoveStatementTest("js2");
   }
 
+  @Test
   public void testMoveStatement13() {
-    doMoveStatementTest("js2");
+    mover.get().doMoveStatementTest("js2");
   }
 }
