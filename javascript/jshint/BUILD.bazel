@@ -115,6 +115,7 @@ jvm_library(
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/navbar/plugin",
         "@community//json/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
     deps = [
         # do not sort,

@@ -132,6 +132,7 @@ jvm_library(
         "//ultimate/ultimate-resources:idea-ultimate-customization",
         "@community//platform/navbar/plugin",
         "@community//json/networknt.wrapper",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
     ],
     deps = [
         # do not sort,
