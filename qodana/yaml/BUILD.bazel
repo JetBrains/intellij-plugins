@@ -118,6 +118,9 @@ jvm_library(
         "@community//plugins/yaml",
         "@community//plugins/yaml/backend",
         "@community//libraries/junit4",
+        "@community//libraries/junit6",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5/codeInsight",
     ],
 )
 ### auto-generated section `build intellij.qodana.yaml.tests` end
