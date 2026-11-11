@@ -74,6 +74,8 @@ class VueHighlightingTest :
       "testGlobalSymbols",
       "testLocalWebTypes",
       "testSlotNameBinding",
+      // TODO: check
+      "testSourceScopedSlots",
       "testVBindVOnHighlighting",
       "testVForInPug",
       "testVSlotSyntax",

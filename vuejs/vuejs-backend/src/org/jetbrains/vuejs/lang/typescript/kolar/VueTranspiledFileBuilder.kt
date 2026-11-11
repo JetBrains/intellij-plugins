@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.vuejs.config.VueCompilerOptions
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.typescript.kolar.muggle.string.toString
-import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueLanguagePlugin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.VueMapping
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.plugins.VueTsxPlugin
 import org.jetbrains.vuejs.lang.typescript.kolar.vue.language.core.virtualCode.VueEmbeddedCode
@@ -22,15 +21,10 @@ import java.io.DataInput
 import java.io.DataOutput
 
 /** The version of the generated code of a Vue file, see [org.jetbrains.vuejs.lang.typescript.kolar.VueKolarTranspiler.transpiledCodeVersion]. */
-internal const val TRANSPILED_FILE_GIST_VERSION: Int = 8
+internal const val TRANSPILED_FILE_GIST_VERSION: Int = 9
 
 @Service(Service.Level.APP)
 class VueTranspiledFileBuilder {
-  private val plugin: VueLanguagePlugin = run {
-    val typesRoot = VueCompilerOptionsHelper.getTypesRoot()
-    VueTsxPlugin(VueCompilerOptions(typesRoot = typesRoot))
-  }
-
   private val transpiledFileGist: PsiFileGist<TranspiledFile> =
     GistManager.getInstance().newPsiFileGist(
       "vue-transpiled-file",
@@ -55,7 +49,9 @@ class VueTranspiledFileBuilder {
       content = emptyList(),
     )
 
-    plugin.resolveEmbeddedCode(fileName = filePath, useIR(file), code)
+    val typesRoot = VueCompilerOptionsHelper.getTypesRoot(file.project)
+    VueTsxPlugin(VueCompilerOptions(typesRoot = typesRoot))
+      .resolveEmbeddedCode(fileName = filePath, useIR(file), code)
 
     val generatedCode = toString(code.content)
     val mappings = getMappingsForCode(code)

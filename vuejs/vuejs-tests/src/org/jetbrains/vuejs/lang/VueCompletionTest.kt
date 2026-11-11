@@ -50,7 +50,6 @@ class VueCompletionTest :
     @RegisterExtension
     @JvmField
     val rule: TrackFailedTestExtension = TrackFailedTestExtension(
-      "testCastedObjectProps",
       "testComputedTypeJS",
       "testComputedTypeTS",
       "testScriptSetupGeneric",
