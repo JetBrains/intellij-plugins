@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSFixtureOptions
+import com.intellij.lang.javascript.JSFormatterFixture
 import com.intellij.lang.javascript.JSTestOption
 import com.intellij.lang.javascript.JSTestOptions
-import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.jsProjectFixture
@@ -62,7 +62,7 @@ class VueModuleImportTest {
 
   @Test
   fun testAutoImportFromVueWithJs() {
-    JavaScriptFormatterTestBase.setTempSettings(js.project, JavascriptLanguage, Consumer<JSCodeStyleSettings> {
+    JSFormatterFixture.setTempSettings(js.project, JavascriptLanguage, Consumer<JSCodeStyleSettings> {
       it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.ALWAYS_JS
     })
 

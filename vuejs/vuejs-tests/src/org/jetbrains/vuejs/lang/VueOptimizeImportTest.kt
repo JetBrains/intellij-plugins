@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
 import com.intellij.lang.javascript.JSFixtureOptions
-import com.intellij.lang.javascript.JavaScriptFormatterTestBase
+import com.intellij.lang.javascript.JSFormatterFixture
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.jsProjectFixture
@@ -24,7 +24,7 @@ class VueOptimizeImportTest {
 
   @Test
   fun testVueSimpleOptimize() {
-    JavaScriptFormatterTestBase.setTempSettings(js.project, JavaScriptSupportLoader.TYPESCRIPT, Consumer<JSCodeStyleSettings> { settings ->
+    JSFormatterFixture.setTempSettings(js.project, JavaScriptSupportLoader.TYPESCRIPT, Consumer<JSCodeStyleSettings> { settings ->
       settings.FORCE_QUOTE_STYlE = true
       settings.USE_DOUBLE_QUOTES = true
     })

@@ -10,7 +10,6 @@ import com.intellij.flex.completion.FlexCompletionInUmlTextFieldsTest;
 import com.intellij.flex.editor.FlexLiveTemplatesTest;
 import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
-import com.intellij.flex.formatter.ActionScriptFormatterTest;
 import com.intellij.flex.highlighting.ActionScriptHighlightingInTextFieldTest;
 import com.intellij.flex.highlighting.ActionScriptHighlightingTest;
 import com.intellij.flex.highlighting.ActionScriptLineMarkersTest;
@@ -58,7 +57,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexUnitHighlightingTest.class);
 
     //com.intellij.flex.formatter.*
-    testSuite.addTestSuite(ActionScriptFormatterTest.class);
 
     //com.intellij.flex.generate.*
 
