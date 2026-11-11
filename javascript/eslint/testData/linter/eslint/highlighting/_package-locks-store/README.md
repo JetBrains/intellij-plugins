@@ -46,7 +46,7 @@ combo is shared, because resolution is relative to each test's `testDataPath`).
 | `typescript 5.9.3`, `@typescript-eslint/parser 8.63.0`, `vue-eslint-parser 10.4.1` (on eslint 8.57) | V8 TypeScript eslintrc tests (`SuppressMissingConfigErrorForTypescript`, `TypescriptWithVueParserAbsolutePath`) |
 
 The fix suite (`quickfix/`) picks dependencies per test (see
-`EslintFixGenericTest.EslintPackageSet`): pure-JS scenarios install the eslint-only CORE
+`EslintFixV10Test.EslintPackageSet`): pure-JS scenarios install the eslint-only CORE
 manifest (`package.json` — the single-dep `eslint` lock above), while HTML/JSX/Vue
 scenarios install the FULL combo manifest (`package.full.json`). Shared-config tests copy
 the chosen root manifest; per-directory tests carry the matching manifest in their own
