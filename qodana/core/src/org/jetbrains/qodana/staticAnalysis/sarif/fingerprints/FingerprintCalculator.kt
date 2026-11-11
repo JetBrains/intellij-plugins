@@ -1,25 +1,25 @@
 package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints
 
-import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.VersionedMap
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.qodanaProductCode
-
-/** Product codes of the linters that use the structural indicators by default. */
-private val STRUCTURAL_FINGERPRINTS_PRODUCT_CODES: Set<String> = setOf("QDJVM", "QDJS")
 
 /**
  * Enables the structural baseline-matching indicators (shift-tolerant + structural) on top of the
- * always-present equality indicators. On by default for the QDJVM and QDJS linters, off for the others.
- * Set `-Dqodana.structural.fingerprints=true|false` to override the default.
+ * always-present equality indicators.
+ *
+ * `-Dqodana.structural.fingerprints=true|false` decides alone when it is set. Without it,
+ * `-Dqodana.structural.fingerprints.default=true|false` decides. The linter distribution sets that default,
+ * and the value is `false` when neither property is set.
  */
 internal val areStructuralFingerprintsEnabled: Boolean by lazy {
-  val productCode = if (ApplicationManager.getApplication() != null) qodanaProductCode() else null
-  areStructuralFingerprintsEnabled(System.getProperty("qodana.structural.fingerprints"), productCode)
+  areStructuralFingerprintsEnabled(
+    property = System.getProperty("qodana.structural.fingerprints"),
+    default = System.getProperty("qodana.structural.fingerprints.default"),
+  )
 }
 
-internal fun areStructuralFingerprintsEnabled(property: String?, productCode: String?): Boolean =
-  property?.toBoolean() ?: (productCode in STRUCTURAL_FINGERPRINTS_PRODUCT_CODES)
+internal fun areStructuralFingerprintsEnabled(property: String?, default: String?): Boolean =
+  property?.toBoolean() ?: default.toBoolean()
 
 internal sealed interface FingerprintCalculator {
   val name: String

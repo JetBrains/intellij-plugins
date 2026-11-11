@@ -174,18 +174,20 @@ class StructuralFingerprintsTest {
     assertNull(prints.get(BaselineCalculation.ENCLOSING_SCOPE_INDICATOR, 1))
   }
 
+  /** The linter distribution sets the default. Without it the indicators stay off. */
   @Test
-  fun `structural fingerprints are on by default only for the QDJVM and QDJS linters`() {
-    assertTrue(areStructuralFingerprintsEnabled(property = null, productCode = "QDJVM"))
-    assertTrue(areStructuralFingerprintsEnabled(property = null, productCode = "QDJS"))
-    assertFalse(areStructuralFingerprintsEnabled(property = null, productCode = "QDPY"))
-    assertFalse(areStructuralFingerprintsEnabled(property = null, productCode = null))
+  fun `the default property decides when the main one is absent`() {
+    assertTrue(areStructuralFingerprintsEnabled(property = null, default = "true"))
+    assertFalse(areStructuralFingerprintsEnabled(property = null, default = "false"))
+    assertFalse(areStructuralFingerprintsEnabled(property = null, default = null))
   }
 
+  /** The user sets the main property, so it wins over the default of the linter. */
   @Test
-  fun `the property overrides the default of the linter`() {
-    assertTrue(areStructuralFingerprintsEnabled(property = "true", productCode = "QDPY"))
-    assertFalse(areStructuralFingerprintsEnabled(property = "false", productCode = "QDJVM"))
+  fun `the main property overrides the default`() {
+    assertTrue(areStructuralFingerprintsEnabled(property = "true", default = "false"))
+    assertTrue(areStructuralFingerprintsEnabled(property = "true", default = null))
+    assertFalse(areStructuralFingerprintsEnabled(property = "false", default = "true"))
   }
 
   @Test
