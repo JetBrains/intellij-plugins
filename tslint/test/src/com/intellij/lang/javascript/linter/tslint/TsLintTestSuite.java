@@ -7,12 +7,10 @@ import org.junit.runners.Suite;
 @Ignore("Manual only")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  TsLintHighlightingTest.class,
   TsLintConfigCompletionTest.class,
   TsLintConfigHighlightingTest.class,
   TsLintResolveTest.class,
-  TsLintCodeStyleImportBasicTest.class,
-  TsLintCodeStyleImportIntegrationTest.class
+  TsLintCodeStyleImportBasicTest.class
 })
 public class TsLintTestSuite {
 }

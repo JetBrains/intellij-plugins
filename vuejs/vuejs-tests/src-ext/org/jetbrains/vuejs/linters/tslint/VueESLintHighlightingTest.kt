@@ -1,36 +1,39 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.linters.tslint
 
-import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.lang.javascript.linter.eslint.EslintInspection
-import com.intellij.lang.javascript.linter.eslint.EslintServiceTestBase
+import com.intellij.lang.javascript.linter.eslint.EslintServiceFixture.Companion.eslintServiceFixture
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
+import org.junit.jupiter.api.Test
 
-class VueESLintHighlightingTest : EslintServiceTestBase() {
+@TestApplication
+class VueESLintHighlightingTest {
+  private val eslint by eslintServiceFixture(
+    JSTempDirFixtureOptions.forBasePath(vueRelativeTestDataPath() + "/linters/eslint/")
+      .withMainPackage("eslint")
+      .withGlobalPackages(linkedMapOf(
+        "eslint" to "8.57.0",
+        "eslint-plugin-vue" to "latest",
+        "@babel/core" to "latest",
+        "@babel/eslint-parser" to "latest",
+        "@vue/cli-plugin-babel" to "latest",
+      )),
+    { EslintInspection() })
 
-  override fun getBasePath(): String = vueRelativeTestDataPath() + "/linters/eslint/"
-
-  override fun getInspection(): InspectionProfileEntry = EslintInspection()
-
-  override fun getPackageName(): String = "eslint"
-
-  override fun getGlobalPackageVersionsToInstall(): Map<String, String> = mapOf(
-    "eslint" to "8.57.0",
-    "eslint-plugin-vue" to "latest",
-    "@babel/core" to "latest",
-    "@babel/eslint-parser" to "latest",
-    "@vue/cli-plugin-babel" to "latest",
-  )
-
+  @Test
   fun testVue2SpecificRules() {
-    doEditorHighlightingTest("test.vue")
+    eslint.doEditorHighlightingTest("test.vue")
   }
 
+  @Test
   fun testVue3SpecificRules() {
-    doEditorHighlightingTest("test.vue")
+    eslint.doEditorHighlightingTest("test.vue")
   }
 
+  @Test
   fun testHtml() {
-    doEditorHighlightingTest("test.html")
+    eslint.doEditorHighlightingTest("test.html")
   }
 }

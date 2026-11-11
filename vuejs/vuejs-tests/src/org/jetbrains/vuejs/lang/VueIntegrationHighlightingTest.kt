@@ -4,47 +4,57 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.nodejs.npm.NpmUtil
-import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest
+import com.intellij.lang.javascript.linter.JSExternalToolFixture.Companion.jsExternalToolFixture
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.psi.xml.XmlTag
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.inspections.VueMissingComponentImportInspection
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
+@TestApplication
+class VueIntegrationHighlightingTest {
+  private val vue by jsExternalToolFixture(
+    JSTempDirFixtureOptions.forBasePath(vueRelativeTestDataPath() + "/highlighting")
+      .withMainPackage(NpmUtil.PNPM_PACKAGE_NAME)
+      .withNodeVersion(NodeJsAppRule.LATEST_20))
 
-  override fun getBasePath(): String = vueRelativeTestDataPath() + "/highlighting"
-
+  @Test
   fun testAutoImportVueComponentWithPnpm() {
     copyTestDirectoryAndInstallDependencies()
-    myFixture.enableInspections(VueMissingComponentImportInspection::class.java, HtmlUnknownTagInspection::class.java)
-    myFixture.configureFromTempProjectFile("src/HelloWorld.vue")
-    myFixture.checkHighlighting()
+    vue.fixture.enableInspections(VueMissingComponentImportInspection::class.java, HtmlUnknownTagInspection::class.java)
+    vue.fixture.configureFromTempProjectFile("src/HelloWorld.vue")
+    vue.fixture.checkHighlighting()
   }
 
+  @Test
   fun testResolveWithJsConfig() {
     copyTestDirectoryAndInstallDependencies()
-    myFixture.configureFromTempProjectFile("src/HelloWorld.vue")
-    val tagAtCaret = myFixture.elementAtCaret.asSafely<XmlTag>()
-    assertNotNull(tagAtCaret)
+    vue.fixture.configureFromTempProjectFile("src/HelloWorld.vue")
+    // The element lookup and the PSI reads need a read action.
+    runReadActionBlocking {
+      val tagAtCaret = vue.fixture.elementAtCaret.asSafely<XmlTag>()
+      assertNotNull(tagAtCaret)
 
-    val polySymbolDescriptor = tagAtCaret?.descriptor.asSafely<HtmlElementSymbolDescriptor>()
-    assertNotNull(polySymbolDescriptor)
+      val polySymbolDescriptor = tagAtCaret?.descriptor.asSafely<HtmlElementSymbolDescriptor>()
+      assertNotNull(polySymbolDescriptor)
 
-    val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiLinkedPolySymbol>()
-    val polySymbolSource = polySymbol?.linkedElement
-    assertNotNull(polySymbolSource)
+      val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiLinkedPolySymbol>()
+      val polySymbolSource = polySymbol?.linkedElement
+      assertNotNull(polySymbolSource)
 
-    val sourceFileName = polySymbolSource!!.containingFile.name
-    assertTrue("Wrong source file: $sourceFileName", sourceFileName == "index.d.ts")
+      val sourceFileName = polySymbolSource!!.containingFile.name
+      assertTrue(sourceFileName == "index.d.ts", "Wrong source file: $sourceFileName")
+    }
   }
 
   private fun copyTestDirectoryAndInstallDependencies() {
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    performNpmInstallUsingPackageManager(project, nodePackage, "package.json")
+    vue.fixture.copyDirectoryToProject(vue.getTestName(true), "")
+    vue.performNpmInstallUsingPackageManager(vue.project, vue.nodePackage, "package.json")
   }
-
-  override fun getMainPackageName(): String = NpmUtil.PNPM_PACKAGE_NAME
-
-  override fun configureInterpreterVersion(): NodeJsAppRule = NodeJsAppRule.LATEST_20
 }

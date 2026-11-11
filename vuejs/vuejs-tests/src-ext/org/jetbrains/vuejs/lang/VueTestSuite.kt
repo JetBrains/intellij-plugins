@@ -37,9 +37,6 @@ import org.junit.runners.Suite
   PugTemplateTest::class,
   VuePugFoldingTest::class,
   VueCopyPasteTest::class,
-  VueIntegrationHighlightingTest::class,
-  VueNpmIntegrationCompletionTest::class,
-  VueYarnIntegrationCompletionTest::class,
   // Following tests are not working currently
   //VueESLintHighlightingTest::class,
   //VueTypeScriptWithTslintTest::class,

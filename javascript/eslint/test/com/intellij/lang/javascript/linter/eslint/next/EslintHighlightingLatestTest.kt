@@ -4,6 +4,7 @@ package com.intellij.lang.javascript.linter.eslint.next
 import com.intellij.lang.javascript.linter.eslint.ESLINT_LATEST_TEST_PACKAGE_SPEC
 import com.intellij.lang.javascript.linter.eslint.stable.EslintHighlightingGenericTest
 import com.intellij.lang.javascript.modules.TestNpmPackage
+import com.intellij.testFramework.junit5.TestApplication
 
 /**
  * The version-agnostic highlighting scenarios run against `eslint@latest`. These MAY fail when ESLint
@@ -12,5 +13,6 @@ import com.intellij.lang.javascript.modules.TestNpmPackage
  * queue. (The lock-store installer exempts `@latest` from the strict stored-lock requirement, so this
  * tier resolves the newest ESLint from the registry.)
  */
+@TestApplication
 @TestNpmPackage(ESLINT_LATEST_TEST_PACKAGE_SPEC)
 class EslintHighlightingLatestTest : EslintHighlightingGenericTest()

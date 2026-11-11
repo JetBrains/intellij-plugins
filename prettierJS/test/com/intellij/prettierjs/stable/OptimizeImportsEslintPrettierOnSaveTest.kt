@@ -56,7 +56,7 @@ class OptimizeImportsEslintPrettierOnSaveTest : PrettierPackageLockTest() {
 
   /**
    * Installs ESLint into `<project>/node_modules` from the stored lock of the ESLint quick-fix test data,
-   * the same way as `EslintPackageLockTestBase` does.
+   * the same way as `EslintPackageLockFixture` does.
    */
   private fun installEslintAtProjectRoot() {
     val projectDir = myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found")

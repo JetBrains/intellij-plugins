@@ -8,18 +8,23 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.linter.eslint.ESLINT_TEST_DATA_RELATIVE_PATH
 import com.intellij.lang.javascript.linter.eslint.EslintBundle
 import com.intellij.lang.javascript.linter.eslint.EslintConfiguration
-import com.intellij.lang.javascript.linter.eslint.EslintPackageLockTestBase
+import com.intellij.lang.javascript.linter.eslint.EslintPackageLockFixture.Companion.eslintPackageLockFixture
 import com.intellij.lang.javascript.linter.eslint.EslintState
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.testFramework.DumbModeTestUtils
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
 import com.intellij.util.LineSeparator
 import com.intellij.util.ThrowableRunnable
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
 /**
  * Version-agnostic ESLint quick-fix and suppression scenarios, reused by the pinned [EslintFixV10Test]
@@ -31,8 +36,8 @@ import org.junit.Assert
  * eslint-only `package.json` (a fast single-dep lock), while scenarios whose config loads a plugin or
  * parser (HTML, JSX) use the TS/Vue/HTML/React combo `package.full.json`.
  */
-abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
-  override fun getBasePath(): String = "$ESLINT_TEST_DATA_RELATIVE_PATH/linter/eslint/quickfix/"
+abstract class EslintFixGenericTest {
+  protected val eslint by eslintPackageLockFixture("$ESLINT_TEST_DATA_RELATIVE_PATH/linter/eslint/quickfix/")
 
   /**
    * Which committed root manifest a shared-config install pulls its dependencies from. Pure-JS scenarios
@@ -54,21 +59,21 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     packageSet: EslintPackageSet = EslintPackageSet.CORE,
   ) {
     prepareProjectForInstall()
-    myFixture.copyFileToProject(packageSet.rootManifest, "package.json")
-    myFixture.copyFileToProject(configSource, "eslint.config.mjs")
-    installEslintFromProjectRoot()
+    eslint.fixture.copyFileToProject(packageSet.rootManifest, "package.json")
+    eslint.fixture.copyFileToProject(configSource, "eslint.config.mjs")
+    eslint.installEslintFromProjectRoot()
   }
 
   /** Installs ESLint from the eslint-only root manifest without any flat config -- for tests that add
    *  their own config (e.g. run-on-save with an inline `eslint.config.js`). */
   protected fun installEslintOnly() {
     prepareProjectForInstall()
-    myFixture.copyFileToProject(EslintPackageSet.CORE.rootManifest, "package.json")
-    installEslintFromProjectRoot()
+    eslint.fixture.copyFileToProject(EslintPackageSet.CORE.rootManifest, "package.json")
+    eslint.installEslintFromProjectRoot()
   }
 
   private fun prepareProjectForInstall() {
-    prepareFixtureForHighlighting()
+    eslint.prepareFixtureForHighlighting()
   }
 
   /**
@@ -92,11 +97,11 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
    * [installEslintWithSharedConfig]) -- split out so dumb-mode tests can install before entering dumb mode.
    */
   protected fun launchQuickFix(description: String, extension: String = ".js") {
-    myFixture.configureByFile(getTestName(false) + extension)
-    val intention = myFixture.getAvailableIntention(description)
+    eslint.fixture.configureByFile(eslint.getTestName(false) + extension)
+    val intention = eslint.fixture.getAvailableIntention(description)
                     ?: error("Intention '$description' is not available")
-    myFixture.launchAction(intention)
-    myFixture.checkResultByFile(getTestName(false) + "_after" + extension)
+    eslint.fixture.launchAction(intention)
+    eslint.fixture.checkResultByFile(eslint.getTestName(false) + "_after" + extension)
   }
 
   /**
@@ -110,142 +115,173 @@ abstract class EslintFixGenericTest : EslintPackageLockTestBase() {
     extension: String,
     lineSeparator: LineSeparator? = null,
   ) {
-    installEslintForTest()
+    eslint.installEslintForTest()
     // installEslintForTest already copied the test directory; use the WithoutCopy variant so the fix run
     // does not re-copy (which would clobber the substituted package.json with the raw $ESLINT_VERSION$).
-    doFixTestForDirectoryWithoutCopy(mainFileName, extension, description, ThrowableRunnable<Throwable> {
+    eslint.doFixTestForDirectoryWithoutCopy(mainFileName, extension, description, ThrowableRunnable<Throwable> {
       if (lineSeparator != null) {
-        JSTestUtils.ensureLineSeparators(myFixture.file, lineSeparator)
+        JSTestUtils.ensureLineSeparators(eslint.fixture.file, lineSeparator)
       }
     })
   }
 
-  fun testSuppressByLineComment() = doQuickFixTest("Suppress 'comma-spacing' for current line")
+  @Test
+  fun testSuppressByLineComment(): Unit = doQuickFixTest("Suppress 'comma-spacing' for current line")
 
-  fun testSuppressByFileComment() = doQuickFixTest("Suppress 'comma-spacing' for current file")
+  @Test
+  fun testSuppressByFileComment(): Unit = doQuickFixTest("Suppress 'comma-spacing' for current file")
 
-  fun testAddSuppressionToExistingLineComment() = doQuickFixTest("Suppress 'comma-spacing' for current line")
+  @Test
+  fun testAddSuppressionToExistingLineComment(): Unit = doQuickFixTest("Suppress 'comma-spacing' for current line")
 
-  fun testAddSuppressionToExistingFileComment() = doQuickFixTest("Suppress 'comma-spacing' for current file")
+  @Test
+  fun testAddSuppressionToExistingFileComment(): Unit = doQuickFixTest("Suppress 'comma-spacing' for current file")
 
-  fun testSuppressAllRulesForFile() = doQuickFixTest("Suppress all ESLint rules for current file")
+  @Test
+  fun testSuppressAllRulesForFile(): Unit = doQuickFixTest("Suppress all ESLint rules for current file")
 
-  fun testSuppressAllRulesForFileWithExistingComment() = doQuickFixTest("Suppress all ESLint rules for current file")
+  @Test
+  fun testSuppressAllRulesForFileWithExistingComment(): Unit = doQuickFixTest("Suppress all ESLint rules for current file")
 
+  @Test
   fun testSuppressForLineInNestedScopeWithIndent() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { settings ->
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(eslint.project) { settings ->
       settings.getCommonSettings(JavascriptLanguage).LINE_COMMENT_AT_FIRST_COLUMN = false
       doQuickFixTest("Suppress 'comma-spacing' for current line")
     }
   }
 
+  @Test
   fun testSuppressForLineInNestedScopeAtLineStart() {
-    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { settings ->
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(eslint.project) { settings ->
       settings.getCommonSettings(JavascriptLanguage).LINE_COMMENT_AT_FIRST_COLUMN = true
       doQuickFixTest("Suppress 'comma-spacing' for current line")
     }
   }
 
-  fun testFixFileWorks() = doQuickFixTest("ESLint: Fix current file")
+  @Test
+  fun testFixFileWorks(): Unit = doQuickFixTest("ESLint: Fix current file")
 
-  fun testFixWithSearchForConfig() = doQuickFixTest("ESLint: Fix current file")
+  @Test
+  fun testFixWithSearchForConfig(): Unit = doQuickFixTest("ESLint: Fix current file")
 
+  @Test
   fun testFixFileInDumbWorks() {
-    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, testRootDisposable)
+    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, eslint.testRootDisposable)
     installEslintWithSharedConfig()
-    DumbModeTestUtils.runInDumbModeSynchronously(project) {
+    DumbModeTestUtils.runInDumbModeSynchronously(eslint.project) {
       launchQuickFix("ESLint: Fix current file")
     }
   }
 
-  fun testSuppressForLineInJSXTagContent() =
+  @Test
+  fun testSuppressForLineInJSXTagContent(): Unit =
     doQuickFixTestForDirectory("Suppress 'react/self-closing-comp' for current line", "test", ".jsx")
 
-  fun testSuppressForLineInJSXTagContent2() =
+  @Test
+  fun testSuppressForLineInJSXTagContent2(): Unit =
     doQuickFixTestForDirectory("Suppress 'jsx-quotes' for current line", "test", ".jsx")
 
-  fun testSuppressForLineInJSXTagContentAddsToExistingComment() =
+  @Test
+  fun testSuppressForLineInJSXTagContentAddsToExistingComment(): Unit =
     doQuickFixTestForDirectory("Suppress 'react/no-unknown-property' for current line", "test", ".jsx")
 
-  fun testSuppressForLineInJSXTagAttributes() =
+  @Test
+  fun testSuppressForLineInJSXTagAttributes(): Unit =
     doQuickFixTestForDirectory("Suppress 'react/jsx-curly-brace-presence' for current line", "test", ".jsx")
 
+  @Test
   fun testFixFileInVue() {
-    Assert.assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"))
+    assertNotNull(Language.findLanguageByID("Vue"), "This test must be run with intellij.vuejs module in classpath")
     doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".vue")
   }
 
+  @Test
   fun testFixFileInVueTs() {
-    Assert.assertNotNull("This test must be run with intellij.vuejs module in classpath", Language.findLanguageByID("Vue"))
+    assertNotNull(Language.findLanguageByID("Vue"), "This test must be run with intellij.vuejs module in classpath")
     doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".vue")
   }
 
-  fun testFixSingleError() =
+  @Test
+  fun testFixSingleError(): Unit =
     doQuickFixTestForDirectory(fixProblemsDescription("no-multiple-empty-lines"), "test", ".js")
 
+  @Test
   fun testFixSingleErrorWithWindowsLineSeparators() {
     if (!SystemInfo.isWindows) return
     doQuickFixTestForDirectory(fixProblemsDescription("no-multiple-empty-lines"), "test", ".js", LineSeparator.CRLF)
   }
 
+  @Test
   fun testFixFileWithWindowsLineSeparator() {
     if (!SystemInfo.isWindows) return
     doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.CRLF)
-    FileDocumentManager.getInstance().saveAllDocuments()
-    Assert.assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(myFixture.file.virtualFile)))
+    // saveAllDocuments needs the EDT.
+    timeoutRunBlocking { edtWriteAction { FileDocumentManager.getInstance().saveAllDocuments() } }
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(eslint.fixture.file.virtualFile)))
   }
 
+  @Test
   fun testFixFileWithConvertLineSeparators() {
     if (!SystemInfo.isWindows) return
     doQuickFixTestForDirectory("ESLint: Fix current file", "test", ".js", LineSeparator.LF)
-    FileDocumentManager.getInstance().saveAllDocuments()
-    Assert.assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(myFixture.file.virtualFile)))
+    // saveAllDocuments needs the EDT.
+    timeoutRunBlocking { edtWriteAction { FileDocumentManager.getInstance().saveAllDocuments() } }
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(eslint.fixture.file.virtualFile)))
   }
 
+  @Test
   fun testNoFixFileActionForNonFixableErrors() {
-    installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js")
-    assertEmpty(myFixture.filterAvailableIntentions("ESLint: Fix current file"))
+    eslint.installEslintForTest()
+    eslint.doEditorHighlightingTestWithoutCopy("test.js")
+    assertThat(eslint.fixture.filterAvailableIntentions("ESLint: Fix current file")).isEmpty()
   }
 
   // The following exercise eslint-plugin-html (embedded <script> linting) and JSX via a shared,
   // extension-specific flat config copied to the project root. Their configs import plugins, so they
   // install the FULL dependency set rather than the eslint-only CORE set.
-  fun testSuppressForFileInHtml() =
+  @Test
+  fun testSuppressForFileInHtml(): Unit =
     doQuickFixTest("Suppress 'no-multiple-empty-lines' for current file", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
-  fun testSuppressMultiLinesByLineComment() =
+  @Test
+  fun testSuppressMultiLinesByLineComment(): Unit =
     doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".js", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
-  fun testSuppressForLineInHtml() =
+  @Test
+  fun testSuppressForLineInHtml(): Unit =
     doQuickFixTest("Suppress 'no-multiple-empty-lines' for current line", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
-  fun testFixInHtml() = doQuickFixTest("ESLint: Fix current file", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
+  @Test
+  fun testFixInHtml(): Unit = doQuickFixTest("ESLint: Fix current file", ".html", "eslint.config.html.mjs", EslintPackageSet.FULL)
 
-  fun testFixWorksInJsx() = doQuickFixTest("ESLint: Fix current file", ".jsx", "eslint.config.jsx.mjs", EslintPackageSet.FULL)
+  @Test
+  fun testFixWorksInJsx(): Unit = doQuickFixTest("ESLint: Fix current file", ".jsx", "eslint.config.jsx.mjs", EslintPackageSet.FULL)
 
+  @Test
   fun testScriptsInHtmlFile() {
     installEslintWithSharedConfig("eslint.config.html.mjs", EslintPackageSet.FULL)
-    myFixture.configureByFile(getTestName(false) + ".html")
+    eslint.fixture.configureByFile(eslint.getTestName(false) + ".html")
     // The whole-file fix action is not offered for scripts embedded in HTML.
-    val fixActions = myFixture.availableIntentions.filter { it.text == "ESLint: Fix current file" }
-    assertEmpty(fixActions)
+    val fixActions = eslint.fixture.availableIntentions.filter { it.text == "ESLint: Fix current file" }
+    assertThat(fixActions).isEmpty()
   }
 
+  @Test
   fun testRunEslintFixOnSave() {
     installEslintOnly()
-    val configuration = EslintConfiguration.getInstance(project)
+    val configuration = EslintConfiguration.getInstance(eslint.project)
     val eslintState = configuration.extendedState.state
     val origEnabled = configuration.isEnabled
     val origRunOnSave = eslintState.isRunOnSave
     configuration.setExtendedState(true, EslintState.Builder(eslintState).setRunOnSave(true).build())
     try {
-      myFixture.addFileToProject("eslint.config.js", "module.exports = {rules: {\"semi\": \"error\"}}")
-      myFixture.configureByText("foo.js", "var a = ''")
-      myFixture.type(' ')
-      myFixture.performEditorAction("SaveAll")
-      ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(project)
-      myFixture.checkResult(" var a = '';")
+      eslint.fixture.addFileToProject("eslint.config.js", "module.exports = {rules: {\"semi\": \"error\"}}")
+      eslint.fixture.configureByText("foo.js", "var a = ''")
+      eslint.fixture.type(' ')
+      eslint.fixture.performEditorAction("SaveAll")
+      ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(eslint.project)
+      eslint.fixture.checkResult(" var a = '';")
     }
     finally {
       configuration.setExtendedState(origEnabled, EslintState.Builder(eslintState).setRunOnSave(origRunOnSave).build())

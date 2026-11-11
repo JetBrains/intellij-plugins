@@ -5,6 +5,9 @@ import com.intellij.lang.javascript.inspections.JSConsecutiveCommasInArrayLitera
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.linter.eslint.ESLINT_10_6_0_TEST_PACKAGE_SPEC
 import com.intellij.lang.javascript.modules.TestNpmPackage
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 /**
  * The primary pinned ESLint quick-fix suite: flat config on eslint 10.6.0. Runs every generic
@@ -12,15 +15,17 @@ import com.intellij.lang.javascript.modules.TestNpmPackage
  * eslint 10's exact suggestion set/ordering, so they must NOT run on the version-agnostic tier.
  * A failure here is a product regression.
  */
+@TestApplication
 @TestNpmPackage(ESLINT_10_6_0_TEST_PACKAGE_SPEC)
 class EslintFixV10Test : EslintFixGenericTest() {
+  @Test
   fun testSuppressQuickFixGoesAfterInspectionFix() {
-    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
-    installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js")
+    eslint.fixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
+    eslint.installEslintForTest()
+    eslint.doEditorHighlightingTestWithoutCopy("test.js")
 
-    val quickFixNames = myFixture.availableIntentions.map { it.text }
-    assertContainsOrdered(quickFixNames,
+    val quickFixNames = eslint.fixture.availableIntentions.map { it.text }
+    assertThat(quickFixNames).containsSubsequence(
                           "Remove unused variable 'foo'",
                           "Edit inspection profile setting",
                           "Run inspection on…",
@@ -41,13 +46,14 @@ class EslintFixV10Test : EslintFixGenericTest() {
                           "Suppress all ESLint rules for current line")
   }
 
+  @Test
   fun testEsLintQuickFixGoesAfterInspectionFix() {
-    myFixture.enableInspections(JSConsecutiveCommasInArrayLiteralInspection::class.java)
-    installEslintForTest()
-    doEditorHighlightingTestWithoutCopy("test.js")
+    eslint.fixture.enableInspections(JSConsecutiveCommasInArrayLiteralInspection::class.java)
+    eslint.installEslintForTest()
+    eslint.doEditorHighlightingTestWithoutCopy("test.js")
 
-    val quickFixNames = myFixture.availableIntentions.map { it.text }
-    assertContainsOrdered(quickFixNames,
+    val quickFixNames = eslint.fixture.availableIntentions.map { it.text }
+    assertThat(quickFixNames).containsSubsequence(
                           "Insert 'undefined'",
                           "Edit inspection profile setting",
                           "Fix all 'Consecutive commas in array literal' problems in file",

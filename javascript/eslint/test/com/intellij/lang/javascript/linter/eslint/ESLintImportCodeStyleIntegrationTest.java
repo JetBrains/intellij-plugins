@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.linter.eslint;
 
-import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
@@ -10,38 +9,49 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.eslint.importer.EslintImportCodeStyleAction;
-import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions;
+import com.intellij.lang.javascript.nodejs.library.yarn.YarnPnpIntegrationFixture;
 import com.intellij.notification.ActionCenter;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.impl.ApplicationNotificationsModel;
 import com.intellij.notification.impl.StatusMessage;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.Objects;
 
+import static com.intellij.lang.javascript.linter.eslint.EslintServiceFixture.eslintServiceFixture;
 import static com.intellij.psi.codeStyle.CommonCodeStyleSettings.WRAP_ALWAYS;
 
-public class ESLintImportCodeStyleIntegrationTest extends EslintServiceTestBase {
+@TestApplication
+public class ESLintImportCodeStyleIntegrationTest {
+  private final TestFixture<EslintServiceFixture> eslint = eslintServiceFixture(
+    JSTempDirFixtureOptions.forBasePath(EslintTestUtil.ESLINT_TEST_DATA_RELATIVE_PATH + "/linter/eslint/import/")
+      .withMainPackage(EslintUtil.PACKAGE_NAME)
+      .withGlobalPackages(Map.of("eslint", "8.57.0")),
+    () -> new EslintInspection());
 
-  @Override
-  protected String getBasePath() {
-    return EslintTestUtil.ESLINT_TEST_DATA_RELATIVE_PATH + "/linter/eslint/import/";
-  }
-
+  @Test
   public void testCombineTwoConfigs() {
     doImportTestFromDirectory("subdir/.eslintrc.json", (common, custom) -> {
-      Assert.assertEquals(WRAP_ALWAYS, custom.OBJECT_LITERAL_WRAP);
-      Assert.assertEquals(WRAP_ALWAYS, common.ARRAY_INITIALIZER_WRAP);
+      Assertions.assertEquals(WRAP_ALWAYS, custom.OBJECT_LITERAL_WRAP);
+      Assertions.assertEquals(WRAP_ALWAYS, common.ARRAY_INITIALIZER_WRAP);
     });
   }
 
+  @Test
   public void testFromPackageJson() {
     doImportTestFromText("""
                            {
@@ -51,10 +61,11 @@ public class ESLintImportCodeStyleIntegrationTest extends EslintServiceTestBase 
                                }
                              }
                            }""",
-                         (settings, custom) -> Assert.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT),
+                         (settings, custom) -> Assertions.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT),
                          PackageJsonUtil.FILE_NAME);
   }
 
+  @Test
   public void testImportFromJsFile() {
     doImportTestFromText("""
                            module.exports = {
@@ -66,26 +77,30 @@ public class ESLintImportCodeStyleIntegrationTest extends EslintServiceTestBase 
                              }
                            };
                            """,
-                         (settings, custom) -> Assert.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT),
+                         (settings, custom) -> Assertions.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT),
                          EslintUtil.DEFAULT_CONFIG_PREFIX + ".js");
   }
 
 
+  @Test
   public void testImportFileWithError() {
+    CodeInsightTestFixture myFixture = eslint.get().getFixture();
     myFixture.configureByText(EslintUtil.DEFAULT_CONFIG_PREFIX + ".json", "{ \"not complete\"");
 
     // this instantiates EventLog.ProjectTracker, otherwise notification, on which this test relies, is not processed at all.
-    ActionCenter.expireNotifications(getProject());
+    ActionCenter.expireNotifications(myFixture.getProject());
 
-    myFixture.testAction(new EslintImportCodeStyleAction());
+    // The action needs the EDT.
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testAction(new EslintImportCodeStyleAction()));
 
-    final @Nullable StatusMessage statusMessage = ApplicationNotificationsModel.getStatusMessage(getProject());
-    Assert.assertNotNull(statusMessage);
-    Assert.assertNotNull(statusMessage.notification());
-    Assert.assertEquals(NotificationType.ERROR, statusMessage.notification().getType());
-    Assert.assertEquals(JSLinterUtil.NOTIFICATION_GROUP.getDisplayId(), statusMessage.notification().getGroupId());
+    final @Nullable StatusMessage statusMessage = ApplicationNotificationsModel.getStatusMessage(myFixture.getProject());
+    Assertions.assertNotNull(statusMessage);
+    Assertions.assertNotNull(statusMessage.notification());
+    Assertions.assertEquals(NotificationType.ERROR, statusMessage.notification().getType());
+    Assertions.assertEquals(JSLinterUtil.NOTIFICATION_GROUP.getDisplayId(), statusMessage.notification().getGroupId());
   }
 
+  @Test
   public void testImportFromYamlFile() {
     String text = """
       ---
@@ -95,70 +110,67 @@ public class ESLintImportCodeStyleIntegrationTest extends EslintServiceTestBase 
         - never
       """;
     doImportTestFromText(text,
-                         (common, custom) -> Assert.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT),
+                         (common, custom) -> Assertions.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT),
                          EslintUtil.DEFAULT_CONFIG_PREFIX + ".yaml");
   }
 
+  @Test
   public void testJsonFileWithExtends() {
     doTestJsonFileWithExtends(null);
   }
 
   private <T extends Throwable> void doTestJsonFileWithExtends(@Nullable ThrowableRunnable<T> onProjectCopiedRunnable) throws T {
+    CodeInsightTestFixture myFixture = eslint.get().getFixture();
     myFixture.copyDirectoryToProject("jsonFileWithExtends", ".");
     myFixture.configureByFile(".eslintrc.json");
     if (onProjectCopiedRunnable != null) {
       onProjectCopiedRunnable.run();
     }
     performImport((common, custom) -> {
-      Assert.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertEquals(7, common.getIndentOptions().INDENT_SIZE);
+      Assertions.assertFalse(custom.USE_SEMICOLON_AFTER_STATEMENT);
+      Assertions.assertEquals(7, common.getIndentOptions().INDENT_SIZE);
     });
   }
 
+  @Test
   public void testJsonFileWithExtends_YarnPnp() throws Exception {
+    EslintServiceFixture fixture = eslint.get();
     doTestJsonFileWithExtends(() -> {
-      VirtualFile root = Objects.requireNonNull(myFixture.findFileInTempDir("."));
-      NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
-      AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
-      YarnPnpNodePackage yarnEslintPkg = YarnPnpNodePackage.create(getProject(),
+      VirtualFile root = Objects.requireNonNull(fixture.getFixture().findFileInTempDir("."));
+      NodePackage yarnPkg = YarnPnpIntegrationFixture.installYarnGlobally(fixture.getNodeJsAppRule());
+      YarnPnpIntegrationFixture.configureYarnBerryAndRunYarnInstall(fixture.getProject(), yarnPkg, fixture.getNodeJsAppRule(), root);
+      YarnPnpNodePackage yarnEslintPkg = YarnPnpNodePackage.create(fixture.getProject(),
                                                                    PackageJsonUtil.findChildPackageJsonFile(root),
-                                                                   getPackageName(), false, false);
-      assertNotNull(yarnEslintPkg);
-      configureLinterForPackage(NodePackageRef.create(yarnEslintPkg));
+                                                                   fixture.getPackageName(), false, false);
+      Assertions.assertNotNull(yarnEslintPkg);
+      fixture.configureLinterForPackage(NodePackageRef.create(yarnEslintPkg));
     });
   }
 
   private void doImportTestFromText(final @NotNull String text,
                                     final @NotNull PairConsumer<CommonCodeStyleSettings, JSCodeStyleSettings> styleChecker,
                                     @Nullable String fileName) {
-    myFixture.configureByText(ObjectUtils.coalesce(fileName, ".eslintrc.json"), text);
+    eslint.get().getFixture().configureByText(ObjectUtils.coalesce(fileName, ".eslintrc.json"), text);
     performImport(styleChecker);
   }
 
   private void doImportTestFromDirectory(String relativeFilePath,
                                          final @NotNull PairConsumer<CommonCodeStyleSettings, JSCodeStyleSettings> test) {
-    myFixture.copyDirectoryToProject(getTestName(true), "");
-    myFixture.configureByFile(relativeFilePath);
+    EslintServiceFixture fixture = eslint.get();
+    fixture.getFixture().copyDirectoryToProject(fixture.getTestName(true), "");
+    fixture.getFixture().configureByFile(relativeFilePath);
 
     performImport(test);
   }
 
   private void performImport(@NotNull PairConsumer<CommonCodeStyleSettings, JSCodeStyleSettings> test) {
-    JSTestUtils.testWithTempCodeStyleSettings(getProject(), (settings) -> {
+    CodeInsightTestFixture myFixture = eslint.get().getFixture();
+    JSTestUtils.testWithTempCodeStyleSettings(myFixture.getProject(), (settings) -> {
       CommonCodeStyleSettings common = settings.getCommonSettings(JavascriptLanguage.INSTANCE);
       JSCodeStyleSettings custom = settings.getCustomSettings(JSCodeStyleSettings.class);
-      myFixture.testAction(new EslintImportCodeStyleAction());
+      // The action needs the EDT.
+      EdtTestUtil.runInEdtAndWait(() -> myFixture.testAction(new EslintImportCodeStyleAction()));
       test.consume(common, custom);
     });
-  }
-
-  @Override
-  protected @NotNull InspectionProfileEntry getInspection() {
-    return new EslintInspection();
-  }
-
-  @Override
-  protected @NotNull String getPackageName() {
-    return EslintUtil.PACKAGE_NAME;
   }
 }

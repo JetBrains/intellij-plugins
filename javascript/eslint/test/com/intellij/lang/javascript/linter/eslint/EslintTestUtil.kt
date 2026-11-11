@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.linter.JSLinterAnnotationResult
 import com.intellij.lang.javascript.linter.JSLinterInput
 import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceClient
 import com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceManager
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -37,13 +38,14 @@ private fun getContribPath(): String {
  * analysis times out deterministically without spawning a real node process (WEB-67172 rationale).
  * Set the timeout before calling (e.g. `JSLanguageServiceUtil.setTimeout(1L, ...)`).
  *
- * Shared by [EslintServiceTestBase] (global-install tiers) and [EslintPackageLockTestBase]
+ * Shared by [EslintServiceFixture] (global-install tiers) and [EslintPackageLockFixture]
  * (pinned-lock tiers), which previously each carried an identical copy of the fake service.
  */
 fun highlightWithNeverRespondingService(project: Project, psiFile: PsiFile, nodePackage: NodePackage): JSLinterAnnotationResult {
   val service = createNeverRespondingEslintService(nodePackage, psiFile.virtualFile.parent)
   val state = EslintConfiguration.getInstance(project).extendedState.state
-  val input = JSLinterInput.create(psiFile, state, null)
+  // The input reads the document, so it needs a read action off the EDT.
+  val input = runReadActionBlocking { JSLinterInput.create(psiFile, state, null) }
   return EsLintExternalRunner.highlight(input, service, true)
 }
 
@@ -63,9 +65,9 @@ private fun createNeverRespondingEslintService(nodePackage: NodePackage, working
 
 /**
  * The file-level ESLint annotation text, read through [EslintLanguageServiceManager] rather than the
- * `JSLinterEditorNotifications` channel that [com.intellij.lang.javascript.linter.LinterHighlightingTest.getAnnotationText]
+ * `JSLinterEditorNotifications` channel that [com.intellij.lang.javascript.linter.LinterHighlightingFixture.getAnnotationText]
  * uses (see `ESLintAnnotationsBuilder.applyFileLevelAnnotation`; WEB-67129 lineage). Shared by the
- * tearDown global-annotation check in [EslintPackageLockTestBase] and [EslintYarnPnpTest].
+ * teardown global-annotation check in [EslintPackageLockFixture] and [EslintServiceFixture].
  */
 fun getEslintFileLevelAnnotationText(project: Project, file: VirtualFile): String? {
   val state = EslintConfiguration.getInstance(project).extendedState.state

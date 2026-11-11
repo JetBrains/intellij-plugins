@@ -159,6 +159,8 @@ jvm_library(
         "@community//platform/platform-util-io:ide-util-io",
         "@community//platform/ide-core",
         "@community//platform/testFramework",
+        "@community//platform/testFramework/junit5",
+        "@community//libraries/junit6",
         "//plugins/JavaScriptLanguage/testFramework",
         "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests_test_lib",
         "@community//platform/statistics",

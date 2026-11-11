@@ -10,7 +10,7 @@ combo directory by name, copies its `package-lock.json` into the test project, a
 to `npm install --force --before=<cutoff>`, which re-resolves the tree. A drifted lock
 still installs, but no longer deterministically. Regenerate the lock (see below) when
 the fallback line shows up. The version-agnostic testData `package.json` files keep a
-`$ESLINT_VERSION$` placeholder that `EslintPackageLockTestBase` substitutes at runtime
+`$ESLINT_VERSION$` placeholder that `EslintPackageLockFixture` substitutes at runtime
 from the class-level `@TestNpmPackage` annotation, so one testData tree serves every
 pinned version.
 

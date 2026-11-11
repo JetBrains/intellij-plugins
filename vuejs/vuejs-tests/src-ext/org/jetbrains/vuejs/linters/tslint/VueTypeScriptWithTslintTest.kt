@@ -2,46 +2,55 @@
 package org.jetbrains.vuejs.linters.tslint
 
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.linter.tslint.TypeScriptServiceWithTslintTestBase
+import com.intellij.lang.javascript.linter.tslint.TypeScriptServiceWithTslintFixture.Companion.typeScriptServiceWithTslintFixture
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.LineSeparator
-import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class VueTypeScriptWithTslintTest : TypeScriptServiceWithTslintTestBase() {
-  override fun getBasePath(): String {
-    return vueRelativeTestDataPath() + "/linters/tslint/"
-  }
+@TestApplication
+class VueTypeScriptWithTslintTest {
+  private val tslint by typeScriptServiceWithTslintFixture(vueRelativeTestDataPath() + "/linters/tslint/")
 
+  @Test
   fun testMatchingLineEndingsNotHighlighted() {
-    doHighlightingTest("main", "vue") {
-      JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
+    tslint.doHighlightingTest("main", "vue") {
+      JSTestUtils.ensureLineSeparators(tslint.fixture.file, LineSeparator.CRLF)
     }
   }
 
+  @Test
   fun testMismatchedLineEndingsHighlighted() {
-    doHighlightingTest("main", "vue") {
-      JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.LF)
+    tslint.doHighlightingTest("main", "vue") {
+      JSTestUtils.ensureLineSeparators(tslint.fixture.file, LineSeparator.LF)
     }
   }
 
+  @Test
   fun testFixAllWithUpdatingLineSeparators() {
     doFixAllTest()
-    FileDocumentManager.getInstance().saveAllDocuments()
-    TestCase.assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(file.virtualFile)))
+    // saveAllDocuments needs the EDT.
+    timeoutRunBlocking { edtWriteAction { FileDocumentManager.getInstance().saveAllDocuments() } }
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(tslint.fixture.file.virtualFile)))
   }
 
+  @Test
   fun testFixAllWithCrlfLineSeparator() {
-    doFixTest("main", "vue", "Fix all auto-fixable tslint failures") {
-      JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
+    tslint.doFixTest("main", "vue", "Fix all auto-fixable tslint failures") {
+      JSTestUtils.ensureLineSeparators(tslint.fixture.file, LineSeparator.CRLF)
     }
-    FileDocumentManager.getInstance().saveAllDocuments()
-    TestCase.assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(file.virtualFile)))
+    // saveAllDocuments needs the EDT.
+    timeoutRunBlocking { edtWriteAction { FileDocumentManager.getInstance().saveAllDocuments() } }
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(tslint.fixture.file.virtualFile)))
   }
 
   private fun doFixAllTest() {
-    doFixTest("main", "vue", "Fix all auto-fixable tslint failures")
+    tslint.doFixTest("main", "vue", "Fix all auto-fixable tslint failures")
   }
 }

@@ -147,6 +147,8 @@ jvm_library(
         "//plugins/JavaScriptLanguage/javascript-parser",
         "//plugins/JavaScriptLanguage/javascript-backend",
         "@community//platform/testFramework",
+        "@community//platform/testFramework/junit5",
+        "@community//libraries/junit6",
         "//plugins/JavaScriptLanguage/testFramework",
         "@community//json/backend",
         "//plugins/JavaScriptLanguage/javascript-common",

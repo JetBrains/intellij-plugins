@@ -1,65 +1,62 @@
 package com.intellij.lang.javascript.linter.eslint.standardjs;
 
-import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.lang.javascript.linter.eslint.EslintServiceTestBase;
-import com.intellij.lang.javascript.linter.eslint.EslintTestUtil;
-import com.intellij.lang.javascript.linter.eslint.standardjs.StandardJSInspection;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.eslint.EslintServiceFixture;
+import com.intellij.lang.javascript.linter.eslint.EslintTestUtil;
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions;
 import com.intellij.testFramework.DumbModeTestUtils;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-public class StandardJSHighlightingTest extends EslintServiceTestBase {
+import static com.intellij.lang.javascript.linter.eslint.EslintServiceFixture.eslintServiceFixture;
+
+@TestApplication
+public class StandardJSHighlightingTest {
   public static final String RELATIVE_TESTDATA_PATH = "/linter/standardjs/highlighting/";
 
-  @Override
-  protected String getBasePath() {
-    return EslintTestUtil.ESLINT_TEST_DATA_RELATIVE_PATH + RELATIVE_TESTDATA_PATH;
-  }
+  private final TestFixture<EslintServiceFixture> standard = eslintServiceFixture(
+    JSTempDirFixtureOptions.forBasePath(EslintTestUtil.ESLINT_TEST_DATA_RELATIVE_PATH + RELATIVE_TESTDATA_PATH)
+      .withMainPackage("standard")
+      .withGlobalPackages(Map.of(
+        "standard", "latest",
+        "eslint-plugin-html", "latest",
+        "@babel/eslint-parser", "latest")),
+    () -> new StandardJSInspection());
 
-  @Override
-  protected @NotNull InspectionProfileEntry getInspection() {
-    return new StandardJSInspection();
-  }
-
-  @Override
-  protected @NotNull String getPackageName() {
-    return "standard";
-  }
-
-  @Override
-  protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
-    return Map.of(
-      "standard", "latest",
-      "eslint-plugin-html", "latest",
-      "@babel/eslint-parser", "latest");
-  }
-
+  @Test
   public void testWithGlobalInPackageJson() {
     defaultHighlightingTest();
   }
 
+  @Test
   public void testDumbMode() {
-    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, getTestRootDisposable());
-    DumbModeTestUtils.runInDumbModeSynchronously(getProject(), () -> {
+    CodeInsightTestFixtureImpl.mustWaitForSmartMode(false, standard.get().getTestRootDisposable());
+    DumbModeTestUtils.runInDumbModeSynchronously(standard.get().getProject(), () -> {
       defaultHighlightingTest();
     });
   }
 
+  @Test
   public void testWithPlugin() {
     defaultHighlightingTest();
   }
 
+  @Test
   public void testWithHtmlPlugin() {
     doHighlightingTest("test.html");
   }
 
+  @Test
   public void testWithIgnorePattern() {
     doHighlightingTest("test.js", "ignored.js");
   }
 
+  @Test
   public void testWithBabelParser() {
     configureByFilename(".babelrc.js");
     doHighlightingTest("test.js");
@@ -70,13 +67,13 @@ public class StandardJSHighlightingTest extends EslintServiceTestBase {
   }
 
   private void configureByFilename(@NotNull String filename) {
-    myFixture.configureByFiles(getTestName(true) + "/" + filename);
+    standard.get().getFixture().configureByFiles(standard.get().getTestName(true) + "/" + filename);
   }
 
   private void doHighlightingTest(final String... filenames) {
     configureByFilename(PackageJsonUtil.FILE_NAME);
     for (String filename : filenames) {
-      myFixture.testHighlighting(true, false, true, getTestName(true) + "/" + filename);
+      standard.get().getFixture().testHighlighting(true, false, true, standard.get().getTestName(true) + "/" + filename);
     }
   }
 }

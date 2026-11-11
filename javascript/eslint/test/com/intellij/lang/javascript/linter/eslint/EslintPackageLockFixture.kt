@@ -2,14 +2,14 @@
 package com.intellij.lang.javascript.linter.eslint
 
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage
 import com.intellij.lang.javascript.linter.JSLinterAnnotationResult
-import com.intellij.lang.javascript.linter.LinterHighlightingTest
+import com.intellij.lang.javascript.linter.LinterHighlightingFixture
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.lang.javascript.modules.TestNpmPackageInstaller
@@ -22,59 +22,54 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.createGlobalContextForTool
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests
+import com.intellij.testFramework.junit5.fixture.TestFixture
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ThrowableRunnable
+import org.jetbrains.annotations.TestOnly
 import java.io.File
+import java.lang.reflect.Method
 import java.nio.file.Files
-import java.nio.file.Path
 
 /**
- * Base class for ESLint tests that install packages per test from a committed `package-lock.json` in
- * `testData/.../_package-locks-store`, mirroring
- * [com.intellij.prettierjs.stable.PrettierPackageLockTest] but adapted to the [LinterHighlightingTest]
- * highlighting flow.
+ * The linter fixture of the ESLint tests that install packages per test from a committed `package-lock.json` in
+ * `testData/.../_package-locks-store`, mirroring [com.intellij.prettierjs.stable.PrettierPackageLockTest] but adapted to the
+ * [LinterHighlightingFixture] highlighting flow. Create it with [eslintPackageLockFixture].
  *
- * Subclasses must be annotated with `@`[TestNpmPackage]`("eslint@X.Y.Z")`. The shared global install is
- * neutralized (see [setUpForTempRoot]); each test copies its testData directory, replaces the
- * [ESLINT_VERSION_PLACEHOLDER] in its `package.json` files with the annotated version, installs from the
- * stored lock (strictly — a store miss for a pinned spec fails, see [TestNpmPackageInstaller]), and
- * points the ESLint configuration at the project-local `node_modules/eslint`.
+ * The test class must be annotated with `@`[TestNpmPackage]`("eslint@X.Y.Z")`. The fixture installs no global package.
+ * Each test copies its testData directory, replaces the [ESLINT_VERSION_PLACEHOLDER] in its `package.json` files with the
+ * annotated version, installs from the stored lock (strictly: a store miss for a pinned spec fails, see [TestNpmPackageInstaller]),
+ * and points the ESLint configuration at the project-local `node_modules/eslint`.
  */
-abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
+@TestOnly
+class EslintPackageLockFixture(
+  fixture: CodeInsightTestFixture,
+  testClass: Class<*>,
+  testMethod: Method,
+  options: JSTempDirFixtureOptions,
+) : LinterHighlightingFixture(fixture, testClass, testMethod, options, { EslintInspection() }) {
 
   private var packagesInstalled = false
 
-  // Packages come from the lock store per test, so nothing is installed globally.
-  override fun getGlobalPackageVersionsToInstall(): Map<String, String?> = emptyMap()
-
-  // Skip the shared global install. The Node interpreter is still set up in the base setUp(), which
-  // runs before setUpForTempRoot(); only the global npm install is skipped here.
-  override fun setUpForTempRoot(rootDir: Path) {
-    // no-op: local install happens in doHighlightingTestWithInstallation
-  }
-
-  override fun getPackageName(): String = "eslint"
-
-  override fun getInspection(): InspectionProfileEntry = EslintInspection()
-
-  // getNodePackage() is unset until the per-test install, so linter configuration is deferred to
-  // doHighlightingTestWithInstallation, which points it at the project-local package.
+  // The node package is unset until the per-test install, so the linter configuration is deferred to
+  // installEslintFromProjectRoot, which points it at the project-local package.
   override fun configureLinter() {
-    // no-op
   }
 
   /**
-   * ESLint routes file-level annotations through [EslintLanguageServiceManager], not the
-   * `JSLinterEditorNotifications` channel that [LinterHighlightingTest.getAnnotationText] reads (see
-   * `ESLintAnnotationsBuilder.applyFileLevelAnnotation`). Without this override the tearDown
+   * ESLint routes file-level annotations through [com.intellij.lang.javascript.linter.eslint.service.EslintLanguageServiceManager], not the
+   * `JSLinterEditorNotifications` channel that [LinterHighlightingFixture.getAnnotationText] reads (see
+   * `ESLintAnnotationsBuilder.applyFileLevelAnnotation`). Without this override the teardown
    * global-annotation check would be vacuous and file-level-error scenarios could not be asserted
    * (WEB-67129 lineage).
    */
   override fun getAnnotationText(): String? =
-    getEslintFileLevelAnnotationText(project, myFixture.file.virtualFile)
+    getEslintFileLevelAnnotationText(project, fixture.file.virtualFile)
 
   /** [installEslintForTest] followed by editor highlighting on [mainFileRelativePath]. Call once per test. */
-  protected fun doHighlightingTestWithInstallation(
+  @JvmOverloads
+  fun doHighlightingTestWithInstallation(
     mainFileRelativePath: String,
     configureFixture: ThrowableRunnable<Throwable>? = null,
   ) {
@@ -88,27 +83,28 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * configuration at `<project>/node_modules/eslint`. Call once per test, before highlighting or the
    * fake-service helper.
    */
-  protected fun installEslintForTest() {
+  fun installEslintForTest() {
     copyTestDataToProject()
     installEslintFromProjectRoot()
   }
 
   /** Like [installEslintForTest], but leaves the linter set to auto-detect the project-local ESLint
    *  (AutodetectLinterPackage) rather than a fixed package -- for the autodetection tests. */
-  protected fun installEslintForTestWithAutodetect() {
+  fun installEslintForTestWithAutodetect() {
     copyTestDataToProject()
     installEslintFromProjectRoot(autodetect = true)
   }
 
   /** Installs ESLint into `<project>/<subdir>/node_modules` (from that sub-directory's `package.json` +
    *  stored lock) and auto-detects it -- for tests asserting resolution from a specific sub-package. */
-  protected fun installEslintForTestInSubdir(subdir: String) {
+  fun installEslintForTestInSubdir(subdir: String) {
     copyTestDataToProject()
     installEslintFromProjectRoot(autodetect = true, installSubdir = subdir)
   }
 
   /** [installEslintForTestWithAutodetect] followed by editor highlighting on [mainFileRelativePath]. */
-  protected fun doHighlightingTestWithAutodetectInstallation(
+  @JvmOverloads
+  fun doHighlightingTestWithAutodetectInstallation(
     mainFileRelativePath: String,
     configureFixture: ThrowableRunnable<Throwable>? = null,
   ) {
@@ -122,23 +118,23 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * contain the `package.json` (and any config): [installEslintForTest] copies the per-test data
    * directory first, while the quick-fix suite copies a shared root install instead. Call once per test.
    */
-  protected fun installEslintFromProjectRoot(autodetect: Boolean = false, installSubdir: String? = null) {
+  fun installEslintFromProjectRoot(autodetect: Boolean = false, installSubdir: String? = null) {
     check(!packagesInstalled) { "ESLint must be installed once per test" }
     packagesInstalled = true
 
-    val projectDir = myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
+    val projectDir = fixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
     replaceEslintVersionPlaceholders(projectDir)
 
-    TestNpmPackageInstaller(project, myFixture, nodeJsAppRule, copyPackageJson = false, requireStoredLock = true)
-      .installForTest(this::class.java, projectDir, installSubdir)
+    TestNpmPackageInstaller(project, fixture, nodeJsAppRule, copyPackageJson = false, requireStoredLock = true)
+      .installForTest(testClass, projectDir, installSubdir)
 
     val installDir = if (installSubdir != null) projectDir.toNioPath().resolve(installSubdir) else projectDir.toNioPath()
     val eslintPath = installDir.resolve(NodeModuleUtil.NODE_MODULES).resolve("eslint")
     check(Files.exists(eslintPath)) { "eslint was not installed at $eslintPath" }
 
     val nodePackage = NodePackage(eslintPath.toString())
-    setNodePackage(nodePackage)
-    VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, nodePackage.systemDependentPath)
+    this.nodePackage = nodePackage
+    VfsRootAccess.allowRootAccess(testRootDisposable, nodePackage.systemDependentPath)
     if (autodetect) {
       configureLinterForPackage(AutodetectLinterPackage.INSTANCE)
     }
@@ -146,25 +142,25 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
       configureLinterForPackage(NodePackageRef.create(nodePackage))
     }
 
-    // EslintServiceTestBase sets this in setUp() from the global install; here the package only exists
+    // EslintServiceFixture sets this in its setup from the global install; here the package only exists
     // after the per-test install, so the registry value is set at this point instead.
     Registry.get("eslint.service.node.path").setValue(eslintPath.parent.toString(), testRootDisposable)
   }
 
   /**
-   * Fabricates a stub `node_modules/eslint` (a package.json only -- no npm install) so [getNodePackage]
+   * Fabricates a stub `node_modules/eslint` (a package.json only -- no npm install) so [nodePackage]
    * and `Files.exists` are satisfied for tests that never actually run ESLint, e.g. the never-responding
    * fake-service timeout test. Keeps the `@latest` canary offline: no registry install to hang on.
    */
-  protected fun installStubEslintPackage() {
+  fun installStubEslintPackage() {
     // A real (supported) version string so the plugin's version check passes; the fake service never
     // loads this package, so no actual ESLint code is needed.
-    myFixture.tempDirFixture.createFile("node_modules/eslint/package.json", """{"name":"eslint","version":"8.57.0"}""")
-    val eslintPath = (myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found"))
+    fixture.tempDirFixture.createFile("node_modules/eslint/package.json", """{"name":"eslint","version":"8.57.0"}""")
+    val eslintPath = (fixture.tempDirFixture.getFile(".") ?: error("Project directory not found"))
       .toNioPath().resolve(NodeModuleUtil.NODE_MODULES).resolve("eslint")
     val nodePackage = NodePackage(eslintPath.toString())
-    setNodePackage(nodePackage)
-    VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, nodePackage.systemDependentPath)
+    this.nodePackage = nodePackage
+    VfsRootAccess.allowRootAccess(testRootDisposable, nodePackage.systemDependentPath)
     configureLinterForPackage(NodePackageRef.create(nodePackage))
   }
 
@@ -173,24 +169,27 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * analysis times out deterministically without spawning a real node process (WEB-67172 rationale).
    * Call after [installEslintForTest]; set the timeout first
    * (e.g. `JSLanguageServiceUtil.setTimeout(1L, testRootDisposable)`). Shared with the global-install
-   * tiers via [EslintTestUtil.highlightWithNeverRespondingService].
+   * tiers via [highlightWithNeverRespondingService].
    */
-  protected fun highlightWithNeverRespondingService(psiFile: PsiFile): JSLinterAnnotationResult =
-    highlightWithNeverRespondingService(project, psiFile, getNodePackage())
+  fun highlightWithNeverRespondingService(psiFile: PsiFile): JSLinterAnnotationResult =
+    highlightWithNeverRespondingService(project, psiFile, nodePackage)
 
   /**
    * Runs the batch (whole-project) ESLint inspection and compares against the current test dir's
    * `expected.xml`, exercising the Annotation -> ProblemDescriptor conversion path. Call after
    * [doHighlightingTestWithInstallation], which performs the per-test install.
    */
-  protected fun doBatchInspectionTest() {
+  fun doBatchInspectionTest() {
     val toolWrapper = LocalInspectionToolWrapper(EslintInspection())
-    val scope = AnalysisScope(myFixture.project)
+    val scope = AnalysisScope(project)
     scope.invalidate()
     val globalContext: GlobalInspectionContextForTests =
       createGlobalContextForTool(scope, project, listOf<InspectionToolWrapper<*, *>>(toolWrapper))
-    InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-    InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, File(testDataPath, getTestName(false)).path)
+    // runTool needs the EDT.
+    runInEdtAndWait {
+      InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
+      InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, File(testDataPath, getTestName(false)).path)
+    }
   }
 
   /**
@@ -198,8 +197,8 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
    * as the "custom config file" IDE setting does. [fileName] is resolved in the temp project (copied
    * there by [installEslintForTest]). Call after the install, before highlighting.
    */
-  protected fun useCustomConfigFile(fileName: String) {
-    val configFile = myFixture.findFileInTempDir(fileName) ?: error("Config file '$fileName' not found in project")
+  fun useCustomConfigFile(fileName: String) {
+    val configFile = fixture.findFileInTempDir(fileName) ?: error("Config file '$fileName' not found in project")
     updateConfiguration {
       it.setCustomConfigFileUsed(true)
         .setCustomConfigFilePath(VfsUtilCore.virtualToIoFile(configFile).absolutePath)
@@ -207,14 +206,14 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
   }
 
   /** Mutates the ESLint extended state (e.g. extra CLI options) for the current test. */
-  protected fun updateConfiguration(configure: (EslintState.Builder) -> EslintState.Builder) {
+  fun updateConfiguration(configure: (EslintState.Builder) -> EslintState.Builder) {
     val configuration = EslintConfiguration.getInstance(project)
     val builder = configure(EslintState.Builder(configuration.extendedState.state))
     configuration.setExtendedState(true, builder.build())
   }
 
   private fun replaceEslintVersionPlaceholders(rootDir: VirtualFile) {
-    val annotation = this::class.java.getAnnotation(TestNpmPackage::class.java)
+    val annotation = testClass.getAnnotation(TestNpmPackage::class.java)
                      ?: error("Test class must be annotated with @TestNpmPackage")
     val version = annotation.packageSpec.substringAfter('@', "latest")
 
@@ -230,11 +229,26 @@ abstract class EslintPackageLockTestBase : LinterHighlightingTest() {
     }
 
     if (filesToUpdate.isNotEmpty()) {
-      WriteAction.run<Throwable> {
+      WriteAction.runAndWait<Throwable> {
         for ((file, newContent) in filesToUpdate) {
           VfsUtil.saveText(file, newContent)
         }
       }
     }
+  }
+
+  companion object {
+    /**
+     * Creates an [EslintPackageLockFixture] on a new project, for the test data in [basePath] under the repository root.
+     * Declare the result as an instance property, so that each test gets its own project.
+     */
+    @JvmStatic
+    @TestOnly
+    fun eslintPackageLockFixture(basePath: String): TestFixture<EslintPackageLockFixture> =
+      jsTempDirFixture(
+        "eslintPackageLockFixture",
+        JSTempDirFixtureOptions.forBasePath(basePath).withoutDefaultInspections().withMainPackage("eslint").withoutGlobalInstall(),
+        ::EslintPackageLockFixture,
+      )
   }
 }
