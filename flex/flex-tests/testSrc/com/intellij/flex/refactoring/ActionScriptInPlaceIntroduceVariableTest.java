@@ -1,44 +1,57 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableTestCase;
-import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableFixture;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduceVariableTestCase {
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableFixture.jsInplaceIntroduceVariableFixture;
 
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("refactoring/introduceVariable/");
+@TestApplication
+public class ActionScriptInPlaceIntroduceVariableTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSInplaceIntroduceVariableFixture> introduce = jsInplaceIntroduceVariableFixture(
+    projectFixture,
+    new JSFixtureOptions(FlexTestUtils.getTestDataPath("refactoring/introduceVariable/")).withModuleType(FlexModuleType.MODULE_TYPE_ID)
+  );
+
+  @BeforeEach
+  void setUp() {
+    JSInplaceIntroduceVariableFixture introduceFixture = introduce.get();
+    FlexTestUtils.allowFlexVfsRootsFor(introduceFixture.getTestRootDisposable(), "refactoring/introduceVariable/");
+    FlexTestUtils.setupFlexSdk(introduceFixture.getFixture().getModule(), introduceFixture.getTestName(false),
+                               ActionScriptInPlaceIntroduceVariableTest.class, introduceFixture.getTestRootDisposable());
   }
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return FlexProjectDescriptor.DESCRIPTOR;
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "refactoring/introduceVariable/");
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
-  }
-
+  @Test
   public void testInplaceBasicAS() {
-    doTest(getTestName(false), ".as");
+    introduce.get().doTest(introduce.get().getTestName(false), ".as");
   }
 
+  @Test
   public void testInplaceSecondOccurrence() {
-    doTest(getTestName(false), ".as");
+    introduce.get().doTest(introduce.get().getTestName(false), ".as");
   }
 
+  @Test
   public void testInplaceWithNamespace() {
-    String name1 = "test1/" + getTestName(false) + "1";
-    String name2 = "test2/" + getTestName(false) + "2";
-    myFixture.configureByFiles(name2 + ".as", name1 + ".as");
-    performActionIntroduce();
-    myFixture.checkResultByFile(getTestName(false) + "2_after.as");
+    JSInplaceIntroduceVariableFixture introduceFixture = introduce.get();
+    CodeInsightTestFixture myFixture = introduceFixture.getFixture();
+    String testName = introduceFixture.getTestName(false);
+    String name1 = "test1/" + testName + "1";
+    String name2 = "test2/" + testName + "2";
+    EdtTestUtil.runInEdtAndWait(() -> {
+      myFixture.configureByFiles(name2 + ".as", name1 + ".as");
+      introduceFixture.performActionIntroduce();
+      myFixture.checkResultByFile(testName + "2_after.as");
+    });
   }
 }

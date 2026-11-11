@@ -2,22 +2,34 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableTestCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableFixture;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class MxmlInplaceIntroduceVariableTest extends JSInplaceIntroduceVariableTestCase {
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableFixture.jsInplaceIntroduceVariableFixture;
 
-  @Override
-  protected @NotNull String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("/refactoring/introduceVariable/");
-  }
+@TestApplication
+public class MxmlInplaceIntroduceVariableTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSInplaceIntroduceVariableFixture> introduce = jsInplaceIntroduceVariableFixture(
+    projectFixture,
+    new JSFixtureOptions(FlexTestUtils.getTestDataPath("/refactoring/introduceVariable/"))
+  );
 
+  @Test
   public void testInitialOccurrenceSelected() {
-    final String testName = getTestName(false);
-    doTest("tmp", testName, ".mxml", testName);
+    JSInplaceIntroduceVariableFixture introduceFixture = introduce.get();
+    final String testName = introduceFixture.getTestName(false);
+    introduceFixture.doTest("tmp", testName, ".mxml", testName);
   }
 
+  @Test
   public void testInjectedAllOccurrences() {
-    doTest("created", getTestName(false), ".mxml", true, null, null, getTestName(false));
+    JSInplaceIntroduceVariableFixture introduceFixture = introduce.get();
+    introduceFixture.doTest("created", introduceFixture.getTestName(false), ".mxml", true, null, null, introduceFixture.getTestName(false));
   }
 }
