@@ -11,7 +11,13 @@ interface CustomInspectionLicenseRule {
     fun requiresUltimatePlus(wrapper: InspectionToolWrapper<*, *>): Boolean {
       return EP_NAME.extensionList.any { it.requiresUltimatePlus(wrapper) }
     }
+
+    fun requiresUltimate(wrapper: InspectionToolWrapper<*, *>): Boolean {
+      return EP_NAME.extensionList.any { it.requiresUltimate(wrapper) }
+    }
   }
 
   fun requiresUltimatePlus(wrapper: InspectionToolWrapper<*, *>): Boolean
+
+  fun requiresUltimate(wrapper: InspectionToolWrapper<*, *>): Boolean = false
 }
