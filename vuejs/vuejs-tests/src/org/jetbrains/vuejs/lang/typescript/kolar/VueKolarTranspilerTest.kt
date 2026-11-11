@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.PlatformTestUtil.assertDirectoriesEqual
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.TestApplication
@@ -27,6 +28,7 @@ class VueKolarTranspilerTest {
   fun doTest() {
     vue.doConfiguredTest(
       configureFileName = "src/App.vue",
+      configurators = listOf(UseDefaultTypesRoot()),
     ) {
       val actualDir = transpile()
       val expectedDir = getExpectedTranspiledDataDir()
@@ -952,4 +954,11 @@ class VueKolarTranspilerTest {
     doTest()
   }
 
+}
+
+private class UseDefaultTypesRoot :
+  PolySymbolsTestConfigurator {
+  override fun configure(fixture: CodeInsightTestFixture) {
+    VueTranspilerTestMixin.setUseDefaultTypesRoot(true, fixture.testRootDisposable)
+  }
 }

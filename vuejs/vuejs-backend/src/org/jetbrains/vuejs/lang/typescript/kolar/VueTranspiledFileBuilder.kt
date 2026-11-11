@@ -26,8 +26,10 @@ internal const val TRANSPILED_FILE_GIST_VERSION: Int = 8
 
 @Service(Service.Level.APP)
 class VueTranspiledFileBuilder {
-  private val plugin: VueLanguagePlugin =
-    VueTsxPlugin(VueCompilerOptions())
+  private val plugin: VueLanguagePlugin = run {
+    val typesRoot = VueCompilerOptionsHelper.getTypesRoot()
+    VueTsxPlugin(VueCompilerOptions(typesRoot = typesRoot))
+  }
 
   private val transpiledFileGist: PsiFileGist<TranspiledFile> =
     GistManager.getInstance().newPsiFileGist(
