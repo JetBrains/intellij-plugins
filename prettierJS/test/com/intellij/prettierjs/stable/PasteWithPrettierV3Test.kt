@@ -7,49 +7,53 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
-import com.intellij.prettierjs.PrettierJSTestUtil
+import com.intellij.prettierjs.stable.PrettierPackageLockFixture.Companion.prettierPackageLockFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.runInEdtAndWait
+import org.junit.jupiter.api.Test
 import java.awt.datatransfer.StringSelection
 
+@TestApplication
 @TestNpmPackage(PRETTIER_3_8_1_TEST_PACKAGE_SPEC)
-class PasteWithPrettierV3Test : PrettierPackageLockTest() {
+class PasteWithPrettierV3Test {
+  private val prettier by prettierPackageLockFixture("paste")
 
-  override fun setUp() {
-    super.setUp()
-    myFixture.testDataPath = PrettierJSTestUtil.getTestDataPath() + "paste"
-  }
-
-  fun testRunPrettierOnPaste() = withInstallation {
+  @Test
+  fun testRunPrettierOnPaste(): Unit = prettier.withInstallation {
     configureRunOnPaste({
-                          val configuration = PrettierConfiguration.getInstance(project)
+                          val configuration = PrettierConfiguration.getInstance(prettier.project)
                           configuration.state.configurationMode = ConfigurationMode.AUTOMATIC
                         }) { doTestPasteAction() }
   }
 
-  fun testRunPrettierOnPasteManual() = withInstallation {
+  @Test
+  fun testRunPrettierOnPasteManual(): Unit = prettier.withInstallation {
     configureRunOnPaste({
-                          val configuration = PrettierConfiguration.getInstance(project)
+                          val configuration = PrettierConfiguration.getInstance(prettier.project)
                           configuration.state.configurationMode = ConfigurationMode.MANUAL
                           configuration.state.runOnReformat = false
                         }) { doTestPasteAction() }
   }
 
-  fun testRunPrettierOnPasteWithAutoImport() = withInstallation {
+  @Test
+  fun testRunPrettierOnPasteWithAutoImport(): Unit = prettier.withInstallation {
     configureRunOnPaste({
-                          val configuration = PrettierConfiguration.getInstance(project)
+                          val configuration = PrettierConfiguration.getInstance(prettier.project)
                           configuration.state.configurationMode = ConfigurationMode.AUTOMATIC
                         }) {
-      val dirName = getTestName(true)
-      myFixture.configureFromTempProjectFile("source.js")
-      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
-      myFixture.configureFromTempProjectFile("toReformat.js")
-      myFixture.pasteAndWaitJSCopyPasteService()
-      myFixture.checkResultByFile("$dirName/toReformat_after.js")
+      val dirName = prettier.getTestName(true)
+      prettier.fixture.configureFromTempProjectFile("source.js")
+      runInEdtAndWait { prettier.fixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY) }
+      prettier.fixture.configureFromTempProjectFile("toReformat.js")
+      runInEdtAndWait { prettier.fixture.pasteAndWaitJSCopyPasteService() }
+      prettier.fixture.checkResultByFile("$dirName/toReformat_after.js")
     }
   }
 
-  fun testRunPrettierOnPasteInsidePrettierIgnoredClass() = withInstallation {
+  @Test
+  fun testRunPrettierOnPasteInsidePrettierIgnoredClass(): Unit = prettier.withInstallation {
     configureRunOnPaste({
-                          val configuration = PrettierConfiguration.getInstance(project)
+                          val configuration = PrettierConfiguration.getInstance(prettier.project)
                           configuration.state.configurationMode = ConfigurationMode.AUTOMATIC
                         }) {
       doTestPasteAction("    /** AAA_003 */   bbb_002  =  String(Index({ unique: true, isUUID:true }))\n")
@@ -57,7 +61,7 @@ class PasteWithPrettierV3Test : PrettierPackageLockTest() {
   }
 
   private fun configureRunOnPaste(configure: Runnable, runnable: Runnable) {
-    val configuration = PrettierConfiguration.getInstance(project)
+    val configuration = PrettierConfiguration.getInstance(prettier.project)
     val runOnPaste = configuration.state.runOnPaste
     val configurationMode = configuration.state.configurationMode
 
@@ -66,11 +70,11 @@ class PasteWithPrettierV3Test : PrettierPackageLockTest() {
 
     // Warm up the Prettier language service (starts Node.js process) before paste action.
     // Without this, the service cold start on Windows can cause formatting to fail.
-    warmUpPrettierService(myFixture.findFileInTempDir("package.json") ?: myFixture.tempDirFixture.getFile(".")!!)
+    prettier.warmUpPrettierService(prettier.fixture.findFileInTempDir("package.json") ?: prettier.fixture.tempDirFixture.getFile(".")!!)
 
     try {
       // Test data already copied by withInstallation
-      myFixture.tempDirFixture.copyAll(getNodePackage().systemIndependentPath, "node_modules/prettier")
+      prettier.fixture.tempDirFixture.copyAll(prettier.nodePackage.systemIndependentPath, "node_modules/prettier")
 
       runnable.run()
     }
@@ -90,13 +94,13 @@ class PasteWithPrettierV3Test : PrettierPackageLockTest() {
   }
 
   private fun doTestPasteAction(textToPaste: String) {
-    val dirName = getTestName(true)
-    myFixture.configureFromTempProjectFile("toReformat.js")
+    val dirName = prettier.getTestName(true)
+    prettier.fixture.configureFromTempProjectFile("toReformat.js")
 
     // Set up clipboard with content to paste
     CopyPasteManager.getInstance().setContents(StringSelection(textToPaste))
-    myFixture.pasteAndWaitJSCopyPasteService()
+    runInEdtAndWait { prettier.fixture.pasteAndWaitJSCopyPasteService() }
     // Check result
-    myFixture.checkResultByFile("$dirName/toReformat_after.js")
+    prettier.fixture.checkResultByFile("$dirName/toReformat_after.js")
   }
 }

@@ -5,95 +5,109 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.prettierjs.PrettierJSTestUtil
+import com.intellij.prettierjs.stable.PrettierPackageLockFixture.Companion.prettierPackageLockFixture
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.LineSeparator
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 /**
  * Generic base for Prettier formatting tests across different Prettier versions.
  *
  * Subclasses must be annotated with [@TestNpmPackage][com.intellij.lang.javascript.modules.TestNpmPackage].
  */
-abstract class ReformatWithPrettierGenericTest : PrettierPackageLockTest() {
-  override fun setUp() {
-    super.setUp()
-    myFixture.testDataPath = PrettierJSTestUtil.getTestDataPath() + "reformat"
-  }
+abstract class ReformatWithPrettierGenericTest {
+  protected val prettier by prettierPackageLockFixture()
 
   // Basic Formatting Tests - Most likely to catch version incompatibilities
 
-  fun testWithoutConfig() = withInstallation {
-    doReformatFile("js")
+  @Test
+  fun testWithoutConfig(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("js")
   }
 
-  fun testTypeScriptWithoutConfig() = withInstallation {
-    doReformatFile("ts")
+  @Test
+  fun testTypeScriptWithoutConfig(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("ts")
   }
 
-  fun testWithPackageJsonConfig() = withInstallation {
-    doReformatFile("js")
+  @Test
+  fun testWithPackageJsonConfig(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("js")
   }
 
   // File Detection Tests
 
-  fun testJsonFileDetectedByExtension() = withInstallation {
-    doReformatFile("json")
+  @Test
+  fun testJsonFileDetectedByExtension(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("json")
   }
 
-  fun testFileDetectedByShebangLine() = withInstallation {
-    doReformatFile("test", "")
+  @Test
+  fun testFileDetectedByShebangLine(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("test", "")
   }
 
   // Config Resolution Tests - Config parsing may change between versions
 
-  fun testResolveConfig() = withInstallation {
-    doReformatFile("webc")
+  @Test
+  fun testResolveConfig(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("webc")
   }
 
-  fun testWithEditorConfig() = withInstallation {
-    doReformatFile("js")
+  @Test
+  fun testWithEditorConfig(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("js")
   }
 
   // Error Handling Tests - Error message format often changes
 
-  fun testInvalidConfigErrorReported() = withInstallation {
-    assertError({ s -> s.contains("tabWidth") }) { doReformatFile("js") }
+  @Test
+  fun testInvalidConfigErrorReported(): Unit = prettier.withInstallation {
+    prettier.assertError({ s -> s.contains("tabWidth") }) { prettier.doReformatFile("js") }
   }
 
-  fun testNotSupportedFile() = withInstallation {
-    assertError({ s -> s.contains("unsupported type") }) { doReformatFile("test", "txt") }
+  @Test
+  fun testNotSupportedFile(): Unit = prettier.withInstallation {
+    prettier.assertError({ s -> s.contains("unsupported type") }) { prettier.doReformatFile("test", "txt") }
   }
 
   // Caret Position Tests - formatWithCursor API may change
 
-  fun testCaretPositionReformat() = withInstallation {
-    configureRunOnReformat { doTestEditorReformat("") }
+  @Test
+  fun testCaretPositionReformat(): Unit = prettier.withInstallation {
+    prettier.configureRunOnReformat { prettier.doTestEditorReformat("") }
   }
 
   // Line Separator Tests
 
-  fun testWithCrlf() = withInstallation {
-    doReformatFile<Throwable>("toReformat", "js") {
-      JSTestUtils.ensureLineSeparators(myFixture.file, LineSeparator.CRLF)
+  @Test
+  fun testWithCrlf(): Unit = prettier.withInstallation {
+    prettier.doReformatFile<Throwable>("toReformat", "js") {
+      JSTestUtils.ensureLineSeparators(prettier.fixture.file, LineSeparator.CRLF)
     }
-    FileDocumentManager.getInstance().saveAllDocuments()
-    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().virtualFile)))
+    runInEdtAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(prettier.file.virtualFile)))
   }
 
   // Ignored File Tests
 
-  fun testIgnoredFile() = withInstallation {
-    doReformatFile("toReformat", "js")
+  @Test
+  fun testIgnoredFile(): Unit = prettier.withInstallation {
+    prettier.doReformatFile("toReformat", "js")
   }
 
   // On-Save Tests
 
-  fun testRunPrettierOnSaveDocument() = withInstallation {
-    configureRunOnSave { doTestSaveAction("SaveDocument", "") }
+  @Test
+  fun testRunPrettierOnSaveDocument(): Unit = prettier.withInstallation {
+    prettier.configureRunOnSave { prettier.doTestSaveAction("SaveDocument", "") }
   }
 
   // On-Reformat Tests
 
-  fun testRunPrettierOnCodeReformat() = withInstallation {
-    configureRunOnReformat { doTestEditorReformat("") }
+  @Test
+  fun testRunPrettierOnCodeReformat(): Unit = prettier.withInstallation {
+    prettier.configureRunOnReformat { prettier.doTestEditorReformat("") }
   }
 }

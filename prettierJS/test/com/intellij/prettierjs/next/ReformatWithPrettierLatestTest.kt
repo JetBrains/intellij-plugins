@@ -6,24 +6,31 @@ import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.TestNpmPackage
-import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest
+import com.intellij.lang.javascript.nodejs.library.yarn.YarnPnpIntegrationFixture
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.prettierjs.PrettierUtil
 import com.intellij.prettierjs.stable.PRETTIER_LATEST_TEST_PACKAGE_SPEC
 import com.intellij.prettierjs.stable.ReformatWithPrettierGenericTest
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
 /**
  * Prettier tests running against the latest version (prettier@latest).
  * Note: These tests may fail when Prettier releases breaking changes.
  */
+@TestApplication
 @TestNpmPackage(PRETTIER_LATEST_TEST_PACKAGE_SPEC)
 class ReformatWithPrettierLatestTest : ReformatWithPrettierGenericTest() {
-  fun testNextVersion() = withInstallation {
-    doReformatFile<Throwable>("toReformat", "js") {
-      performNpmInstallForPackageJson("package.json")
-      val nextPrettier = NodePackage(myFixture.tempDirPath + "/node_modules/prettier")
-      PrettierConfiguration.getInstance(project).withLinterPackage(NodePackageRef.create(nextPrettier))
+  @Test
+  fun testNextVersion(): Unit = prettier.withInstallation {
+    prettier.doReformatFile<Throwable>("toReformat", "js") {
+      prettier.performNpmInstallForPackageJson("package.json")
+      val nextPrettier = NodePackage(prettier.fixture.tempDirPath + "/node_modules/prettier")
+      PrettierConfiguration.getInstance(prettier.project).withLinterPackage(NodePackageRef.create(nextPrettier))
     }
   }
 
@@ -31,30 +38,31 @@ class ReformatWithPrettierLatestTest : ReformatWithPrettierGenericTest() {
    * Tests Prettier integration with Yarn Berry PnP (Plug'n'Play).
    * Installs Yarn globally, configures Yarn Berry, and uses YarnPnpNodePackage for resolution.
    */
-  fun testYarnPrettierBasicExample() = withInstallation {
-    doReformatFile<Throwable>("toReformat", "js") {
-      val file = myFixture.findFileInTempDir("toReformat.js")
+  @Test
+  fun testYarnPrettierBasicExample(): Unit = prettier.withInstallation {
+    prettier.doReformatFile<Throwable>("toReformat", "js") {
+      val file = prettier.fixture.findFileInTempDir("toReformat.js")
       val root = file.parent
-      val yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(nodeJsAppRule)
-      VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, yarnPkg.systemIndependentPath)
-      AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(project, yarnPkg, nodeJsAppRule, root)
+      val yarnPkg = YarnPnpIntegrationFixture.installYarnGlobally(prettier.nodeJsAppRule)
+      VfsRootAccess.allowRootAccess(prettier.testRootDisposable, yarnPkg.systemIndependentPath)
+      YarnPnpIntegrationFixture.configureYarnBerryAndRunYarnInstall(prettier.project, yarnPkg, prettier.nodeJsAppRule, root)
       configureYarnPrettierPackage(root)
     }
   }
 
   private fun configureYarnPrettierPackage(root: com.intellij.openapi.vfs.VirtualFile) {
-    val configuration = PrettierConfiguration.getInstance(project)
+    val configuration = PrettierConfiguration.getInstance(prettier.project)
     val packageJsonFile = PackageJsonUtil.findChildPackageJsonFile(root)
-    assertNotNull("package.json not found in $root", packageJsonFile)
+    assertNotNull(packageJsonFile, "package.json not found in $root")
     val yarnPrettierPkg = YarnPnpNodePackage.create(
-      project,
+      prettier.project,
       packageJsonFile!!,
       PrettierUtil.PACKAGE_NAME, false, false
     )
     assertNotNull(yarnPrettierPkg)
     configuration.withLinterPackage(NodePackageRef.create(yarnPrettierPkg!!))
     val readYarnPrettierPkg = configuration.getPackage(null)
-    assertInstanceOf(readYarnPrettierPkg, YarnPnpNodePackage::class.java)
+    assertInstanceOf(YarnPnpNodePackage::class.java, readYarnPrettierPkg)
     assertEquals("yarn:package.json:prettier", readYarnPrettierPkg.systemIndependentPath)
   }
 }

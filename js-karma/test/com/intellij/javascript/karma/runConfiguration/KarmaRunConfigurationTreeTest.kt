@@ -8,10 +8,13 @@ import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.Faile
 import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.Location
 import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.OutputError
 import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.PassedTest
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
 @IJIgnore(issue = "For local development usage. Will be enabled on CI after setting up headless Chrome on CI for these kind of tests")
+@TestApplication
 class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
-
+  @Test
   fun `test jasmineFailedTest`() {
     doTreeTest(
       {
@@ -36,6 +39,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
     )
   }
 
+  @Test
   fun `test jasmineNavigateFromTree`() {
     val baseLocation = Location("/src/user.spec.js")
     doTreeTest(
@@ -60,6 +64,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
     )
   }
 
+  @Test
   fun `test qUnitNavigateFromTree`() {
     val baseLocation = Location("/src/user.spec.js", shouldVerifyTestName = false)
     doTreeTest(
@@ -84,6 +89,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
     )
   }
 
+  @Test
   fun `test scopeJasmineSuite`() {
     doTreeTest(
       {
@@ -106,6 +112,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
     )
   }
 
+  @Test
   fun `test scopeJasmineTest`() {
     doTreeTest(
       {
@@ -128,6 +135,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
   }
 
   // WEB-52234
+  @Test
   fun `test asyncKarmaConfiguration`() {
     doTreeTest(
       {
@@ -148,6 +156,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
   }
 
   // WEB-73647
+  @Test
   fun `test notAsyncKarmaConfigCompatibleKarmaVersion`() {
     doTreeTest(
       {
@@ -168,6 +177,7 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
   }
 
   // WEB-73868
+  @Test
   fun `test karmaConfigV1_5_0`() {
     doTreeTest(
       {

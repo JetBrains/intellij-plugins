@@ -1,21 +1,21 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs.stable
 
 import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptionsBase
 import com.intellij.codeInsight.actions.onSave.OptimizeImportsOnSaveOptions
-import com.intellij.lang.javascript.JavaScriptFileType
-import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.fileTypes.FileType
+import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
-import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
+import com.intellij.lang.javascript.JavaScriptFileType
+import com.intellij.lang.javascript.modules.JSNodeInterpreterFixture
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.lang.javascript.modules.TestNpmPackageInstaller
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -28,10 +28,14 @@ import com.intellij.prettierjs.PrettierLanguageServiceManager
 import com.intellij.prettierjs.PrettierUtil
 import com.intellij.prettierjs.ReformatWithPrettierAction
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.fixture.TestFixture
+import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
 import com.intellij.util.ThrowableRunnable
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
-import java.nio.file.Path
+import java.lang.reflect.Method
 
 /**
  * Prettier version constants for tests.
@@ -51,28 +55,28 @@ const val PRETTIER_LATEST_TEST_PACKAGE_SPEC: String = "prettier@latest"
 const val PRETTIER_VERSION_PLACEHOLDER: String = "\$PRETTIER_VERSION\$"
 
 /**
- * Base class for Prettier tests using cached package-lock.json files.
+ * The fixture of the Prettier tests that install packages per test from a cached `package-lock.json`.
+ * Create it with [prettierPackageLockFixture].
  *
- * Subclasses must be annotated with [@TestNpmPackage][TestNpmPackage]("prettier@X.Y.Z").
+ * The test class must be annotated with [@TestNpmPackage][TestNpmPackage]("prettier@X.Y.Z").
+ * The fixture installs no global package.
  */
-abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
+class PrettierPackageLockFixture(
+  fixture: CodeInsightTestFixture,
+  testClass: Class<*>,
+  testMethod: Method,
+  options: JSTempDirFixtureOptions,
+) : JSNodeInterpreterFixture(fixture, testClass, testMethod, options) {
 
-  protected var localNodePackage: NodePackage? = null
-  protected var packagesInstalled: Boolean = false
+  private var localNodePackage: NodePackage? = null
+  private var packagesInstalled: Boolean = false
 
-  override fun getGlobalPackageVersionsToInstall(): Map<String, String> = emptyMap()
+  /** The locally installed Prettier package. It is `getNodePackage()` of the JUnit 3 base. */
+  val nodePackage: NodePackage
+    get() = localNodePackage ?: error("NodePackage not initialized. Call setUp() first.")
 
-  override fun setUpForTempRoot(rootDir: Path) {
-    // Skip parent implementation that installs global packages
-    // We'll install packages locally on-demand in tests
-  }
-
-  override fun setUp() {
-    super.setUp()
-    myFixture.testDataPath = PrettierJSTestUtil.getTestDataPath() + "reformat"
-    packagesInstalled = false
-  }
-
+  /** The file of [fixture]. It is the `getFile()` override of the JUnit 3 base. */
+  val file: PsiFile get() = fixture.file
 
   /**
    * Wrapper for tests that need default installation (packages at root).
@@ -85,21 +89,21 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
    *
    * Example:
    * ```
-   * fun testWithoutConfig() = withInstallation {
-   *   doReformatFile("js")
+   * fun testWithoutConfig() = prettier.withInstallation {
+   *   prettier.doReformatFile("js")
    * }
    * ```
    */
-  protected fun <T> withInstallation(block: () -> T): T {
+  fun <T> withInstallation(block: () -> T): T {
     // Copy test data first
     val dirName = getTestName(true)
-    myFixture.copyDirectoryToProject(dirName, "")
-    
+    fixture.copyDirectoryToProject(dirName, "")
+
     // Replace version placeholders in package.json files before installation
-    val projectDir = myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
+    val projectDir = fixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
     replacePrettierVersionPlaceholders(projectDir)
     installPackages()
-    
+
     return block()
   }
 
@@ -111,23 +115,23 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
    *
    * Example:
    * ```
-   * fun testAutoconfigured() = withSubdirInstallation("autoconfigured", "subdir") {
-   *   myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("subdir/formatted.js"))
-   *   runReformatAction()
-   *   myFixture.checkResultByFile("autoconfigured/subdir/formatted_after.js")
+   * fun testAutoconfigured() = prettier.withSubdirInstallation("autoconfigured", "subdir") {
+   *   prettier.fixture.configureFromExistingVirtualFile(prettier.fixture.findFileInTempDir("subdir/formatted.js"))
+   *   prettier.runReformatAction()
+   *   prettier.fixture.checkResultByFile("autoconfigured/subdir/formatted_after.js")
    * }
    * ```
    */
-  protected fun <T> withSubdirInstallation(
+  fun <T> withSubdirInstallation(
     testDataSubdir: String,
     installSubdir: String,
-    block: () -> T
+    block: () -> T,
   ): T {
     // Copy test data first so subdirectory exists
-    myFixture.copyDirectoryToProject(testDataSubdir, "")
+    fixture.copyDirectoryToProject(testDataSubdir, "")
 
     // Replace version placeholders in the subdirectory before installation
-    val projectDir = myFixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
+    val projectDir = fixture.tempDirFixture.getFile(".") ?: error("Project directory not found")
     val subdir = projectDir.findChild(installSubdir) ?: error("Subdirectory not found: $installSubdir")
     replacePrettierVersionPlaceholders(subdir)
     installPackages(installSubdir)
@@ -137,8 +141,8 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
 
   /**
    * Installs prettier packages and configures the Prettier plugin.
-   * This is called automatically by test wrapper functions, or can be called manually if needed.
-   * 
+   * This is called automatically by test wrapper functions.
+   *
    * @param installSubdir Optional subdirectory where packages should be installed (relative to project root)
    */
   private fun installPackages(installSubdir: String? = null) {
@@ -147,16 +151,19 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
     packagesInstalled = true
 
-    val projectDir = myFixture.tempDirFixture.getFile(".")
+    val projectDir = fixture.tempDirFixture.getFile(".")
                      ?: error("Project directory not found")
 
-    TestNpmPackageInstaller(project, myFixture, nodeJsAppRule, copyPackageJson = false)
-      .installForTest(this::class.java, projectDir, installSubdir)
+    runInEdtAndWait {
+      TestNpmPackageInstaller(project, fixture, nodeJsAppRule, copyPackageJson = false)
+        .installForTest(testClass, projectDir, installSubdir)
+    }
 
     // Determine where prettier was installed
     val installDir = if (installSubdir != null) {
       projectDir.findChild(installSubdir) ?: error("Install subdirectory not found: $installSubdir")
-    } else {
+    }
+    else {
       projectDir
     }
 
@@ -169,22 +176,13 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
       "Expected prettier package to exist at $prettierPath"
     }
 
-    val nodePackage = NodePackage(prettierPath.toString())
-    localNodePackage = nodePackage
-    VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, nodePackage.systemDependentPath)
+    val prettierPackage = NodePackage(prettierPath.toString())
+    localNodePackage = prettierPackage
+    VfsRootAccess.allowRootAccess(testRootDisposable, prettierPackage.systemDependentPath)
 
     // Configure Prettier to use the locally installed package
     PrettierConfiguration.getInstance(project)
-      .withLinterPackage(NodePackageRef.create(nodePackage))
-  }
-
-  override fun tearDown() {
-    localNodePackage = null
-    super.tearDown()
-  }
-
-  protected fun getNodePackage(): NodePackage {
-    return localNodePackage ?: error("NodePackage not initialized. Call setUp() first.")
+      .withLinterPackage(NodePackageRef.create(prettierPackage))
   }
 
   /**
@@ -194,19 +192,19 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
    * causing it to silently return default settings.
    * Call this before querying code style settings to ensure the service is ready.
    */
-  protected fun warmUpPrettierService(contextFile: VirtualFile) {
-    val nodePackage = getNodePackage()
-    val service = PrettierLanguageService.getInstance(project, contextFile, nodePackage)
+  fun warmUpPrettierService(contextFile: VirtualFile) {
+    val prettierPackage = nodePackage
+    val service = PrettierLanguageService.getInstance(project, contextFile, prettierPackage)
     // Just wait for the result — the goal is to start the Node.js process, not to validate the config.
-    service.resolveConfig(contextFile.path, nodePackage).get()
+    service.resolveConfig(contextFile.path, prettierPackage).get()
   }
 
   /**
    * Replaces [PRETTIER_VERSION_PLACEHOLDER] in all package.json files under the given directory
    * with the actual prettier version from the @TestNpmPackage annotation.
    */
-  protected fun replacePrettierVersionPlaceholders(rootDir: VirtualFile) {
-    val annotation = this::class.java.getAnnotation(TestNpmPackage::class.java)
+  fun replacePrettierVersionPlaceholders(rootDir: VirtualFile) {
+    val annotation = testClass.getAnnotation(TestNpmPackage::class.java)
                      ?: error("Test class must be annotated with @TestNpmPackage")
 
     val packageSpec = annotation.packageSpec
@@ -227,7 +225,7 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
 
     if (filesToUpdate.isNotEmpty()) {
-      WriteAction.run<Throwable> {
+      WriteAction.runAndWait<Throwable> {
         for ((file, newContent) in filesToUpdate) {
           VfsUtil.saveText(file, newContent)
         }
@@ -239,53 +237,52 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
    * Moves an installed package from the root `node_modules` into the `node_modules` of [targetDir].
    * npm hoists every package into the root. The move gives a nested package its own copy, as pnpm does.
    */
-  protected fun moveInstalledPackage(packageName: String, targetDir: String) {
-    val installedPackage = myFixture.findFileInTempDir("${NodeModuleUtil.NODE_MODULES}/$packageName")
+  fun moveInstalledPackage(packageName: String, targetDir: String) {
+    val installedPackage = fixture.findFileInTempDir("${NodeModuleUtil.NODE_MODULES}/$packageName")
                            ?: error("Package $packageName is not installed")
-    val target = myFixture.findFileInTempDir(targetDir) ?: error("Directory $targetDir not found")
-    WriteAction.run<Throwable> {
+    val target = fixture.findFileInTempDir(targetDir) ?: error("Directory $targetDir not found")
+    WriteAction.runAndWait<Throwable> {
       installedPackage.move(this, VfsUtil.createDirectoryIfMissing(target, NodeModuleUtil.NODE_MODULES))
     }
   }
 
-  protected fun doReformatFile(extension: String) {
+  fun doReformatFile(extension: String) {
     doReformatFile("toReformat", extension)
   }
 
-  protected fun doReformatFile(fileNamePrefix: String, extension: String) {
+  fun doReformatFile(fileNamePrefix: String, extension: String) {
     doReformatFile<Throwable>(fileNamePrefix, extension, null)
   }
 
-  protected fun <T : Throwable> doReformatFile(
+  fun <T : Throwable> doReformatFile(
     fileNamePrefix: String,
     extension: String,
     configureFixture: ThrowableRunnable<T>?,
   ) {
     val dirName = getTestName(true)
     val extensionWithDot = if (StringUtil.isEmpty(extension)) "" else ".$extension"
-    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir(fileNamePrefix + extensionWithDot))
+    fixture.configureFromExistingVirtualFile(fixture.findFileInTempDir(fileNamePrefix + extensionWithDot))
     configureFixture?.run()
     runReformatAction()
-    myFixture.checkResultByFile("$dirName/$fileNamePrefix" + "_after" + extensionWithDot)
+    fixture.checkResultByFile("$dirName/$fileNamePrefix" + "_after" + extensionWithDot)
   }
 
-  protected fun runReformatAction() {
-    myFixture.testAction(ReformatWithPrettierAction())
+  fun runReformatAction() {
+    runInEdtAndWait {
+      fixture.testAction(ReformatWithPrettierAction())
+    }
   }
 
-  protected fun assertError(checkException: Condition<String>, runnable: Runnable) {
+  fun assertError(checkException: Condition<String>, runnable: Runnable) {
     runnable.run()
 
     val manager = PrettierLanguageServiceManager.getInstance(project)
     val service = manager.jsLinterServices.values.firstOrNull()
     val error = service?.service?.error
-    Assert.assertTrue(
-      "Expected condition to be valid for exception: ${error?.message}",
-      checkException.value(error?.message)
-    )
+    assertTrue(checkException.value(error?.message), "Expected condition to be valid for exception: ${error?.message}")
   }
 
-  protected fun configureRunOnSave(runnable: Runnable) {
+  fun configureRunOnSave(runnable: Runnable) {
     val configuration = PrettierConfiguration.getInstance(project)
     val runOnSave = configuration.state.runOnSave
     val runOnReformat = configuration.state.runOnReformat
@@ -297,7 +294,7 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
 
     try {
       // Copy prettier to node_modules (test data already copied by withInstallation)
-      myFixture.tempDirFixture.copyAll(getNodePackage().systemIndependentPath, "node_modules/prettier")
+      fixture.tempDirFixture.copyAll(nodePackage.systemIndependentPath, "node_modules/prettier")
 
       runnable.run()
     }
@@ -316,10 +313,10 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
    * Registers a transient `FormatOnSaveOptionsBase.DefaultsProvider` that adds JavaScript
    * to the on-save 'Optimize imports' file-type set. The extension is registered BEFORE the
    * first `OptimizeImportsOnSaveOptions.getInstance(project)` call so the service's State
-   * picks it up at construction time. The extension is removed via `myFixture.testRootDisposable`.
+   * picks it up at construction time. The extension is removed via `testRootDisposable`.
    */
-  protected fun configureRunOptimizeImportsAndPrettierOnSave(runnable: Runnable) {
-    OPTIMIZE_IMPORTS_DEFAULTS_EP.point.registerExtension(JsOptimizeImportsOnSaveDefaults, myFixture.testRootDisposable)
+  fun configureRunOptimizeImportsAndPrettierOnSave(runnable: Runnable) {
+    OPTIMIZE_IMPORTS_DEFAULTS_EP.point.registerExtension(JsOptimizeImportsOnSaveDefaults, testRootDisposable)
 
     val configuration = PrettierConfiguration.getInstance(project)
     val origRunOnSave = configuration.state.runOnSave
@@ -337,7 +334,7 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
 
     try {
       // Copy prettier to node_modules (test data already copied by withInstallation)
-      myFixture.tempDirFixture.copyAll(getNodePackage().systemIndependentPath, "node_modules/prettier")
+      fixture.tempDirFixture.copyAll(nodePackage.systemIndependentPath, "node_modules/prettier")
 
       runnable.run()
     }
@@ -350,32 +347,23 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
-  private companion object {
-    val OPTIMIZE_IMPORTS_DEFAULTS_EP = ExtensionPointName.create<FormatOnSaveOptionsBase.DefaultsProvider>(
-      "com.intellij.formatOnSaveOptions.defaultsProvider"
-    )
-
-    val JsOptimizeImportsOnSaveDefaults = object : FormatOnSaveOptionsBase.DefaultsProvider {
-      override fun getFileTypesWithOptimizeImportsOnSaveByDefault(): Collection<FileType> =
-        listOf(JavaScriptFileType)
-    }
-  }
-
-  protected fun doTestSaveAction(actionId: String, subDir: String) {
+  fun doTestSaveAction(actionId: String, subDir: String) {
     doTestSaveAction(actionId, subDir, null)
   }
 
-  protected fun doTestSaveAction(actionId: String, subDir: String, configureFile: Runnable?) {
+  fun doTestSaveAction(actionId: String, subDir: String, configureFile: Runnable?) {
     val dirName = getTestName(true)
-    myFixture.configureFromTempProjectFile(subDir + "toReformat.js")
+    fixture.configureFromTempProjectFile(subDir + "toReformat.js")
     configureFile?.run()
-    myFixture.type(' ')
-    myFixture.performEditorAction(actionId)
-    ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(myFixture.project)
-    myFixture.checkResultByFile("$dirName/$subDir" + "toReformat_after.js")
+    runInEdtAndWait {
+      fixture.type(' ')
+      fixture.performEditorAction(actionId)
+      ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(fixture.project)
+    }
+    fixture.checkResultByFile("$dirName/$subDir" + "toReformat_after.js")
   }
 
-  protected fun configureRunOnReformat(runnable: Runnable) {
+  fun configureRunOnReformat(runnable: Runnable) {
     val configuration = PrettierConfiguration.getInstance(project)
     val origRunOnReformat = configuration.state.runOnReformat
     val configurationMode = configuration.state.configurationMode
@@ -385,7 +373,7 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
 
     try {
       // Copy prettier to node_modules (test data already copied by withInstallation)
-      myFixture.tempDirFixture.copyAll(getNodePackage().systemIndependentPath, "node_modules/prettier")
+      fixture.tempDirFixture.copyAll(nodePackage.systemIndependentPath, "node_modules/prettier")
 
       runnable.run()
     }
@@ -395,7 +383,7 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
-  protected fun configureMode(mode: PrettierConfiguration.ConfigurationMode, runnable: Runnable) {
+  fun configureMode(mode: PrettierConfiguration.ConfigurationMode, runnable: Runnable) {
     val configuration = PrettierConfiguration.getInstance(project)
     val configurationMode = configuration.state.configurationMode
 
@@ -409,19 +397,21 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
-  protected fun doTestEditorReformat(subDir: String) {
+  fun doTestEditorReformat(subDir: String) {
     doTestEditorReformat(subDir, null)
   }
 
-  protected fun doTestEditorReformat(subDir: String, configureFile: Runnable?) {
+  fun doTestEditorReformat(subDir: String, configureFile: Runnable?) {
     val dirName = getTestName(true)
-    myFixture.configureFromTempProjectFile(subDir + "toReformat.js")
+    fixture.configureFromTempProjectFile(subDir + "toReformat.js")
     configureFile?.run()
-    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT)
-    myFixture.checkResultByFile("$dirName/$subDir" + "toReformat_after.js")
+    runInEdtAndWait {
+      fixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT)
+    }
+    fixture.checkResultByFile("$dirName/$subDir" + "toReformat_after.js")
   }
 
-  protected fun configureFormatFilesOutsideDependencyScope(enabled: Boolean, runnable: Runnable) {
+  fun configureFormatFilesOutsideDependencyScope(enabled: Boolean, runnable: Runnable) {
     val configuration = PrettierConfiguration.getInstance(project)
     val runOnSave = configuration.state.runOnSave
     val runOnReformat = configuration.state.runOnReformat
@@ -445,5 +435,31 @@ abstract class PrettierPackageLockTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
-  override fun getFile(): PsiFile = myFixture.file
+  companion object {
+    private val OPTIMIZE_IMPORTS_DEFAULTS_EP = ExtensionPointName.create<FormatOnSaveOptionsBase.DefaultsProvider>(
+      "com.intellij.formatOnSaveOptions.defaultsProvider"
+    )
+
+    private val JsOptimizeImportsOnSaveDefaults = object : FormatOnSaveOptionsBase.DefaultsProvider {
+      override fun getFileTypesWithOptimizeImportsOnSaveByDefault(): Collection<FileType> =
+        listOf(JavaScriptFileType)
+    }
+
+    /**
+     * Creates a [PrettierPackageLockFixture] on a new project, for the test data in [testDataDir] of the Prettier test data.
+     * [nodeJsAppRule] replaces an override of `configureInterpreterVersion()`; `null` keeps the default Node.js version.
+     * Declare the result as an instance property, so that each test gets its own project.
+     */
+    fun prettierPackageLockFixture(
+      testDataDir: String = "reformat",
+      nodeJsAppRule: NodeJsAppRule? = null,
+    ): TestFixture<PrettierPackageLockFixture> {
+      val options = JSTempDirFixtureOptions(PrettierJSTestUtil.getTestDataPath() + testDataDir).withoutGlobalInstall()
+      return jsTempDirFixture(
+        "prettierPackageLockFixture",
+        if (nodeJsAppRule != null) options.withNodeVersion(nodeJsAppRule) else options,
+        ::PrettierPackageLockFixture,
+      )
+    }
+  }
 }

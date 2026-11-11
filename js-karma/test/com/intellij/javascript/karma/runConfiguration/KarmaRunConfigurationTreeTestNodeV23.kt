@@ -6,12 +6,13 @@ import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.karma.runConfiguration.infrastructure.KarmaRunConfigurationTestsBase
 import com.intellij.javascript.karma.scope.KarmaScopeKind
 import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.FailedTest
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
 @IJIgnore(issue = "For local development usage. Will be enabled on CI after setting up headless Chrome on CI for these kind of tests")
-class KarmaRunConfigurationTreeTestNodeV23: KarmaRunConfigurationTestsBase() {
-
-  override fun configureInterpreterVersion(): NodeJsAppRule = NodeJsAppRule.LATEST_23
-
+@TestApplication
+class KarmaRunConfigurationTreeTestNodeV23: KarmaRunConfigurationTestsBase(NodeJsAppRule.LATEST_23) {
+  @Test
   fun `test failedTestInAngularNodejsV23`() {
     doTreeTest(
       {

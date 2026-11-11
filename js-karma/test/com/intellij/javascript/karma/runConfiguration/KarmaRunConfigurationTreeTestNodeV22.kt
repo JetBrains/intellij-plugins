@@ -6,12 +6,14 @@ import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.karma.runConfiguration.infrastructure.KarmaRunConfigurationTestsBase
 import com.intellij.javascript.karma.scope.KarmaScopeKind
 import com.intellij.javascript.testFramework.runConfigurations.fixturesDsl.PassedTest
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Test
 
 @IJIgnore(issue = "For local development usage. Will be enabled on CI after setting up headless Chrome on CI for these kind of tests")
-class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase() {
-  override fun configureInterpreterVersion(): NodeJsAppRule = NodeJsAppRule.LATEST_22
-
+@TestApplication
+class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase(NodeJsAppRule.LATEST_22) {
   // WEB-73511
+  @Test
   fun `test angularV20`() {
     doTreeTest(
       {
@@ -35,6 +37,7 @@ class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase() {
 
   // WEB-75680
   // Test case for template project like `npx --yes --package @angular/cli@21 ng new angular-21-karma --standalone=true --test-runner=karma`
+  @Test
   fun `test angularV21NgTemplate`() {
     doTreeTest(
       {
@@ -53,6 +56,7 @@ class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase() {
   }
 
   // WEB-75680
+  @Test
   fun `test angularV21AndAngularDevkitBuildAngularPkg`() {
     doTreeTest(
       {
@@ -71,6 +75,7 @@ class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase() {
   }
 
   // WEB-76243
+  @Test
   fun `test angularV21AndKarmaTestBuilder`() {
     doTreeTest(
       {

@@ -27,14 +27,13 @@ import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests
 import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ThrowableRunnable
-import org.jetbrains.annotations.TestOnly
 import java.io.File
 import java.lang.reflect.Method
 import java.nio.file.Files
 
 /**
  * The linter fixture of the ESLint tests that install packages per test from a committed `package-lock.json` in
- * `testData/.../_package-locks-store`, mirroring [com.intellij.prettierjs.stable.PrettierPackageLockTest] but adapted to the
+ * `testData/.../_package-locks-store`, mirroring [com.intellij.prettierjs.stable.PrettierPackageLockFixture] but adapted to the
  * [LinterHighlightingFixture] highlighting flow. Create it with [eslintPackageLockFixture].
  *
  * The test class must be annotated with `@`[TestNpmPackage]`("eslint@X.Y.Z")`. The fixture installs no global package.
@@ -42,7 +41,6 @@ import java.nio.file.Files
  * annotated version, installs from the stored lock (strictly: a store miss for a pinned spec fails, see [TestNpmPackageInstaller]),
  * and points the ESLint configuration at the project-local `node_modules/eslint`.
  */
-@TestOnly
 class EslintPackageLockFixture(
   fixture: CodeInsightTestFixture,
   testClass: Class<*>,
@@ -243,7 +241,6 @@ class EslintPackageLockFixture(
      * Declare the result as an instance property, so that each test gets its own project.
      */
     @JvmStatic
-    @TestOnly
     fun eslintPackageLockFixture(basePath: String): TestFixture<EslintPackageLockFixture> =
       jsTempDirFixture(
         "eslintPackageLockFixture",

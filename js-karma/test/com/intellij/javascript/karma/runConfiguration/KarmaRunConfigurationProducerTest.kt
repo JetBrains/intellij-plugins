@@ -8,17 +8,24 @@ import com.intellij.javascript.karma.runConfiguration.infrastructure.KarmaRunCon
 import com.intellij.javascript.karma.scope.KarmaScopeKind
 import com.intellij.javascript.testFramework.runConfigurations.JsTestsRunConfigurationProducerTest
 import com.intellij.javascript.testFramework.runConfigurations.queries.FileQuery
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
+@TestApplication
 class KarmaRunConfigurationProducerTest:
-  JsTestsRunConfigurationProducerTest<KarmaRunConfigurationProducerTest.KarmaSettingsFixture, KarmaRunConfiguration, KarmaRunSettings.Builder>()
+  JsTestsRunConfigurationProducerTest<KarmaRunConfigurationProducerTest.KarmaSettingsFixture, KarmaRunConfiguration, KarmaRunSettings.Builder>(
+    JSTempDirFixtureOptions.forBasePath("/contrib/js-karma/testData/runConfiguration/configurationProducer")
+  )
 {
-  override fun getBasePath() = "/contrib/js-karma/testData/runConfiguration/configurationProducer"
-
   override fun getRunConfigurationClass(): Class<*>? = KarmaRunConfiguration::class.java
 
   override fun createRunConfigurationRunner(): KarmaRunConfigurationRunner = KarmaRunConfigurationRunner()
 
   // Jasmine
+  @Test
   fun `test forFile`() {
     assertDirOrFileRunConfigurationSettings(
       "Should have a suggest for file with tests",
@@ -32,6 +39,7 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  @Test
   fun `test guttersInFile`() {
     val fileQuery = FileQuery("src/user.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/user.spec.js", "karma.conf.js", workingDir = "")
@@ -69,6 +77,7 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  @Test
   fun `test guttersInFileWithoutTestName`() {
     val fileQuery = FileQuery("src/file-with-some-name.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/file-with-some-name.js", "karma.conf.js", workingDir = "")
@@ -86,6 +95,7 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  @Test
   fun `test forPsiElements`() {
     val fileQuery = FileQuery("src/user.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/user.spec.js", "karma.conf.js", workingDir = "")
@@ -122,6 +132,7 @@ class KarmaRunConfigurationProducerTest:
   }
 
   // Mocha TDD UI
+  @Test
   fun `test forFileMochaTdd`() {
     assertDirOrFileRunConfigurationSettings(
       "Should have a suggest for file with tests",
@@ -135,6 +146,7 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  @Test
   fun `test guttersInFileMochaTdd`() {
     val fileQuery = FileQuery("src/array.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/array.spec.js", "karma.conf.js", workingDir = "")
@@ -159,6 +171,7 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  @Test
   fun `test forPsiElementsMochaTdd`() {
     val fileQuery = FileQuery("src/array.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.SUITE, "src/array.spec.js", "karma.conf.js", workingDir = "")
@@ -185,6 +198,7 @@ class KarmaRunConfigurationProducerTest:
     )
   }
 
+  @Test
   fun `test guttersInFileQUnit`() {
     val fileQuery = FileQuery("src/user.spec.js")
     val baseSettingsFixture = KarmaSettingsFixture(KarmaScopeKind.TEST, "src/user.spec.js", "karma.conf.js", workingDir = "")
@@ -212,44 +226,44 @@ class KarmaRunConfigurationProducerTest:
     settingsFixture: KarmaSettingsFixture
   ) {
     val karmaRunConfiguration = configuration as? KarmaRunConfiguration
-    assertNotNull("$messageTracePrefix: Configuration has correct type", karmaRunConfiguration)
+    assertNotNull(karmaRunConfiguration, "$messageTracePrefix: Configuration has correct type")
 
     val settings = karmaRunConfiguration?.runSettings
-    assertNotNull("$messageTracePrefix: Configuration has settings", settings)
+    assertNotNull(settings, "$messageTracePrefix: Configuration has settings")
 
     settings?.let { karmaConfigSettings ->
       settingsFixture.workingDir?.let {
         assertEquals(
-          "$messageTracePrefix: Working dirs are same",
           makeProjectRelativePathAsAbsolute(it),
-          karmaConfigSettings.workingDirectorySystemIndependent
+          karmaConfigSettings.workingDirectorySystemIndependent,
+          "$messageTracePrefix: Working dirs are same"
         )
       }
       assertEquals(
-        "$messageTracePrefix: Test kind is same",
         settingsFixture.scopeKind,
         karmaConfigSettings.scopeKind,
+        "$messageTracePrefix: Test kind is same",
       )
 
       assertEquals(
-        "$messageTracePrefix: Test file path is same",
         makeProjectRelativePathAsAbsolute(settingsFixture.testFilePath),
         karmaConfigSettings.testFileSystemIndependentPath,
+        "$messageTracePrefix: Test file path is same",
       )
 
       settingsFixture.configFilePath?.let {
         assertEquals(
-          "$messageTracePrefix: Config file path is same",
           makeProjectRelativePathAsAbsolute(it),
-          karmaConfigSettings.configPathSystemIndependent
+          karmaConfigSettings.configPathSystemIndependent,
+          "$messageTracePrefix: Config file path is same"
         )
       }
 
       settingsFixture.testNames?.let {
         assertEquals(
-          "$messageTracePrefix: Test names are same",
           it,
           karmaConfigSettings.testNames,
+          "$messageTracePrefix: Test names are same",
         )
       }
     }

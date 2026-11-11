@@ -9,7 +9,6 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.fixture.TestFixture
-import org.jetbrains.annotations.TestOnly
 import java.io.File
 import java.lang.reflect.Method
 import java.util.function.Supplier
@@ -19,7 +18,6 @@ import java.util.function.Supplier
  * Create it with [eslintServiceFixture].
  * The setup points the ESLint service at the Node.js modules of the global install.
  */
-@TestOnly
 class EslintServiceFixture(
   fixture: CodeInsightTestFixture,
   testClass: Class<*>,
@@ -54,7 +52,6 @@ class EslintServiceFixture(
      */
     @JvmStatic
     @JvmOverloads
-    @TestOnly
     fun eslintServiceFixture(options: JSTempDirFixtureOptions,
                              inspection: Supplier<out InspectionProfileEntry>,
                              serviceFileLevelAnnotation: Boolean = false): TestFixture<EslintServiceFixture> =

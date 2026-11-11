@@ -206,7 +206,6 @@ jvm_library(
         "@community//platform/smRunner",
         "@community//platform/structure-view-impl:structureView",
         "@community//platform/problemsView/shared",
-        "@community//libraries/junit4",
         "@community//libraries/junit6",
         "@community//libraries/assertj-core",
         "@community//platform/testFramework/junit5/codeInsight",

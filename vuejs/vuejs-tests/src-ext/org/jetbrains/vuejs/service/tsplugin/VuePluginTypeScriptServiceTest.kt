@@ -2,41 +2,38 @@
 package org.jetbrains.vuejs.service.tsplugin
 
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
-import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
-import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
+import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
+import com.intellij.lang.typescript.service.TypeScriptServiceFixture.Companion.typeScriptServiceFixture
+import com.intellij.openapi.application.readActionBlocking
 import com.intellij.platform.testFramework.core.FileComparisonFailedError
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
-class VuePluginTypeScriptServiceTest :
-  TypeScriptServiceTestBase() {
+@TestApplication
+class VuePluginTypeScriptServiceTest {
+  private val vue by typeScriptServiceFixture(JSTempDirFixtureOptions.forBasePath(vueRelativeTestDataPath() + "/ts-plugin").withExtension("vue"))
 
   private val DEFAULT_VUE_MODULE: VueTestModule = VueTestModule.VUE_3_5_0
 
-  override fun getBasePath(): String = vueRelativeTestDataPath() + "/ts-plugin"
-
-  override fun getExtension(): String {
-    return "vue"
-  }
-
-  override val service: VuePluginTypeScriptService
-    get() = TypeScriptServiceHolder.getForFile(project, file.virtualFile) as VuePluginTypeScriptService
-
-  override fun setUp() {
-    super.setUp()
-    myFixture.enableInspections(VueInspectionsProvider())
-    myFixture.configureByText(VueTsConfigFile.FILE_NAME, VueTsConfigFile.DEFAULT_TSCONFIG_CONTENT)
+  @BeforeEach
+  fun setUp() {
+    vue.fixture.enableInspections(VueInspectionsProvider())
+    vue.fixture.configureByText(VueTsConfigFile.FILE_NAME, VueTsConfigFile.DEFAULT_TSCONFIG_CONTENT)
   }
 
   private fun configureVueDependencies(
       vueModule: VueTestModule = DEFAULT_VUE_MODULE,
   ) {
-    myFixture.configureVueDependencies(modules = arrayOf(vueModule, VueTestModule.VUE_TSCONFIG_0_9_1))
+    vue.fixture.configureVueDependencies(modules = arrayOf(vueModule, VueTestModule.VUE_TSCONFIG_0_9_1))
   }
 
   private fun doSimpleHighlightTest(
@@ -45,49 +42,57 @@ class VuePluginTypeScriptServiceTest :
       warnings: Boolean = false,
   ) {
     configureVueDependencies(vueModule)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("$fileName.$extension")
-    checkHighlightingByOptions(warnings)
+    vue.fixture.copyDirectoryToProject(vue.getTestName(true), "")
+    vue.fixture.configureFromTempProjectFile("$fileName.${vue.extension}")
+    vue.checkHighlightingByOptions(warnings)
   }
 
+  @Test
   fun testBasicErrors() {
     doSimpleHighlightTest()
   }
 
+  @Test
   fun testSimpleVue() {
     doSimpleHighlightTest()
   }
 
+  @Test
   fun testEnableSuggestions() {
     doSimpleHighlightTest()
   }
 
+  @Test
   fun testAugmentedComponentCustomPropertiesWithOverrides() {
     doSimpleHighlightTest()
   }
 
+  @Test
   fun testAugmentedComponentCustomPropertiesWithOverrides__vapor() {
     doSimpleHighlightTest(VueTestModule.VUE_3_6_0)
   }
 
+  @Test
   fun testAugmentedComponentCustomPropertiesWithOverridesErrors() {
     doSimpleHighlightTest()
   }
 
+  @Test
   fun testAugmentedComponentCustomPropertiesWithOverridesErrors__vapor() {
     doSimpleHighlightTest(VueTestModule.VUE_3_6_0)
   }
 
+  @Test
   fun testSimpleRename() {
     configureVueDependencies()
-    val fileToRename = myFixture.addFileToProject("Usage.vue", """
+    val fileToRename = vue.fixture.addFileToProject("Usage.vue", """
       <script setup lang="ts">
         console.log("test");
       </script>
       <template>text</template>
     """.trimIndent())
 
-    myFixture.configureByText("Simple.vue", """
+    vue.fixture.configureByText("Simple.vue", """
       <script setup lang="ts">
       import Usage from './Us<caret>age.vue';
       console.log(Usage);
@@ -96,16 +101,17 @@ class VuePluginTypeScriptServiceTest :
       </template>
     """.trimIndent())
 
-    myFixture.checkHighlighting()
-    myFixture.renameElement(fileToRename, "Usage2.vue")
+    vue.fixture.checkHighlighting()
+    runInEdtAndWait { vue.fixture.renameElement(fileToRename, "Usage2.vue") }
 
     //no errors
-    myFixture.checkHighlighting()
+    vue.fixture.checkHighlighting()
   }
 
+  @Test
   fun testBasicCompletion() {
     configureVueDependencies()
-    myFixture.configureByText("main.vue", """
+    vue.fixture.configureByText("main.vue", """
       <script setup>
         import { ref } from 'vue'
         const message = ref('Hello World!')
@@ -116,10 +122,10 @@ class VuePluginTypeScriptServiceTest :
       </template>
     """.trimIndent())
 
-    myFixture.completeBasic()
-    myFixture.type('\n')
+    vue.fixture.completeBasic()
+    runInEdtAndWait { vue.fixture.type('\n') }
 
-    myFixture.checkResult("""
+    vue.fixture.checkResult("""
       <script setup>
         import { ref } from 'vue'
         const message = ref('Hello World!')
@@ -131,23 +137,24 @@ class VuePluginTypeScriptServiceTest :
     """.trimIndent())
   }
 
+  @Test
   fun testBasicDoc() {
     configureVueDependencies()
-    myFixture.configureByText("main.vue", """
+    vue.fixture.configureByText("main.vue", """
       <script setup>
         import { ref } from 'vue'
         const message = re<caret>f('Hello World!')
       </script>
     """)
 
-    myFixture.doHighlighting()
+    vue.fixture.doHighlighting()
     checkDoc()
   }
 
   private fun checkDoc() {
-    val actualDocText = JSAbstractDocumentationTest.getQuickDocumentationText(myFixture)
+    val actualDocText = timeoutRunBlocking { readActionBlocking { JSAbstractDocumentationTest.getQuickDocumentationText(vue.fixture) } }
                         ?: throw AssertionError("No documentation found")
-    val expectedDocFilePath = "$testDataPath/${getTestName(false)}.expected.html"
+    val expectedDocFilePath = "${vue.testDataPath}/${vue.getTestName(false)}.expected.html"
     val expectedDocText = File(expectedDocFilePath).readText()
     if (expectedDocText != actualDocText) {
       throw FileComparisonFailedError(

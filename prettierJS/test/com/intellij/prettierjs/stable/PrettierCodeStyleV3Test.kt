@@ -8,45 +8,53 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.TestNpmPackage
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.prettierjs.PrettierConfiguration
-import com.intellij.prettierjs.PrettierJSTestUtil
+import com.intellij.prettierjs.stable.PrettierPackageLockFixture.Companion.prettierPackageLockFixture
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.testFramework.utils.vfs.getPsiFile
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
+@TestApplication
 @TestNpmPackage(PRETTIER_3_8_1_TEST_PACKAGE_SPEC)
-class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
+class PrettierCodeStyleV3Test {
+  private val prettier by prettierPackageLockFixture("codeStyle")
 
   var originalSettings: CodeStyleSettings? = null
 
-  override fun setUp() {
-    super.setUp()
-    CodeStyle.dropTemporarySettings(project)
-    originalSettings = CodeStyle.createTestSettings(CodeStyle.getSettings(project))
-    myFixture.testDataPath = PrettierJSTestUtil.getTestDataPath() + "codeStyle"
+  @BeforeEach
+  fun setUp() {
+    CodeStyle.dropTemporarySettings(prettier.project)
+    originalSettings = CodeStyle.createTestSettings(CodeStyle.getSettings(prettier.project))
   }
 
-  override fun tearDown() {
-    try {
-      val state = PrettierConfiguration.getInstance(project)
-        .withLinterPackage(NodePackageRef.create(getNodePackage()))
-        .state
-      state.configurationMode = PrettierConfiguration.ConfigurationMode.DISABLED
-      state.codeStyleSettingsModifierEnabled = false
-      CodeStyle.getSettings(project).copyFrom(originalSettings!!)
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
+  @AfterEach
+  fun tearDown() {
+    // The setup of the fixture did not complete, for example without Node.js.
+    val original = originalSettings ?: return
+    val state = PrettierConfiguration.getInstance(prettier.project)
+      .withLinterPackage(NodePackageRef.create(prettier.nodePackage))
+      .state
+    state.configurationMode = PrettierConfiguration.ConfigurationMode.DISABLED
+    state.codeStyleSettingsModifierEnabled = false
+    CodeStyle.getSettings(prettier.project).copyFrom(original)
   }
 
-  fun testJavaScriptFileSettings() = withInstallation {
+  @Test
+  fun testJavaScriptFileSettings(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       for (fileName in listOf("index.js", "index.jsx")) {
         val (language, settings) = getInfoForFile(fileName)
@@ -60,7 +68,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
           assertTrue(it.USE_TAB_CHARACTER)
         }
         assertEquals(settings.LINE_SEPARATOR, "\r\n")
-        assertContainsElements(settings.getSoftMargins(language), listOf(70))
+        assertTrue(settings.getSoftMargins(language).containsAll(listOf(70)))
 
         val customSettings = settings.getCustomSettings(JSCodeStyleSettings::class.java)
 
@@ -78,7 +86,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testJavaScriptFileSettings_1() = withInstallation {
+  @Test
+  fun testJavaScriptFileSettings_1(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       for (fileName in listOf("index.js", "index.jsx")) {
         val (language, settings) = getInfoForFile(fileName)
@@ -92,7 +101,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
           assertFalse(it.USE_TAB_CHARACTER)
         }
         assertEquals(settings.LINE_SEPARATOR, "\r")
-        assertContainsElements(settings.getSoftMargins(language), listOf(100))
+        assertTrue(settings.getSoftMargins(language).containsAll(listOf(100)))
 
         val customSettings = settings.getCustomSettings(JSCodeStyleSettings::class.java)
 
@@ -110,7 +119,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testTypeScriptFileSettings() = withInstallation {
+  @Test
+  fun testTypeScriptFileSettings(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       for (fileName in listOf("index.ts", "index.d.ts", "index.tsx")) {
         val (language, settings) = getInfoForFile(fileName)
@@ -124,7 +134,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
           assertTrue(it.USE_TAB_CHARACTER)
         }
         assertEquals(settings.LINE_SEPARATOR, "\r\n")
-        assertContainsElements(settings.getSoftMargins(language), listOf(70))
+        assertTrue(settings.getSoftMargins(language).containsAll(listOf(70)))
 
         val customSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
 
@@ -142,7 +152,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testTypeScriptFileSettings_1() = withInstallation {
+  @Test
+  fun testTypeScriptFileSettings_1(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       for (fileName in listOf("index.ts", "index.d.ts", "index.tsx")) {
         val (language, settings) = getInfoForFile(fileName)
@@ -156,7 +167,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
           assertFalse(it.USE_TAB_CHARACTER)
         }
         assertEquals(settings.LINE_SEPARATOR, "\r")
-        assertContainsElements(settings.getSoftMargins(language), listOf(100))
+        assertTrue(settings.getSoftMargins(language).containsAll(listOf(100)))
 
         val customSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
 
@@ -174,7 +185,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testWithoutConfigFileSettings() = withInstallation {
+  @Test
+  fun testWithoutConfigFileSettings(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       val (language, settings) = getInfoForFile("index.js")
 
@@ -187,7 +199,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
         assertFalse(it.USE_TAB_CHARACTER)
       }
       assertNull(settings.LINE_SEPARATOR)
-      assertContainsElements(settings.getSoftMargins(language), listOf(80))
+      assertTrue(settings.getSoftMargins(language).containsAll(listOf(80)))
 
       val customSettings = settings.getCustomSettings(JSCodeStyleSettings::class.java)
 
@@ -204,7 +216,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testHtmlFileSettings() = withInstallation {
+  @Test
+  fun testHtmlFileSettings(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       val (language, settings) = getInfoForFile("index.html")
 
@@ -217,7 +230,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
         assertTrue(it.USE_TAB_CHARACTER)
       }
       assertEquals(settings.LINE_SEPARATOR, "\r\n")
-      assertContainsElements(settings.getSoftMargins(language), listOf(70))
+      assertTrue(settings.getSoftMargins(language).containsAll(listOf(70)))
 
       val customSettings = settings.getCustomSettings(HtmlCodeStyleSettings::class.java)
 
@@ -225,7 +238,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testNested() = withInstallation {
+  @Test
+  fun testNested(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       val settings = getCodeStyleSettingsForFile("root.js")
       val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
@@ -237,7 +251,8 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testNoDependencyFormatOutOfScope() = withSubdirInstallation("noDependencyFormatOutOfScope", "subdir") {
+  @Test
+  fun testNoDependencyFormatOutOfScope(): Unit = prettier.withSubdirInstallation("noDependencyFormatOutOfScope", "subdir") {
     configurePrettierForCodeStyle {
       val settings = getCodeStyleSettingsForFile("index.js")
       val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
@@ -245,36 +260,40 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testNoDependency() = withSubdirInstallation("noDependency", "subdir") {
+  @Test
+  fun testNoDependency(): Unit = prettier.withSubdirInstallation("noDependency", "subdir") {
     configurePrettierForCodeStyle {
       try {
-        PrettierConfiguration.getInstance(project).state.formatFilesOutsideDependencyScope = false
+        PrettierConfiguration.getInstance(prettier.project).state.formatFilesOutsideDependencyScope = false
 
         val settings = getCodeStyleSettingsForFile("index.js")
         val indentOptions = settings.getCommonSettings(JavascriptLanguage).indentOptions
         assertEquals(12, indentOptions?.INDENT_SIZE)
       }
       finally {
-        PrettierConfiguration.getInstance(project).state.formatFilesOutsideDependencyScope = false
+        PrettierConfiguration.getInstance(prettier.project).state.formatFilesOutsideDependencyScope = false
       }
     }
   }
 
-  fun testPlainText() = withInstallation {
+  @Test
+  fun testPlainText(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       val (language, settings) = getInfoForFile("text.txt")
-      assertContainsElements(settings.getSoftMargins(language), emptyList())
+      assertTrue(settings.getSoftMargins(language).containsAll(emptyList()))
     }
   }
 
-  fun testCssFile() = withInstallation {
+  @Test
+  fun testCssFile(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       val (language, settings) = getInfoForFile("style.css")
-      assertContainsElements(settings.getSoftMargins(language), listOf(70))
+      assertTrue(settings.getSoftMargins(language).containsAll(listOf(70)))
     }
   }
 
-  fun testInjectedLanguages() = withInstallation {
+  @Test
+  fun testInjectedLanguages(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       for (fileName in listOf("javascript.js", "typescript.ts")) {
         val settings = getCodeStyleSettingsForFile(fileName)
@@ -294,16 +313,18 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
     }
   }
 
-  fun testSettingsFollowSavedConfigChange() = withInstallation {
+  @Test
+  fun testSettingsFollowSavedConfigChange(): Unit = prettier.withInstallation {
     configurePrettierForCodeStyle {
       assertEquals(3, indexJsIndentSizeWithoutEditor())
 
       // the user changes the config in the editor and saves it
-      val document = FileDocumentManager.getInstance().getDocument(myFixture.findFileInTempDir(".prettierrc.json"))!!
-      WriteCommandAction.runWriteCommandAction(project) { document.setText("""{"tabWidth": 7}""") }
-      FileDocumentManager.getInstance().saveDocument(document)
+      val configFile = prettier.fixture.findFileInTempDir(".prettierrc.json")
+      val document = runReadAction { FileDocumentManager.getInstance().getDocument(configFile) }!!
+      WriteCommandAction.runWriteCommandAction(prettier.project) { document.setText("""{"tabWidth": 7}""") }
+      runInEdtAndWait { FileDocumentManager.getInstance().saveDocument(document) }
       // The save terminated the old service. Start the new service now, because the code style modifier waits only 500 ms for a result.
-      warmUpPrettierService(myFixture.findFileInTempDir("package.json"))
+      prettier.warmUpPrettierService(prettier.fixture.findFileInTempDir("package.json"))
 
       assertEquals(7, indexJsIndentSizeWithoutEditor())
     }
@@ -314,14 +335,15 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
    * An open editor can compute the code style settings before the new service starts.
    */
   private fun indexJsIndentSizeWithoutEditor(): Int {
-    val psiFile = myFixture.findFileInTempDir("index.js").getPsiFile(project)
+    val indexJs = prettier.fixture.findFileInTempDir("index.js")
+    val psiFile = runReadAction { indexJs.getPsiFile(prettier.project) }
     val settings = timeoutRunBlocking { CodeStyle.getSettings(psiFile) }
     return settings.getCommonSettings(psiFile.language).indentOptions!!.INDENT_SIZE
   }
 
   private fun configurePrettierForCodeStyle(block: () -> Unit) {
-    val state = PrettierConfiguration.getInstance(project)
-      .withLinterPackage(NodePackageRef.create(getNodePackage()))
+    val state = PrettierConfiguration.getInstance(prettier.project)
+      .withLinterPackage(NodePackageRef.create(prettier.nodePackage))
       .state
     val filesPattern = state.filesPattern
     val configurationMode = state.configurationMode
@@ -333,7 +355,7 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
 
     // Warm up the Prettier language service (starts Node.js process) before querying code style.
     // Without this, the 500ms timeout in PrettierCodeStyleSettingsModifier may fire on Windows.
-    warmUpPrettierService(myFixture.findFileInTempDir("package.json") ?: myFixture.tempDirFixture.getFile(".")!!)
+    prettier.warmUpPrettierService(prettier.fixture.findFileInTempDir("package.json") ?: prettier.fixture.tempDirFixture.getFile(".")!!)
 
     try {
      block()
@@ -353,15 +375,15 @@ class PrettierCodeStyleV3Test : PrettierPackageLockTest() {
   }
 
   private fun getCodeStyleSettingsForFile(fileName: String): CodeStyleSettings {
-    val file = myFixture.findFileInTempDir(fileName)
+    val file = prettier.fixture.findFileInTempDir(fileName)
     return timeoutRunBlocking {
-      myFixture.configureFromExistingVirtualFile(file)
-      CodeStyle.getSettings(project, file)
+      prettier.fixture.configureFromExistingVirtualFile(file)
+      CodeStyle.getSettings(prettier.project, file)
     }
   }
 
   private fun getLanguageForFile(fileName: String): Language {
-    val file = myFixture.findFileInTempDir(fileName)
-    return file.getPsiFile(project).language
+    val file = prettier.fixture.findFileInTempDir(fileName)
+    return runReadAction { file.getPsiFile(prettier.project).language }
   }
 }
