@@ -11,14 +11,14 @@ data class VueCompilerOptions(
 
   /**
    * Default: Automatically detected from the installed vue version, otherwise 3.3.
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#target)
    */
   val target: Double = 99.0,
 
   /**
    * Default: "vue"
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#lib)
    */
   val lib: String = "vue",
@@ -34,7 +34,7 @@ data class VueCompilerOptions(
 
   /**
    * Default: [".vue"]
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#extensions)
    */
   val extensions: List<String> = listOf(".vue"),
@@ -59,7 +59,7 @@ data class VueCompilerOptions(
 
   /**
    * Default: false
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#jsxSlots)
    */
   val jsxSlots: Boolean = false,
@@ -75,7 +75,7 @@ data class VueCompilerOptions(
 
   /**
    * Default: false
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#strictTemplates)
    */
   val strictTemplates: Boolean = false,
@@ -181,7 +181,7 @@ data class VueCompilerOptions(
 
   /**
    * Default: false
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#skipTemplateCodegen)
    */
   val skipTemplateCodegen: Boolean = false,
@@ -244,21 +244,21 @@ data class VueCompilerOptions(
 
   /**
    * Default: []
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#dataAttributes)
    */
   val dataAttributes: List<String> = emptyList(),
 
   /**
    * Default: ["aria-*"]
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#htmlAttributes)
    */
   val htmlAttributes: List<String> = listOf("aria-*"),
 
   /**
    * Default: ["(await import('${lib}')).defineComponent(", ")"]
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#optionsWrapper)
    */
   val optionsWrapper: List<String> = listOf("(await import('$lib')).defineComponent(", ")"),
@@ -266,7 +266,7 @@ data class VueCompilerOptions(
 
   /**
    * Default: { defineProps: ['defineProps'], defineSlots: ['defineSlots'], defineEmits: ['defineEmits'], defineExpose: ['defineExpose'], defineModel: ['defineModel'], defineOptions: ['defineOptions'], withDefaults: ['withDefaults'] }
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#macros)
    */
   val macros: Macros = Macros(),
@@ -282,14 +282,14 @@ data class VueCompilerOptions(
 
   /**
    * Default: []
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#plugins)
    */
   val plugins: List<String> = emptyList(),
 
   /**
    * Default: { '': { input: true }, value: { input: { type: 'text' }, textarea: true, select: true } }
-   * 
+   *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#experimentalModelPropName)
    */
   val experimentalModelPropName: Map<String, Map<String, String>>? = null,
