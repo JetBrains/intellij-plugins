@@ -18,7 +18,10 @@ import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.types.VueUnwrapRefType
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
 class VueTypeScriptServiceGetElementTypeTest :
   TypeScriptServiceGetElementTypeTest() {
@@ -45,7 +48,7 @@ class VueTypeScriptServiceGetElementTypeTest :
 
   private fun assertServiceIsVuePlugin() {
     inReadAction {
-      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
+      assertInstanceOf(VuePluginTypeScriptService::class.java, TypeScriptServiceHolder.getForFile(project, file.virtualFile))
     }
   }
 
