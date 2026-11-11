@@ -16,9 +16,7 @@
 package com.intellij.protobuf;
 
 import com.intellij.protobuf.jvm.names.NameUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -26,7 +24,6 @@ import static com.google.common.truth.Truth.assertThat;
  * Tests for {@link NameUtils}. This is mostly a smoke test. Ultimately, we care about how protoc
  * converts proto names to Java names.
  */
-@RunWith(JUnit4.class)
 public class NameUtilsTest {
 
   @Test

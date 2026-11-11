@@ -19,6 +19,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.truth.StandardSubjectBuilder;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory;
@@ -27,10 +28,17 @@ import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.LightJavaProject;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Unmodifiable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collection;
@@ -40,6 +48,8 @@ import java.util.stream.Collectors;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static com.intellij.protobuf.TestUtils.notNull;
+import static com.intellij.testFramework.fixtures.LightJavaFixturesKt.lightJavaCodeInsightFixture;
+import static com.intellij.testFramework.fixtures.LightJavaFixturesKt.lightJavaProjectFixture;
 
 /**
  * Test for {@link PbJavaFindUsagesHandlerFactory}.
@@ -59,39 +69,34 @@ import static com.intellij.protobuf.TestUtils.notNull;
  * we share implementation code between the two, so this is not as exhaustive (namely, shares {@link
  * NameGenerator}).
  */
-public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixtureTestCase {
+@TestApplication
+public class PbJavaFindUsagesHandlerFactoryTest {
+  private static final TestFixture<LightJavaProject> projectFixture = lightJavaProjectFixture();
+  private final TestFixture<LightJavaCodeInsightTestFixture> codeInsightFixture = lightJavaCodeInsightFixture(projectFixture);
 
-  protected final Disposable testDisposable = new TestDisposable();
+  private final Disposable testDisposable = Disposer.newDisposable();
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    myFixture.setTestDataPath(getTestDataPath());
+  @BeforeEach
+  void setUp() {
+    codeInsightFixture.get().setTestDataPath(getTestDataPath());
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      Disposer.dispose(testDisposable);
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+  @AfterEach
+  void tearDown() {
+    EdtTestUtil.runInEdtAndWait(() -> Disposer.dispose(testDisposable));
   }
 
-  @Override
-  public String getTestDataPath() {
+  private static String getTestDataPath() {
     return TestUtils.getTestHomeDirectory() + "/protoeditor-jvm/testData/";
   }
 
-  private String getTestJarsDirectoryPath() {
+  private static String getTestJarsDirectoryPath() {
     return getTestDataPath() + "jars/";
   }
 
+  @Test
   public void testProto2() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2Lib-speed.jar", testDisposable);
     String expectedJavaFile = "Proto2User.java";
@@ -166,7 +171,9 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
         "setStringChoiceBytes");
   }
 
+  @Test
   public void testProtoSyntax3() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     JavaTestData.addGenCodeJar(
         myFixture.getModule(), getTestJarsDirectoryPath(), "libProtoSyntax3Lib-speed.jar", testDisposable);
     String expectedJavaFile = "ProtoSyntax3User.java";
@@ -211,7 +218,9 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
         "STRING_CHOICE");
   }
 
+  @Test
   public void testProto2Lite() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     JavaTestData.addGenCodeJar(
         myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2LiteLib-lite.jar", testDisposable);
     String expectedJavaFile = "Proto2LiteUser.java";
@@ -256,7 +265,9 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
         "STRING_CHOICE");
   }
 
+  @Test
   public void testClashingEnum() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     JavaTestData.addGenCodeJar(
         myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingEnum-speed.jar", testDisposable);
     String expectedJavaFile = "ClashingEnumUser.java";
@@ -277,33 +288,38 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
 
   private List<UsageInfo> findJavaUsesForSymbol(
       PsiFile file, String localDottedName, int expectedProtoUsages) {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     assertThat(file).isInstanceOf(PbFile.class);
     PbFile pbFile = (PbFile) file;
-    QualifiedName fullyQualifiedName =
-        pbFile.getPackageQualifiedName().append(QualifiedName.fromDottedString(localDottedName));
-    Collection<PbSymbol> symbols = pbFile.getLocalQualifiedSymbolMap().get(fullyQualifiedName);
+    Collection<PbSymbol> symbols = ReadAction.computeBlocking(() -> {
+      QualifiedName fullyQualifiedName =
+          pbFile.getPackageQualifiedName().append(QualifiedName.fromDottedString(localDottedName));
+      return pbFile.getLocalQualifiedSymbolMap().get(fullyQualifiedName);
+    });
     assertWithMessage("Find symbol: " + localDottedName).that(symbols).hasSize(1);
     List<UsageInfo> allUses =
         symbols.stream()
             .findFirst()
             .map(symbol -> ImmutableList.copyOf(myFixture.findUsages(symbol)))
             .orElse(ImmutableList.of());
-    List<UsageInfo> protoUses = protoUsages(allUses);
-    assertWithUsages(protoUses).that(protoUses).hasSize(expectedProtoUsages);
-    List<UsageInfo> javaUses = javaUsages(allUses);
-    // Sort by use position to make sure they are stable.
-    javaUses = ContainerUtil.sorted(javaUses,
-        (u1, u2) -> {
-          VirtualFile vfile1 = u1.getVirtualFile();
-          VirtualFile vfile2 = u2.getVirtualFile();
-          String path1 = vfile1 != null ? vfile1.getPath() : null;
-          String path2 = vfile2 != null ? vfile2.getPath() : null;
-          return ComparisonChain.start()
-              .compare(path1, path2)
-              .compare(u1.getNavigationOffset(), u2.getNavigationOffset())
-              .result();
-        });
-    return javaUses;
+    return ReadAction.computeBlocking(() -> {
+      List<UsageInfo> protoUses = protoUsages(allUses);
+      assertWithUsages(protoUses).that(protoUses).hasSize(expectedProtoUsages);
+      List<UsageInfo> javaUses = javaUsages(allUses);
+      // Sort by use position to make sure they are stable.
+      javaUses = ContainerUtil.sorted(javaUses,
+          (u1, u2) -> {
+            VirtualFile vfile1 = u1.getVirtualFile();
+            VirtualFile vfile2 = u2.getVirtualFile();
+            String path1 = vfile1 != null ? vfile1.getPath() : null;
+            String path2 = vfile2 != null ? vfile2.getPath() : null;
+            return ComparisonChain.start()
+                .compare(path1, path2)
+                .compare(u1.getNavigationOffset(), u2.getNavigationOffset())
+                .result();
+          });
+      return javaUses;
+    });
   }
 
   @Unmodifiable
@@ -321,20 +337,22 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
     String expectedFile,
     int expectedJavaUsages,
     String... expectedContexts) {
-    assertWithUsages(uses).that(uses).hasSize(expectedJavaUsages);
-    // Do a "zip" between uses and expectedContents (though expectedContents is a prefix of uses).
-    assertWithUsages(uses).that(uses.size()).isAtLeast(expectedContexts.length);
-    for (int i = 0; i < expectedContexts.length; ++i) {
-      String expectedContext = expectedContexts[i];
-      UsageInfo use = uses.get(i);
-      PsiFile file = notNull(use.getFile());
-      assertWithMessage("usage #" + i).that(file.getName()).isEqualTo(expectedFile);
-      String actualContext =
-          file.getText()
-              .substring(
-                  use.getNavigationOffset(), use.getNavigationOffset() + expectedContext.length());
-      assertWithMessage("usage #" + i).that(actualContext).isEqualTo(expectedContext);
-    }
+    ReadAction.runBlocking(() -> {
+      assertWithUsages(uses).that(uses).hasSize(expectedJavaUsages);
+      // Do a "zip" between uses and expectedContents (though expectedContents is a prefix of uses).
+      assertWithUsages(uses).that(uses.size()).isAtLeast(expectedContexts.length);
+      for (int i = 0; i < expectedContexts.length; ++i) {
+        String expectedContext = expectedContexts[i];
+        UsageInfo use = uses.get(i);
+        PsiFile file = notNull(use.getFile());
+        assertWithMessage("usage #" + i).that(file.getName()).isEqualTo(expectedFile);
+        String actualContext =
+            file.getText()
+                .substring(
+                    use.getNavigationOffset(), use.getNavigationOffset() + expectedContext.length());
+        assertWithMessage("usage #" + i).that(actualContext).isEqualTo(expectedContext);
+      }
+    });
   }
 
   private static StandardSubjectBuilder assertWithUsages(List<UsageInfo> uses) {

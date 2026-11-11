@@ -31,7 +31,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiQualifiedReferenceElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.LightJavaProject;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
@@ -40,6 +47,8 @@ import java.util.List;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static com.intellij.protobuf.TestUtils.notNull;
+import static com.intellij.testFramework.fixtures.LightJavaFixturesKt.lightJavaCodeInsightFixture;
+import static com.intellij.testFramework.fixtures.LightJavaFixturesKt.lightJavaProjectFixture;
 
 /**
  * Tests for {@link PbJavaGotoDeclarationHandler}.
@@ -58,9 +67,12 @@ import static com.intellij.protobuf.TestUtils.notNull;
  * .proto file + element). There must be at least one {@link #CARET_MARKER} after each {@link
  * GotoExpectationMarker}.
  */
-public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtureTestCase {
+@TestApplication
+public class PbJavaGotoDeclarationHandlerTest {
+  private static final TestFixture<LightJavaProject> projectFixture = lightJavaProjectFixture();
+  private final TestFixture<LightJavaCodeInsightTestFixture> codeInsightFixture = lightJavaCodeInsightFixture(projectFixture);
 
-  protected final Disposable testDisposable = new TestDisposable();
+  private final Disposable testDisposable = Disposer.newDisposable();
 
   // Marker that determines which caret positions to test.
   public static final String CARET_MARKER = "caretAfterThis";
@@ -69,37 +81,27 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   // We might also have a CARET_MARKER in a /* */ comment, so scoot past the " */ "
   private static final int CARET_BUMP = 5;
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      Disposer.dispose(testDisposable);
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+  @AfterEach
+  void tearDown() {
+    EdtTestUtil.runInEdtAndWait(() -> Disposer.dispose(testDisposable));
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    myFixture.setTestDataPath(getTestDataPath());
+  @BeforeEach
+  void setUp() {
+    codeInsightFixture.get().setTestDataPath(getTestDataPath());
   }
 
-  @Override
-  public String getTestDataPath() {
+  private static String getTestDataPath() {
     return TestUtils.getTestHomeDirectory() + "/protoeditor-jvm/testData/";
   }
 
-  private String getTestJarsDirectoryPath() {
+  private static String getTestJarsDirectoryPath() {
     return getTestDataPath() + "jars/";
   }
 
-
+  @Test
   public void testProto2() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(new File(getTestDataPath(), "proto/Proto2.proto").getPath(), "protos/Proto2.proto");
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2Lib-speed.jar", testDisposable);
@@ -112,7 +114,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(60);
   }
 
+  @Test
   public void testProto2MultipleFiles() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(
       new File(getTestDataPath(), "proto/Proto2MultipleFiles.proto").getPath(), "protos/Proto2MultipleFiles.proto");
     JavaTestData.addGenCodeJar(
@@ -126,7 +130,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(9);
   }
 
+  @Test
   public void testProto2OuterClass() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(
       new File(getTestDataPath(), "proto/Proto2OuterClass.proto").getPath(), "protos/Proto2OuterClass.proto");
     JavaTestData.addGenCodeJar(
@@ -140,7 +146,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(4);
   }
 
+  @Test
   public void testProtoSyntax3() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(
       new File(getTestDataPath(), "proto/ProtoSyntax3.proto").getPath(), "protos/ProtoSyntax3.proto");
     JavaTestData.addGenCodeJar(
@@ -154,7 +162,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(10);
   }
 
+  @Test
   public void testProto2Lite() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(
       new File(getTestDataPath(), "proto/Proto2Lite.proto").getPath(), "protos/Proto2Lite.proto");
     JavaTestData.addGenCodeJar(
@@ -168,7 +178,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(10);
   }
 
+  @Test
   public void testBadRecursion() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     // While editing, it's possible to construct weird classes w/ inheritance recursion, etc.
     // Make sure that doesn't cause our goto handler to stack overflow.
     PsiClass badClass =
@@ -185,7 +197,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(1);
   }
 
+  @Test
   public void testClashingEnum() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_enum.proto");
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingEnum-speed.jar", testDisposable);
@@ -197,7 +211,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(2);
   }
 
+  @Test
   public void testClashingMessage() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_message.proto");
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingMessage-speed.jar", testDisposable);
@@ -209,7 +225,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(2);
   }
 
+  @Test
   public void testClashingNestedEnum() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_nested_enum.proto");
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingNestedEnum-speed.jar", testDisposable);
@@ -221,7 +239,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(2);
   }
 
+  @Test
   public void testClashingNestedMessage() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_nested_message.proto");
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingNestedMessage-speed.jar", testDisposable);
@@ -234,7 +254,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
       .isEqualTo(2);
   }
 
+  @Test
   public void testNotClashingField() {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyFileToProject(getTestDataPath() + "proto/not_clashing_field.proto");
     JavaTestData.addGenCodeJar(
       myFixture.getModule(), getTestJarsDirectoryPath(), "libNotClashingField-speed.jar", testDisposable);
@@ -265,6 +287,7 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   }
 
   private void setupBaseClasses(String expectedPackage, String... filesToCopy) {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     String expectedPackageDir = expectedPackage.replace('.', File.separatorChar);
     Arrays.stream(filesToCopy)
       .forEach(
@@ -280,12 +303,13 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
    * the checks aren't accidentally skipped (grep the file yourself to sanity check)
    */
   private int checkExpectations(VirtualFile javaFile) {
+    LightJavaCodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.configureFromExistingVirtualFile(javaFile);
-    PsiFile psiFile = getFile();
+    PsiFile psiFile = myFixture.getFile();
     List<GotoExpectationMarker> expectations = GotoExpectationMarker.parseExpectations(psiFile);
 
-    Project project = getProject();
-    Editor editor = getEditor();
+    Project project = myFixture.getProject();
+    Editor editor = myFixture.getEditor();
     String text = psiFile.getText();
 
     for (GotoExpectationMarker expectation : expectations) {
