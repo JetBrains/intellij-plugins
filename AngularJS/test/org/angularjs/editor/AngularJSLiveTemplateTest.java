@@ -3,27 +3,33 @@ package org.angularjs.editor;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
-import com.intellij.lang.javascript.JSLiveTemplatesTestBase;
+import com.intellij.lang.javascript.JSFixtureOptions;
+import com.intellij.lang.javascript.JSLiveTemplatesFixture;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.angularjs.AngularTestUtil;
+import org.junit.jupiter.api.Test;
 
-public class AngularJSLiveTemplateTest extends JSLiveTemplatesTestBase {
-  @Override
-  protected String getBasePath() {
-    return "";
-  }
+import static com.intellij.lang.javascript.JSLiveTemplatesFixture.jsLiveTemplatesFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
 
-  @Override
-  protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass());
-  }
+@TestApplication
+public class AngularJSLiveTemplateTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<JSLiveTemplatesFixture> liveTemplates =
+    jsLiveTemplatesFixture(projectFixture, new JSFixtureOptions(AngularTestUtil.getBaseTestDataPath(AngularJSLiveTemplateTest.class)));
 
+  @Test
   public void testFactory() {
-    doTest("ngmfa", "js", "AngularJS");
+    liveTemplates.get().doTest("ngmfa", "js", "AngularJS");
   }
 
+  @Test
   public void testClassMemberContext() {
-    myFixture.configureByText("a.js", "class C {\n<caret>\n}");
+    JSLiveTemplatesFixture templatesFixture = liveTemplates.get();
+    templatesFixture.getFixture().configureByText("a.js", "class C {\n<caret>\n}");
     Template template = TemplateSettings.getInstance().getTemplate("ngmfa", "AngularJS");
-    checkTemplateApplicability(template, false);
+    templatesFixture.checkTemplateApplicability(template, false);
   }
 }

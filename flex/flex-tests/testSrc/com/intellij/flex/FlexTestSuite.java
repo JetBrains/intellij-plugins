@@ -1,13 +1,10 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex;
 
-import com.intellij.flex.codeInsight.ActionScriptStatementMoverTest;
 import com.intellij.flex.codeInsight.FlexGotoImplementationsTest;
-import com.intellij.flex.codeInsight.FlexHierarchyTest;
 import com.intellij.flex.codeInsight.FlexNavigationTest;
 import com.intellij.flex.completion.ActionScriptCompletionInTextFieldTest;
 import com.intellij.flex.completion.FlexCompletionInUmlTextFieldsTest;
-import com.intellij.flex.editor.FlexLiveTemplatesTest;
 import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
 import com.intellij.flex.highlighting.ActionScriptHighlightingInTextFieldTest;
@@ -24,7 +21,6 @@ import com.intellij.flex.highlighting.SwfHighlightingTest;
 import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
 import com.intellij.flex.parser.FlexImporterTest;
-import com.intellij.flex.refactoring.ActionScriptInPlaceIntroduceVariableTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import com.intellij.testFramework.TestFrameworkUtil;
 import junit.framework.Test;
@@ -38,17 +34,12 @@ public final class FlexTestSuite {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
 
     // com.intellij.flex.codeInsight.*
-    testSuite.addTestSuite(ActionScriptStatementMoverTest.class);
     testSuite.addTestSuite(FlexGotoImplementationsTest.class);
-    testSuite.addTestSuite(FlexHierarchyTest.class);
     testSuite.addTestSuite(FlexNavigationTest.class);
 
     // com.intellij.flex.completion.*
     testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
     testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
-
-    //com.intellij.flex.editor.*
-    testSuite.addTestSuite(FlexLiveTemplatesTest.class);
 
     //com.intellij.flex.flashBuilder.*
     testSuite.addTestSuite(FlashBuilderImportTest.class);
@@ -89,7 +80,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexImporterTest.class);
 
     //com.intellij.flex.refactoring.*
-    testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
 
     //com.intellij.flex.resolver.*
     testSuite.addTestSuite(FlexCssNavigationTest.class);
