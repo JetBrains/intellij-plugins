@@ -455,6 +455,16 @@ class VueKolarTranspilerTest {
   }
 
   @Test
+  fun `setup-destructured-const-in-nested-component-interpolation`() {
+    doTest()
+  }
+
+  @Test
+  fun `setup-destructured-const-in-nested-component-interpolation__vapor`() {
+    doTest()
+  }
+
+  @Test
   fun `simple-app-with-components`() {
     doTest()
   }
