@@ -18,11 +18,15 @@ type __VLS_LocalDirectives = {};
 let __VLS_directives!: __VLS_LocalDirectives & import('vue').GlobalDirectives;
 void __VLS_ctx, __VLS_components, __VLS_intrinsics, __VLS_directives;
 const __VLS_template = () => {
+__VLS_withDotValue(env, {} as import('vue').Ref<unknown>);
 __VLS_withDotValue(showLogo, {} as import('vue').Ref<unknown>);
 __VLS_withDotValue(isSearchExpanded, {} as import('vue').Ref<unknown>);
 __VLS_withDotValue(prNumber, {} as import('vue').Ref<unknown>);
 __VLS_asFunctionalElement1(__VLS_intrinsics.header, __VLS_intrinsics.header)({
 });
+__VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
+});
+( env.value === 'release' ? 'alpha' : env.value );
 if (showLogo.value && !isSearchExpanded.value && prNumber.value) {
 let __VLS_0!: __VLS_WithComponent<'NuxtLink', __VLS_LocalComponents, __VLS_GlobalComponents, void, false, 'NuxtLink'>['NuxtLink'];
 /** @ts-ignore @type { | typeof __VLS_components.NuxtLink | typeof __VLS_components.NuxtLink} */
@@ -49,7 +53,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
 /** @type {__VLS_StyleScopedClasses['font-medium']} */;
 ( prNumber.value );
 // @ts-ignore
-[showLogo,isSearchExpanded,prNumber,prNumber,prNumber,prNumber,$t,];
+[env,env,showLogo,isSearchExpanded,prNumber,prNumber,prNumber,prNumber,$t,];
 }
 // @ts-ignore
 [];

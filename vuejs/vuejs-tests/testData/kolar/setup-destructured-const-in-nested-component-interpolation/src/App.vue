@@ -6,6 +6,9 @@ const isSearchExpanded = computed(() => false)
 
 <template>
   <header>
+    <span>
+      {{ env === 'release' ? 'alpha' : env }}
+    </span>
     <NuxtLink
       v-if="showLogo && !isSearchExpanded && prNumber"
       :to="`https://github.com/npmx-dev/npmx.dev/pull/${prNumber}`"
