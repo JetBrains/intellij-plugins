@@ -40,8 +40,6 @@ internal data object MoveAndRefactorTolerantIndicator : StructuralFingerprintCal
 /**
  * Structural fingerprint tolerant to a heavy refactoring inside one file. It reads the problem element type
  * alone, so it is the coarsest of the indicators.
- *
- * The name is a literal, because `BaselineCalculation` of the pinned qodana-sarif holds no constant for it.
  */
 internal data object ScopeAndShapeTolerantIndicator : StructuralFingerprintCalculator {
   override val name: String = SCOPE_AND_SHAPE_TOLERANT_INDICATOR
