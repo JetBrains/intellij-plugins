@@ -3,22 +3,21 @@ package com.intellij.structuralsearch;
 
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.structuralsearch.plugin.replace.impl.Replacer;
-import junit.framework.TestCase;
+import com.intellij.testFramework.junit5.TestApplication;
 import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.intellij.lang.javascript.JavaScriptSupportLoader.JAVASCRIPT;
 import static com.intellij.lang.javascript.flex.FlexSupportLoader.ECMA_SCRIPT_L4;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@TestApplication
 public class ActionScriptStructuralReplaceTest extends JSStructuralReplaceTestBase {
 
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("structuralsearch/");
+  public ActionScriptStructuralReplaceTest() {
+    super(FlexTestUtils.getTestDataPath("structuralsearch/"));
   }
 
   @Override
@@ -35,6 +34,7 @@ public class ActionScriptStructuralReplaceTest extends JSStructuralReplaceTestBa
            ActionScriptFileType.INSTANCE.getLanguage());
   }
 
+  @Test
   public void testInMxml() throws IOException {
     doTestByFile("Script.mxml", "Script_replacement1.mxml", "var $i$ = $val$", "var $i$:int = $val$", JAVASCRIPT, ECMA_SCRIPT_L4);
     doTestByFile("Script.mxml", "script_replacement2.mxml", "$func$();", "func();", JAVASCRIPT, ECMA_SCRIPT_L4);
@@ -42,11 +42,12 @@ public class ActionScriptStructuralReplaceTest extends JSStructuralReplaceTestBa
                  ECMA_SCRIPT_L4);
   }
 
+  @Test
   public void testUnsupportedPatterns() {
     String s = "someCode()";
     try {
-      Replacer.testReplace(s, "doc.method()", "", options, getProject(), false, true, JAVASCRIPT, ECMA_SCRIPT_L4);
-      TestCase.fail();
+      ssrFixture.get().testReplace(s, "doc.method()", "", false, true, JAVASCRIPT, ECMA_SCRIPT_L4);
+      fail();
     }
     catch (UnsupportedPatternException ignored) {}
   }
