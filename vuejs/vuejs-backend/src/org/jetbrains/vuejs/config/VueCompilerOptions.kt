@@ -30,7 +30,7 @@ data class VueCompilerOptions(
    *
    * [Online Documentation](https://github.com/vuejs/language-tools/wiki/Vue-Compiler-Options#typesRoot)
    */
-  val typesRoot: String = "@vue/language-core/types",
+  val typesRoot: String = DEFAULT_TYPES_ROOT,
 
   /**
    * Default: [".vue"]
@@ -314,4 +314,8 @@ data class VueCompilerOptions(
     val useSlots: List<String> = listOf("useSlots"),
     val useTemplateRef: List<String> = listOf("useTemplateRef", "templateRef"),
   )
+
+  companion object {
+    const val DEFAULT_TYPES_ROOT: String = "@vue/language-core/types"
+  }
 }
