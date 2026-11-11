@@ -47,6 +47,7 @@ groups:
   - groupId: LuaRecommendedRmlInspections
     inspections:
       - OpenGrepConstantCondition
+      - OpenGrepNilDereference
 
 inspections:
   - group: LuaRecommendedOpengrepRules
