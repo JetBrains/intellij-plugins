@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.license
 
 import com.intellij.codeInspection.ex.ToolsImpl
+import org.jetbrains.qodana.license.QodanaLicenseType.COMMUNITY
 import org.jetbrains.qodana.license.QodanaLicenseType.NONE
 import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM
 import org.jetbrains.qodana.license.QodanaLicenseType.PREMIUM_LIGHT
@@ -23,6 +24,7 @@ internal fun QodanaLicenseType.isInspectionLicensed(from: ToolsImpl): Boolean {
   if (this == NONE) return false
   if (from.tool.shortName in ULTIMATE_PLUS_INSPECTIONS) return false
   if (CustomInspectionLicenseRule.requiresUltimatePlus(from.tool)) return false
+  if (this == COMMUNITY && CustomInspectionLicenseRule.requiresUltimate(from.tool)) return false
 
   val pluginId = from.tool.extension?.pluginDescriptor?.pluginId?.idString
   return pluginId !in ULTIMATE_PLUS_PLUGINS
