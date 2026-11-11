@@ -3,8 +3,6 @@ package com.intellij.flex;
 
 import com.intellij.flex.codeInsight.FlexGotoImplementationsTest;
 import com.intellij.flex.codeInsight.FlexNavigationTest;
-import com.intellij.flex.completion.ActionScriptCompletionInTextFieldTest;
-import com.intellij.flex.completion.FlexCompletionInUmlTextFieldsTest;
 import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
 import com.intellij.flex.highlighting.ActionScriptHighlightingInTextFieldTest;
@@ -36,10 +34,6 @@ public final class FlexTestSuite {
     // com.intellij.flex.codeInsight.*
     testSuite.addTestSuite(FlexGotoImplementationsTest.class);
     testSuite.addTestSuite(FlexNavigationTest.class);
-
-    // com.intellij.flex.completion.*
-    testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
-    testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
 
     //com.intellij.flex.flashBuilder.*
     testSuite.addTestSuite(FlashBuilderImportTest.class);

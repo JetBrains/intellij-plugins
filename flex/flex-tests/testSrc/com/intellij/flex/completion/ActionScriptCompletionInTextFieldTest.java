@@ -3,7 +3,6 @@ package com.intellij.flex.completion;
 
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
-import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -23,150 +22,174 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescript
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterTableModel;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.ArrayUtil;
+import org.junit.jupiter.api.Test;
 
-public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
-  private static final LightProjectDescriptor DESCRIPTOR = new FlexProjectDescriptor();
+import static com.intellij.flex.completion.FlexCompletionInTextFieldFixture.DEFALUT_VALUES;
+import static com.intellij.flex.completion.FlexCompletionInTextFieldFixture.flexCompletionInTextFieldFixture;
+import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return DESCRIPTOR;
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath(BASE_PATH);
-  }
+@TestApplication
+public class ActionScriptCompletionInTextFieldTest {
+  private static final TestFixture<Project> projectFixture = jsProjectFixture();
+  private final TestFixture<FlexCompletionInTextFieldFixture> textField = flexCompletionInTextFieldFixture(projectFixture);
 
   private JSFunction createFakeFunction() {
-    return createFakeClass().findFunctionByName("a");
+    return ReadAction.computeBlocking(() -> textField.get().createFakeClass().findFunctionByName("a"));
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testChangeSignatureReturnType() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
     JSFunction function = createFakeFunction();
-    JSExpressionCodeFragment fragment =
-      JSChangeSignatureDialog.createReturnTypeCodeFragment(new JSMethodDescriptor(function, false).getReturnType(), function,
-                                                           FlexSupportLoader.ECMA_SCRIPT_L4);
+    JSExpressionCodeFragment fragment = ReadAction.computeBlocking(
+      () -> JSChangeSignatureDialog.createReturnTypeCodeFragment(new JSMethodDescriptor(function, false).getReturnType(), function,
+                                                                 FlexSupportLoader.ECMA_SCRIPT_L4));
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
-    checkTextFieldCompletion(fragment, included, excluded, "Z111", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion(fragment, included, excluded, "Z111", flex.getTestName(false) + ".txt");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testChangeSignatureParameterTypeCell() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createParameterTypeCellFragment("", createFakeFunction());
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
+    JSFunction function = createFakeFunction();
+    JSExpressionCodeFragment fragment = ReadAction.computeBlocking(() -> JSParameterTableModel.createParameterTypeCellFragment("", function));
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", flex.getTestName(false) + ".txt");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testChangeSignatureDefaultValueCell() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createDefaultValueCellFragment("", createFakeClass());
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
+    JSExpressionCodeFragment fragment =
+      ReadAction.computeBlocking(() -> JSParameterTableModel.createDefaultValueCellFragment("", flex.createFakeClass()));
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
     String[] excluded = new String[]{"public", "function", "while"};
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", flex.getTestName(false) + ".txt");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testChangeSignatureInitializerCell() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    JSExpressionCodeFragment fragment = JSParameterTableModel.createInitializerCellFragment("", createFakeClass());
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
+    JSExpressionCodeFragment fragment =
+      ReadAction.computeBlocking(() -> JSParameterTableModel.createInitializerCellFragment("", flex.createFakeClass()));
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
     String[] excluded = new String[]{"public", "function", "while"};
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", flex.getTestName(false) + ".txt");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testPackageNameCombo() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    PsiFile fragment =
-      ActionScriptPackageChooserDialog.createPackageReferenceEditor("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
+    PsiFile fragment = ReadAction.computeBlocking(
+      () -> ActionScriptPackageChooserDialog.createPackageReferenceEditor("", flex.getProject(), "", GlobalSearchScope.projectScope(flex.getProject()), "").getPsiFile());
     String[] included = new String[]{"com"};
     String[] excluded = new String[]{"public", "function", "while", "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "com", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "com", flex.getTestName(false) + ".txt");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
+  @Test
   public void testPackageNameCombo2() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    PsiFile fragment =
-      ActionScriptPackageChooserDialog.createPackageReferenceEditor("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
+    PsiFile fragment = ReadAction.computeBlocking(
+      () -> ActionScriptPackageChooserDialog.createPackageReferenceEditor("", flex.getProject(), "", GlobalSearchScope.projectScope(flex.getProject()), "").getPsiFile());
     String[] included = new String[]{"foo"};
     String[] excluded = new String[]{"public", "function", "while", "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "foo", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "foo", flex.getTestName(false) + ".txt");
   }
 
   @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
+  @Test
   public void testCreateFlexSkinHostComponent() {
-    setUpJdk();
-    myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    PsiFile fragment = CreateFlexSkinDialog.createHostComponentCombo("", getModule()).getPsiFile();
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    flex.setUpJdk();
+    flex.getFixture().configureByFiles(flex.getTestName(false) + "_2.js2");
+    PsiFile fragment = ReadAction.computeBlocking(() -> CreateFlexSkinDialog.createHostComponentCombo("", flex.getFixture().getModule()).getPsiFile());
     String[] included = new String[]{"Z111", "Z222"};
     // TODO primitive types (and e.g. not subclasses of SkinnableComponent?) should be removed from completion list
     String[] excluded = new String[]{"public", "function", "while", "Z333", "EventDispatcher", "int", "String", "uint", "Number"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
+    flex.checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", flex.getTestName(false) + ".txt");
   }
 
   private void doTestCustomScope(String activeBcName, String selectedBcName, int numberOfVariants) {
+    FlexCompletionInTextFieldFixture flex = textField.get();
+    CodeInsightTestFixture myFixture = flex.getFixture();
+    Project project = flex.getProject();
+    Module module = myFixture.getModule();
     String buildConfigName = "AIR";
-    String filename = getTestName(false).replaceAll("\\d+", "");
+    String filename = flex.getTestName(false).replaceAll("\\d+", "");
     myFixture.configureByFiles(filename + "_2.mxml", filename + "_3.mxml");
 
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
 
-    FlexTestUtils.modifyConfigs(getProject(), e -> {
+    FlexTestUtils.modifyConfigs(project, e -> {
       {
-        final ModifiableFlexBuildConfiguration bc = e.getConfigurations(getModule())[0];
+        final ModifiableFlexBuildConfiguration bc = e.getConfigurations(module)[0];
         bc.setName("Flex");
         bc.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
         FlexTestUtils.setSdk(bc, sdk);
       }
       {
-        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(getModule());
+        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(module);
         bc.setName(buildConfigName);
         bc.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
         FlexTestUtils.setSdk(bc, sdk);
       }
     });
 
-    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(getModule());
+    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     FlexBuildConfiguration old = manager.getActiveConfiguration();
     Disposer.register(myFixture.getTestRootDisposable(), () ->  manager.setActiveBuildConfiguration(old));
     manager.setActiveBuildConfiguration(manager.findConfigurationByName(activeBcName));
 
     final GlobalSearchScope scope =
-      FlexUtils.getModuleWithDependenciesAndLibrariesScope(getModule(), manager.findConfigurationByName(selectedBcName), false);
+      FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, manager.findConfigurationByName(selectedBcName), false);
     PublicInheritorFilter filter =
-      new PublicInheritorFilter(getProject(), FlashRunConfigurationForm.SPRITE_CLASS_NAME, scope, true);
+      new PublicInheritorFilter(project, FlashRunConfigurationForm.SPRITE_CLASS_NAME, scope, true);
 
-    PsiFile fragment =
-      JSReferenceEditor.forClassName("", getProject(), null, GlobalSearchScope.moduleScope(getModule()), null, filter, "").getPsiFile();
+    PsiFile fragment = ReadAction.computeBlocking(
+      () -> JSReferenceEditor.forClassName("", project, null, GlobalSearchScope.moduleScope(module), null, filter, "").getPsiFile());
 
-    doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, filename + ".txt");
-    assertEquals(numberOfVariants, myFixture.getLookupElements().length);
+    flex.doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, filename + ".txt",
+                                 () -> assertEquals(numberOfVariants, myFixture.getLookupElements().length));
 
-    FlexTestUtils.modifyConfigs(getProject(), e -> {
-      ModifiableFlexBuildConfiguration[] configurations = e.getConfigurations(getModule());
+    FlexTestUtils.modifyConfigs(project, e -> {
+      ModifiableFlexBuildConfiguration[] configurations = e.getConfigurations(module);
       if (configurations == null || configurations.length <= 1) return;
       for (ModifiableFlexBuildConfiguration configuration : configurations) {
         if (configuration.getName().equals(buildConfigName)) e.configurationRemoved(configuration);
@@ -175,21 +198,25 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
+  @Test
   public void testCustomScope1() {
     doTestCustomScope("Flex", "Flex", 0);
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
+  @Test
   public void testCustomScope2() {
     doTestCustomScope("Flex", "AIR", 2);
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
+  @Test
   public void testCustomScope3() {
     doTestCustomScope("AIR", "Flex", 0);
   }
 
   @FlexTestOptions(FlexTestOption.WithGumboSdk)
+  @Test
   public void testCustomScope4() {
     doTestCustomScope("AIR", "AIR", 2);
   }
