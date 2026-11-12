@@ -1,13 +1,28 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import kotlinx.serialization.json.Json
 import org.jetbrains.vuejs.VueTsConfig.CompilerOptions
+import org.jetbrains.vuejs.VueTsConfig.ContentMapper
 import org.jetbrains.vuejs.config.VueCompilerOptions
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
+import org.jetbrains.vuejs.lang.typescript.service.getBundledVueContentMapperDir
+import org.jetbrains.vuejs.lang.typescript.service.vueContentMapperPackageName
 import org.junit.jupiter.api.assertNull
+
+/**
+ * Copies the bundled `@vue/content-mapper` package into `node_modules` of the test project.
+ * The function refreshes the package directory first, because the persistent VFS of a local test run can keep removed files.
+ */
+internal fun copyBundledVueContentMapper(fixture: CodeInsightTestFixture) {
+  val mapperDir = getBundledVueContentMapperDir()!!
+  VfsUtil.markDirtyAndRefresh(false, true, true, mapperDir)
+  fixture.tempDirFixture.copyAll(mapperDir.toString(), "node_modules/$vueContentMapperPackageName")
+}
 
 data class VueTsConfigFile(
   val types: List<String> = emptyList(),
@@ -15,7 +30,22 @@ data class VueTsConfigFile(
   val enabled: Boolean = true,
   // TODO: remove after migration on TsType
   val checkUsage: Boolean = enabled,
+  val contentMappers: List<ContentMapper>? = null,
 ) : PolySymbolsTestConfigurator {
+
+  /**
+   * In [VueTestMode.TS_GO_PROXY], moves [vueCompilerOptions] into a new [VUE_CONTENT_MAPPER] entry of [contentMappers].
+   * An explicit [contentMappers] list stays as it is.
+   */
+  fun withTestMode(testMode: VueTestMode): VueTsConfigFile {
+    if (testMode != VueTestMode.TS_GO_PROXY || contentMappers != null)
+      return this
+
+    return copy(
+      vueCompilerOptions = null,
+      contentMappers = listOf(VUE_CONTENT_MAPPER.copy(options = vueCompilerOptions)),
+    )
+  }
 
   override fun configure(
     fixture: CodeInsightTestFixture,
@@ -26,9 +56,14 @@ data class VueTsConfigFile(
     assertNull(fixture.tempDirFixture.getFile(FILE_NAME))
     assertNull(fixture.tempDirFixture.getFile("tsconfig.base.json"))
 
+    if (contentMappers != null && contentMappers.any { it.packageName == vueContentMapperPackageName }) {
+      copyBundledVueContentMapper(fixture)
+    }
+
     val content = tsconfigContent(
       types = types,
       vueCompilerOptions = vueCompilerOptions,
+      contentMappers = contentMappers,
     )
 
     fixture.configureByText(FILE_NAME, content)
@@ -40,15 +75,23 @@ data class VueTsConfigFile(
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
 
+    val VUE_CONTENT_MAPPER: ContentMapper =
+      ContentMapper(
+        packageName = vueContentMapperPackageName,
+        extensions = listOf(VUE_FILE_EXTENSION),
+      )
+
     val DEFAULT_TSCONFIG_CONTENT: String =
       tsconfigContent(
         types = emptyList(),
         vueCompilerOptions = null,
+        contentMappers = null,
       )
 
     private fun tsconfigContent(
       types: List<String>,
       vueCompilerOptions: VueCompilerOptions?,
+      contentMappers: List<ContentMapper>?,
     ): String {
       val config = VueTsConfig(
         extends = "@vue/tsconfig/tsconfig.dom.json",
@@ -68,6 +111,7 @@ data class VueTsConfigFile(
           tsBuildInfoFile = "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
         ),
         vueCompilerOptions = vueCompilerOptions,
+        contentMappers = contentMappers,
       )
 
       return Json.encodeToString(config)

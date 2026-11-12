@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.testFramework.PlatformTestUtil.assertDirectoriesEqual
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.junit5.RegistryKey
 import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.VueFixture
 import org.jetbrains.vuejs.VueTestMode
@@ -21,6 +22,7 @@ import java.io.FileNotFoundException
 private const val __TRANSPILE__: String = "__transpile__"
 
 @TestApplication
+@RegistryKey("vue.kolar.transpiler.enabled", "true")
 class VueKolarTranspilerTest {
 
   private val vue: VueFixture by vueFixture("kolar", VueTestMode.TS_GO_PROXY, dirModeByDefault = true)

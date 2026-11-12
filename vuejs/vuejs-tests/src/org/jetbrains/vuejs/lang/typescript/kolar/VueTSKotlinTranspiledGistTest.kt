@@ -33,6 +33,7 @@ import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsigh
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.RegistryKey
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.intellij.testFramework.junit5.fixture.projectFixture
@@ -50,6 +51,7 @@ import kotlin.time.Duration.Companion.minutes
  * The data of the gist must be the same as the data of the full parse, for each import style of a Vue file.
  */
 @TestApplication
+@RegistryKey("vue.kolar.transpiler.enabled", "true")
 class VueTSKotlinTranspiledGistTest {
   private val pathFixture = tempPathFixture()
   private val projectFixture = projectFixture(pathFixture, OpenProjectTask {}, true)

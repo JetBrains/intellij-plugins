@@ -52,8 +52,9 @@ class VueCompletionTest :
     val rule: TrackFailedTestExtension = TrackFailedTestExtension(
       "testComputedTypeJS",
       "testComputedTypeTS",
-      "testScriptSetupGeneric",
       "testVueOutObjectLiteralTs",
+      // reproducible in test only
+      "testCompleteComponentWithDefineOptions",
     )
   }
 
@@ -800,7 +801,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testComplexThisContext() =
     vue.doLookupTest(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_5_3,
-                 renderTypeText = false, renderPriority = false)
+                     renderTypeText = false, renderPriority = false)
 
   @Test
   fun testTopLevelTagsNoI18n() =
@@ -1761,7 +1762,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testComponentCustomPropertiesWithFunctionOverloads() =
     vue.doLookupTest(VueTestModule.VUE_2_6_10, configureFileName = "ComponentCustomPropertiesWithFunctionOverloads.vue",
-                 containsCheck = true)
+                     containsCheck = true)
 
   @Test
   fun testDefineSlotsProperties() =

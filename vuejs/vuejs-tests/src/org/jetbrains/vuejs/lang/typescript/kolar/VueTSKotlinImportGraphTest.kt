@@ -48,6 +48,7 @@ import kotlin.time.Duration.Companion.minutes
 /** Checks that the TSKotlin config graph resolves the imports of a Vue file from its Kolar service script. */
 @TestApplication
 @RegistryKey("typescript.tskotlin.enabled", "true")
+@RegistryKey("vue.kolar.transpiler.enabled", "true")
 class VueTSKotlinImportGraphTest {
   private val pathFixture = tempPathFixture()
   private val projectFixture = projectFixture(pathFixture, OpenProjectTask {}, true)

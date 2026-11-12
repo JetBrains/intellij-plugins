@@ -95,12 +95,13 @@ open class VueFixture(
     buildList {
       add(VueSettingsConfigurator())
 
-      addAll(super.adjustConfigurators(configurators))
+      super.adjustConfigurators(configurators)
+        .mapTo(this) { if (it is VueTsConfigFile) it.withTestMode(testMode) else it }
 
       add(VueToolsConfigurator(testMode))
 
       if (none { it is VueTsConfigFile }) {
-        add(VueTsConfigFile())
+        add(VueTsConfigFile().withTestMode(testMode))
       }
     }
 
