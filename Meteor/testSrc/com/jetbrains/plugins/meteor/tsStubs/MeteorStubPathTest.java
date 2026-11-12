@@ -2,13 +2,18 @@ package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.util.containers.ContainerUtil;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MeteorStubPathTest extends TestCase {
 
+public class MeteorStubPathTest {
+
+  @Test
   public void testVersionNumber() {
     List<MeteorStubPath.VersionNumber> versions =
       ContainerUtil.sorted(List.of(create("meteor-v1.1.1.d.ts"), create("meteor-v0.1.d.ts"), create("meteor-v0.2.2.d.ts"), create("meteor-v0.2.d.ts")));
@@ -27,10 +32,12 @@ public class MeteorStubPathTest extends TestCase {
     assertEquals(name, versions.get(index).myFileName);
   }
 
+  @Test
   public void testPathWithNodeModules() {
     assertTrue(JSLibraryUtil.isProbableLibraryPath("/var/node_modules/.meteor"));
   }
 
+  @Test
   public void testPathWithNotNodeModules() {
     assertFalse(JSLibraryUtil.isProbableLibraryPath("/var/node_ms/.meteor"));
   }

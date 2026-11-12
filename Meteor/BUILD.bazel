@@ -162,10 +162,10 @@ jvm_library(
         "//contrib/Meteor:meteor",
         "//contrib/handlebars:handlebars-tests_test_lib",
         "//plugins/LiveEdit:js-liveEdit-tests_test_lib",
-        "@community//libraries/junit4",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5/codeInsight",
         "@community//libraries/junit6",
+        "@community//libraries/assertj-core",
         "@community//platform/scratch/plugin",
     ],
 )

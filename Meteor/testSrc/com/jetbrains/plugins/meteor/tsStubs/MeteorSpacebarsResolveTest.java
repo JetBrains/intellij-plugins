@@ -4,46 +4,74 @@ import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-  @Override
-  protected boolean runInDispatchThread() {
-    return false;
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/Meteor/testData/testResolveHelpers")
+public class MeteorSpacebarsResolveTest {
+  private final TestFixture<Project> projectFixture = codeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsight = codeInsightFixture(projectFixture);
+  private String testName;
+
+  @BeforeEach
+  void setUp(TestInfo testInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), true);
+    MeteorTestUtil.enableMeteor();
+    CodeInsightTestFixture myFixture = codeInsight.get();
+    HbTestUtils.setOpenHtmlAsHandlebars(true, myFixture.getProject(), myFixture.getTestRootDisposable());
   }
 
-  @Override
-  protected String getBasePath() {
-    return MeteorTestUtil.getBasePath() + "/testResolveHelpers/";
+  @AfterEach
+  void tearDown() {
+    MeteorTestUtil.disableMeteor();
   }
 
+  @Test
   public void testSingleTag() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
     assertEquals("Template.myTemplateForHelper.testProperty", ((JSQualifiedNamedElement)resolve).getQualifiedName());
   }
 
+  @Test
   public void testSingleUnescapedTag() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
     assertEquals("Template.myTemplateForHelper.testProperty", ((JSQualifiedNamedElement)resolve).getQualifiedName());
   }
 
+  @Test
   public void testThreeTags() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
     assertEquals("Template.myTemplateForHelper2.testProperty", ((JSQualifiedNamedElement)resolve).getQualifiedName());
   }
 
+  @Test
   public void testNotResolve() {
     PsiElement resolve = resolveElement();
     assertNull(resolve);
   }
 
+  @Test
   public void testResolvedObjectLiteralHelper() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
@@ -51,12 +79,14 @@ public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
     assertEquals("MeteorTemplateHelpersNamespace.myTemplateForLiteral." + "testPropertyLiteral", qualifiedName);
   }
 
+  @Test
   public void testResolveGlobalHelper() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
     assertEquals("MeteorGlobalHelpersNamespace.globalHelper1", ((JSPsiElementBase)resolve).getQualifiedName());
   }
 
+  @Test
   public void testResolveTemplate() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
@@ -64,12 +94,14 @@ public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
     assertEquals("\"templateForResolving\"", text);
   }
 
+  @Test
   public void testResolveForBodyTag() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
     assertEquals("MeteorTemplateHelpersNamespace.body.testPropertyForBody", ((JSPsiElementBase)resolve).getQualifiedName());
   }
 
+  @Test
   public void testResolveBlockTag() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
@@ -77,8 +109,9 @@ public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
   }
 
   private PsiElement resolveElement() {
-    VirtualFile directory = myFixture.copyDirectoryToProject(getTestName(true) + "/module", "module");
-    MeteorProjectTestBase.initMeteorDirs(getProject());
+    CodeInsightTestFixture myFixture = codeInsight.get();
+    VirtualFile directory = myFixture.copyDirectoryToProject(testName + "/module", "module");
+    MeteorTestUtil.initMeteorDirs(myFixture.getProject());
     VirtualFile templates = directory.findFileByRelativePath("templates.html");
     assertNotNull(templates);
     myFixture.configureFromExistingVirtualFile(templates);
@@ -87,25 +120,5 @@ public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
       PsiReference reference = myFixture.getFile().findReferenceAt(offset);
       return reference.resolve();
     });
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    MeteorTestUtil.enableMeteor();
-    super.setUp();
-    HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), myFixture.getTestRootDisposable());
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      MeteorTestUtil.disableMeteor();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
   }
 }

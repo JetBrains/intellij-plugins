@@ -3,47 +3,69 @@ package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class MeteorHighlightingTest extends MeteorProjectTestBase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/Meteor/testData/testHighlighting")
+public class MeteorHighlightingTest {
+  private final TestFixture<Project> projectFixture = codeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsight = codeInsightFixture(projectFixture);
+
+  @BeforeEach
+  void setUp() {
+    MeteorTestUtil.enableMeteor();
+    MeteorTestUtil.initMeteorDirs(codeInsight.get().getProject());
     enableInspections();
   }
 
+  @AfterEach
+  void tearDown() {
+    MeteorTestUtil.disableMeteor();
+  }
+
+  @Test
   public void testTemplateWithoutName() {
-    doTest();
+    doTest("templateWithoutName");
   }
 
-  protected void enableInspections() {
-    myFixture.enableInspections(new RequiredAttributesInspection());
+  private void enableInspections() {
+    codeInsight.get().enableInspections(new RequiredAttributesInspection());
   }
 
-  private void doTest() {
-    myFixture.testHighlighting(getTestName(true) + ".spacebars");
+  private void doTest(String testName) {
+    codeInsight.get().testHighlighting(testName + ".spacebars");
   }
 
-  @Override
-  protected String getBasePath() {
-    return super.getBasePath() + "/testHighlighting/";
-  }
-
+  @Test
   public void testResolveToJSInScriptTag() {
-    final boolean oldValue = HbConfig.shouldOpenHtmlAsHandlebars(getProject());
+    CodeInsightTestFixture myFixture = codeInsight.get();
+    Project project = myFixture.getProject();
+    String testName = "ResolveToJSInScriptTag";
+    final boolean oldValue = HbConfig.shouldOpenHtmlAsHandlebars(project);
     try {
-      HbConfig.setShouldOpenHtmlAsHandlebars(true, getProject());
-      PsiReference reference = myFixture.getReferenceAtCaretPosition(getTestName(false) + ".js", getTestName(false) + ".html");
-      assertInstanceOf(reference, JSReferenceExpression.class);
-      PsiElement resolve = ReadAction.compute(() -> reference.resolve());// may be null if Hb file element type is not stub, just don't throw an assertion
+      HbConfig.setShouldOpenHtmlAsHandlebars(true, project);
+      PsiReference reference = myFixture.getReferenceAtCaretPosition(testName + ".js", testName + ".html");
+      assertInstanceOf(JSReferenceExpression.class, reference);
+      PsiElement resolve = JSTestUtils.runInBackgroundReadActionAndWait(() -> reference.resolve());// may be null if Hb file element type is not stub, just don't throw an assertion
       //assertNotNull(resolve);
     }
     finally {
-      HbConfig.setShouldOpenHtmlAsHandlebars(oldValue, getProject());
+      HbConfig.setShouldOpenHtmlAsHandlebars(oldValue, project);
     }
   }
 }

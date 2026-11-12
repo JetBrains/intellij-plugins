@@ -41,7 +41,7 @@ public class MeteorCompletionTest {
     FileBasedIndex.getInstance().requestRebuild(MeteorTemplateIndex.METEOR_TEMPLATES_INDEX);
     UIUtil.pump();
     IndexingTestUtil.waitUntilIndexesAreReady(js.get().getProject());
-    MeteorProjectTestBase.initMeteorDirs(js.get().getProject());
+    MeteorTestUtil.initMeteorDirs(js.get().getProject());
   }
 
   @AfterEach

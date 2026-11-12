@@ -1,77 +1,85 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IndexingTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdater;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-import java.util.concurrent.Future;
-
-import static com.intellij.openapi.application.ApplicationManager.getApplication;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightProjectFixture;
 import static com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdaterKt.findAndInitMeteorRoots;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
-  @Override
-  protected String getBasePath() {
-    return MeteorTestUtil.getBasePath() + "/testSpacebarsCompletion/";
-  }
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/Meteor/testData/testSpacebarsCompletion")
+public class MeteorSpacebarsCompletionTest {
+  private final TestFixture<Project> projectFixture = codeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsight = codeInsightFixture(projectFixture);
+  private String testName;
 
+  @Test
   public void testCompletionTemplates() {
     doSimpleTest();
   }
 
+  @Test
   public void testCompletionTemplateHelper() {
     doSimpleTest();
   }
 
+  @Test
   public void testCompletionGlobalHelper() {
     doSimpleTest();
   }
 
+  @Test
   public void testCompletionGlobalHelperForBlockTag() {
     doSimpleTest();
   }
 
   private void doSimpleTest() {
-    String filePath = getTestName(true) + "/" + "templates" + ".html";
-    final String fullPath = getTestName(true) + "/module";
+    CodeInsightTestFixture myFixture = codeInsight.get();
+    String filePath = testName + "/" + "templates" + ".html";
+    final String fullPath = testName + "/module";
     myFixture.copyDirectoryToProject(fullPath, "module");
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
+    EdtTestUtil.runInEdtAndWait(() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
     myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject(filePath, StringUtil.getShortName(filePath, '/')));
     updateMeteorStatus();
 
     myFixture.completeBasic();
-    String filePath2 = getTestName(true) + "/" + "templates" + "_after.html";
+    String filePath2 = testName + "/" + "templates" + "_after.html";
     myFixture.checkResultByFile(filePath2);
   }
 
   private void updateMeteorStatus() {
-    findAndInitMeteorRoots(getProject());
-    Future<?> updateFinished = getApplication().executeOnPooledThread(MeteorLibraryUpdater.getInstance(getProject())::waitForUpdate);
-    PlatformTestUtil.waitForFuture(updateFinished);
-    IndexingTestUtil.waitUntilIndexesAreReady(getProject());
-    assertTrue(MeteorFacade.getInstance().isMeteorProject(getProject()));
+    Project project = codeInsight.get().getProject();
+    ReadAction.run(() -> findAndInitMeteorRoots(project));
+    MeteorLibraryUpdater.getInstance(project).waitForUpdate();
+    IndexingTestUtil.waitUntilIndexesAreReady(project);
+    assertTrue(MeteorFacade.getInstance().isMeteorProject(project));
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUp(TestInfo testInfo) {
+    testName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), true);
     MeteorTestUtil.enableMeteor();
-    MeteorLibraryUpdater.getInstance(getProject()).waitForUpdate();
+    MeteorLibraryUpdater.getInstance(codeInsight.get().getProject()).waitForUpdate();
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      MeteorTestUtil.disableMeteor();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+  @AfterEach
+  void tearDown() {
+    MeteorTestUtil.disableMeteor();
   }
 }
