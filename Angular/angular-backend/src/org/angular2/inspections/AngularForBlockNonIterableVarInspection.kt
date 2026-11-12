@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService.LOCATION
 import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
@@ -34,13 +35,19 @@ class AngularForBlockNonIterableVarInspection : LocalInspectionTool() {
             val expression = block.parameters.getOrNull(0)
               ?.takeIf { it.isPrimaryExpression }
               ?.expression
-            val expressionType = expression
-                                   ?.let { JSResolveUtil.getExpressionJSType(it) }
+            val evaluatedType = expression?.let { JSResolveUtil.getExpressionJSType(it) }
+            val expressionType = evaluatedType
                                    ?.substitute()
                                    ?.let { JSTypeUtils.removeNullableComponents(it) }
                                    ?.takeIf { !JSTypeUtils.isAnyType(it) && it !is JSTupleType }
                                  ?: return@withTypeEvaluationLocation
-            val property = expressionType
+            // The record of a TypeScript compiler type has the members from the compiler. The substituted type gets its record
+            // from the IDE resolve, and with TSKotlin that resolve sees only one file of the TSKotlin library, for example lib.es5.d.ts.
+            val recordType = evaluatedType
+                               .takeIf { it is TypeScriptCompilerType }
+                               ?.let { JSTypeUtils.removeNullableComponents(it) }
+                             ?: expressionType
+            val property = recordType
               .asRecordType(block)
               .let {
                 it.findPropertySignature("[Symbol.iterator]")
