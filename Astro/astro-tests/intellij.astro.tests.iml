@@ -45,7 +45,6 @@
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.libraries.junit4" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
@@ -53,6 +52,7 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework.junit5.codeInsight" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.monolith.main" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.libraries.junit6" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.junit6.suites" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.scratch.plugin" scope="TEST" />
   </component>
 </module>
