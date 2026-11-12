@@ -7,78 +7,111 @@ import com.intellij.deno.entities.DenoEntity
 import com.intellij.deno.service.DenoTypings
 import com.intellij.deno.setUseDenoLibrary
 import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesWorkspaceModelNode
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.platform.backend.workspace.WorkspaceModel
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class DenoEntityTest : DenoLibraryRootsTestBase() {
+@TestApplication
+class DenoEntityTest {
+  companion object {
+    private val projectFixture = sharedCodeInsightProjectFixture()
+  }
 
+  private val roots by denoLibraryRootsFixture(projectFixture) { true }
+
+  @Test
   fun testEntityRoots() {
     val entity = denoEntities().single()
-    val typings = DenoTypings.getInstance(project).getDenoTypingsVirtualFile()!!
+    val typings = DenoTypings.getInstance(roots.project).getDenoTypingsVirtualFile()!!
 
-    assertEquals(VfsUtilCore.pathToUrl("${denoCache.path}/deps"), entity.depsFile?.url)
-    assertEquals(VfsUtilCore.pathToUrl("${denoCache.path}/npm"), entity.npmFolder?.url)
+    assertEquals(VfsUtilCore.pathToUrl("${roots.denoCache.path}/deps"), entity.depsFile?.url)
+    assertEquals(VfsUtilCore.pathToUrl("${roots.denoCache.path}/npm"), entity.npmFolder?.url)
     assertEquals(typings.url, entity.denoTypes?.url)
   }
 
-  fun testDisableDenoRemovesEntity() {
-    setUseDenoLibrary(project, value = false, updateLib = false)
-    DenoSettings.getService(project).setUseDenoAndReload(UseDeno.DISABLE)
+  @Test
+  fun testDisableDenoRemovesEntity(): Unit = timeoutRunBlocking {
+    setUseDenoLibrary(roots.project, value = false, updateLib = false)
+    withContext(Dispatchers.EDT) {
+      DenoSettings.getService(roots.project).setUseDenoAndReload(UseDeno.DISABLE)
+    }
 
-    assertEmpty(denoEntities())
+    assertThat(denoEntities()).isEmpty()
   }
 
-  fun testDepsCreatedAfterEntity() {
-    val hashFile = createCacheFile("deps/https/deno.land/${hashName('d')}")
+  @Test
+  fun testDepsCreatedAfterEntity(): Unit = timeoutRunBlocking {
+    val hashFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('d')}")
 
-    assertTrue(isInLibraries(hashFile))
+    assertTrue(roots.isInLibraries(hashFile))
   }
 
   /**
    * The cache path from the settings field can end with a slash. The stored URL must still be the URL of the folder, or a folder that
    * `deno cache` creates later stays outside the index.
    */
-  fun testCachePathWithTrailingSlash() {
-    DenoSettings.getService(project).setDenoCache(denoCache.path + "/")
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+  @Test
+  fun testCachePathWithTrailingSlash(): Unit = timeoutRunBlocking {
+    DenoSettings.getService(roots.project).setDenoCache(roots.denoCache.path + "/")
+    withContext(Dispatchers.EDT) {
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    }
 
     val entity = denoEntities().single()
-    assertEquals(VfsUtilCore.pathToUrl("${denoCache.path}/deps"), entity.depsFile?.url)
-    assertEquals(VfsUtilCore.pathToUrl("${denoCache.path}/npm"), entity.npmFolder?.url)
-    assertTrue(isInLibraries(createCacheFile("deps/https/deno.land/${hashName('g')}")))
+    assertEquals(VfsUtilCore.pathToUrl("${roots.denoCache.path}/deps"), entity.depsFile?.url)
+    assertEquals(VfsUtilCore.pathToUrl("${roots.denoCache.path}/npm"), entity.npmFolder?.url)
+    assertTrue(roots.isInLibraries(roots.createCacheFile("deps/https/deno.land/${roots.hashName('g')}")))
   }
 
-  fun testCachePathChange() {
-    val oldHashFile = createCacheFile("deps/https/deno.land/${hashName('e')}")
-    val newCache = createDenoCacheDir("newDenoCache")
-    val newHashFile = createCacheFile("deps/https/deno.land/${hashName('e')}", newCache)
+  @Test
+  fun testCachePathChange(): Unit = timeoutRunBlocking {
+    val oldHashFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('e')}")
+    val newCache = roots.createDenoCacheDir("newDenoCache")
+    val newHashFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('e')}", newCache)
     // The setter alone updates the libraries, whoever calls it.
-    DenoSettings.getService(project).setDenoCache(newCache.path)
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    DenoSettings.getService(roots.project).setDenoCache(newCache.path)
+    withContext(Dispatchers.EDT) {
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    }
 
     assertEquals(VfsUtilCore.pathToUrl("${newCache.path}/deps"), denoEntities().single().depsFile?.url)
-    assertFalse(isInLibraries(oldHashFile))
-    assertTrue(isInLibraries(newHashFile))
+    assertFalse(roots.isInLibraries(oldHashFile))
+    assertTrue(roots.isInLibraries(newHashFile))
   }
 
-  fun testProjectViewNode() {
-    val depsDir = createCacheFile("deps/https/deno.land/${hashName('f')}").parent.parent.parent
-    updateLibraries()
+  @Test
+  fun testProjectViewNode(): Unit = timeoutRunBlocking {
+    val depsDir = roots.createCacheFile("deps/https/deno.land/${roots.hashName('f')}").parent.parent.parent
+    roots.updateLibraries()
 
-    val node = DenoExternalLibrariesWorkspaceModelNodesProvider().createNode(denoEntities().single(), project, null)
-    assertInstanceOf(node, ExternalLibrariesWorkspaceModelNode::class.java)
-    node!!.update()
-    assertEquals(DenoBundle.message("deno.library.name"), node.presentation.presentableText)
+    val node = DenoExternalLibrariesWorkspaceModelNodesProvider().createNode(denoEntities().single(), roots.project, null)
+    assertInstanceOf(ExternalLibrariesWorkspaceModelNode::class.java, node)
+    readAction { node!!.update() }
+    assertEquals(DenoBundle.message("deno.library.name"), node!!.presentation.presentableText)
     assertNotNull(node.presentation.getIcon(false))
-    assertContainsElements((node as ExternalLibrariesWorkspaceModelNode).roots, depsDir)
+    assertThat((node as ExternalLibrariesWorkspaceModelNode).roots).contains(depsDir)
   }
 
+  @Test
   fun testSupporterMatchesEntity() {
-    assertTrue(createDenoEntity(project)!!.hasSameRoots(denoEntities().single()))
+    assertTrue(createDenoEntity(roots.project)!!.hasSameRoots(denoEntities().single()))
   }
 
   private fun denoEntities(): List<DenoEntity> {
-    return WorkspaceModel.getInstance(project).currentSnapshot.entities(DenoEntity::class.java).toList()
+    return WorkspaceModel.getInstance(roots.project).currentSnapshot.entities(DenoEntity::class.java).toList()
   }
 }

@@ -4,56 +4,80 @@ import com.intellij.deno.DenoSettings
 import com.intellij.deno.UseDeno
 import com.intellij.deno.service.DenoTypings
 import com.intellij.deno.setUseDenoLibrary
-import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
 import com.intellij.psi.impl.ResolveScopeManager
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-open class DenoLibraryRootsTest : DenoLibraryRootsTestBase() {
-
-  fun testDepsFiles() {
-    val hashFile = createCacheFile("deps/https/deno.land/${hashName('a')}")
-    val metadataFile = createCacheFile("deps/https/deno.land/${hashName('a')}.metadata.json")
-    val definitionFile = createCacheFile("deps/https/deno.land/mod.d.ts")
-    val jsFile = createCacheFile("deps/https/deno.land/mod.js")
-    updateLibraries()
-
-    assertTrue(isInLibraries(hashFile))
-    assertTrue(isInLibraries(metadataFile))
-    assertTrue(isInLibraries(definitionFile))
-    assertFalse(isInLibraries(jsFile))
+@TestApplication
+open class DenoLibraryRootsTest {
+  companion object {
+    private val projectFixture = sharedCodeInsightProjectFixture()
   }
 
-  fun testNpmFiles() {
-    val definitionFile = createCacheFile("npm/registry.npmjs.org/chalk/5.3.0/index.d.ts")
-    updateLibraries()
+  protected open val useWorkspaceModelRoots: Boolean = true
 
-    assertTrue(isInLibraries(definitionFile))
+  private val roots by denoLibraryRootsFixture(projectFixture) { useWorkspaceModelRoots }
+
+  @Test
+  fun testDepsFiles(): Unit = timeoutRunBlocking {
+    val hashFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('a')}")
+    val metadataFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('a')}.metadata.json")
+    val definitionFile = roots.createCacheFile("deps/https/deno.land/mod.d.ts")
+    val jsFile = roots.createCacheFile("deps/https/deno.land/mod.js")
+    roots.updateLibraries()
+
+    assertTrue(roots.isInLibraries(hashFile))
+    assertTrue(roots.isInLibraries(metadataFile))
+    assertTrue(roots.isInLibraries(definitionFile))
+    assertFalse(roots.isInLibraries(jsFile))
   }
 
-  fun testTypings() {
-    val typings = DenoTypings.getInstance(project).getDenoTypingsVirtualFile()!!
+  @Test
+  fun testNpmFiles(): Unit = timeoutRunBlocking {
+    val definitionFile = roots.createCacheFile("npm/registry.npmjs.org/chalk/5.3.0/index.d.ts")
+    roots.updateLibraries()
 
-    assertTrue(isInLibraries(typings))
+    assertTrue(roots.isInLibraries(definitionFile))
   }
 
-  fun testResolveScope() {
-    val hashFile = createCacheFile("deps/https/deno.land/${hashName('b')}")
-    updateLibraries()
-    val typings = DenoTypings.getInstance(project).getDenoTypingsVirtualFile()!!
-    myFixture.configureByText("main.ts", "")
+  @Test
+  fun testTypings(): Unit = timeoutRunBlocking {
+    val typings = DenoTypings.getInstance(roots.project).getDenoTypingsVirtualFile()!!
 
-    val scope = ReadAction.compute<_, RuntimeException> { ResolveScopeManager.getElementResolveScope(myFixture.file) }
+    assertTrue(roots.isInLibraries(typings))
+  }
+
+  @Test
+  fun testResolveScope(): Unit = timeoutRunBlocking {
+    val hashFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('b')}")
+    roots.updateLibraries()
+    val typings = DenoTypings.getInstance(roots.project).getDenoTypingsVirtualFile()!!
+    roots.fixture.configureByText("main.ts", "")
+
+    val scope = readAction { ResolveScopeManager.getElementResolveScope(roots.fixture.file) }
     assertTrue(scope.contains(hashFile))
     assertTrue(scope.contains(typings))
   }
 
-  fun testDisableDeno() {
-    val hashFile = createCacheFile("deps/https/deno.land/${hashName('c')}")
-    updateLibraries()
-    assertTrue(isInLibraries(hashFile))
+  @Test
+  fun testDisableDeno(): Unit = timeoutRunBlocking {
+    val hashFile = roots.createCacheFile("deps/https/deno.land/${roots.hashName('c')}")
+    roots.updateLibraries()
+    assertTrue(roots.isInLibraries(hashFile))
 
-    setUseDenoLibrary(project, value = false, updateLib = false)
-    DenoSettings.getService(project).setUseDenoAndReload(UseDeno.DISABLE)
+    setUseDenoLibrary(roots.project, value = false, updateLib = false)
+    withContext(Dispatchers.EDT) {
+      DenoSettings.getService(roots.project).setUseDenoAndReload(UseDeno.DISABLE)
+    }
 
-    assertFalse(isInLibraries(hashFile))
+    assertFalse(roots.isInLibraries(hashFile))
   }
 }

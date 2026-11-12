@@ -8,7 +8,8 @@ import com.intellij.deno.model.hasNpmImportPrefix
 import com.intellij.deno.setUseDenoLibrary
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
-import com.intellij.javascript.debugger.DenoAppRule
+import com.intellij.javascript.debugger.DenoDownloader
+import com.intellij.javascript.debugger.relativeDenoPath
 import com.intellij.lang.javascript.modules.JSImportTestUtil
 import com.intellij.lang.javascript.modules.JSNodeInterpreterFixture
 import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
@@ -34,12 +35,10 @@ import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.testFramework.utils.io.deleteRecursively
 import com.intellij.util.ui.UIUtil
-import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
-import org.opentest4j.TestAbortedException
 import java.lang.reflect.Method
 import java.nio.file.Files
 import java.nio.file.Path
@@ -53,7 +52,6 @@ const val stdPathUrl = "https://deno.land/$stdVersion/path/mod.ts"
  * Create it with [denoServiceFixture].
  *
  * The setup downloads Deno 1.46.3, makes the project configure Deno automatically, and turns on the TypeScript service.
- * When Deno is not available, the test is skipped.
  * The disposal of the test root disposable restores the Deno mode and turns off the TypeScript service.
  */
 class DenoServiceFixture(
@@ -62,18 +60,12 @@ class DenoServiceFixture(
   testMethod: Method,
   options: JSTempDirFixtureOptions,
 ) : JSNodeInterpreterFixture(fixture, testClass, testMethod, options) {
-  val denoAppRule: DenoAppRule = DenoAppRule.V_1_46_3
-
   override fun setUp() {
     super.setUp()
-    try {
-      denoAppRule.executeBefore()
-    }
-    catch (e: AssumptionViolatedException) {
-      throw TestAbortedException(e.message, e)
-    }
+    val denoPath = DenoDownloader("v1.46.3").downloadAndUnpack().resolve(relativeDenoPath())
+    assertTrue(Files.exists(denoPath), "Deno is not found at $denoPath")
     val service = DenoSettings.getService(project)
-    service.setDenoPath(denoAppRule.exePath)
+    service.setDenoPath(denoPath.toString())
     val before = service.getUseDeno()
     runInEdtAndWait { service.setUseDenoAndReload(UseDeno.CONFIGURE_AUTOMATICALLY) }
     (fixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)

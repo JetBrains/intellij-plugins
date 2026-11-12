@@ -1,9 +1,15 @@
 package com.intellij.deno.model
 
-import com.intellij.deno.DenoTestBase
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
-class DenoUrlParserTest : DenoTestBase() {
+@TestApplication
+class DenoUrlParserTest {
 
+  @Test
   fun testDenoLandStd() {
     val url = parseDenoUrl("https://deno.land/std@0.187.0/path/_constants.ts")
     assertNotNull(url!!)
@@ -17,6 +23,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://deno.land/std@0.187.0/path/_constants.ts", url.toString())
   }
 
+  @Test
   fun testDenoLandStdExact() {
     val url = parseDenoUrl("https://deno.land/std@0.187.0")
     assertNotNull(url!!)
@@ -31,6 +38,7 @@ class DenoUrlParserTest : DenoTestBase() {
   }
 
 
+  @Test
   fun testDenoLandX() {
     val url = parseDenoUrl("https://deno.land/x/cly@v0.25.6/mod.ts")
     assertNotNull(url!!)
@@ -44,6 +52,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://deno.land/x/cly@v0.25.6/mod.ts", url.toString())
   }
 
+  @Test
   fun testJsrScoped() {
     val url = parseDenoUrl("https://jsr.io/@std/assert/1.0.5/unimplemented.ts")
     assertNotNull(url!!)
@@ -57,6 +66,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://jsr.io/@std/assert/1.0.5/unimplemented.ts", url.toString())
   }
 
+  @Test
   fun testJsrMeta() {
     val url = parseDenoUrl("https://jsr.io/@std/internal/meta.json")
     assertNotNull(url!!)
@@ -70,6 +80,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://jsr.io/@std/internal/meta.json", url.toString())
   }
 
+  @Test
   fun testJsrMetaWithVersion() {
     val url = parseDenoUrl("https://jsr.io/@std/json/0.213.1_meta.json")
     assertNotNull(url!!)
@@ -83,6 +94,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://jsr.io/@std/json/0.213.1_meta.json", url.toString())
   }
 
+  @Test
   fun testCustomUrl() {
     val url = parseDenoUrl("https://must.cool.net/custompath/src/without.js")
     assertNotNull(url!!)
@@ -96,6 +108,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://must.cool.net/custompath/src/without.js", url.toString())
   }
 
+  @Test
   fun testCustomUrlWithSubNamespace() {
     val url = parseDenoUrl("https://esm.sh/v126/react-dom@18.2.0")
     assertNotNull(url!!)
@@ -109,6 +122,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://esm.sh/v126/react-dom@18.2.0", url.toString())
   }
 
+  @Test
   fun testCustomScopedUrlWithSubNamespace() {
     val url = parseDenoUrl("https://esm.sh/v126/@mdx-js/react@2.3.0")
     assertNotNull(url!!)
@@ -122,6 +136,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://esm.sh/v126/@mdx-js/react@2.3.0", url.toString())
   }
 
+  @Test
   fun testCustomScopedUrlWithSubNamespaceIncorrectVersion() {
     val url = parseDenoUrl("https://esm.sh/v128/@types/react@~18.2/index.d.ts")
     assertNotNull(url!!)
@@ -135,6 +150,7 @@ class DenoUrlParserTest : DenoTestBase() {
     assertEquals("https://esm.sh/v128/@types/react@~18.2/index.d.ts", url.toString())
   }
 
+  @Test
   fun testJsrScopedWithModFile() {
     val url = parseDenoUrl("https://jsr.io/@luca/cases/1.0.0/mod.ts")
     assertNotNull(url!!)
