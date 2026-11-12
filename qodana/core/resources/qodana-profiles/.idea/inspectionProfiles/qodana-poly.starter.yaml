@@ -144,5 +144,4 @@ inspections:
       - "tools/**"
       - ".qodana/**"
       - "scope#$gitignore" # $gitignore scope available only in qodana execution
-      - "scope#test:*..*"
       - "scope#file:buildSrc/*"
