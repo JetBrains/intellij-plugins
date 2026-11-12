@@ -1,32 +1,35 @@
 package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.config.HbConfig;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class HbEnterHandlerTest extends HbActionHandlerTest {
+import static com.dmarcotte.handlebars.editor.actions.HbActionHandlerTestUtil.doEnterTest;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+
+@TestApplication
+public class HbEnterHandlerTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
 
   private boolean myPrevFormatSetting;
 
-  @Override
-  protected void setUp()
-    throws Exception {
-    super.setUp();
-
+  @BeforeEach
+  void setUp() {
     // disable the formatter for these tests
     myPrevFormatSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      HbConfig.setFormattingEnabled(myPrevFormatSetting);
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+  @AfterEach
+  void tearDown() {
+    HbConfig.setFormattingEnabled(myPrevFormatSetting);
   }
 
   /**
@@ -34,8 +37,9 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
    * expect an extra newline to be inserted with the caret placed
    * between the tags
    */
+  @Test
   public void testEnterBetweenMatchingHbTags() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>{{/foo}}",
 
@@ -50,8 +54,9 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
    * On Enter between MIS-matched open/close tags,
    * we still get the standard behavior
    */
+  @Test
   public void testEnterBetweenMismatchedHbTags() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>{{/bar}}" +
       "stuff",
@@ -69,8 +74,9 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
    * (Notice that we have "other stuff" our test string.  When the caret is at the file
    * boundary, it's actually a special case.  See {@link #testEnterAtOpenTagOnFileBoundary}
    */
+  @Test
   public void testEnterAtOpenTag() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>" +
       "other stuff",
@@ -89,8 +95,9 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
    * Note: this used to result in an error.  The was a bug where we checked beyond the
    * end of the file for a close tag to go with this open tag.
    */
+  @Test
   public void testEnterAtOpenTagOnFileBoundary() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>",
 
@@ -99,9 +106,10 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
     );
   }
 
+  @Test
   public void testTagAttributeIndent() {
     HbConfig.setFormattingEnabled(true);
-    doEnterTest(
+    doEnterTest(fixture.get(),
       """
         {{#ffo fooo="1"<caret>
         }}

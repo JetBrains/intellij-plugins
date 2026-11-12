@@ -2,9 +2,9 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.generation.AutoIndentLinesHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -21,51 +22,26 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IndexingTestUtil;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Base class for Handlebars formatter tests.  Based on com.intellij.psi.formatter.java.AbstractJavaFormatterTest.
+ * Helpers for the Handlebars formatter tests.  Based on com.intellij.psi.formatter.java.AbstractJavaFormatterTest.
+ * <p/>
+ * A test class sets up the formatter settings with {@link FormatterTestSettings} before each test.
  */
-public abstract class HbFormatterTest extends BasePlatformTestCase implements HbFormattingModelBuilderTest {
+public final class HbFormatterTestUtil {
   private static final String TEST_DATA_PATH = new File(HbTestUtils.BASE_TEST_DATA_PATH, "formatter").getAbsolutePath();
 
-  protected FormatterTestSettings formatterTestSettings;
-
-  @Override
-  protected void setUp()
-    throws Exception {
-    super.setUp();
-
-    formatterTestSettings = new FormatterTestSettings(CodeStyle.getSettings(getProject()));
-    formatterTestSettings.setUp();
-  }
-
-  @Override
-  protected void tearDown()
-    throws Exception {
-    try {
-      formatterTestSettings.tearDown();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
-  }
-
-  /**
-   * Passes {@link com.intellij.testFramework.UsefulTestCase#getTestName(boolean)}
-   * as a parameter to {@link #doFileBasedTest(java.lang.String)}
-   *
-   */
-  void doFileBasedTest() throws Exception {
-    doFileBasedTest(getTestName(false) + ".hbs");
+  private HbFormatterTestUtil() {
   }
 
   /**
@@ -77,27 +53,31 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    *
    * @param fileNameBefore The name of the file to test (must have the '.hbs' extension).
    */
-  void doFileBasedTest(@NonNls String fileNameBefore) throws Exception {
-    doFileBasedTest(fileNameBefore, HbLanguage.getDefaultTemplateLang());
+  public static void doFileBasedTest(@NotNull CodeInsightTestFixture fixture, @NonNls String fileNameBefore) throws Exception {
+    doFileBasedTest(fixture, fileNameBefore, HbLanguage.getDefaultTemplateLang());
   }
 
   /**
-   * Specialization of {@link #doFileBasedTest(String)} which adds the option of specifying a templated language
+   * Specialization of {@link #doFileBasedTest(CodeInsightTestFixture, String)} which adds the option of specifying a templated language
    * other than {@link com.dmarcotte.handlebars.HbLanguage#getDefaultTemplateLang()}
    *
    * @param fileNameBefore           The name of the file to test
    * @param templateDataLanguageType The LanguageFileType of the templated file
    */
-  void doFileBasedTest(@NonNls String fileNameBefore, LanguageFileType templateDataLanguageType) throws Exception {
+  public static void doFileBasedTest(@NotNull CodeInsightTestFixture fixture,
+                                     @NonNls String fileNameBefore,
+                                     LanguageFileType templateDataLanguageType) throws Exception {
     String extension = FileUtilRt.getExtension(fileNameBefore);
-    doTextTest(loadFile(fileNameBefore),
+    doTextTest(fixture,
+               loadFile(fileNameBefore),
                loadFile(fileNameBefore.replace("." + extension, "_expected." + extension)),
                extension,
                templateDataLanguageType);
   }
 
-  void doStringBasedTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
-    doTextTest(text, textAfter, "hbs", HbLanguage.getDefaultTemplateLang());
+  public static void doStringBasedTest(@NotNull CodeInsightTestFixture fixture, @NonNls final String text, @NonNls String textAfter)
+    throws IncorrectOperationException {
+    doTextTest(fixture, text, textAfter, "hbs", HbLanguage.getDefaultTemplateLang());
   }
 
   /**
@@ -109,56 +89,64 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    * @param textAfter                The expected result after running the formatter
    * @param templateDataLanguageType The templated language of the file
    */
-  void doTextTest(final String beforeText, String textAfter, String extension, LanguageFileType templateDataLanguageType) throws IncorrectOperationException {
+  private static void doTextTest(@NotNull CodeInsightTestFixture fixture,
+                                 final String beforeText,
+                                 String textAfter,
+                                 String extension,
+                                 LanguageFileType templateDataLanguageType) throws IncorrectOperationException {
     // define action to run "Reformat Code" on the whole "file" defined by beforeText
     Runnable fullFormatRunnableFactory = () -> {
-          TextRange rangeToUse = myFixture.getFile().getTextRange();
-          CodeStyleManager styleManager = CodeStyleManager.getInstance(getProject());
-          styleManager.reformatText(myFixture.getFile(), rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
+          TextRange rangeToUse = fixture.getFile().getTextRange();
+          CodeStyleManager styleManager = CodeStyleManager.getInstance(fixture.getProject());
+          styleManager.reformatText(fixture.getFile(), rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
         };
 
     // define action to run "Adjust line indent" on every line in the "file" defined by beforeText
     Runnable lineFormatRunnableFactory = () -> {
-          Editor editor = myFixture.getEditor();
+          Editor editor = fixture.getEditor();
           editor.getSelectionModel().setSelection(0, editor.getDocument().getTextLength());
-          new AutoIndentLinesHandler().invoke(myFixture.getProject(), editor, myFixture.getFile());
+          new AutoIndentLinesHandler().invoke(fixture.getProject(), editor, fixture.getFile());
         };
 
-    doFormatterActionTest(fullFormatRunnableFactory, beforeText, textAfter, extension, templateDataLanguageType);
-    doFormatterActionTest(lineFormatRunnableFactory, beforeText, textAfter, extension, templateDataLanguageType);
+    doFormatterActionTest(fixture, fullFormatRunnableFactory, beforeText, textAfter, extension, templateDataLanguageType);
+    doFormatterActionTest(fixture, lineFormatRunnableFactory, beforeText, textAfter, extension, templateDataLanguageType);
   }
 
-  private void doFormatterActionTest(final Runnable formatAction,
-                                     final String beforeText,
-                                     String textAfter,
-                                     String extension,
-                                     LanguageFileType templateDataLanguageType) {
-    PsiFile baseFile = myFixture.configureByText("A." + extension, beforeText);
+  private static void doFormatterActionTest(@NotNull CodeInsightTestFixture fixture,
+                                            final Runnable formatAction,
+                                            final String beforeText,
+                                            String textAfter,
+                                            String extension,
+                                            LanguageFileType templateDataLanguageType) {
+    Project project = fixture.getProject();
+    PsiFile baseFile = fixture.configureByText("A." + extension, beforeText);
 
     VirtualFile virtualFile = baseFile.getVirtualFile();
     assert virtualFile != null;
-    TemplateDataLanguageMappings.getInstance(getProject()).setMapping(virtualFile, templateDataLanguageType.getLanguage());
-    IndexingTestUtil.waitUntilIndexesAreReady(getProject());
+    EdtTestUtil.runInEdtAndWait(
+      () -> TemplateDataLanguageMappings.getInstance(project).setMapping(virtualFile, templateDataLanguageType.getLanguage()));
+    IndexingTestUtil.waitUntilIndexesAreReady(project);
 
     // fetch a fresh instance of the file -- the template data mapping creates a new instance,
     // which was causing problems in PsiFileImpl.isValid()
-    final PsiFile file = PsiManager.getInstance(getProject()).findFile(virtualFile);
+    final PsiFile file = ReadAction.computeBlocking(() -> PsiManager.getInstance(project).findFile(virtualFile));
     assert file != null;
 
-    WriteCommandAction.runWriteCommandAction(getProject(), formatAction);
-    TemplateDataLanguageMappings.getInstance(getProject()).cleanupForNextTest();
-    assertEquals("Reformat Code failed", prepareText(textAfter), prepareText(file.getText()));
+    WriteCommandAction.runWriteCommandAction(project, formatAction);
+    TemplateDataLanguageMappings.getInstance(project).cleanupForNextTest();
+    assertEquals(prepareText(project, textAfter), prepareText(project, ReadAction.computeBlocking(file::getText)), "Reformat Code failed");
   }
 
-  private String prepareText(String actual) {
+  private static String prepareText(@NotNull Project project, String actual) {
     actual = StringUtil.trimStart(actual, "\n");
     actual = StringUtil.trimStart(actual, "\n");
 
     // Strip trailing spaces
     final Document doc = EditorFactory.getInstance().createDocument(actual);
-    CommandProcessor.getInstance().executeCommand(getProject(), () -> ApplicationManager.getApplication().runWriteAction(() -> {
-      ((DocumentImpl)doc).stripTrailingSpaces(getProject());
-    }), "formatting", null);
+    EdtTestUtil.runInEdtAndWait(
+      () -> CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> {
+        ((DocumentImpl)doc).stripTrailingSpaces(project);
+      }), "formatting", null));
 
     return doc.getText();
   }
@@ -170,4 +158,3 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
     return text;
   }
 }
-

@@ -4,188 +4,205 @@ package com.dmarcotte.handlebars.editor.actions;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.format.FormatterTestSettings;
 import com.intellij.application.options.CodeStyle;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static com.dmarcotte.handlebars.editor.actions.HbActionHandlerTestUtil.doCharTest;
+import static com.dmarcotte.handlebars.editor.actions.HbActionHandlerTestUtil.doEnterTest;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
 
 /**
- * These tests are based on other children of {@link BasePlatformTestCase},
+ * These tests are based on other children of {@code BasePlatformTestCase},
  * in particular {@code com.intellij.application.options.codeInsight.editor.quotes.SelectionQuotingTypedHandlerTest}
  */
-public class HbTypedHandlerTest extends HbActionHandlerTest {
+@TestApplication
+public class HbTypedHandlerTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
   private boolean myPrevAutoCloseSetting;
   private FormatterTestSettings formatterTestSettings;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  @BeforeEach
+  void setUp() {
     myPrevAutoCloseSetting = HbConfig.isAutoGenerateCloseTagEnabled();
     HbConfig.setAutoGenerateCloseTagEnabled(true);
 
-    formatterTestSettings = new FormatterTestSettings(CodeStyle.getSettings(getProject()));
+    formatterTestSettings = new FormatterTestSettings(CodeStyle.getSettings(fixture.get().getProject()));
     formatterTestSettings.setUp();
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      HbConfig.setAutoGenerateCloseTagEnabled(myPrevAutoCloseSetting);
-      if (formatterTestSettings != null) {
-        formatterTestSettings.tearDown();
-      }
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
+  @AfterEach
+  void tearDown() {
+    HbConfig.setAutoGenerateCloseTagEnabled(myPrevAutoCloseSetting);
+    if (formatterTestSettings != null) {
+      formatterTestSettings.tearDown();
     }
   }
 
   /**
    * Sanity check that we do nothing when something other than "}" completes a stache
    */
+  @Test
   public void testNonStacheClosingCharacter() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('X', "{{#foo}<caret>", "{{#foo}X<caret>");
+    doCharTest(fixture.get(), 'X', "{{#foo}<caret>", "{{#foo}X<caret>");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('X', "{{#foo}<caret>", "{{#foo}X<caret>");
+    doCharTest(fixture.get(), 'X', "{{#foo}<caret>", "{{#foo}X<caret>");
   }
 
+  @Test
   public void testCloseDoubleBraces() {
     HbConfig.setAutocompleteMustachesEnabled(false);
-    doCharTest('}', "foo {{bar<caret>", "foo {{bar}<caret>");
-    doCharTest('}', "foo {{&bar<caret>", "foo {{&bar}<caret>");
-    doCharTest('}', "foo {{/bar<caret>", "foo {{/bar}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{bar<caret>", "foo {{bar}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{&bar<caret>", "foo {{&bar}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{/bar<caret>", "foo {{/bar}<caret>");
 
     HbConfig.setAutocompleteMustachesEnabled(true);
-    doCharTest('}', "foo {{bar<caret>", "foo {{bar}}<caret>");
-    doCharTest('}', "foo {{&bar<caret>", "foo {{&bar}}<caret>");
-    doCharTest('}', "foo {{/bar<caret>", "foo {{/bar}}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{bar<caret>", "foo {{bar}}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{&bar<caret>", "foo {{&bar}}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{/bar<caret>", "foo {{/bar}}<caret>");
 
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "foo {{#bar<caret>", "foo {{#bar}}<caret>{{/bar}}");
-    doCharTest('}', "foo {{^bar<caret>", "foo {{^bar}}<caret>{{/bar}}");
-    doCharTest('}', "foo {{#bar}}{{#baz<caret>{{/bar}}", "foo {{#bar}}{{#baz}}<caret>{{/baz}}{{/bar}}");
+    doCharTest(fixture.get(), '}', "foo {{#bar<caret>", "foo {{#bar}}<caret>{{/bar}}");
+    doCharTest(fixture.get(), '}', "foo {{^bar<caret>", "foo {{^bar}}<caret>{{/bar}}");
+    doCharTest(fixture.get(), '}', "foo {{#bar}}{{#baz<caret>{{/bar}}", "foo {{#bar}}{{#baz}}<caret>{{/baz}}{{/bar}}");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('}', "foo {{#bar<caret>", "foo {{#bar}}<caret>");
-    doCharTest('}', "foo {{^bar<caret>", "foo {{^bar}}<caret>");
-    doCharTest('}', "foo {{#bar}}{{#baz<caret>{{/bar}}", "foo {{#bar}}{{#baz}}<caret>{{/bar}}");
+    doCharTest(fixture.get(), '}', "foo {{#bar<caret>", "foo {{#bar}}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{^bar<caret>", "foo {{^bar}}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{#bar}}{{#baz<caret>{{/bar}}", "foo {{#bar}}{{#baz}}<caret>{{/bar}}");
   }
 
+  @Test
   public void testCloseTripleBraces() {
     HbConfig.setAutocompleteMustachesEnabled(false);
-    doCharTest('}', "foo {{{bar<caret>", "foo {{{bar}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{{bar<caret>", "foo {{{bar}<caret>");
 
     HbConfig.setAutocompleteMustachesEnabled(true);
-    doCharTest('}', "foo {{{bar<caret>", "foo {{{bar}}}<caret>");
+    doCharTest(fixture.get(), '}', "foo {{{bar<caret>", "foo {{{bar}}}<caret>");
   }
 
+  @Test
   public void testInsertCloseTagForOpenBlockStache() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{#foo}<caret>", "{{#foo}}<caret>{{/foo}}");
-    doCharTest('}', "{{#foo bar baz}<caret>", "{{#foo bar baz}}<caret>{{/foo}}");
-    doCharTest('}', "{{#foo bar baz bat=\"bam\"}<caret>", "{{#foo bar baz bat=\"bam\"}}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{#foo}<caret>", "{{#foo}}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{#foo bar baz}<caret>", "{{#foo bar baz}}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{#foo bar baz bat=\"bam\"}<caret>", "{{#foo bar baz bat=\"bam\"}}<caret>{{/foo}}");
 
     // test when caret is not at file boundary
-    doCharTest('}', "{{#foo}<caret>some\nother content", "{{#foo}}<caret>{{/foo}}some\nother content");
-    doCharTest('}', "{{#foo bar baz}<caret>some\nother content", "{{#foo bar baz}}<caret>{{/foo}}some\nother content");
-    doCharTest('}', "{{#foo bar baz bat=\"bam\"}<caret>some\nother content",
+    doCharTest(fixture.get(), '}', "{{#foo}<caret>some\nother content", "{{#foo}}<caret>{{/foo}}some\nother content");
+    doCharTest(fixture.get(), '}', "{{#foo bar baz}<caret>some\nother content", "{{#foo bar baz}}<caret>{{/foo}}some\nother content");
+    doCharTest(fixture.get(), '}', "{{#foo bar baz bat=\"bam\"}<caret>some\nother content",
                "{{#foo bar baz bat=\"bam\"}}<caret>{{/foo}}some\nother content");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('}', "{{#foo}<caret>", "{{#foo}}<caret>");
-    doCharTest('}', "{{#foo bar baz}<caret>", "{{#foo bar baz}}<caret>");
-    doCharTest('}', "{{#foo bar baz bat=\"bam\"}<caret>", "{{#foo bar baz bat=\"bam\"}}<caret>");
+    doCharTest(fixture.get(), '}', "{{#foo}<caret>", "{{#foo}}<caret>");
+    doCharTest(fixture.get(), '}', "{{#foo bar baz}<caret>", "{{#foo bar baz}}<caret>");
+    doCharTest(fixture.get(), '}', "{{#foo bar baz bat=\"bam\"}<caret>", "{{#foo bar baz bat=\"bam\"}}<caret>");
   }
 
+  @Test
   public void testInsertCloseTagForNestedBlocks() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{#foo}}{{#bar}<caret>{{/foo}}", "{{#foo}}{{#bar}}<caret>{{/bar}}{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{#foo}}{{#bar}<caret>{{/foo}}", "{{#foo}}{{#bar}}<caret>{{/bar}}{{/foo}}");
   }
 
+  @Test
   public void testInsertCloseTagForOpenInverseStache() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{^foo}<caret>", "{{^foo}}<caret>{{/foo}}");
-    doCharTest('}', "{{^foo bar baz}<caret>", "{{^foo bar baz}}<caret>{{/foo}}");
-    doCharTest('}', "{{^foo bar baz bat=\"bam\"}<caret>", "{{^foo bar baz bat=\"bam\"}}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{^foo}<caret>", "{{^foo}}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{^foo bar baz}<caret>", "{{^foo bar baz}}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{^foo bar baz bat=\"bam\"}<caret>", "{{^foo bar baz bat=\"bam\"}}<caret>{{/foo}}");
 
     // test when caret is not at file boundary
-    doCharTest('}', "{{^foo}<caret>some\nother content", "{{^foo}}<caret>{{/foo}}some\nother content");
-    doCharTest('}', "{{^foo bar baz}<caret>some\nother content", "{{^foo bar baz}}<caret>{{/foo}}some\nother content");
-    doCharTest('}', "{{^foo bar baz bat=\"bam\"}<caret>some\nother content",
+    doCharTest(fixture.get(), '}', "{{^foo}<caret>some\nother content", "{{^foo}}<caret>{{/foo}}some\nother content");
+    doCharTest(fixture.get(), '}', "{{^foo bar baz}<caret>some\nother content", "{{^foo bar baz}}<caret>{{/foo}}some\nother content");
+    doCharTest(fixture.get(), '}', "{{^foo bar baz bat=\"bam\"}<caret>some\nother content",
                "{{^foo bar baz bat=\"bam\"}}<caret>{{/foo}}some\nother content");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('}', "{{^foo}<caret>", "{{^foo}}<caret>");
-    doCharTest('}', "{{^foo bar baz}<caret>", "{{^foo bar baz}}<caret>");
-    doCharTest('}', "{{^foo bar baz bat=\"bam\"}<caret>", "{{^foo bar baz bat=\"bam\"}}<caret>");
+    doCharTest(fixture.get(), '}', "{{^foo}<caret>", "{{^foo}}<caret>");
+    doCharTest(fixture.get(), '}', "{{^foo bar baz}<caret>", "{{^foo bar baz}}<caret>");
+    doCharTest(fixture.get(), '}', "{{^foo bar baz bat=\"bam\"}<caret>", "{{^foo bar baz bat=\"bam\"}}<caret>");
   }
 
+  @Test
   public void testInsertCloseTagWithWhitespace() {
     // ensure that we properly identify the "foo" even if there's whitespace between it and the open tag
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{#   foo   }<caret>", "{{#   foo   }}<caret>{{/foo}}");
+    doCharTest(fixture.get(), '}', "{{#   foo   }<caret>", "{{#   foo   }}<caret>{{/foo}}");
   }
 
+  @Test
   public void testInsertCloseTagForComplexIds() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{#foo.bar}<caret>", "{{#foo.bar}}<caret>{{/foo.bar}}");
-    doCharTest('}', "{{#foo.bar.[baz bat]}<caret>", "{{#foo.bar.[baz bat]}}<caret>{{/foo.bar.[baz bat]}}");
+    doCharTest(fixture.get(), '}', "{{#foo.bar}<caret>", "{{#foo.bar}}<caret>{{/foo.bar}}");
+    doCharTest(fixture.get(), '}', "{{#foo.bar.[baz bat]}<caret>", "{{#foo.bar.[baz bat]}}<caret>{{/foo.bar.[baz bat]}}");
   }
 
+  @Test
   public void testNoInsertCloseTagForExtraStaches() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{#foo}}<caret>", "{{#foo}}}<caret>");
+    doCharTest(fixture.get(), '}', "{{#foo}}<caret>", "{{#foo}}}<caret>");
   }
 
+  @Test
   public void testRegularStache() {
     // ensure that nothing special happens for regular 'staches, whether autoGenerateCloseTag is enabled or not
 
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{foo}<caret>", "{{foo}}<caret>");
-    doCharTest('}', "{{foo bar baz}<caret>", "{{foo bar baz}}<caret>");
+    doCharTest(fixture.get(), '}', "{{foo}<caret>", "{{foo}}<caret>");
+    doCharTest(fixture.get(), '}', "{{foo bar baz}<caret>", "{{foo bar baz}}<caret>");
 
     // test when caret is not at file boundary
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{foo}<caret>some\nother stuff", "{{foo}}<caret>some\nother stuff");
-    doCharTest('}', "{{foo bar baz}<caret>some\nother stuff", "{{foo bar baz}}<caret>some\nother stuff");
+    doCharTest(fixture.get(), '}', "{{foo}<caret>some\nother stuff", "{{foo}}<caret>some\nother stuff");
+    doCharTest(fixture.get(), '}', "{{foo bar baz}<caret>some\nother stuff", "{{foo bar baz}}<caret>some\nother stuff");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('}', "{{foo}<caret>", "{{foo}}<caret>");
-    doCharTest('}', "{{foo bar baz}<caret>", "{{foo bar baz}}<caret>");
+    doCharTest(fixture.get(), '}', "{{foo}<caret>", "{{foo}}<caret>");
+    doCharTest(fixture.get(), '}', "{{foo bar baz}<caret>", "{{foo bar baz}}<caret>");
   }
 
   /**
    * Our typed handler relies on looking a couple of characters back
    * make sure we're well behaved when there are none.
    */
+  @Test
   public void testFirstCharTyped() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "<caret>", "}<caret>");
+    doCharTest(fixture.get(), '}', "<caret>", "}<caret>");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('}', "<caret>", "}<caret>");
+    doCharTest(fixture.get(), '}', "<caret>", "}<caret>");
   }
 
   /**
    * Ensure that IDEA does not provide any automatic "}" insertion
    */
+  @Test
   public void testSuppressNativeBracketInsert() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('{', "<caret>", "{<caret>");
-    doCharTest('{', "{<caret>", "{{<caret>");
-    doCharTest('{', "{{<caret>", "{{{<caret>");
+    doCharTest(fixture.get(), '{', "<caret>", "{<caret>");
+    doCharTest(fixture.get(), '{', "{<caret>", "{{<caret>");
+    doCharTest(fixture.get(), '{', "{{<caret>", "{{{<caret>");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
-    doCharTest('{', "<caret>", "{<caret>");
-    doCharTest('{', "{<caret>", "{{<caret>");
-    doCharTest('{', "{{<caret>", "{{{<caret>");
+    doCharTest(fixture.get(), '{', "<caret>", "{<caret>");
+    doCharTest(fixture.get(), '{', "{<caret>", "{{<caret>");
+    doCharTest(fixture.get(), '{', "{{<caret>", "{{{<caret>");
   }
 
+  @Test
   public void testFormatOnCloseBlockCompleted1() {
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#foo}}
@@ -198,8 +215,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
                  {{/foo}}<caret>""");
   }
 
+  @Test
   public void testFormatOnCloseBlockCompleted2() {
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#foo}}
@@ -212,8 +230,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
                  {{/foo}}<caret> other stuff""");
   }
 
+  @Test
   public void testFormatOnCloseBlockCompleted3() {
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#foo}}
@@ -228,11 +247,12 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
                  other stuff""");
   }
 
+  @Test
   public void testFormatDisabledCloseBlockCompleted() {
     boolean previousFormatSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
 
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#foo}}
@@ -247,8 +267,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     HbConfig.setFormattingEnabled(previousFormatSetting);
   }
 
+  @Test
   public void testFormatOnSimpleInverseCompleted1() {
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#if}}
@@ -261,8 +282,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
                  {{else}}<caret>""");
   }
 
+  @Test
   public void testFormatOnSimpleInverseCompleted2() {
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#if}}
@@ -275,8 +297,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
                  {{else}}<caret> other stuff""");
   }
 
+  @Test
   public void testFormatOnSimpleInverseCompleted3() {
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#if}}
@@ -291,11 +314,12 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
                  other stuff""");
   }
 
+  @Test
   public void testFormatDisabledSimpleInverseCompleted() {
     boolean previousFormatSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
 
-    doCharTest('}',
+    doCharTest(fixture.get(), '}',
 
                """
                  {{#if}}
@@ -310,8 +334,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     HbConfig.setFormattingEnabled(previousFormatSetting);
   }
 
+  @Test
   public void testEnterBetweenBlockTags() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>{{/foo}}",
 
@@ -322,11 +347,12 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     );
   }
 
+  @Test
   public void testFormatterDisabledEnterBetweenBlockTags() {
     boolean previousFormatSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
 
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>{{/foo}}",
 
@@ -339,8 +365,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     HbConfig.setFormattingEnabled(previousFormatSetting);
   }
 
+  @Test
   public void testEnterNotBetweenBlockTags() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{foo}}<caret>{{foo}}",
 
@@ -349,8 +376,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     );
   }
 
+  @Test
   public void testFinishingClosingTag() {
-    doCharTest(
+    doCharTest(fixture.get(),
       '/',
       """
         <div class="entry">
@@ -363,7 +391,7 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
         </div>"""
     );
 
-    doCharTest(
+    doCharTest(fixture.get(),
       '/',
       """
         <div class="entry">

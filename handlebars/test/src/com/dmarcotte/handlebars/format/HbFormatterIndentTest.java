@@ -3,20 +3,49 @@ package com.dmarcotte.handlebars.format;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class HbFormatterIndentTest extends HbFormatterTest {
+import static com.dmarcotte.handlebars.format.HbFormatterTestUtil.doStringBasedTest;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+
+@TestApplication
+public class HbFormatterIndentTest implements HbFormattingModelBuilderTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
+  private FormatterTestSettings formatterTestSettings;
+
+  @BeforeEach
+  void setUp() {
+    formatterTestSettings = new FormatterTestSettings(CodeStyle.getSettings(fixture.get().getProject()));
+    formatterTestSettings.setUp();
+  }
+
+  @AfterEach
+  void tearDown() {
+    if (formatterTestSettings != null) {
+      formatterTestSettings.tearDown();
+    }
+  }
 
   /**
    * This sanity check should be enough to ensure that we don't format
    * when the formatter is disabled
    */
+  @Test
   public void testFormatterDisabled() {
     boolean previousFormatterSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
 
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -37,11 +66,12 @@ public class HbFormatterIndentTest extends HbFormatterTest {
   /**
    * Sanity check that we respect non-default (i.e. 4) indent sizes
    */
+  @Test
   public void testNonDefaultIndentSize() {
-    int previousHtmlIndent = CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE;
-    CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = 2;
+    int previousHtmlIndent = CodeStyle.getSettings(fixture.get().getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE;
+    CodeStyle.getSettings(fixture.get().getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = 2;
 
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -58,11 +88,12 @@ public class HbFormatterIndentTest extends HbFormatterTest {
         {{/foo}}"""
     );
 
-    CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = previousHtmlIndent;
+    CodeStyle.getSettings(fixture.get().getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = previousHtmlIndent;
   }
 
+  @Test
   public void testSimpleStache() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       "{{foo}}",
 
@@ -70,8 +101,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testSimpleBlock() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -87,8 +119,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testNestedBlocks() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -110,8 +143,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testSimpleStacheInDiv() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <div>
@@ -125,8 +159,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testMarkupInBlockStache() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -140,8 +175,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <div>
@@ -159,8 +195,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testAttributeStaches() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <div {{foo}}>
@@ -178,8 +215,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testMixedContentInDiv1() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <div>
@@ -197,8 +235,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testMixedContentInDiv2() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <div>
@@ -216,8 +255,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testSimpleStacheInNestedDiv() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -235,8 +275,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testBlockStacheInNestedDiv() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -258,8 +299,9 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testNestedDivsInBlock() {
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         {{#foo}}
@@ -289,12 +331,13 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testFormattingInsideDoNotIndentElems1() {
 
     HtmlCodeStyleSettings settings = getHtmlSettings();
     settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "body";
 
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <body>
@@ -312,12 +355,13 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testFormattingInsideDoNotIndentElems2() {
 
     HtmlCodeStyleSettings settings = getHtmlSettings();
     settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "body";
 
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <body>
@@ -333,12 +377,13 @@ public class HbFormatterIndentTest extends HbFormatterTest {
     );
   }
 
+  @Test
   public void testFormattingInsideNestedDoNotIndentElems() {
 
     HtmlCodeStyleSettings settings = getHtmlSettings();
     settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "span";
 
-    doStringBasedTest(
+    doStringBasedTest(fixture.get(),
 
       """
         <span>
@@ -366,6 +411,6 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
   @NotNull
   private HtmlCodeStyleSettings getHtmlSettings() {
-    return CodeStyle.getSettings(getProject()).getCustomSettings(HtmlCodeStyleSettings.class);
+    return CodeStyle.getSettings(fixture.get().getProject()).getCustomSettings(HtmlCodeStyleSettings.class);
   }
 }

@@ -2,9 +2,22 @@ package com.dmarcotte.handlebars.editor.braces;
 
 import com.dmarcotte.handlebars.file.HbFileType;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class HbBraceMatcherTest extends BasePlatformTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestApplication
+public class HbBraceMatcherTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
 
   private static final String ourBraceMatchIndicator = "<brace_match>";
 
@@ -25,14 +38,14 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     int secondBracePosition = textForTest.indexOf(ourBraceMatchIndicator);
     textForTest = textForTest.replaceFirst(ourBraceMatchIndicator, ""); // remove second brace from input
 
-    assertTrue("Should have two \"" + ourBraceMatchIndicator + "\" tokens in fileText.  Given fileText:\n"
-               + fileText,
-               firstBracePosition > -1 && secondBracePosition > -1);
+    assertTrue(firstBracePosition > -1 && secondBracePosition > -1,
+               "Should have two \"" + ourBraceMatchIndicator + "\" tokens in fileText.  Given fileText:\n"
+               + fileText);
 
     String firstBraceResult = findMatchBraceForBraceAtCaret(textForTest, firstBracePosition, secondBracePosition);
-    assertEquals("Result with caret at first <brace_match>", fileText, firstBraceResult);
+    assertEquals(fileText, firstBraceResult, "Result with caret at first <brace_match>");
     String secondBraceResult = findMatchBraceForBraceAtCaret(textForTest, secondBracePosition, firstBracePosition);
-    assertEquals("Result with caret at second <brace_match>", fileText, secondBraceResult);
+    assertEquals(fileText, secondBraceResult, "Result with caret at second <brace_match>");
   }
 
   /**
@@ -45,6 +58,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
    *         the the brace matching subsystem dictated
    */
   private String findMatchBraceForBraceAtCaret(String fileText, int caretPosition, int expectedMatchedBracePosition) {
+    CodeInsightTestFixture myFixture = fixture.get();
 
     String caretIndicator = "<caret>";
     String textWithCaret = new StringBuilder(fileText).insert(caretPosition, caretIndicator).toString();
@@ -53,9 +67,9 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
 
     boolean caretFirst = expectedMatchedBracePosition > caretPosition;
     int actualBraceMatchPosition
-      = BraceMatchingUtil.getMatchedBraceOffset(myFixture.getEditor(),
-                                                caretFirst,
-                                                myFixture.getFile());
+      = ReadAction.computeBlocking(() -> BraceMatchingUtil.getMatchedBraceOffset(myFixture.getEditor(),
+                                                                                 caretFirst,
+                                                                                 myFixture.getFile()));
 
     // we want to have an easy to read result, so we insert a <brace_match> where
     // BraceMatchingUtil.getMatchedBraceOffset told us it should go.
@@ -100,6 +114,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
       {{/ foo4 }}
       """;
 
+  @Test
   public void testSimpleMustache() {
     doBraceTest(
       ourTestSource.replace("{{ bar }}", "<brace_match>{{ bar }}")
@@ -107,6 +122,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testUnEscapedMustache() {
     doBraceTest(
       ourTestSource.replace("{{{ baz }}}", "<brace_match>{{{ baz }}}")
@@ -114,6 +130,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testPartial() {
     doBraceTest(
       ourTestSource.replace("{{> partial }}", "<brace_match>{{> partial }}")
@@ -121,6 +138,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testBlockMustache() {
     doBraceTest(
       ourTestSource.replace("{{# foo1 }}", "<brace_match>{{# foo1 }}")
@@ -128,6 +146,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testInverseBlockMustache() {
     doBraceTest(
       ourTestSource.replace("{{^ foo4 }}", "<brace_match>{{^ foo4 }}")
@@ -135,6 +154,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testSimpleInverseMustache() {
     doBraceTest(
       ourTestSource.replace("{{^ }}", "<brace_match>{{^ }}")
@@ -142,6 +162,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testNestedBlockStache() {
     doBraceTest(
       ourTestSource.replace("{{# foo2 }}", "<brace_match>{{# foo2 }}")
@@ -149,6 +170,7 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
     );
   }
 
+  @Test
   public void testInverseBlockStache() {
     doBraceTest(
       ourTestSource.replace("{{^ foo3 }}", "<brace_match>{{^ foo3 }}")

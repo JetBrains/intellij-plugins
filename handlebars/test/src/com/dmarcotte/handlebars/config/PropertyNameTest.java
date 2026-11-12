@@ -1,15 +1,14 @@
 package com.dmarcotte.handlebars.config;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@RunWith(value = Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class PropertyNameTest {
   /**
    * Associates a {@link Property} with its expected attributes to ensure stability and backwards compatibility
@@ -32,7 +31,6 @@ public class PropertyNameTest {
     new PropertyTestDefinition(Property.COMMENTER_LANGUAGE_ID, "HbCommenterLanguageId"),
     new PropertyTestDefinition(Property.SHOULD_OPEN_HTML, "HbShouldOpenHtmlAsHb"));
 
-  @Parameterized.Parameters
   public static List<Object[]> parameters() {
     List<Object[]> testParameters = new ArrayList<>();
     for (PropertyTestDefinition propertyTestDefinition : PROPERTY_TEST_DEFINITIONS) {
@@ -42,18 +40,13 @@ public class PropertyNameTest {
     return testParameters;
   }
 
-  private final PropertyTestDefinition propertyTestDefinition;
-
-  public PropertyNameTest(PropertyTestDefinition propertyTestDefinition) {
-    this.propertyTestDefinition = propertyTestDefinition;
-  }
-
-  @Test
-  public void testPropertyNameBackwardsCompatibility() {
-    Assert.assertEquals("Error in " +
-                        propertyTestDefinition.property.name() +
-                        ".\n\tPersisted property name changed.  This will mess up user preferences without some sort of migration strategy.\n\n",
-                        propertyTestDefinition.expectedPropertyName,
-                        propertyTestDefinition.property.getStringName());
+  @ParameterizedTest
+  @MethodSource("parameters")
+  public void testPropertyNameBackwardsCompatibility(PropertyTestDefinition propertyTestDefinition) {
+    assertEquals(propertyTestDefinition.expectedPropertyName,
+                 propertyTestDefinition.property.getStringName(),
+                 "Error in " +
+                 propertyTestDefinition.property.name() +
+                 ".\n\tPersisted property name changed.  This will mess up user preferences without some sort of migration strategy.\n\n");
   }
 }

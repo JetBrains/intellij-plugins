@@ -1,33 +1,35 @@
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
-import com.dmarcotte.handlebars.editor.actions.HbActionHandlerTest;
 import com.intellij.idea.IJIgnore;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormattingModelBuilderTest {
+import static com.dmarcotte.handlebars.editor.actions.HbActionHandlerTestUtil.doEnterTest;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+
+@TestApplication
+public class HbFormatOnEnterTest implements HbFormattingModelBuilderTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
 
   private boolean myPrevFormatSetting;
 
-  @Override
-  protected void setUp()
-    throws Exception {
-    super.setUp();
-
+  @BeforeEach
+  void setUp() {
     myPrevFormatSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(true);
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      HbConfig.setFormattingEnabled(myPrevFormatSetting);
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+  @AfterEach
+  void tearDown() {
+    HbConfig.setFormattingEnabled(myPrevFormatSetting);
   }
 
   /**
@@ -35,11 +37,12 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
    * when the formatter is disabled
    */
   @IJIgnore(issue = "WEB-77789")
+  @Test
   public void testEnterWithFormatterDisabled() {
     boolean previousFormatterSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(false);
 
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>",
 
@@ -50,8 +53,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     HbConfig.setFormattingEnabled(previousFormatterSetting);
   }
 
+  @Test
   public void testSimpleStache() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{foo}}<caret>",
 
@@ -60,8 +64,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlock1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}<caret>",
 
@@ -70,8 +75,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlock2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}\n" +
       "    {{bar}}<caret>htmlPadding",
@@ -83,8 +89,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlock3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
       """
         {{#foo}}
             {{bar}}<caret>
@@ -99,8 +106,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
         """);
   }
 
+  @Test
   public void testNestedBlocks1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -123,8 +131,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testNestedBlocks2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -147,8 +156,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testNestedBlocks3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -171,8 +181,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleStacheInDiv1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div><caret>
@@ -187,8 +198,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleStacheInDiv2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -203,8 +215,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleStacheInDiv3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "<div>\n" +
       "    {{foo}}<caret>",
@@ -216,8 +229,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMarkupInBlockStache1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -232,8 +246,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMarkupInBlockStache2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}<caret>
@@ -248,8 +263,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMarkupInBlockStache3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "{{#foo}}\n" +
       "    <span></span><caret>",
@@ -261,8 +277,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testEmptyBlockInDiv1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -279,8 +296,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testEmptyBlockInDiv2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -296,8 +314,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testEmptyBlockInDiv3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -312,8 +331,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testEmptyBlockInDiv4() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "<div>\n" +
       "{{#foo}}<caret>{{/foo}}",
@@ -326,8 +346,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -346,8 +367,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -366,8 +388,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -386,8 +409,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv4() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -402,8 +426,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv5() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -420,8 +445,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv6() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -438,8 +464,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv7() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -455,8 +482,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleBlockInDiv8() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -475,8 +503,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testAttributeStaches1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div {{foo}}><caret>
@@ -495,8 +524,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testAttributeStaches2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div {{foo}}>
@@ -515,8 +545,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testAttributeStaches3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div {{foo}}>
@@ -535,8 +566,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testAttributeStaches4() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "<div {{foo}}><caret>",
 
@@ -545,8 +577,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testAttributeStaches5() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       "<div {{foo}}>\n" +
       "    <div class=\"{{bar}}\"><caret>",
@@ -558,8 +591,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testAttributeStaches6() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div {{foo}}>
@@ -574,8 +608,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -594,8 +629,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -614,8 +650,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -634,8 +671,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv4() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -654,8 +692,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv5() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div><caret>
@@ -670,8 +709,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv6() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -686,8 +726,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv7() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -702,8 +743,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testMixedContentInDiv8() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         <div>
@@ -720,8 +762,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testEmptyLinesAfterOpenBlock1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -744,8 +787,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testEmptyLinesAfterOpenBlock2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#if}}
@@ -774,8 +818,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleStacheInNestedDiv1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -794,8 +839,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testSimpleStacheInNestedDiv2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -814,8 +860,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testBlockStacheInNestedDiv1() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -838,8 +885,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testBlockStacheInNestedDiv2() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -862,8 +910,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testBlockStacheInNestedDiv3() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}
@@ -886,8 +935,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     );
   }
 
+  @Test
   public void testBlockStacheInNestedDiv4() {
-    doEnterTest(
+    doEnterTest(fixture.get(),
 
       """
         {{#foo}}

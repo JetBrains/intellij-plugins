@@ -1,13 +1,16 @@
 package com.dmarcotte.handlebars.config;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertyTest {
 
@@ -26,13 +29,13 @@ public class PropertyTest {
 
     int length = Property.values().length;
     Field[] fields = Property.class.getDeclaredFields();
-    Assert.assertEquals("Declared properties in enum \"" +
-                        Property.class.getSimpleName() +
-                        "\" have changed!  Ensure that changes are backwards compatible " +
-                        "and " + PropertyNameTest.class.getName() + " has been updated appropriately.\n" +
-                        "Fields: " + Arrays.toString(fields),
-                        expectedNumberOfPropertyFields,
-                        length);
+    assertEquals(expectedNumberOfPropertyFields,
+                 length,
+                 "Declared properties in enum \"" +
+                 Property.class.getSimpleName() +
+                 "\" have changed!  Ensure that changes are backwards compatible " +
+                 "and " + PropertyNameTest.class.getName() + " has been updated appropriately.\n" +
+                 "Fields: " + Arrays.toString(fields));
   }
 
   @Test
@@ -43,10 +46,10 @@ public class PropertyTest {
       properties.remove(propertyTestDefinition.property);
     }
 
-    Assert.assertTrue("The following " + Property.class.getSimpleName() + " entries do not have corresponding " +
-                      PropertyNameTest.PropertyTestDefinition.class.getSimpleName() +
-                      " tests defined: " + properties.toString(),
-                      properties.isEmpty());
+    assertTrue(properties.isEmpty(),
+               "The following " + Property.class.getSimpleName() + " entries do not have corresponding " +
+               PropertyNameTest.PropertyTestDefinition.class.getSimpleName() +
+               " tests defined: " + properties.toString());
   }
 
   @Test
@@ -55,8 +58,8 @@ public class PropertyTest {
 
     for (Property property : Property.values()) {
       String propertyNameString = property.getStringName();
-      Assert.assertFalse("Property string name \"" + propertyNameString + "\" is not unique in Property",
-                                         propertyNameStrings.contains(propertyNameString));
+      assertFalse(propertyNameStrings.contains(propertyNameString),
+                  "Property string name \"" + propertyNameString + "\" is not unique in Property");
       propertyNameStrings.add(propertyNameString);
     }
   }
