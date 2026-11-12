@@ -1,43 +1,54 @@
 package com.intellij.webassembly.lang.editor
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.junit.Test
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
+import com.intellij.testFramework.TestDataPath
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.testNameFixture
+import org.junit.jupiter.api.Test
 
-class WebAssemblyCodeFoldingTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String = "src/test/resources/editor/codeFolding"
+@TestApplication
+@TestDataPath($$"$PROJECT_ROOT/contrib/web-assembly-plugin/src/test/resources/editor/codeFolding")
+class WebAssemblyCodeFoldingTest {
+    companion object {
+        private val projectFixture = sharedCodeInsightProjectFixture()
+    }
+
+    private val myFixture by sharedCodeInsightFixture(projectFixture)
+    private val testName by testNameFixture(false)
 
     @Test
-    fun testBr() = testCodeFolding(getTestName(false))
+    fun testBr(): Unit = testCodeFolding(testName)
     @Test
-    fun testBrifNamed() = testCodeFolding(getTestName(false))
+    fun testBrifNamed(): Unit = testCodeFolding(testName)
     @Test
-    fun testBrLoop() = testCodeFolding(getTestName(false))
+    fun testBrLoop(): Unit = testCodeFolding(testName)
     @Test
-    fun testBrtable() = testCodeFolding(getTestName(false))
+    fun testBrtable(): Unit = testCodeFolding(testName)
     @Test
-    fun testExprBrif() = testCodeFolding(getTestName(false))
+    fun testExprBrif(): Unit = testCodeFolding(testName)
     @Test
-    fun testHighlighting() = testCodeFolding(getTestName(false))
+    fun testHighlighting(): Unit = testCodeFolding(testName)
     @Test
-    fun testIf() = testCodeFolding(getTestName(false))
+    fun testIf(): Unit = testCodeFolding(testName)
     @Test
-    fun testIfMultiNamed() = testCodeFolding(getTestName(false))
+    fun testIfMultiNamed(): Unit = testCodeFolding(testName)
     @Test
-    fun testIfReturn() = testCodeFolding(getTestName(false))
+    fun testIfReturn(): Unit = testCodeFolding(testName)
     @Test
-    fun testIfThenBr() = testCodeFolding(getTestName(false))
+    fun testIfThenBr(): Unit = testCodeFolding(testName)
     @Test
-    fun testIfThenBrNamed() = testCodeFolding(getTestName(false))
+    fun testIfThenBrNamed(): Unit = testCodeFolding(testName)
     @Test
-    fun testIfThenElseBr() = testCodeFolding(getTestName(false))
+    fun testIfThenElseBr(): Unit = testCodeFolding(testName)
     @Test
-    fun testIfThenElseBrNamed() = testCodeFolding(getTestName(false))
+    fun testIfThenElseBrNamed(): Unit = testCodeFolding(testName)
     @Test
-    fun testLoop() = testCodeFolding(getTestName(false))
+    fun testLoop(): Unit = testCodeFolding(testName)
     @Test
-    fun testLoopMultiNamed() = testCodeFolding(getTestName(false))
+    fun testLoopMultiNamed(): Unit = testCodeFolding(testName)
 
     private fun testCodeFolding(testName: String) {
-        myFixture.testFoldingWithCollapseStatus("${testDataPath}/${testName}.wat")
+        myFixture.testFoldingWithCollapseStatus("${myFixture.testDataPath}/${testName}.wat")
     }
 }

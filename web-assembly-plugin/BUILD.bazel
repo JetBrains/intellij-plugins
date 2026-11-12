@@ -78,6 +78,11 @@ jvm_library(
         ["src/test/resources/**/*"],
     ),
     visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+    ],
     deps = [
         # do not sort,
         "@community//platform/analysis-api:analysis",
@@ -87,7 +92,6 @@ jvm_library(
         "@community//platform/lang-impl",
         "@community//platform/core-impl",
         "@community//platform/testFramework",
-        "@community//libraries/junit4",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5/codeInsight",
         "@community//libraries/junit6",
