@@ -6,6 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CoroutineScope
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.context.isVue2
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.hasVueFileType
@@ -26,7 +27,8 @@ internal fun isVueServiceContext(project: Project, context: VirtualFile): Boolea
  * and the context of the given file.
  * It should be used as a source of truth about which service is actually started in the IDE.
  */
-internal fun getAppropriateVueLSVersion(
+@ApiStatus.Internal
+fun getAppropriateVueLSVersion(
   project: Project,
   context: VirtualFile,
 ): VueLanguageToolsVersion {

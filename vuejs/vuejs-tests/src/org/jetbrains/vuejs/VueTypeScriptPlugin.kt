@@ -1,9 +1,10 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs
 
-import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.lang.typescript.service.VueLanguageToolsVersion
+import org.jetbrains.vuejs.lang.typescript.service.getAppropriateVueLSVersion
 
 fun getRequiredHybridModeBundledVersion(
   fixture: CodeInsightTestFixture,
@@ -11,24 +12,20 @@ fun getRequiredHybridModeBundledVersion(
 ): VueLanguageToolsVersion? =
   when (testMode) {
     VueTestMode.DEFAULT,
-      -> if (useDefaultPlugin(fixture))
-      VueLanguageToolsVersion.DEFAULT
-    else
-      VueLanguageToolsVersion.LEGACY
+      -> getLanguageToolsVersion(fixture)
 
     VueTestMode.TS_GO_PROXY,
     VueTestMode.NO_PLUGIN,
-      -> return null
+      -> null
   }
 
-private fun useDefaultPlugin(
+private fun getLanguageToolsVersion(
   fixture: CodeInsightTestFixture,
-): Boolean {
+): VueLanguageToolsVersion {
   val packageJson = fixture.tempDirFixture.getFile("node_modules/vue/package.json")
-                    ?: return true
+                    ?: return VueLanguageToolsVersion.DEFAULT
 
-  val version = PackageJsonData.getOrCreate(packageJson).version
-                ?: return true
-
-  return version.major != 2
+  return runReadActionBlocking {
+    getAppropriateVueLSVersion(fixture.project, packageJson)
+  }
 }
