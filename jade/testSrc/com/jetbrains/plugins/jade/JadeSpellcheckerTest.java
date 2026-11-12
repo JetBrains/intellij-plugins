@@ -2,22 +2,34 @@
 package com.jetbrains.plugins.jade;
 
 import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-public class JadeSpellcheckerTest extends BasePlatformTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+@TestApplication
+public class JadeSpellcheckerTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
+  private String myTestName;
+
+  @BeforeEach
+  void setUp(TestInfo testInfo) {
+    myTestName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), true);
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.setTestDataPath(JadeTestUtil.getBaseTestDataPath() + "/spellchecker/");
     myFixture.enableInspections(new GrazieSpellCheckingInspection());
   }
 
+  @Test
   public void testAll() {
-    myFixture.testHighlighting(false, false, true, getTestName(true) + ".jade");
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return JadeTestUtil.getBaseTestDataPath() + "/spellchecker/";
+    fixture.get().testHighlighting(false, false, true, myTestName + ".jade");
   }
 }

@@ -4,103 +4,135 @@ package com.jetbrains.plugins.jade;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Ignore;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-@Ignore("AT-4013")
-public class JadeFormatterTest extends LightPlatformCodeInsightTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
 
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return JadeTestUtil.getBaseTestDataPath() + "/formatter/";
+@Disabled("AT-4013")
+@TestApplication
+public class JadeFormatterTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
+  private String myTestName;
+
+  @BeforeEach
+  void setUp(TestInfo testInfo) {
+    myTestName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), true);
+    fixture.get().setTestDataPath(JadeTestUtil.getBaseTestDataPath() + "/formatter/");
   }
 
+  @Test
   public void testTags() {
     doTest();
   }
 
+  @Test
   public void testTags2() {
     doTestWithIndentOptions(2, 4, false);
   }
 
+  @Test
   public void testTags3() {
     doTest();
   }
 
+  @Test
   public void testMultilineAttributes() {
     doTest();
   }
 
+  @Test
   public void testIncludeWithInternals() {
     doTest();
   }
 
+  @Test
   public void testLeadingComment() {
     doTest();
   }
 
+  @Test
   public void testScriptStyle() {
     doTest();
   }
 
+  @Test
   public void testSpacesToTabs() {
     doTestWithIndentOptions(4, 4, true);
   }
 
+  @Test
   public void testIndentsInTextBlock() {
     doTest();
   }
 
+  @Test
   public void testComment() {
     doTest();
   }
 
+  @Test
   public void testScript2() {
     doTest();
   }
 
+  @Test
   public void testEmbeddedHtmlPlainText() {
     doTest();
   }
 
+  @Test
   public void testSeveralJavascripts() {
     doTest();
   }
 
+  @Test
   public void testWeb14016() {
-    final String fileName = getTestName(true) + ".jade";
+    CodeInsightTestFixture myFixture = fixture.get();
+    final String fileName = myTestName + ".jade";
 
-    configureByFile(fileName);
-    doReformat(getFile());
-    checkResultByFile(fileName);
+    myFixture.configureByFile(fileName);
+    doReformat(myFixture.getFile());
+    myFixture.checkResultByFile(fileName);
   }
 
+  @Test
   public void testText() {
     doTestWithIndentOptions(4, 4, true);
   }
 
   private void doTest() {
-    configureByFile(getTestName(true) + ".jade");
-    doReformat(getFile());
-    checkResultByFile(getTestName(true) + "_after.jade");
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.configureByFile(myTestName + ".jade");
+    doReformat(myFixture.getFile());
+    myFixture.checkResultByFile(myTestName + "_after.jade");
   }
 
   private void doReformat(final PsiElement file) {
-    final CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(getProject());
-    ApplicationManager.getApplication().runWriteAction(() -> {
+    final CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(fixture.get().getProject());
+    EdtTestUtil.runInEdtAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       codeStyleManager.reformat(file);
-    });
+    }));
   }
 
   private void doTestWithIndentOptions(int indentSize, int tabSize, boolean useTabs) {
-    CodeStyleSettings currSettings = CodeStyle.getSettings(getProject());
+    Project project = fixture.get().getProject();
+    CodeStyleSettings currSettings = CodeStyle.getSettings(project);
     CodeStyleSettings tempSettings = CodeStyle.createTestSettings(currSettings);
     CommonCodeStyleSettings.IndentOptions indentOptions = tempSettings.getCommonSettings(JadeLanguage.INSTANCE).getIndentOptions();
     CommonCodeStyleSettings.IndentOptions jsIndentOptions = tempSettings.getCommonSettings(JavascriptLanguage.INSTANCE).getIndentOptions();
@@ -112,15 +144,16 @@ public class JadeFormatterTest extends LightPlatformCodeInsightTestCase {
     jsIndentOptions.INDENT_SIZE = indentSize;
     jsIndentOptions.TAB_SIZE = tabSize;
     jsIndentOptions.USE_TAB_CHARACTER = useTabs;
-    CodeStyleSettingsManager.getInstance(getProject()).setTemporarySettings(tempSettings);
+    CodeStyleSettingsManager.getInstance(project).setTemporarySettings(tempSettings);
     try {
       doTest();
     }
     finally {
-      CodeStyleSettingsManager.getInstance(getProject()).dropTemporarySettings();
+      CodeStyleSettingsManager.getInstance(project).dropTemporarySettings();
     }
   }
 
+  @Test
   public void testUnbufferedSameIndent() {
     doTestWithIndentOptions(4, 4, false);
   }

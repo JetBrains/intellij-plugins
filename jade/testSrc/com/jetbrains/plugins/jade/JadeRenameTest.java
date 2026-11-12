@@ -1,72 +1,73 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.plugins.jade;
 
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.testFramework.UsefulTestCase;
-import com.intellij.testFramework.builders.EmptyModuleFixtureBuilder;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.TestFixtureBuilder;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-public class JadeRenameTest extends UsefulTestCase {
-  private CodeInsightTestFixture myFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName());
-    myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
-    final EmptyModuleFixtureBuilder moduleFixtureBuilder = projectBuilder.addModule(EmptyModuleFixtureBuilder.class);
-    moduleFixtureBuilder.addSourceContentRoot(myFixture.getTempDirPath());
+@TestApplication
+public class JadeRenameTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
+  private String myTestName;
 
-    myFixture.setUp();
-    myFixture.setTestDataPath(JadeTestUtil.getBaseTestDataPath() + "/rename");
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      myFixture.tearDown();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      myFixture = null;
-      super.tearDown();
-    }
+  @BeforeEach
+  void setUp(TestInfo testInfo) {
+    myTestName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), true);
+    fixture.get().setTestDataPath(JadeTestUtil.getBaseTestDataPath() + "/rename");
   }
 
   public void _testVar1() {
-    myFixture.configureByFile(getTestName(true) + ".jade");
-    myFixture.testRename(getTestName(true) + "_after.jade", "zzi");
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.configureByFile(myTestName + ".jade");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testRename(myTestName + "_after.jade", "zzi"));
   }
 
+  @Test
   public void testExtends1() {
-    myFixture.configureByFiles(getTestName(true) + ".jade", getTestName(true) + "_2.jade");
-    myFixture.testRename(getTestName(true) + "_after.jade", "foobar.jade");
-    PsiDirectory dir = myFixture.getFile().getParent();
-    assertNull(dir.findFile(getTestName(true) + "_2.jade"));
-    assertNotNull(dir.findFile("foobar.jade"));
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.configureByFiles(myTestName + ".jade", myTestName + "_2.jade");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testRename(myTestName + "_after.jade", "foobar.jade"));
+    PsiDirectory dir = ReadAction.computeBlocking(() -> myFixture.getFile().getParent());
+    assertNull(ReadAction.computeBlocking(() -> dir.findFile(myTestName + "_2.jade")));
+    assertNotNull(ReadAction.computeBlocking(() -> dir.findFile("foobar.jade")));
   }
 
+  @Test
   public void testInclude1() {
-    myFixture.configureByFiles(getTestName(true) + ".jade", getTestName(true) + "_2.js");
-    myFixture.testRename(getTestName(true) + "_after.jade", "foobar.js");
-    PsiDirectory dir = myFixture.getFile().getParent();
-    assertNull(dir.findFile(getTestName(true) + "_2.jade"));
-    assertNotNull(dir.findFile("foobar.js"));
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.configureByFiles(myTestName + ".jade", myTestName + "_2.js");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testRename(myTestName + "_after.jade", "foobar.js"));
+    PsiDirectory dir = ReadAction.computeBlocking(() -> myFixture.getFile().getParent());
+    assertNull(ReadAction.computeBlocking(() -> dir.findFile(myTestName + "_2.jade")));
+    assertNotNull(ReadAction.computeBlocking(() -> dir.findFile("foobar.js")));
   }
 
+  @Test
   public void testClassSelector() {
-    myFixture.configureByFile(getTestName(true) + ".jade");
-    myFixture.testRename(getTestName(true) + "_after.jade", "z220");
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.configureByFile(myTestName + ".jade");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testRename(myTestName + "_after.jade", "z220"));
   }
 
+  @Test
   public void testIdSelector() {
-    myFixture.configureByFile(getTestName(true) + ".jade");
-    myFixture.testRename(getTestName(true) + "_after.jade", "z220");
+    CodeInsightTestFixture myFixture = fixture.get();
+    myFixture.configureByFile(myTestName + ".jade");
+    EdtTestUtil.runInEdtAndWait(() -> myFixture.testRename(myTestName + "_after.jade", "z220"));
   }
 
 }

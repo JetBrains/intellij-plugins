@@ -4,82 +4,96 @@ package com.jetbrains.plugins.jade;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.idea.IJIgnore;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-public class JadeCopyPasteTest extends BasePlatformTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+
+@TestApplication
+public class JadeCopyPasteTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> fixture = sharedCodeInsightFixture(projectFixture);
 
   private int myOriginalReformatOnPaste;
+  private String myTestName;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  void setUp(TestInfo testInfo) {
+    myTestName = PlatformTestUtil.getTestName(testInfo.getTestMethod().orElseThrow().getName(), true);
+    fixture.get().setTestDataPath(JadeTestUtil.getBaseTestDataPath() + "/copyPaste");
     myOriginalReformatOnPaste = CodeInsightSettings.getInstance().REFORMAT_ON_PASTE;
     CodeInsightSettings.getInstance().REFORMAT_ON_PASTE = CodeInsightSettings.NO_REFORMAT;
   }
 
-  @Override
-  protected String getTestDataPath() {
-    return JadeTestUtil.getBaseTestDataPath() + "/copyPaste";
+  @AfterEach
+  void tearDown() {
+    CodeInsightSettings.getInstance().REFORMAT_ON_PASTE = myOriginalReformatOnPaste;
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      CodeInsightSettings.getInstance().REFORMAT_ON_PASTE = myOriginalReformatOnPaste;
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
-  }
-
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testWholeLine1() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testWholeLine2() {
     doTest();
   }
 
+  @Test
   public void testPartLine1() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testPartLine2() {
     doTest();
   }
 
+  @Test
   public void testPasteInNewlineStart() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testPasteInNewlineIndent() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testPasteInTextOnTheEndOfLine() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testPasteInPipedText() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testLeadingNewLine() {
     doTest();
   }
 
+  @Test
   @IJIgnore(issue = "AT-4013")
   public void testCss() {
+    CodeInsightTestFixture myFixture = fixture.get();
     String name = "web_2153";
     myFixture.configureByFile(name + "_source.css");
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY);
@@ -89,7 +103,8 @@ public class JadeCopyPasteTest extends BasePlatformTestCase {
   }
 
   private void doTest() {
-    String name = getTestName(true);
+    CodeInsightTestFixture myFixture = fixture.get();
+    String name = myTestName;
     myFixture.configureByFile(name + "_source.jade");
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY);
     myFixture.configureByFile(name + "_target.jade");
