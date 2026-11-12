@@ -13,6 +13,7 @@ import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
@@ -24,16 +25,25 @@ import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.hasVueFileType
 
+/**
+ * The registry key `vue.kolar.transpiler.enabled` enables this transpiler for TSKotlin.
+ * When the key is off, the transpiler has no effect, so TS-Go uses only the Vue content mapper.
+ */
 class VueKolarTranspiler(
   private val project: Project,
 ) : KolarTranspiler {
 
+  private val isTranspilerEnabled: Boolean
+    get() = Registry.`is`("vue.kolar.transpiler.enabled")
+
   override fun isHighlightingCandidate(file: VirtualFile): Boolean =
-    file.isInLocalFileSystem
+    isTranspilerEnabled
+    && file.isInLocalFileSystem
     && file.hasVueFileType
 
   override fun isEnabled(file: VirtualFile): Boolean =
-    file.isInLocalFileSystem
+    isTranspilerEnabled
+    && file.isInLocalFileSystem
     && file.hasVueFileType
     && isVueContext(file, project)
 
@@ -45,7 +55,7 @@ class VueKolarTranspiler(
   }
 
   override fun getRelatedFiles(files: Collection<VirtualFile>): Collection<VirtualFile> =
-    VueKolarContext.getRelatedFiles(project, files)
+    if (isTranspilerEnabled) VueKolarContext.getRelatedFiles(project, files) else emptySet()
 
   override fun supportsInjectedFile(file: PsiFile): Boolean =
     file.language is VueJSLanguage

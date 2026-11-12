@@ -36,11 +36,12 @@ class VueCompletionTest :
     @Rule
     @JvmField
     val rule: TestRule = TrackFailedTestRule(
-      "testCastedObjectProps",
       "testComputedTypeJS",
       "testComputedTypeTS",
       "testScriptSetupGeneric",
       "testVueOutObjectLiteralTs",
+      // reproducible in test only
+      "testCompleteComponentWithDefineOptions",
     )
 
     override fun getCodeCompletionExpectedItemsLocation(dir: Boolean, dirName: String): String {

@@ -1,0 +1,1 @@
+import { h } from "./config.foo"

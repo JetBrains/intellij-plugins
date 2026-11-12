@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.typescript.kolar
 
 import com.intellij.lang.typescript.kolar.KolarTranspilerService
 import com.intellij.openapi.components.service
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,6 +25,11 @@ class VueKolarTranspilerTest :
   VueTestCase("kolar", VueTestMode.TS_GO_PROXY) {
 
   override val dirModeByDefault: Boolean = true
+
+  override fun setUp() {
+    super.setUp()
+    Registry.get("vue.kolar.transpiler.enabled").setValue(true, testRootDisposable)
+  }
 
   fun doTest() {
     doConfiguredTest(

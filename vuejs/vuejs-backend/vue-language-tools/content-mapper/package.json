@@ -1,0 +1,21 @@
+{
+  "name": "@vue/content-mapper",
+  "version": "4.0.0-alpha.3",
+  "private": true,
+  "typescript": {
+    "contentMapper": {
+      "exec": [
+        "node",
+        "lib/server.js"
+      ],
+      "dynamicConfig": true
+    }
+  },
+  "devDependencies": {
+    "@vue/content-mapper": "4.0.0-alpha.3",
+    "rolldown": "latest"
+  },
+  "scripts": {
+    "build": "rolldown --config"
+  }
+}

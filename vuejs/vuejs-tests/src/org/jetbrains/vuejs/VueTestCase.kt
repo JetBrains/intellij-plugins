@@ -45,12 +45,13 @@ abstract class VueTestCase(
     configurators: List<PolySymbolsTestConfigurator>,
   ): List<PolySymbolsTestConfigurator> =
     buildList {
-      addAll(super.adjustConfigurators(configurators))
+      super.adjustConfigurators(configurators)
+        .mapTo(this) { if (it is VueTsConfigFile) it.withTestMode(testMode) else it }
 
       add(VueToolsConfigurator(testMode))
 
       if (none { it is VueTsConfigFile }) {
-        add(VueTsConfigFile())
+        add(VueTsConfigFile().withTestMode(testMode))
       }
     }
 
