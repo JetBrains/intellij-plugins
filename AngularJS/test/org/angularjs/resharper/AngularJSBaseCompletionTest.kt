@@ -1,22 +1,26 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.resharper
 
-import com.intellij.lang.resharper.tests.ReSharperCompletionTestCase
 import com.intellij.lang.resharper.tests.ReSharperTestUtil
+import com.intellij.lang.resharper.tests.junit5.ReSharperCompletionTestCase
+import com.intellij.lang.resharper.tests.junit5.ReSharperTestDataPath
+import com.intellij.lang.resharper.tests.junit5.ReSharperTestNames
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.TestDataPath
 import com.intellij.util.ThrowableRunnable
 import org.angularjs.AngularTestUtil
-import org.junit.runners.Parameterized
 import java.io.File
 
 abstract class AngularJSBaseCompletionTest : ReSharperCompletionTestCase() {
   @JvmField
-  @Parameterized.Parameter(1)
   var myAngularVersion: String? = null
+
+  override fun setParameters(parameters: List<Any?>) {
+    super.setParameters(parameters)
+    myAngularVersion = parameters[1] as String
+  }
 
   override val goldSuffix: List<String>
     get() = listOf("$myAngularVersion.gold")
@@ -45,10 +49,10 @@ abstract class AngularJSBaseCompletionTest : ReSharperCompletionTestCase() {
     fun findTestData(klass: Class<*>): String {
       return (AngularTestUtil.getBaseTestDataPath(klass)
               + "/CodeCompletion/"
-              + klass.getAnnotation(TestDataPath::class.java).value.removePrefix("\$R#_COMPLETION_TEST_ROOT"))
+              + klass.getAnnotation(ReSharperTestDataPath::class.java).value.removePrefix("\$R#_COMPLETION_TEST_ROOT"))
     }
 
-    @com.intellij.testFramework.Parameterized.Parameters(name = "{0} - {1}")
+    @ReSharperTestNames
     @JvmStatic
     fun testNames2(klass: Class<*>): List<Array<String>> {
       val result = mutableListOf<Array<String>>()

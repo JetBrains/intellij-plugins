@@ -1,27 +1,29 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.resharper
 
-import com.intellij.lang.resharper.tests.ReSharperParameterizedTestCase
 import com.intellij.lang.resharper.tests.ReSharperTestUtil
+import com.intellij.lang.resharper.tests.junit5.ReSharperParameterizedTestCase
+import com.intellij.lang.resharper.tests.junit5.ReSharperProjectPerTest
+import com.intellij.lang.resharper.tests.junit5.ReSharperTestNames
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.testFramework.renameSymbolAtCaret
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
-import com.intellij.testFramework.Parameterized
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.RegistryKey
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.angular2.Angular2TestUtil
-import org.junit.runner.RunWith
 import java.io.File
 
-@RunWith(value = Parameterized::class)
-@Suppress("ACCIDENTAL_OVERRIDE")
+@TestApplication
+@RegistryKey(key = "ast.loading.filter", value = "true")
+@ReSharperProjectPerTest
 class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
-
-  public override fun setUp() {
-    super.setUp()
-    Angular2TestUtil.enableAstLoadingFilter(this)
-  }
 
   override fun doSingleTest(testFile: String, path: String) {
     myFixture.copyFileToProject("../../../package.json", "package.json")
@@ -41,14 +43,18 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
     }
     assert(fileWithCaret != null)
     myFixture.configureByText(fileWithCaret!!, ReSharperTestUtil.loadAndConvertCaret(fileWithCaret, testDir.path))
-    PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments()
+    timeoutRunBlocking {
+      withContext(Dispatchers.EDT) {
+        PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments()
 
-    //perform rename
-    myFixture.renameSymbolAtCaret("zzz")
+        //perform rename
+        myFixture.renameSymbolAtCaret("zzz")
 
-    WriteCommandAction
-      .runWriteCommandAction(project) { PostprocessReformattingAspect.getInstance(project).doPostponedFormatting() }
-    FileDocumentManager.getInstance().saveAllDocuments()
+        WriteCommandAction
+          .runWriteCommandAction(project) { PostprocessReformattingAspect.getInstance(project).doPostponedFormatting() }
+        FileDocumentManager.getInstance().saveAllDocuments()
+      }
+    }
     for (f in testDir.listFiles()!!) {
       if (f.getName().startsWith(testNamePrefix) && f.getName().endsWith(".gold")) {
         myFixture.checkResultByFile(f.getName().removeSuffix(".gold"),
@@ -58,7 +64,7 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
   }
 
   companion object {
-    @Parameterized.Parameters(name = "{0}")
+    @ReSharperTestNames
     @Throws(Exception::class)
     @JvmStatic
     @Suppress("unused")

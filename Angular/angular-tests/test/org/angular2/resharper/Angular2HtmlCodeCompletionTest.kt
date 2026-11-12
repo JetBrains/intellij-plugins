@@ -5,10 +5,12 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.testFramework.TestDataPath
+import com.intellij.lang.resharper.tests.junit5.ReSharperTestDataPath
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.containers.ContainerUtil
 
-@TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2Html")
+@TestApplication
+@ReSharperTestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2Html")
 class Angular2HtmlCodeCompletionTest : Angular2ReSharperCompletionTestBase() {
   override fun doGetExtraFiles(): List<String> {
     val extraFiles = super.doGetExtraFiles()

@@ -5,12 +5,14 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.testFramework.TestDataPath
+import com.intellij.lang.resharper.tests.junit5.ReSharperTestDataPath
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 
-@TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2")
+@TestApplication
+@ReSharperTestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2")
 class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {
   override fun shouldSkipItem(element: LookupElement): Boolean {
     if (element.getLookupString().startsWith("[(")) {
