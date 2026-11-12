@@ -1,0 +1,85 @@
+load("@community//build:tests-options.bzl", "jps_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.astro.tests.tsServiceFramework` start
+jvm_library(
+    name = "tsServiceFramework_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "testSrc/**/*.kt",
+            "testSrc/**/*.java",
+            "testSrc/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.astro.tests.tsServiceFramework",
+    visibility = ["//visibility:public"],
+    runtime_deps = ["@community//platform/main/intellij.platform.monolith.main:monolith-main"],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/core-api:core",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/testFramework",
+        "//contrib/Astro:astro",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/JavaScriptLanguage/testFramework",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "@community//plugins/htmltools:html-tools",
+        "//plugins/JavaScriptLanguage/plugin",
+        "//plugins/css/common/psi",
+        "@community//plugins/copyright",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests_test_lib",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "@community//xml/xml-parser:parser",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/tests:tests_test_lib",
+        "@community//platform/lang-impl",
+        "@community//platform/lang-api:lang",
+        "@community//libraries/stream",
+        "@community//platform/core-ui",
+        "@community//platform/core-impl",
+        "@community//xml/xml-analysis-api:analysis",
+        "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+        "@community//platform/polySymbols/shared:polySymbols",
+        "@community//platform/polySymbols/backend",
+        "//contrib/postcss/paid",
+        "@community//platform/lsp",
+        "@community//platform/lsp/testFramework",
+        "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+        "@community//platform/polySymbols/testFramework",
+        "@community//xml/testFramework",
+        "//plugins/css/common",
+        "//plugins/JavaScriptLanguage/javascript-codeinsight",
+        "@community//libraries/junit4",
+        "@community//libraries/kotlinx/coroutines/core",
+        "@community//xml/xml-analysis-impl:analysis-impl",
+        "@community//xml/impl",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5/codeInsight",
+        "@community//libraries/junit6",
+        "@community//platform/scratch/plugin",
+        "//contrib/Astro/astro-tests:astro-tests_test_lib",
+    ],
+)
+### auto-generated section `build intellij.astro.tests.tsServiceFramework` end
+
+### auto-generated section `iml intellij.astro.tests.tsServiceFramework` start
+exports_files(
+    [
+        "intellij.astro.tests.tsServiceFramework.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.astro.tests.tsServiceFramework` end
+
+### auto-generated section `test intellij.astro.tests.tsServiceFramework` start
+jps_test(
+    name = "tsServiceFramework_test",
+    runtime_deps = [":tsServiceFramework_test_lib"],
+)
+### auto-generated section `test intellij.astro.tests.tsServiceFramework` end

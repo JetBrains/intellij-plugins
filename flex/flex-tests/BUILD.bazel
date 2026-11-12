@@ -24,6 +24,7 @@ jvm_library(
         "@community//plugins/properties/plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
         "@community//json/plugin",
+        "//plugins/JavaScriptLanguage/tests/unitTests/flex:flex_test_lib",
         "@community//plugins/yaml/plugin",
     ],
     deps = [

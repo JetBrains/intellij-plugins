@@ -1,0 +1,99 @@
+load("@community//build:tests-options.bzl", "jps_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.jade.tests.codeInsight` start
+jvm_library(
+    name = "codeInsight_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "testSrc/**/*.kt",
+            "testSrc/**/*.java",
+            "testSrc/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    module_name = "intellij.jade.tests.codeInsight",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/problemsView/plugin",
+        "//plugins/css/codeinsight/actions",
+        "//plugins/ultimate-plugin",
+        "//plugins/JavaScriptLanguage/plugin",
+        "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "//contrib/jade:jade-tests_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/platform-api:ide",
+        "@community//platform/platform-impl:ide-impl",
+        "//plugins/css/common",
+        "@community//platform/indexing-api:indexing",
+        "@community//platform/lang-api:lang",
+        "@community//platform/editor-ui-ex:editor-ex",
+        "@community//platform/lang-impl",
+        "@community//platform/indexing-impl",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//xml/xml-parser:parser",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "@community//platform/execution-impl",
+        "@community//platform/ide-core-impl",
+        "@community//platform/ide-core",
+        "@community//xml/impl",
+        "@community//platform/testFramework",
+        "//plugins/css/plugin",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//ultimate/ultimate-resources:idea-ultimate-customization",
+        "//plugins/fileWatcher",
+        "@community//spellchecker",
+        "@community//plugins/grazie/src:core",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/tests:tests_test_lib",
+        "@community//platform/polySymbols/testFramework",
+        "//plugins/JavaScriptLanguage/testFramework",
+        "//plugins/coffeescript/coffeescript-core:coffeescript",
+        "@community//platform/core-ui",
+        "@community//platform/core-impl",
+        "//plugins/css/common/psi",
+        "//plugins/css/backend",
+        "//plugins/css/codeinsight/analysis",
+        "//contrib/jade/css",
+        "//contrib/jade/watcher",
+        "//plugins/JavaScriptLanguage/javascript-common",
+        "//plugins/JavaScriptLanguage/javascript-codeinsight",
+        "//contrib/jade",
+        "//plugins/fileWatcher:fileWatcher-tests_test_lib",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "@community//libraries/junit4",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5/codeInsight",
+        "@community//libraries/junit6",
+        "@community//libraries/junit6-params",
+        "@community//platform/scratch/plugin",
+    ],
+)
+### auto-generated section `build intellij.jade.tests.codeInsight` end
+
+### auto-generated section `iml intellij.jade.tests.codeInsight` start
+exports_files(
+    [
+        "intellij.jade.tests.codeInsight.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.jade.tests.codeInsight` end
+
+### auto-generated section `test intellij.jade.tests.codeInsight` start
+jps_test(
+    name = "codeInsight_test",
+    runtime_deps = [":codeInsight_test_lib"],
+)
+### auto-generated section `test intellij.jade.tests.codeInsight` end

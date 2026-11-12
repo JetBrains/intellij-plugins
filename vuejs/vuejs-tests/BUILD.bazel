@@ -126,6 +126,7 @@ jvm_library(
         "@community//xml/xml-analysis-impl:analysis-impl",
         "@community//xml/impl",
         "@community//platform/lsp-impl",
+        "//plugins/JavaScriptLanguage/tests/unitTests/testFramework",
         "@community//platform/scratch/plugin",
     ],
 )

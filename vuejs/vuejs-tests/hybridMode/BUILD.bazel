@@ -1,0 +1,141 @@
+load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//build:tests-options.bzl", "jps_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `build intellij.vuejs.tests.hybridMode` start
+create_kotlinc_options(
+    name = "custom_hybridMode",
+    opt_in = [
+        "kotlin.uuid.ExperimentalUuidApi",
+        "org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
+        "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+        "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+    ],
+    x_context_parameters = True,
+)
+
+jvm_library(
+    name = "hybridMode_test_lib",
+    testonly = True,
+    srcs = glob(
+        [
+            "testSrc/**/*.kt",
+            "testSrc/**/*.java",
+            "testSrc/**/*.form",
+        ],
+        allow_empty = True,
+    ),
+    kotlinc_opts = ":custom_hybridMode",
+    module_name = "intellij.vuejs.tests.hybridMode",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        # do not sort,
+        "@community//json/plugin",
+        "@community//plugins/yaml/plugin",
+        "//contrib/jade/css",
+        "@community//idea/customization/plugin",
+        "//plugins/ultimate-plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "//contrib/vuejs/vuejs-tests:tests_test_lib",
+    ],
+    deps = [
+        # do not sort,
+        "//contrib/vuejs/vuejs-webpack:webpack",
+        "@community//platform/analysis-api:analysis",
+        "@community//platform/code-style-api:codeStyle",
+        "@community//platform/core-api:core",
+        "@community//platform/editor-ui-api:editor-ui",
+        "@community//platform/polySymbols/backend",
+        "@community//platform/projectModel-api:projectModel",
+        "@community//platform/refactoring",
+        "@community//platform/testFramework",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5/codeInsight",
+        "//plugins/css/common",
+        "//plugins/JavaScriptLanguage/javascript-psi-impl",
+        "//plugins/css/plugin",
+        "@community//java/java-runtime:rt",
+        "//plugins/JavaScriptLanguage/javascript-parser",
+        "@community//plugins/htmltools:html-tools",
+        "@community//xml/xml-parser:parser",
+        "@community//xml/xml-analysis-api:analysis",
+        "@community//spellchecker",
+        "@community//plugins/grazie/src:core",
+        "@community//platform/indexing-impl",
+        "//plugins/JavaScriptLanguage/testFramework",
+        "//plugins/JavaScriptLanguage/javascript-backend",
+        "//contrib/javascript/eslint",
+        "//contrib/javascript/eslint:eslint-tests_test_lib",
+        "//contrib/vuejs/vuejs-eslint:eslint",
+        "@community//platform/analysis-impl",
+        "@community//platform/lang-impl",
+        "//plugins/JavaScriptLanguage/plugin",
+        "//plugins/css/common/psi",
+        "@community//plugins/copyright",
+        "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests_test_lib",
+        "//plugins/sass/plugin",
+        "//contrib/jade",
+        "//contrib/postcss/plugin",
+        "//contrib/postcss/paid",
+        "//plugins/stylus",
+        "@community//xml/xml-psi-api:psi",
+        "@community//xml/tests:tests_test_lib",
+        "@community//libraries/stream",
+        "@community//libraries/gson",
+        "@community//platform/core-ui",
+        "@community//platform/core-impl",
+        "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+        "//plugins/webpack",
+        "@community//platform/lsp",
+        "@community//platform/lang-core",
+        "@community//platform/polySymbols/shared:polySymbols",
+        "@community//platform/polySymbols/web",
+        "@community//platform/lsp/testFramework",
+        "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+        "@community//platform/polySymbols/testFramework",
+        "@community//xml/testFramework",
+        "//plugins/css/codeinsight/analysis",
+        "//plugins/css/backend",
+        "//plugins/JavaScriptLanguage/javascript-common",
+        "//plugins/sass/backend",
+        "//plugins/sass",
+        "//contrib/vuejs/vuejs-common:common",
+        "//contrib/vuejs/vue-free:free",
+        "//contrib/vuejs/vuejs-backend:backend",
+        "//contrib/vuejs/vuejs-plugin:plugin",
+        "@community//platform/lang-api:lang",
+        "@community//platform/ide-core",
+        "@community//platform/util:util-ui",
+        "//plugins/JavaScriptLanguage/javascript-codeinsight",
+        "//plugins/JavaScriptLanguage/js-analysis-impl:javascript-analysis-impl",
+        "//plugins/webpack:webpack-tests_test_lib",
+        "//plugins/JSIntentionPowerPack:javascript-intentions",
+        "@community//libraries/kotlinx/serialization/core",
+        "@community//libraries/kotlinx/serialization/json",
+        "@community//libraries/junit4",
+        "@community//libraries/assertj-core",
+        "@community//libraries/junit6",
+        "@community//xml/xml-ui-common:ui-common",
+        "@community//xml/xml-analysis-impl:analysis-impl",
+        "@community//xml/impl",
+        "@community//platform/lsp-impl",
+        "@community//platform/scratch/plugin",
+    ],
+)
+### auto-generated section `build intellij.vuejs.tests.hybridMode` end
+
+### auto-generated section `iml intellij.vuejs.tests.hybridMode` start
+exports_files(
+    [
+        "intellij.vuejs.tests.hybridMode.iml",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `iml intellij.vuejs.tests.hybridMode` end
+
+### auto-generated section `test intellij.vuejs.tests.hybridMode` start
+jps_test(
+    name = "hybridMode_test",
+    runtime_deps = [":hybridMode_test_lib"],
+)
+### auto-generated section `test intellij.vuejs.tests.hybridMode` end
