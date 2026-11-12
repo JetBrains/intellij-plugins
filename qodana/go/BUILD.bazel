@@ -71,6 +71,7 @@ jvm_library(
         # do not sort,
         "//plugins/ultimate-plugin",
         "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "//plugins/uml/impl",
     ],
     deps = [
         # do not sort,
