@@ -61,6 +61,9 @@ fun supportsDefineComponent(context: PsiElement): Boolean =
 fun getVueClassComponentLibrary(location: PsiElement): String? =
   PolyContext.get(KIND_VUE_CLASS_COMPONENT_LIBRARY, location)
 
+fun getVueClassComponentLibrary(contextFile: VirtualFile, project: Project): String? =
+  PolyContext.get(KIND_VUE_CLASS_COMPONENT_LIBRARY, contextFile, project)
+
 fun getVueClassComponentDecoratorName(location: PsiElement): String =
   if (detectPkgVersion(location, VUE_CLASS_COMPONENT).let {
       it == null || it < VERSION_8_0_0
