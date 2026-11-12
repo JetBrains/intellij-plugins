@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "contentMappers": [
+    { "package": "@vue/content-mapper", "extensions": [".vue"] }
+  ]
+}
