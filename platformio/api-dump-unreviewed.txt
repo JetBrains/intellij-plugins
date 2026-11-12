@@ -199,12 +199,6 @@ f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvid
 - createTask(com.intellij.execution.configurations.RunConfiguration):com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBeforeRunTask
 - getId():com.intellij.openapi.util.Key
 - getName():java.lang.String
-f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector
-- sf:DEBUG_START_EVENT_ID:com.intellij.internal.statistic.eventLog.events.EventId
-- sf:EVENT_LOG_GROUP:com.intellij.internal.statistic.eventLog.EventLogGroup
-- sf:NEW_PROJECT:com.intellij.internal.statistic.eventLog.events.EventId
-- <init>():V
-- getGroup():com.intellij.internal.statistic.eventLog.EventLogGroup
 f:com.jetbrains.cidr.cpp.embedded.platformio.PlatformioValgrindDisabler
 - com.intellij.cidr.profiling.valgrind.ValgrindDisabler
 - <init>():V
