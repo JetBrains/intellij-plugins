@@ -1,53 +1,66 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.TestDataPath;
-import org.intellij.plugins.postcss.PostCssFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.intellij.plugins.postcss.PostCssFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@TestDataPath("$CONTENT_ROOT/../testData/inspections/mediaRanges/")
-public class PostCssMediaRangeInspectionTest extends PostCssFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.intellij.plugins.postcss.PostCssFixtureKt.postCssFixture;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/postcss/tests/testData/inspections/mediaRanges")
+public class PostCssMediaRangeInspectionTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<PostCssFixture> postCss = postCssFixture(projectFixture);
+
+  @BeforeEach
+  void setUp() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.enableInspections(PostCssMediaRangeInspection.class);
   }
 
+  @Test
   public void testIncorrectMediaRange() {
     doTest();
   }
 
+  @Test
   public void testIncorrectSignDirection() {
     doTest();
   }
 
+  @Test
   public void testIncorrectSignDirectionWithDifferentOperators() {
     doTest();
   }
 
+  @Test
   public void testCorrectSignDirection() {
     doTest();
   }
 
+  @Test
   public void testEqualSigns() {
     doTest();
   }
 
+  @Test
   public void testOneEqualSignOfTwo() {
     doTest();
   }
 
+  @Test
   public void testOneSign() {
     doTest();
   }
 
   private void doTest() {
-    myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
-  }
-
-  @NotNull
-  @Override
-  protected String getTestDataSubdir() {
-    return "mediaRanges";
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
+    myFixture.testHighlighting(true, false, false, postCss.get().getTestName() + ".pcss");
   }
 }

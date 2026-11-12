@@ -1,33 +1,46 @@
 package org.intellij.plugins.postcss.completion;
 
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.intellij.plugins.postcss.PostCssFixture;
+import org.junit.jupiter.api.Test;
 
-public class PostCssOtherCompletionTest extends PostCssCompletionTestBase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.intellij.plugins.postcss.PostCssFixtureKt.postCssFixture;
 
-  @NotNull
-  @Override
-  protected String getTestDataSubdir() {
-    return "other";
-  }
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/postcss/tests/testData/completion/other")
+public class PostCssOtherCompletionTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<PostCssFixture> postCss = postCssFixture(projectFixture);
 
+  @Test
   public void testSimpleVarAsPropertyValue() {
-    myFixture.copyFileToProject(getTestName(true) + "_imported.pcss");
-    doTestCompletionVariants("foo", "bar", "baz", "in_imported");
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
+    myFixture.copyFileToProject(postCss.get().getTestName() + "_imported.pcss");
+    postCss.get().doTestCompletionVariants("foo", "bar", "baz", "in_imported");
   }
 
+  @Test
   public void testSimpleVarInterpolationStart() {
-    doTestCompletionVariants("foo", "bar", "baz");
+    postCss.get().doTestCompletionVariants("foo", "bar", "baz");
   }
 
+  @Test
   public void testSimpleVarInterpolationMiddle() {
-    doTestCompletionVariants("bar", "baz");
+    postCss.get().doTestCompletionVariants("bar", "baz");
   }
 
+  @Test
   public void testSimpleVarInterpolationEnd() {
-    doTest();
+    postCss.get().doTestCompletion();
   }
 
+  @Test
   public void testSimpleVarAsSelector() {
-    doTestCompletionVariants("foo", "bar", "baz");
+    postCss.get().doTestCompletionVariants("foo", "bar", "baz");
   }
 }

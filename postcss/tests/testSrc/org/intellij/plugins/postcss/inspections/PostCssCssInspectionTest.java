@@ -1,5 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.css.inspections.invalid.CssInvalidAtRuleInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidImportInspection;
@@ -9,42 +10,61 @@ import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspecti
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
 import com.intellij.psi.css.inspections.invalid.CssUnresolvedClassInComposesRuleInspection;
 import com.intellij.testFramework.TestDataPath;
-import org.intellij.plugins.postcss.PostCssFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.intellij.plugins.postcss.PostCssFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@TestDataPath("$CONTENT_ROOT/../testData/inspections/")
-public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.intellij.plugins.postcss.PostCssFixtureKt.postCssFixture;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/postcss/tests/testData/inspections")
+public class PostCssCssInspectionTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<PostCssFixture> postCss = postCssFixture(projectFixture);
+
+  @BeforeEach
+  void setUp() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.enableInspections(CssInvalidImportInspection.class,
                                 CssInvalidPseudoSelectorInspection.class,
                                 CssInvalidMediaFeatureInspection.class,
                                 CssInvalidAtRuleInspection.class);
   }
 
+  @Test
   public void testImportEverywhere() {
     doTest();
   }
 
+  @Test
   public void testInvalidPseudoClass() {
     doTest();
   }
 
+  @Test
   public void testMediaFeatureInvalid() {
     doTest();
   }
 
+  @Test
   public void testBadAtRule() {
     doTest();
   }
 
+  @Test
   public void testSimpleVariables() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.enableInspections(CssInvalidPropertyValueInspection.class, CssInvalidHtmlTagReferenceInspection.class);
     doTest();
   }
 
+  @Test
   public void testModuleValueReferences() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.enableInspections(PostCssUnresolvedModuleValueReferenceInspection.class,
                                 CssUnknownTargetInspection.class,
                                 CssUnresolvedClassInComposesRuleInspection.class,
@@ -53,6 +73,7 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
   }
 
   private void doTest() {
-    myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
+    myFixture.testHighlighting(true, false, false, postCss.get().getTestName() + ".pcss");
   }
 }

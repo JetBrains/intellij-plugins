@@ -1,45 +1,60 @@
 package org.intellij.plugins.postcss.resolve;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.intellij.plugins.postcss.PostCssFixture;
+import org.junit.jupiter.api.Test;
 
-@TestDataPath("$CONTENT_ROOT/../testData/resolve/customSelectors")
-public class PostCssCustomSelectorResolveTest extends PostCssResolveTest {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.intellij.plugins.postcss.PostCssFixtureKt.postCssFixture;
 
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/postcss/tests/testData/resolve/customSelectors")
+public class PostCssCustomSelectorResolveTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<PostCssFixture> postCss = postCssFixture(projectFixture);
+
+  @Test
   public void testResolve() {
-    doTest();
+    postCss.get().doTestResolve();
   }
 
+  @Test
   public void testResolveInCustomSelectorAtRule() {
-    doTest();
+    postCss.get().doTestResolve();
   }
 
+  @Test
   public void testResolveWithImport() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.configureByFile("definition.pcss");
-    doTest();
+    postCss.get().doTestResolve();
   }
 
+  @Test
   public void testResolveWithoutImport() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.configureByFile("definition.pcss");
-    doTest();
+    postCss.get().doTestResolve();
   }
 
+  @Test
   public void testResolveMulti() {
-    doTest(2);
+    postCss.get().doTestResolve(2);
   }
 
+  @Test
   public void testResolveMultiInDifferentFiles() {
+    CodeInsightTestFixture myFixture = postCss.get().getFixture();
     myFixture.configureByFile("definition.pcss");
-    doTest(2);
+    postCss.get().doTestResolve(2);
   }
 
+  @Test
   public void testInline() {
-    doTest(1, "html");
-  }
-
-  @Override
-  @NotNull
-  protected String getTestDataSubdir() {
-    return "customSelectors";
+    postCss.get().doTestResolve(1, "html");
   }
 }
