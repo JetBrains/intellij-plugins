@@ -1,8 +1,10 @@
 package com.intellij.javascript.karma.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KarmaUtilTest {
   @Test
@@ -38,10 +40,10 @@ public class KarmaUtilTest {
   }
 
   private static void assertKarmaConfig(@NotNull String filename, boolean matchMostRelevantNamesOnly) {
-    Assert.assertTrue(KarmaUtil.isKarmaConfigFile(filename, matchMostRelevantNamesOnly));
+    assertTrue(KarmaUtil.isKarmaConfigFile(filename, matchMostRelevantNamesOnly));
   }
 
   private static void assertNotKarmaConfig(@NotNull String filename, boolean matchMostRelevantNamesOnly) {
-    Assert.assertFalse(KarmaUtil.isKarmaConfigFile(filename, matchMostRelevantNamesOnly));
+    assertFalse(KarmaUtil.isKarmaConfigFile(filename, matchMostRelevantNamesOnly));
   }
 }

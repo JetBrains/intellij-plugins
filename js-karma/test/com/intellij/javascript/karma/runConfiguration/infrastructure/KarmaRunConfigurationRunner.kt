@@ -20,7 +20,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.testFramework.ExecutionTestUtil
-import junit.framework.TestCase.fail
+import org.junit.jupiter.api.fail
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
