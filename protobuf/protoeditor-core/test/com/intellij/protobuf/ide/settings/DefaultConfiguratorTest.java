@@ -17,8 +17,8 @@ package com.intellij.protobuf.ide.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
-import com.intellij.openapi.module.EmptyModuleType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.roots.ContentEntry;
@@ -49,8 +49,8 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
     assertTrue(projectDir.mkdirs());
 
     Project project = doCreateAndOpenProject();
-    Module module1 = doCreateRealModuleIn("module1", project, EmptyModuleType.getInstance());
-    Module module2 = doCreateRealModuleIn("module2", project, EmptyModuleType.getInstance());
+    Module module1 = doCreateRealModuleIn("module1", project, ModuleType.EMPTY);
+    Module module2 = doCreateRealModuleIn("module2", project, ModuleType.EMPTY);
 
     File module1Root1 = new File(projectDir, "module1Root1");
     File module1Root1Src1 = new File(module1Root1, "src1");
