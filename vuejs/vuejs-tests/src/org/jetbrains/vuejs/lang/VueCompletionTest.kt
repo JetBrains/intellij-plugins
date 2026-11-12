@@ -452,6 +452,7 @@ abstract class VueCompletionTestBase(
   fun testClassComponentCompletion() =
     vue.doLookupTest(
       VueTestModule.VUE_2_7_14,
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       fileContents = "<template><<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
@@ -460,6 +461,7 @@ abstract class VueCompletionTestBase(
   fun testClassComponentCompletionTs() =
     vue.doLookupTest(
       VueTestModule.VUE_2_7_14,
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       fileContents = "<template><<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
@@ -701,6 +703,7 @@ abstract class VueCompletionTestBase(
   @Test
   fun testComplexComponentDecorator8Ts() =
     vue.doLookupTest(
+      additionalDependencies = mapOf("vue-class-component" to "*"),
       configureFileName = "App.vue",
       locations = listOf("<HW <caret>", "<<caret>HW"),
       lookupItemFilter = filterOutStandardHtmlSymbols and { it.priority > 0 && !it.lookupString.startsWith("v-") },
@@ -1794,12 +1797,19 @@ abstract class VueCompletionTestBase(
   fun testTypescriptVForItemCompletion() =
     vue.doLookupTest(
       VueTestModule.VUE_2_7_14,
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties,
     )
 
   @Test
   fun testDestructuringVariableTypeInVFor() =
-    vue.doLookupTest(VueTestModule.VUE_2_5_3)
+    vue.doLookupTest(
+      VueTestModule.VUE_2_5_3,
+      additionalDependencies = mapOf(
+        "vue-class-component" to "*",
+        "vue-property-decorator" to "*",
+      ),
+    )
 
   @Test
   fun testComponentInsertionWithClassDefined() =

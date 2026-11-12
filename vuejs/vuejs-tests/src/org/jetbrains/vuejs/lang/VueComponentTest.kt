@@ -200,7 +200,10 @@ class VueComponentTest :
 
   @Test
   fun testDecoratedComponentEmitsTS() =
-    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+    doTest(
+      addNodeModules = listOf(VueTestModule.VUE_2_6_10),
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    )
 
   @Test
   fun testDefineModels() =
@@ -224,8 +227,9 @@ class VueComponentTest :
   private fun doTest(
     strictNullChecksDiffer: Boolean = false,
     addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
+    additionalDependencies: Map<String, String> = emptyMap(),
   ) {
-    var file = configureTestProject(addNodeModules) as PsiFileImpl
+    var file = configureTestProject(addNodeModules, additionalDependencies) as PsiFileImpl
 
     val textWithMarkers = file.text
 
@@ -294,10 +298,14 @@ class VueComponentTest :
 
   private fun configureTestProject(
     addNodeModules: List<VueTestModule> = emptyList(),
+    additionalDependencies: Map<String, String> = emptyMap(),
     extension: String = "vue",
   ): PsiFile {
     if (addNodeModules.isNotEmpty()) {
-      myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
+      myFixture.configureVueDependencies(
+        modules = addNodeModules.toTypedArray(),
+        additionalDependencies = additionalDependencies,
+      )
     }
     return myFixture.configureByFile(getTestName(false) + "." + extension)
   }

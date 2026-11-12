@@ -207,7 +207,9 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   open fun testCompRequiredAttributesTestTS() {
-    vue.doHighlightingTest()
+    vue.doHighlightingTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    )
   }
 
   @Test
@@ -453,7 +455,7 @@ abstract class VueHighlightingTestBase protected constructor(
   @Test
   open /* temp */
   fun testClassComponentAnnotationWithLocalComponent() {
-    vue.fixture.configureVueDependencies()
+    vue.fixture.configureVueDependencies("vue-property-decorator" to "*")
     createTwoClassComponents(vue.fixture)
     vue.doHighlightingTest()
   }
@@ -461,7 +463,7 @@ abstract class VueHighlightingTestBase protected constructor(
   @Test
   open /* temp */
   fun testClassComponentAnnotationWithLocalComponentTs() {
-    vue.fixture.configureVueDependencies()
+    vue.fixture.configureVueDependencies("vue-property-decorator" to "*")
     vue.fixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
     createTwoClassComponents(vue.fixture, true)
     vue.doHighlightingTest()
@@ -475,12 +477,16 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testLocalComponentExtendsInClassSyntax() {
-    vue.doHighlightingTest()
+    vue.doHighlightingTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    )
   }
 
   @Test
   fun testLocalComponentInClassSyntax() {
-    vue.doHighlightingTest()
+    vue.doHighlightingTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    )
   }
 
   @Test
@@ -610,7 +616,9 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testFilters() {
-    vue.doHighlightingTest()
+    vue.doHighlightingTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    )
   }
 
   @Test
@@ -642,6 +650,7 @@ abstract class VueHighlightingTestBase protected constructor(
   @Test
   fun testPrivateMembersHighlighting() {
     vue.doHighlightingTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       inspections = listOf(JSUnusedGlobalSymbolsInspection::class.java),
     )
   }
@@ -754,7 +763,10 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testIndirectExport() {
-    vue.doHighlightingTest(VueTestModule.VUE_2_6_10)
+    vue.doHighlightingTest(
+      VueTestModule.VUE_2_6_10,
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    )
   }
 
   @Test
@@ -785,7 +797,9 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testSuperComponentMixin() {
-    vue.doHighlightingTest {
+    vue.doHighlightingTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+    ) {
       vue.disableAstLoadingFilterWhenPluginUsed()
     }
   }
@@ -1018,6 +1032,7 @@ abstract class VueHighlightingTestBase protected constructor(
   fun testLifecycleEventsVue2ClassComponent() {
     vue.doHighlightingTest(
       VueTestModule.VUE_2_6_10,
+      additionalDependencies = mapOf("vue-class-component" to "*"),
       inspections = listOf(
         JSUnusedLocalSymbolsInspection::class.java,
         JSUnusedGlobalSymbolsInspection::class.java,

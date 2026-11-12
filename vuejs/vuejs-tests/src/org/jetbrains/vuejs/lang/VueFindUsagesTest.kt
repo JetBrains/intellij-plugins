@@ -38,22 +38,34 @@ abstract class VueFindUsagesTestBase(
 
   @Test
   fun testPrivateComponentGetter() {
-    vue.doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+      fileName = "App.vue",
+    )
   }
 
   @Test
   fun testPrivateComponentSetter() {
-    vue.doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+      fileName = "App.vue",
+    )
   }
 
   @Test
   fun testPrivateComponentMethod() {
-    vue.doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+      fileName = "App.vue",
+    )
   }
 
   @Test
   fun testPrivateConstructorField() {
-    vue.doFindUsagesTest(configureFileName = "App.vue")
+    vue.doFindUsagesTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
+      fileName = "App.vue",
+    )
   }
 
   @Test

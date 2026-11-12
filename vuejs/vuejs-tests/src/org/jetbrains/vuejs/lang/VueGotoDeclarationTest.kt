@@ -1912,6 +1912,7 @@ components.install = (Vue, options = {}) => {
   @Test
   fun testResolveWithClassComponent() {
     vue.doConfiguredTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       configureFile = false,
     ) {
       createTwoClassComponents(vue.fixture)
@@ -1948,6 +1949,7 @@ export default class UsageComponent extends Vue {
   @Test
   fun testResolveWithClassComponentTs() {
     vue.doConfiguredTest(
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       configureFile = false,
     ) {
       createTwoClassComponents(vue.fixture, true)
@@ -2107,6 +2109,7 @@ export default class UsageComponent extends Vue {
   fun testAtComponentResolution() {
     vue.doConfiguredTest(
       VUE_2_6_10,
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       configureFile = false,
     ) {
       val file = configureByFile("at_component.vue")
@@ -2128,6 +2131,7 @@ export default class UsageComponent extends Vue {
   fun testAtComponentResolutionTs() {
     vue.doConfiguredTest(
       VUE_2_6_10,
+      additionalDependencies = mapOf("vue-property-decorator" to "*"),
       configureFile = false,
     ) {
       val file = configureByFile("at_component_ts.vue")
