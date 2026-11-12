@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.groovy.search;
 
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.groovy.testFramework.BaseTest;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.testFramework.junit5.TestApplication;
@@ -16,12 +17,14 @@ import java.util.Collection;
 
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait;
 import static org.jetbrains.plugins.groovy.util.GroovyFixture.groovyFixture;
+import static org.jetbrains.plugins.groovy.util.GroovyFixture.groovyProjectFixture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestApplication
 public class GrCucumberFindUsagesTest implements BaseTest {
-  private final TestFixture<JavaCodeInsightTestFixture> groovy = groovyFixture(GrCucumberTestUtil.DESCRIPTOR);
+  private static final TestFixture<Project> project = groovyProjectFixture();
+  private final TestFixture<JavaCodeInsightTestFixture> groovy = groovyFixture(project, GrCucumberTestUtil.DESCRIPTOR);
 
   @Override
   public @NotNull JavaCodeInsightTestFixture getFixture() {

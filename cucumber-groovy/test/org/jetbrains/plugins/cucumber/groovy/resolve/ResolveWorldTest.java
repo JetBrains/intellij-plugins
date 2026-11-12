@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.groovy.resolve;
 
 import com.intellij.groovy.testFramework.ResolveTest;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.testFramework.junit5.TestApplication;
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.Test;
 
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait;
 import static org.jetbrains.plugins.groovy.util.GroovyFixture.groovyFixture;
+import static org.jetbrains.plugins.groovy.util.GroovyFixture.groovyProjectFixture;
 
 @TestApplication
 public class ResolveWorldTest implements ResolveTest {
-  private final TestFixture<JavaCodeInsightTestFixture> groovy = groovyFixture(GrCucumberTestUtil.DESCRIPTOR);
+  private static final TestFixture<Project> project = groovyProjectFixture();
+  private final TestFixture<JavaCodeInsightTestFixture> groovy = groovyFixture(project, GrCucumberTestUtil.DESCRIPTOR);
 
   @Override
   public @NotNull JavaCodeInsightTestFixture getFixture() {

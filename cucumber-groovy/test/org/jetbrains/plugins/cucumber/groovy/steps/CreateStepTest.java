@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.groovy.steps;
 
 import com.intellij.groovy.testFramework.BaseTest;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -19,10 +20,12 @@ import org.junit.jupiter.api.Test;
 
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait;
 import static org.jetbrains.plugins.groovy.util.GroovyFixture.groovyFixture;
+import static org.jetbrains.plugins.groovy.util.GroovyFixture.groovyProjectFixture;
 
 @TestApplication
 public class CreateStepTest implements BaseTest {
-  private final TestFixture<JavaCodeInsightTestFixture> groovy = groovyFixture(GrCucumberTestUtil.DESCRIPTOR);
+  private static final TestFixture<Project> project = groovyProjectFixture();
+  private final TestFixture<JavaCodeInsightTestFixture> groovy = groovyFixture(project, GrCucumberTestUtil.DESCRIPTOR);
 
   @Override
   public @NotNull JavaCodeInsightTestFixture getFixture() {
