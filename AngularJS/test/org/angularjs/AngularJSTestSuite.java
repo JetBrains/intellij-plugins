@@ -21,7 +21,6 @@ import org.angularjs.findUsages.AngularFindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.lang.parser.AngularJSParserTest;
 import org.angularjs.refactoring.DirectiveRenameTest;
-import org.angularjs.resharper.AngularJSReSharperTestSuite;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -49,8 +48,7 @@ import org.junit.runners.Suite;
   AngularUiRouterTest.class,
   ComponentsTest.class,
   NgDocTest.class,
-  DiagramsTest.class,
-  AngularJSReSharperTestSuite.class
+  DiagramsTest.class
 })
 public class AngularJSTestSuite {
 

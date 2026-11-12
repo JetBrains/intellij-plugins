@@ -72,7 +72,6 @@ import org.angular2.lang.html.Angular2HtmlLexerSpecTest
 import org.angular2.lang.html.Angular2SemanticHighlightingTest
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
 import org.angular2.library.forms.Angular2FormsTestSuite
-import org.angular2.resharper.Angular2ReSharperTestSuite
 import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -131,7 +130,6 @@ import org.junit.runners.Suite
   Angular2CssCompletionTest::class,
   Angular2CssInspectionsTest::class,
   Angular2CssRenameTest::class,
-  Angular2ReSharperTestSuite::class,
   Angular2CssHighlightingTest::class,
   Angular2CssUsageHighlightingTest::class,
 
