@@ -228,6 +228,25 @@ public class GherkinFormatterTest {
     );
   }
 
+  // Any scenario keyword with Examples is an outline: its own tag stays at the scenario's depth, a tag on Examples is indented.
+  @Test
+  public void testExamplesWithTagUnderEveryScenarioKeyword() {
+    for (String keyword : new String[]{"Scenario", "Example", "Scenario Outline", "Scenario Template"}) {
+      doTextTest(
+        """
+          Feature: Autocompletion
+
+            @tag1
+            %s: s
+              Given some <value>
+
+              @tag2
+              Examples:
+                | value |""".formatted(keyword)
+      );
+    }
+  }
+
   // Test for IDEA-278652
   @Test
   public void testTagsForScenarioOutline() {

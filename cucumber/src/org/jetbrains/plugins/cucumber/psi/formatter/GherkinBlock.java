@@ -100,7 +100,7 @@ public class GherkinBlock implements ASTBlock {
 
       final boolean nodeIsScenarioOutline = myNode.getElementType() == GherkinElementTypes.SCENARIO_OUTLINE;
       final boolean childNodeIsTag = child.getElementType() == GherkinElementTypes.TAG;
-      final boolean isTagInsideScenario = TreeUtil.findSibling(child, TokenSet.create(GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD)) == null;
+      final boolean isTagInsideScenario = TreeUtil.findSibling(child, GherkinTokenTypes.SCENARIOS_KEYWORDS) == null;
       final boolean shouldIndentTag = nodeIsScenarioOutline && childNodeIsTag && isTagInsideScenario;
       Indent indent;
       if (BLOCKS_TO_INDENT.contains(child.getElementType()) || shouldIndentTag) {

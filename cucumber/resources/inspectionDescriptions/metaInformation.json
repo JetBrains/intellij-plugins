@@ -21,10 +21,6 @@
       "codeQualityCategory": "Sanity"
     },
     {
-      "id": "GherkinScenarioToScenarioOutline",
-      "codeQualityCategory": "Sanity"
-    },
-    {
       "id": "CucumberMissedExamples",
       "codeQualityCategory": "Sanity"
     }
