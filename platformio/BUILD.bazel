@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -99,6 +100,15 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end
+
+### auto-generated section `plugin intellij.clion.embedded.platformio` start
+ij_plugin(
+    name = "platformio_plugin",
+    descriptor_module = ":platformio",
+    content_modules = ["//contrib/platformio/terminal"],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.clion.embedded.platformio` end
 
 ### auto-generated section `iml intellij.clion.embedded.platformio` start
 exports_files(

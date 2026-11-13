@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -41,6 +42,20 @@ jvm_library(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.clion.diagnostics` end
+
+### auto-generated section `plugin intellij.clion.diagnostics` start
+ij_plugin(
+    name = "clion-diagnostics_plugin",
+    descriptor_module = ":clion-diagnostics",
+    content_modules = [
+        # do not sort,
+        "//contrib/cpp-diagnostics/core",
+        "//contrib/cpp-diagnostics/cmake",
+        "//contrib/cpp-diagnostics/docker",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.clion.diagnostics` end
 
 ### auto-generated section `iml intellij.clion.diagnostics` start
 exports_files(

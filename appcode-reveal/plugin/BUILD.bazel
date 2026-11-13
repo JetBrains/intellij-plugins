@@ -1,3 +1,4 @@
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -23,6 +24,15 @@ jvm_library(
     visibility = ["//visibility:public"],
 )
 ### auto-generated section `build intellij.appcode.reveal.plugin` end
+
+### auto-generated section `plugin intellij.appcode.reveal.plugin` start
+ij_plugin(
+    name = "plugin_plugin",
+    descriptor_module = ":plugin",
+    content_modules = ["//contrib/appcode-reveal"],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.appcode.reveal.plugin` end
 
 ### auto-generated section `iml intellij.appcode.reveal.plugin` start
 exports_files(
