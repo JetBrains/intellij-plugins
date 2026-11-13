@@ -1,4 +1,5 @@
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -90,6 +91,19 @@ jvm_library(
     ],
 )
 ### auto-generated section `build intellij.meteor` end
+
+### auto-generated section `plugin intellij.meteor` start
+ij_plugin(
+    name = "meteor_plugin",
+    descriptor_module = ":meteor",
+    content_modules = [
+        # do not sort,
+        "//contrib/Meteor/liveEdit",
+        "//contrib/Meteor/watcher",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.meteor` end
 
 ### auto-generated section `iml intellij.meteor` start
 exports_files(
