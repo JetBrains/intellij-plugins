@@ -1,4 +1,9 @@
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.vcs.perforce.util` start
+content_module_jar(module = ":vcs-perforce-util")
+### auto-generated section `dev intellij.vcs.perforce.util` end
 
 ### auto-generated section `build intellij.vcs.perforce.util` start
 jvm_library(
@@ -30,6 +35,7 @@ jvm_library(
 exports_files(
     [
         "intellij.vcs.perforce.util.iml",
+        "resources/intellij.vcs.perforce.util.xml",
     ],
     visibility = ["//visibility:public"],
 )

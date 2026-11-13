@@ -42,7 +42,9 @@
     <module name="intellij.platform.vcs.impl.shared"/>
   </dependencies>
   <!-- endregion -->
-  <content namespace="jetbrains"/>
+  <content namespace="jetbrains">
+    <module name="intellij.vcs.perforce.util" loading="embedded"/>
+  </content>
   <depends optional="true" config-file="git-plugin-extensions.xml">Git4Idea</depends>
 
   <actions>

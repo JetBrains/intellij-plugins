@@ -7,12 +7,12 @@ dev_dist_plugin(
     content_modules = ["intellij.vcs.perforce.util"],
     descriptor = "resources/META-INF/plugin.xml",
     jars = {
-        "lib/vcs-perforce.jar": [
-            "intellij.vcs.perforce",
-            "intellij.vcs.perforce.util",
-        ],
+        "lib/vcs-perforce.jar": ["intellij.vcs.perforce"],
     },
     main_module = "intellij.vcs.perforce",
+    module_jar_paths = {
+        "intellij.vcs.perforce.util": "lib/intellij.vcs.perforce.util.jar",
+    },
 )
 ### auto-generated section `dev intellij.vcs.perforce` end
 
