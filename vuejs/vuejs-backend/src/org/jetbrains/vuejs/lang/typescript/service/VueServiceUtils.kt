@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.vuejs.context.getVueClassComponentLibrary
 import org.jetbrains.vuejs.context.isVue2
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.hasVueFileType
@@ -32,14 +33,13 @@ fun getAppropriateVueLSVersion(
   project: Project,
   context: VirtualFile,
 ): VueLanguageToolsVersion {
-  return if (isVue2(project, context)) {
-    // supports Vue
-    VueLanguageToolsVersion.LEGACY
-  }
-  else {
-    // supports only Vue 3+
-    VueLanguageToolsVersion.DEFAULT
-  }
+  if (isVue2(project, context))
+    return VueLanguageToolsVersion.LEGACY
+
+  if (getVueClassComponentLibrary(context, project) != null)
+    return VueLanguageToolsVersion.LEGACY
+
+  return VueLanguageToolsVersion.DEFAULT
 }
 
 @Service(Service.Level.PROJECT)
