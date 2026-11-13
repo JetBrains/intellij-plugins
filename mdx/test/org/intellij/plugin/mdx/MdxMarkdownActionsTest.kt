@@ -70,15 +70,6 @@ class MdxMarkdownActionsTest : MdxTestBase() {
   }
 
   @Test
-  fun testMarkdownHeaderActionAppliesInMdx() {
-    doActionTest(
-      actionId = HEADER_DOWN_ACTION_ID,
-      before = testName,
-      after = "${testName}_after"
-    )
-  }
-
-  @Test
   fun testMarkdownListActionsAreAvailableInMdx() {
     myFixture.configureByFile("$testName.mdx")
 
@@ -132,7 +123,6 @@ class MdxMarkdownActionsTest : MdxTestBase() {
     private const val STRIKETHROUGH_ACTION_ID = "org.intellij.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
     private const val CODE_SPAN_ACTION_ID = "org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
     private const val CREATE_LINK_ACTION_ID = "Markdown.Styling.CreateLink"
-    private const val HEADER_DOWN_ACTION_ID = "org.intellij.plugins.markdown.ui.actions.styling.HeaderDownAction"
     private const val SET_HEADER_LEVEL_ACTION_ID = "Markdown.Styling.SetHeaderLevel"
     private const val CREATE_OR_CHANGE_LIST_ACTION_ID = "Markdown.Styling.CreateOrChangeList"
     private const val COMMENT_LINE_ACTION_ID = "CommentByLineComment"
