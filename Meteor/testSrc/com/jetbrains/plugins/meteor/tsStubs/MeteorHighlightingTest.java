@@ -6,7 +6,6 @@ import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
@@ -61,8 +60,8 @@ public class MeteorHighlightingTest {
       HbConfig.setShouldOpenHtmlAsHandlebars(true, project);
       PsiReference reference = myFixture.getReferenceAtCaretPosition(testName + ".js", testName + ".html");
       assertInstanceOf(JSReferenceExpression.class, reference);
-      PsiElement resolve = JSTestUtils.runInBackgroundReadActionAndWait(() -> reference.resolve());// may be null if Hb file element type is not stub, just don't throw an assertion
-      //assertNotNull(resolve);
+      // The result may be null if the Hb file element type is not a stub. The test checks only that resolve does not throw an assertion.
+      JSTestUtils.runInBackgroundReadActionAndWait(() -> reference.resolve());
     }
     finally {
       HbConfig.setShouldOpenHtmlAsHandlebars(oldValue, project);

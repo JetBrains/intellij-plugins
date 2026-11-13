@@ -1,15 +1,15 @@
 package org.intellij.plugins.postcss
 
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightFixture
 import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.runInEdtAndGet
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.junit5.fixture.testFixture
@@ -44,13 +44,13 @@ class PostCssFixture internal constructor(
 ) {
   /** Completes at the caret of the file `<testName>.pcss`, and checks that the variants are the same set as [items]. */
   fun doTestCompletionVariants(vararg items: String) {
-    EdtTestUtil.runInEdtAndWait<RuntimeException> { fixture.testCompletionVariants("$testName.pcss", *items) }
+    runInEdtAndWait { fixture.testCompletionVariants("$testName.pcss", *items) }
   }
 
   /** Completes at the caret of the file `<testName>.pcss`, and checks that the lookup starts with [items]. */
   fun doTestPreferred(vararg items: String) {
     fixture.configureByFile("$testName.pcss")
-    EdtTestUtil.runInEdtAndWait<RuntimeException> {
+    runInEdtAndWait {
       fixture.completeBasic()
       fixture.assertPreferredCompletionItems(0, *items)
     }
@@ -59,7 +59,7 @@ class PostCssFixture internal constructor(
   /** Completes at the caret of the file `<testName>.pcss`, and checks the item text and the type text of the first [items]. */
   fun doTestPreferred(vararg items: Pair<String, String>) {
     fixture.configureByFile("$testName.pcss")
-    val lookupElements = EdtTestUtil.runInEdtAndGet<Array<LookupElement>, RuntimeException> {
+    val lookupElements = runInEdtAndGet {
       fixture.completeBasic()
     }
     val presentation = LookupElementPresentation()
@@ -76,7 +76,7 @@ class PostCssFixture internal constructor(
    */
   fun doTestPreferredNotStrict(vararg expectedItems: Pair<String, String>) {
     fixture.configureByFile("$testName.pcss")
-    val lookupElements = EdtTestUtil.runInEdtAndGet<Array<LookupElement>, RuntimeException> {
+    val lookupElements = runInEdtAndGet {
       fixture.completeBasic()
     }
     val presentation = LookupElementPresentation()
@@ -99,7 +99,7 @@ class PostCssFixture internal constructor(
 
   /** Completes at the caret of the file `<testName>.pcss`, and compares the result with the file `<testName>_after.pcss`. */
   fun doTestCompletion() {
-    EdtTestUtil.runInEdtAndWait<RuntimeException> { fixture.testCompletion("$testName.pcss", "${testName}_after.pcss") }
+    runInEdtAndWait { fixture.testCompletion("$testName.pcss", "${testName}_after.pcss") }
   }
 
   /** Applies the single intention [message] in the file `<testName>.pcss`, and compares the result with `<testName>_after.pcss`. */
