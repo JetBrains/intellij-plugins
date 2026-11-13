@@ -8,6 +8,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.junit.Test
@@ -15,6 +16,7 @@ import org.junit.Test
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2CssHighlightingTest : Angular2TestCase("css/highlighting") {
 
   @Test

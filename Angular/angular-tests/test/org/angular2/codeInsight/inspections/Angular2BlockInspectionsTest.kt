@@ -6,12 +6,14 @@ import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.inspections.AngularIncorrectBlockUsageInspection
 import org.junit.Test
 
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2BlockInspectionsTest : Angular2TestCase("inspections/blocks") {
 
   @Test

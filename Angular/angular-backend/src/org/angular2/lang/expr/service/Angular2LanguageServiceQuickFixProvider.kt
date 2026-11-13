@@ -12,6 +12,7 @@ import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_CODE_TYPE_
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
+import com.intellij.lang.typescript.tsc.tskotlin.TSKotlinTypeScriptService
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -32,7 +33,7 @@ class Angular2LanguageServiceQuickFixProvider : JSLanguageServiceQuickFixProvide
     file: PsiFile,
     textRange: TextRange,
   ): List<JSLanguageServiceQuickFix> =
-    if ((service is Angular2TypeScriptService || service is TypeScriptGoLspService)
+    if ((service is Angular2TypeScriptService || service is TypeScriptGoLspService || service is TSKotlinTypeScriptService)
         && file is Angular2HtmlFile
         && serviceError is TypeScriptAnnotationRangeError
     ) {

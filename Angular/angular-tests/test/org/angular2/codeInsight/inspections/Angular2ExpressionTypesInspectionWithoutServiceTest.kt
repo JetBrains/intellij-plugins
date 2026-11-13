@@ -7,11 +7,13 @@ import org.angular2.Angular2TsConfigFile
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.junit.Test
 
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2ExpressionTypesInspectionWithoutServiceTest : Angular2TestCase("inspections/expressionType") {
 
   @Throws(Exception::class)

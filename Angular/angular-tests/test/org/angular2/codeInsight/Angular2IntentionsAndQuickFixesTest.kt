@@ -21,6 +21,7 @@ import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
@@ -29,6 +30,7 @@ import org.junit.Test
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuickFixes") {
 
   @Test

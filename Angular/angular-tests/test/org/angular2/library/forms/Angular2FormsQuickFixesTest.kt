@@ -5,6 +5,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
@@ -12,6 +13,7 @@ import org.junit.Test
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2FormsQuickFixesTest : Angular2TestCase("library/forms/quickFixes") {
 
   @Test

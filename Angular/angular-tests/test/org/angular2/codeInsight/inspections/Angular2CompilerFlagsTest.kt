@@ -7,12 +7,14 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.junit.Test
 
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2CompilerFlagsTest : Angular2TestCase("inspections/compilerFlags") {
 
   override fun setUp() {

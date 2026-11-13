@@ -7,6 +7,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.angular2.inspections.AngularInaccessibleSymbolInspection
 import org.junit.Test
@@ -14,6 +15,7 @@ import org.junit.Test
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2InaccessibleMemberAotQuickFixesTest : Angular2TestCase("inspections/inaccessibleSymbol") {
 
   @Test
