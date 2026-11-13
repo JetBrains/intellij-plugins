@@ -44,14 +44,17 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
+import com.intellij.lang.typescript.kolar.KolarServiceScript
 import com.intellij.lang.typescript.kolar.KolarTranspilerService
 import com.intellij.lang.typescript.kolar.service.KolarTypeScriptLspService
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
+import com.intellij.lang.typescript.tsc.tskotlin.TSKotlinTypeScriptService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -113,7 +116,14 @@ internal class BindingsTypeResolver private constructor(
         analyzeService(directives, element, elementNameRangeProvider(), service)
       service is KolarTypeScriptLspService && (ApplicationManager.getApplication().isUnitTestMode
                                                || Angular2EntitiesProvider.findTemplateComponent(element) != null) ->
-        analyzeKolarService(directives, element, elementNameRangeProvider(), service)
+        analyzeKolarService(directives, element, elementNameRangeProvider()) { templateFile, serviceScript, range ->
+          service.typeEvaluationSupport.getGeneratedElementType(templateFile, serviceScript, range)
+        }
+      service is TSKotlinTypeScriptService && (ApplicationManager.getApplication().isUnitTestMode
+                                               || Angular2EntitiesProvider.findTemplateComponent(element) != null) ->
+        analyzeKolarService(directives, element, elementNameRangeProvider()) { _, serviceScript, range ->
+          service.getKolarGeneratedElementType(serviceScript, range)
+        }
       isStrictTemplates(element) -> analyzeStrictTemplates(
         directives, element, inputWeightProvider(), plainAttributesProvider(), inputExpressionsProvider())
       else -> analyzeNonStrict(directives, element, inputExpressionsProvider())
@@ -414,7 +424,7 @@ internal class BindingsTypeResolver private constructor(
       directives: List<Angular2Directive>,
       element: PsiElement,
       nameRange: TextRange,
-      service: KolarTypeScriptLspService,
+      getGeneratedElementType: (templateFile: PsiFile, serviceScript: KolarServiceScript, generatedRange: TextRange) -> JSType?,
     ): AnalysisResult? {
       val (transpiledComponentFile, templateFile) =
         getTranspiledDirectiveAndTopLevelSourceFile(element)
@@ -441,11 +451,11 @@ internal class BindingsTypeResolver private constructor(
         nameRange
 
       val templateContextType = templateMappings.contextVarMappings[adjustedNameRange]
-        ?.let { service.typeEvaluationSupport.getGeneratedElementType(templateFile, serviceScript, it) }
+        ?.let { getGeneratedElementType(templateFile, serviceScript, it) }
         ?.substitute(element)
       val substitutors = directives.associateBy({ it }) { directive ->
         val directiveInstanceType = templateMappings.directiveVarMappings[Pair(adjustedNameRange, directive)]
-          ?.let { service.typeEvaluationSupport.getGeneratedElementType(templateFile, serviceScript, it)?.substitute(element) }
+          ?.let { getGeneratedElementType(templateFile, serviceScript, it)?.substitute(element) }
         buildJSTypeSubstitutor(directive, directiveInstanceType)
       }
       // TODO - `strictSubstitutors` should not contain implicit `any` substitution,
