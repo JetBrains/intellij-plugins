@@ -21,7 +21,7 @@ abstract class CppIntegrationTest : IntegrationTest() {
     get() = PathManager.getHomeDir() / "contrib/qodana/cpp/test-data"
 
   override fun createTestContext(projectDir: Path): IDETestContext {
-    AdditionalModulesForDevBuildServer.addAdditionalModules("intellij.qodana")
+    AdditionalModulesForDevBuildServer.addAdditionalModules("intellij.qodana", "intellij.clion.dfa")
     return getCLionContext(
       testName,
       TestCase(IdeInfo.CLion, LocalProjectInfo(projectDir)),
