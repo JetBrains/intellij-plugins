@@ -13,6 +13,7 @@ import org.angular2.Angular2TestCase
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.NO_COMPLETION
 import org.angular2.codeInsight.Angular2LiveTemplateTest.TestMode.WITH_COMPLETION
 import org.junit.Test
@@ -20,6 +21,7 @@ import org.junit.Test
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2LiveTemplateTest : Angular2TestCase("liveTemplate") {
   @Throws(Exception::class)
   override fun setUp() {

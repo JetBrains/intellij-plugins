@@ -115,7 +115,7 @@ abstract class Angular2TestCase(
     }
 
   /** A TypeScript-Go service, or TSKotlin, a port of TypeScript-Go. These kinds read the `.tsgo` test data, when it exists. */
-  private val usesTsGoTestData: Boolean
+  protected val usesTsGoTestData: Boolean
     get() = serviceKind == TypeScriptServiceKind.TsGoProxy
             || serviceKind == TypeScriptServiceKind.TsKotlin
             || serviceKind == TypeScriptServiceKind.TsKotlinLs

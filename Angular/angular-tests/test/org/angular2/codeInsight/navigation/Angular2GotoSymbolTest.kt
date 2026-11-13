@@ -10,12 +10,14 @@ import org.angular2.Angular2TestCase
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.junit.Test
 import org.junit.runners.Parameterized
 
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2GotoSymbolTest : Angular2TestCase("navigation/symbol/") {
 
   companion object {

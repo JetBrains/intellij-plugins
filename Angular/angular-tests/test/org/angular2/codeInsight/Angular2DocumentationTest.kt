@@ -10,8 +10,10 @@ import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TsConfigFile
+import org.angular2.SkipTsKotlinLs
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.junit.Test
 import java.io.File
@@ -19,6 +21,7 @@ import java.io.File
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2DocumentationTest : Angular2TestCase("documentation") {
 
   @Test
@@ -36,7 +39,12 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   @Test
   fun testSimpleBananaBox() = doTestWithDeps()
 
+  /**
+   * TODO: TSKotlin does not resolve the imports of the Kolar service script of a TypeScript file, for example `./deps/ng_if` here.
+   *   The program treats a TypeScript file as disk-sourced, so it takes the imports from the IDE index of the original file.
+   */
   @Test
+  @SkipTsKotlinLs
   fun testDirectiveWithMatchingInput() = doTestWithDeps(useConfig = true)
 
   @Test
@@ -206,8 +214,7 @@ class Angular2DocumentationTest : Angular2TestCase("documentation") {
   }
 
   private fun CodeInsightTestFixture.calculateFileSuffix(): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsKotlin) {
+    if (usesTsGoTestData) {
       val expectedFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file)
                            .virtualFile.nameWithoutExtension + ".expected.tsgo.html"
       if (File("$testDataPath/$expectedFile").exists())

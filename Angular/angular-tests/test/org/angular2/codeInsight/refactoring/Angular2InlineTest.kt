@@ -11,12 +11,14 @@ import org.angular2.Angular2TestModule
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.refactoring.inline.Angular2InlineHandler
 import org.junit.Test
 
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2InlineTest : Angular2TestCase("refactoring/inline") {
 
   @Test

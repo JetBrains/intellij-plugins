@@ -28,6 +28,7 @@ import org.angular2.Angular2TestModule.IONIC_ANGULAR_8_4_3
 import org.angular2.Angular2TsConfigFile
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
@@ -36,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2CompletionTest : Angular2TestCase("completion") {
 
   override fun setUp() {

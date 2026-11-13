@@ -11,6 +11,7 @@ import org.angular2.Angular2TestUtil
 import org.angular2.TestNoService
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider.getEntity
@@ -25,6 +26,7 @@ import org.junit.Test
 @TestNoService
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2ModelStructureTest : Angular2TestCase("modelStructure") {
 
   @Test
