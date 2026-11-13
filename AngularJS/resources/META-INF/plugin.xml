@@ -23,6 +23,8 @@
 
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
+    <module name="intellij.diagram"/>
+    <module name="intellij.diagram.impl"/>
     <module name="intellij.javascript.analysis.impl"/>
     <module name="intellij.javascript.backend"/>
     <module name="intellij.javascript.psi.impl"/>
