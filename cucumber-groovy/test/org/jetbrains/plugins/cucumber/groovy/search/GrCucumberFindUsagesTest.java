@@ -4,6 +4,7 @@ package org.jetbrains.plugins.cucumber.groovy.search;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.groovy.testFramework.BaseTest;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightJavaProject;
@@ -40,11 +41,13 @@ public class GrCucumberFindUsagesTest implements BaseTest {
     getFixture().configureByText("current." + ext, text);
 
     int flags = TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED;
-    final PsiElement targetElement = TargetElementUtil.findTargetElement(getFixture().getEditor(), flags);
-    assertNotNull(targetElement, "Cannot find referenced element");
+    runInEdtAndWait(() -> {
+      final PsiElement targetElement = TargetElementUtil.findTargetElement(getFixture().getEditor(), flags);
+      assertNotNull(targetElement, "Cannot find referenced element");
 
-    Collection<UsageInfo> usages = getFixture().findUsages(targetElement);
-    assertEquals(count, usages.size());
+      Collection<UsageInfo> usages = getFixture().findUsages(targetElement);
+      assertEquals(count, usages.size());
+    });
   }
 
   protected void doTest(String text, String ext, String additional, String additionalExt) {
@@ -61,124 +64,116 @@ public class GrCucumberFindUsagesTest implements BaseTest {
 
   @Test
   public void step() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  # language: en
-  Feature: Division
-   In order to avoid silly mistakes
-   Cashiers must be able to calculate a fraction
+    doTest("""
+# language: en
+Feature: Division
+ In order to avoid silly mistakes
+ Cashiers must be able to calculate a fraction
 
-   Scenario: go all east
-     Given a mower in 0,0 facing north
-     When I piv<caret>ot the mower to the right
-     And I move the mower
-     And I move the mower
-     And I move the mower
-     And I move the mower
-     And I move the mower
-     And I move the mow
-     And I move the mow1
-     Then the mower should be in 5,0 facing east
-  """, "feature", """
+ Scenario: go all east
+   Given a mower in 0,0 facing north
+   When I piv<caret>ot the mower to the right
+   And I move the mower
+   And I move the mower
+   And I move the mower
+   And I move the mower
+   And I move the mower
+   And I move the mow
+   And I move the mow1
+   Then the mower should be in 5,0 facing east
+""", "feature", """
 
-  this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-  this.metaClass.mixin(cucumber.runtime.groovy.EN)
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-  Given(~'^a mower in (\\\\d+),(\\\\d+) facing north$') { int arg1, int arg2 ->
-     // Express the Regexp above with the code you wish you had
-     throw new PendingException()
-  }
-  When(~'^I pivot the mower to the right$') {->
-     // Express the Regexp above with the code you wish you had
-     throw new PendingException()
-  }
-  """, "groovy");
-    });
+Given(~'^a mower in (\\\\d+),(\\\\d+) facing north$') { int arg1, int arg2 ->
+   // Express the Regexp above with the code you wish you had
+   throw new PendingException()
+}
+When(~'^I pivot the mower to the right$') {->
+   // Express the Regexp above with the code you wish you had
+   throw new PendingException()
+}
+""", "groovy");
   }
 
   @Test
   public void scenarioOutlineStep() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  # language: en
-  Feature: Division
-   In order to avoid silly mistakes
-   Cashiers must be able to calculate a fraction
+    doTest("""
+# language: en
+Feature: Division
+ In order to avoid silly mistakes
+ Cashiers must be able to calculate a fraction
 
-  Scenario Outline: eating
-     Given there a<caret>re <start> cucumbers
-     When I eat <eat> cucumbers
-     Then I should have <left> cucumbers
+Scenario Outline: eating
+   Given there a<caret>re <start> cucumbers
+   When I eat <eat> cucumbers
+   Then I should have <left> cucumbers
 
-   Examples:
-     | start | eat | left |
-     | 12    | 5   | 7    |
-     | 20    | 5   | 15   |
-  """, "feature", """
+ Examples:
+   | start | eat | left |
+   | 12    | 5   | 7    |
+   | 20    | 5   | 15   |
+""", "feature", """
 
-  this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-  this.metaClass.mixin(cucumber.runtime.groovy.EN)
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-  Given(~'^there are (\\\\d+) cucumbers$') {int number ->
-     throw new PendingException()
-  }
-  """, "groovy");
-    });
+Given(~'^there are (\\\\d+) cucumbers$') {int number ->
+   throw new PendingException()
+}
+""", "groovy");
   }
 
   @Test
   public void stepDefinition() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-  this.metaClass.mixin(cucumber.runtime.groovy.EN)
+    doTest("""
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-  Given(~'^there a<caret>re (\\\\d+) cucumbers$') {int number ->
-     throw new PendingException()
-  }
-  """, "groovy", """
-  # language: en
-  Feature: Division
-   In order to avoid silly mistakes
-   Cashiers must be able to calculate a fraction
+Given(~'^there a<caret>re (\\\\d+) cucumbers$') {int number ->
+   throw new PendingException()
+}
+""", "groovy", """
+# language: en
+Feature: Division
+ In order to avoid silly mistakes
+ Cashiers must be able to calculate a fraction
 
-  Scenario Outline: eating
-     Given there are <start> cucumbers
-     When I eat <eat> cucumbers
-     Then I should have <left> cucumbers
+Scenario Outline: eating
+   Given there are <start> cucumbers
+   When I eat <eat> cucumbers
+   Then I should have <left> cucumbers
 
-   Examples:
-     | start | eat | left |
-     | 12    | 5   | 7    |
-     | 20    | 5   | 15   |
-  """, "feature");
-    });
+ Examples:
+   | start | eat | left |
+   | 12    | 5   | 7    |
+   | 20    | 5   | 15   |
+""", "feature");
   }
 
   @Test
   public void stepDefinition2() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  import cucumber.runtime.PendingException
+    doTest("""
+import cucumber.runtime.PendingException
 
-  this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-  this.metaClass.mixin(cucumber.runtime.groovy.EN)
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-  Given(~'^a mow<caret>er in (\\\\d+),(\\\\d+) facing north_java$') { int arg1, int arg2 ->
-     // Express the Regexp above with the code you wish you had
-     throw new PendingException()
-  }""", "groovy", """
-  # language: en
-  Feature: Division_other
-   In order to avoid silly mistakes
-   Cashiers must be able to calculate a fraction
+Given(~'^a mow<caret>er in (\\\\d+),(\\\\d+) facing north_java$') { int arg1, int arg2 ->
+   // Express the Regexp above with the code you wish you had
+   throw new PendingException()
+}""", "groovy", """
+# language: en
+Feature: Division_other
+ In order to avoid silly mistakes
+ Cashiers must be able to calculate a fraction
 
-   Scenario: go all east
-     Given a mower in 0,0 facing north_java
-     When I pivot the mower to the right_java
-     Given a commit 'fix'_java
-     Given a commit3 'fix'    _java
-  """, "feature");
-    });
+ Scenario: go all east
+   Given a mower in 0,0 facing north_java
+   When I pivot the mower to the right_java
+   Given a commit 'fix'_java
+   Given a commit3 'fix'    _java
+""", "feature");
   }
 }

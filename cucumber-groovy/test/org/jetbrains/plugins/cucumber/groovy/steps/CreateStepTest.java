@@ -7,6 +7,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightJavaProject;
@@ -35,56 +36,50 @@ public class CreateStepTest implements BaseTest {
 
   @Test
   public void simple_step_creation() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  Feature: Git Cherry-Pick When Auto-Commit is selected
-    Scenario: Simple cherry-pick
-      Given a comm<caret>it
-  """, """
-  this.metaClass.mixin(cucumber.api.groovy.Hooks)
-  this.metaClass.mixin(cucumber.api.groovy.EN)
+    doTest("""
+Feature: Git Cherry-Pick When Auto-Commit is selected
+  Scenario: Simple cherry-pick
+    Given a comm<caret>it
+""", """
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
+this.metaClass.mixin(cucumber.api.groovy.EN)
 
-  Given(~/^a commit$/) { ->
-      // Write code here that turns the phrase above into concrete actions
-      throw new PendingException()
-  }""");
-    });
+Given(~/^a commit$/) { ->
+    // Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+}""");
   }
 
   @Test
   public void escapeChars() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  Feature: Git Cherry-Pick When Auto-Commit is selected
-    Scenario: Simple cherry-pick
-      Given a comm<caret>it 'fix'
-  """, """
-  this.metaClass.mixin(cucumber.api.groovy.Hooks)
-  this.metaClass.mixin(cucumber.api.groovy.EN)
+    doTest("""
+Feature: Git Cherry-Pick When Auto-Commit is selected
+  Scenario: Simple cherry-pick
+    Given a comm<caret>it 'fix'
+""", """
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
+this.metaClass.mixin(cucumber.api.groovy.EN)
 
-  Given(~/^a commit 'fix'$/) { ->
-      // Write code here that turns the phrase above into concrete actions
-      throw new PendingException()
-  }""");
-    });
+Given(~/^a commit 'fix'$/) { ->
+    // Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+}""");
   }
 
   @Test
   public void escapeSlashD() {
-    runInEdtAndWait(() -> {
-      doTest("""
-  Feature: Git Cherry-Pick When Auto-Commit is selected
-    Scenario: Simple cherry-pick
-      Given a comm<caret>it 'fix' 5
-  """, """
-  this.metaClass.mixin(cucumber.api.groovy.Hooks)
-  this.metaClass.mixin(cucumber.api.groovy.EN)
+    doTest("""
+Feature: Git Cherry-Pick When Auto-Commit is selected
+  Scenario: Simple cherry-pick
+    Given a comm<caret>it 'fix' 5
+""", """
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
+this.metaClass.mixin(cucumber.api.groovy.EN)
 
-  Given(~/^a commit 'fix' (\\d+)$/) { int arg1 ->
-      // Write code here that turns the phrase above into concrete actions
-      throw new PendingException()
-  }""");
-    });
+Given(~/^a commit 'fix' (\\d+)$/) { int arg1 ->
+    // Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+}""");
   }
 
   private void doTest(String feature, String expectedStepDef) {
@@ -96,15 +91,17 @@ this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 """);
 
-    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
-        PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
-        PsiElement at = file.findElementAt(getFixture().getEditor().getCaretModel().getOffset());
-        GherkinStep step = PsiTreeUtil.getParentOfType(at, GherkinStep.class);
-        new GrStepDefinitionCreator().createStepDefinition(step, stepDef, false);
-        PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
-      }
-    );
+    runInEdtAndWait(() -> {
+      WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+          PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+          PsiElement at = file.findElementAt(getFixture().getEditor().getCaretModel().getOffset());
+          GherkinStep step = PsiTreeUtil.getParentOfType(at, GherkinStep.class);
+          new GrStepDefinitionCreator().createStepDefinition(step, stepDef, false);
+          PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+        }
+      );
 
-    Assertions.assertEquals(expectedStepDef, stepDef.getText());
+      Assertions.assertEquals(expectedStepDef, stepDef.getText());
+    });
   }
 }

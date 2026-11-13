@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.groovy.resolve;
 
 import com.intellij.groovy.testFramework.ResolveTest;
 import com.intellij.psi.PsiMethod;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightJavaProject;
@@ -29,15 +30,13 @@ public class ResolveWorldTest implements ResolveTest {
 
   @BeforeEach
   public void addCustomWorld() {
-    runInEdtAndWait(() -> {
-      getFixture().addFileToProject("classes.groovy", """
-  class CustomWorld {
-      String customMethod() {
-          "foo"
-      }
-  }
-  """);
-    });
+    getFixture().addFileToProject("classes.groovy", """
+class CustomWorld {
+    String customMethod() {
+        "foo"
+    }
+}
+""");
   }
 
   private void resolveMethodTest(String text) {
@@ -55,68 +54,58 @@ World {
 
   @Test
   public void resolveCustomWorldInHook() {
-    runInEdtAndWait(() -> {
-      resolveMethodTest("""
-  Before() {
-      assert "foo" == custom<caret>Method()
-  }
-  """);
-    });
+    resolveMethodTest("""
+Before() {
+    assert "foo" == custom<caret>Method()
+}
+""");
   }
 
   @Test
   public void custom_world_method_in_hook_in_inner_closure() {
-    runInEdtAndWait(() -> {
-      resolveMethodTest("""
-  Before() {
-      [1,2,3].each { <caret>customMethod() }
-  }
-  """);
-    });
+    resolveMethodTest("""
+Before() {
+    [1,2,3].each { <caret>customMethod() }
+}
+""");
   }
 
   @Test
   public void resolveCustomWorldInStep() {
-    runInEdtAndWait(() -> {
-      resolveMethodTest("""
-  Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
-      assert "foo" == custom<caret>Method()
-  }
-  """);
-    });
+    resolveMethodTest("""
+Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
+    assert "foo" == custom<caret>Method()
+}
+""");
   }
 
   @Test
   public void custom_world_method_in_step_in_inner_closure() {
-    runInEdtAndWait(() -> {
-      resolveMethodTest("""
-  Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
-      [1,2,3].each { <caret>customMethod() }
-  }
-  """);
-    });
+    resolveMethodTest("""
+Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
+    [1,2,3].each { <caret>customMethod() }
+}
+""");
   }
 
   @Test
   public void worldFromSameDirectoryFile() {
-    runInEdtAndWait(() -> {
-      getFixture().addFileToProject("otherSteps.groovy", """
-  this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-  this.metaClass.mixin(cucumber.runtime.groovy.EN)
+    getFixture().addFileToProject("otherSteps.groovy", """
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-  World {
-      new CustomWorld()
-  }
-  """);
+World {
+    new CustomWorld()
+}
+""");
 
-      resolveTest("""
-  this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-  this.metaClass.mixin(cucumber.runtime.groovy.EN)
+    resolveTest("""
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-  Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
-      assert "foo" == custom<caret>Method()
-  }
-  """, PsiMethod.class);
-    });
+Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
+    assert "foo" == custom<caret>Method()
+}
+""", PsiMethod.class);
   }
 }
