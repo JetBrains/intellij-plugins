@@ -6,6 +6,7 @@ import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationErrorFilter
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
 import com.intellij.lang.typescript.kolar.CodeMapping
 import com.intellij.lang.typescript.kolar.KolarAssociatedFile
 import com.intellij.lang.typescript.kolar.KolarCodeInformation
@@ -18,7 +19,6 @@ import com.intellij.lang.typescript.kolar.KolarVirtualCode
 import com.intellij.lang.typescript.kolar.TypeScriptHover
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
 import com.intellij.lang.typescript.kolar.sourceMap.KolarMapping
-import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -46,6 +46,7 @@ import org.angular2.lang.html.Angular2HtmlDialect
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.EnumSet
 import java.util.concurrent.Callable
+import kotlin.reflect.KClass
 
 internal class AngularKolarTranspiler(private val project: Project) : KolarTranspiler {
 
@@ -99,10 +100,16 @@ private abstract class AngularFileInfo(
   override fun createAnnotationErrorFilter(): TypeScriptAnnotationErrorFilter =
     Angular2AnnotationErrorFilter
 
-  override fun postProcessErrors(file: PsiFile, errors: List<LspAnnotationError>): List<LspAnnotationError> =
-    super.postProcessErrors(file, errors)
-      .translateNamesInErrors(file)
-      .filterQuickFixes(file)
+  override fun <T : TypeScriptAnnotationRangeError> postProcessErrors(
+    file: PsiFile,
+    errors: List<T>,
+    errorClass: KClass<T>,
+    copyWith: (error: T, description: String, tooltip: String?) -> T,
+    withoutQuickFixes: (error: T) -> T,
+  ): List<T> =
+    super.postProcessErrors(file, errors, errorClass, copyWith, withoutQuickFixes)
+      .translateNamesInErrors(file, errorClass, copyWith)
+      .filterQuickFixes(file, withoutQuickFixes)
 
   override fun postProcessInlayHints(hints: List<TypeScriptInlayHint>): List<TypeScriptInlayHint> =
     ReadAction.nonBlocking(Callable {
@@ -240,18 +247,14 @@ private class AngularTranspiledFile(
     file.hashCode() * 31 + project.hashCode()
 }
 
-private fun List<LspAnnotationError>.translateNamesInErrors(file: PsiFile): List<LspAnnotationError> =
+private fun <T : TypeScriptAnnotationRangeError> List<T>.translateNamesInErrors(
+  file: PsiFile,
+  errorClass: KClass<T>,
+  copyWith: (error: T, description: String, tooltip: String?) -> T,
+): List<T> =
   getTranspiledDirectiveAndTopLevelSourceFile(file)
     ?.let { (transpiledDirectiveFile, topLevelFile) ->
-      translateNamesInErrors(
-        this, transpiledDirectiveFile,
-        topLevelFile, LspAnnotationError::class,
-      ) { error, newDescription, newTooltip ->
-        error.copyWith(
-          description = newDescription,
-          tooltip = newTooltip,
-        )
-      }
+      translateNamesInErrors(this, transpiledDirectiveFile, topLevelFile, errorClass, copyWith)
     }
   ?: this
 
@@ -263,14 +266,14 @@ private fun List<TypeScriptInlayHint>.reposition(project: Project, file: Virtual
   }
 }
 
-private fun List<LspAnnotationError>.filterQuickFixes(file: PsiFile): List<LspAnnotationError> {
+private fun <T : TypeScriptAnnotationRangeError> List<T>.filterQuickFixes(file: PsiFile, withoutQuickFixes: (error: T) -> T): List<T> {
   val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
                  ?: return this
   return this.map {
     if (Angular2LanguageServiceQuickFixFilter.accept(file, document, it))
       it
     else
-      it.copyWith(quickFixes = emptyList())
+      withoutQuickFixes(it)
   }
 }
 

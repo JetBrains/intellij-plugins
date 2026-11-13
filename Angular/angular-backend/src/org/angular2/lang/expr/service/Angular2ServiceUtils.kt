@@ -12,6 +12,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint
 import com.intellij.lang.typescript.kolar.TypeScriptInlayHint.InlayHintKind
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
+import com.intellij.lang.typescript.tsc.tskotlin.TSKotlinTypeScriptService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.logger
@@ -63,6 +64,7 @@ fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): B
 fun isAngularTypeScriptServiceEnabled(context: PsiFile): Boolean =
   TypeScriptServiceHolder.getForElement(context)?.service.let {
     it is Angular2TypeScriptService
+    || it is TSKotlinTypeScriptService
     || (it is TypeScriptGoLspService && isAngularTypeScriptServiceEnabled(context.project, context.virtualFile))
   }
 

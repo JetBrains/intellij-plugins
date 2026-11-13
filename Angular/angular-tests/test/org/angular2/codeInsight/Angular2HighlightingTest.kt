@@ -53,8 +53,10 @@ import org.angular2.Angular2TestModule.RXJS_7_8_1
 import org.angular2.Angular2TestModule.TS_LIB
 import org.angular2.Angular2TsConfigFile
 import org.angular2.Angular2TsExpectedConfigFiles
+import org.angular2.SkipTsKotlinLs
 import org.angular2.TestTsGoProxy
 import org.angular2.TestTsKotlin
+import org.angular2.TestTsKotlinLs
 import org.angular2.TestTsNode
 import org.angular2.codeInsight.inspections.Angular2ExpressionTypesInspectionTest
 import org.junit.Test
@@ -64,6 +66,7 @@ import java.io.IOException
 @TestTsNode
 @TestTsGoProxy
 @TestTsKotlin
+@TestTsKotlinLs
 class Angular2HighlightingTest : Angular2TestCase("highlighting") {
 
   @Test
@@ -440,7 +443,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting") {
   fun testTypeofNg19() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "typeof.html")
 
+  /**
+   * TODO: TSKotlin does not resolve the imports of the Kolar service script of a TypeScript file, for example `shared` here.
+   *   The program treats a TypeScript file as disk-sourced, so it takes the imports from the IDE index of the original file.
+   */
   @Test
+  @SkipTsKotlinLs
   fun testConfigWithMapping() =
     checkHighlighting(ANGULAR_CORE_18_2_1, dir = true, configureFileName = "projects/frontend/src/app/app.component.html",
                       configurators = listOf(Angular2TsExpectedConfigFiles("projects/frontend/tsconfig.app.json")))

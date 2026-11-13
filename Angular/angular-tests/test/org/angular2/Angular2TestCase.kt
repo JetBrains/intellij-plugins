@@ -8,8 +8,9 @@ import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspClientDescriptor
 import com.intellij.lang.typescript.lsp.TypeScriptGoLspIntegrationProvider
-import com.intellij.lang.typescript.lsp.TypeScriptGoLspService
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
+import com.intellij.lang.typescript.tsc.servicePredicateForTsGo
+import com.intellij.lang.typescript.tsc.servicePredicateForTsKotlinLs
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -50,6 +51,10 @@ annotation class TestTsKotlin
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
+annotation class TestTsKotlinLs
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
 annotation class TestTsGoProxy
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -66,6 +71,10 @@ annotation class SkipTsKotlin
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
+annotation class SkipTsKotlinLs
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
 annotation class SkipTsGoProxy
 
 @RunWith(com.intellij.testFramework.Parameterized::class)
@@ -77,6 +86,7 @@ abstract class Angular2TestCase(
     None(TestNoService::class, SkipNoService::class),
     TsNode(TestTsNode::class, SkipTsNode::class),
     TsKotlin(TestTsKotlin::class, SkipTsKotlin::class),
+    TsKotlinLs(TestTsKotlinLs::class, SkipTsKotlinLs::class),
     TsGoProxy(TestTsGoProxy::class, SkipTsGoProxy::class),
   }
 
@@ -84,12 +94,15 @@ abstract class Angular2TestCase(
   @JvmField
   var serviceKind: TypeScriptServiceKind = TypeScriptServiceKind.None
 
-  private val expectedServerClass: KClass<out TypeScriptService> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+  private val serverPredicate: (TypeScriptService) -> Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
     when (serviceKind) {
-      TypeScriptServiceKind.TsNode -> Angular2TypeScriptService::class
-      TypeScriptServiceKind.TsKotlin -> TypeScriptGoLspService::class
-      TypeScriptServiceKind.TsGoProxy -> TypeScriptGoLspService::class
-      TypeScriptServiceKind.None -> Angular2TypeScriptService::class
+      TypeScriptServiceKind.None,
+      TypeScriptServiceKind.TsNode -> { service: TypeScriptService ->
+        service is Angular2TypeScriptService
+      }
+      TypeScriptServiceKind.TsKotlin -> servicePredicateForTsGo
+      TypeScriptServiceKind.TsKotlinLs -> servicePredicateForTsKotlinLs
+      TypeScriptServiceKind.TsGoProxy -> servicePredicateForTsGo
     }
   }
 
@@ -101,6 +114,12 @@ abstract class Angular2TestCase(
       HybridTestMode.CodeInsightFixture
     }
 
+  /** A TypeScript-Go service, or TSKotlin, a port of TypeScript-Go. These kinds read the `.tsgo` test data, when it exists. */
+  private val usesTsGoTestData: Boolean
+    get() = serviceKind == TypeScriptServiceKind.TsGoProxy
+            || serviceKind == TypeScriptServiceKind.TsKotlin
+            || serviceKind == TypeScriptServiceKind.TsKotlinLs
+
   override val testDataRoot: String
     get() = Angular2TestUtil.getBaseTestDataPath()
 
@@ -110,19 +129,18 @@ abstract class Angular2TestCase(
   override val defaultExtension: String
     get() = "ts"
 
-  override val defaultDirName: String get() {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsKotlin) {
-      val tsGoDirName = "$testName.tsgo"
-      if (File("$testDataPath/$tsGoDirName").exists())
-        return tsGoDirName
+  override val defaultDirName: String
+    get() {
+      if (usesTsGoTestData) {
+        val tsGoDirName = "$testName.tsgo"
+        if (File("$testDataPath/$tsGoDirName").exists())
+          return tsGoDirName
+      }
+      return testName
     }
-    return testName
-  }
 
   override fun getDefaultConfigureFileName(extension: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsKotlin) {
+    if (usesTsGoTestData) {
       val tsgoConfigureFileName = "$testName.tsgo.$extension"
       if (File("$testDataPath/$tsgoConfigureFileName").exists())
         return tsgoConfigureFileName
@@ -132,8 +150,7 @@ abstract class Angular2TestCase(
 
   override fun getGoldFileName(forcedGoldFileName: String?, testFileExt: String): String {
     val goldFileName = super.getGoldFileName(forcedGoldFileName, testFileExt)
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsKotlin) {
+    if (usesTsGoTestData) {
       val lastIndex = goldFileName.lastIndexOf('.')
       val tsGoGoldFileName = "${goldFileName.substring(0, lastIndex)}.tsgo${goldFileName.substring(lastIndex)}"
       if (File("$testDataPath/$tsGoGoldFileName").exists())
@@ -143,8 +160,7 @@ abstract class Angular2TestCase(
   }
 
   override fun getCodeCompletionExpectedItemsFileNameInfix(prefix: String, suffix: String): String {
-    if (serviceKind == TypeScriptServiceKind.TsGoProxy
-        || serviceKind == TypeScriptServiceKind.TsKotlin) {
+    if (usesTsGoTestData) {
       val tsGoItemsFileName = "${prefix}.tsgo${suffix}"
       if (File("$testDataPath/$tsGoItemsFileName").exists())
         return ".tsgo"
@@ -171,9 +187,8 @@ abstract class Angular2TestCase(
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(
       myFixture,
       tsKotlin = serviceKind == TypeScriptServiceKind.TsKotlin,
-    ) {
-      it::class == expectedServerClass
-    }
+      servicePredicate = serverPredicate
+    )
     thisLogger().info("Using $service for the test")
     when (serviceKind) {
       TypeScriptServiceKind.TsNode -> {
@@ -188,6 +203,7 @@ abstract class Angular2TestCase(
         triggerLspServerInit(project, TypeScriptGoLspIntegrationProvider::class.java,
                              TypeScriptGoLspClientDescriptor(project))
       }
+      TypeScriptServiceKind.TsKotlinLs,
       TypeScriptServiceKind.None -> {}
     }
 

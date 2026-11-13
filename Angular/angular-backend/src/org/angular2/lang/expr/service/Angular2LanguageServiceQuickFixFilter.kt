@@ -8,7 +8,6 @@ import com.intellij.lang.typescript.compiler.languageService.TS_ERROR_CODE_UNUSE
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptAnnotationRangeError
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFix
-import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -22,7 +21,7 @@ object Angular2LanguageServiceQuickFixFilter {
     || action !is TypeScriptLanguageServiceFix
     || accept(file, error) { element }
 
-  fun accept(file: PsiFile, document: Document, error: LspAnnotationError): Boolean =
+  fun accept(file: PsiFile, document: Document, error: TypeScriptAnnotationRangeError): Boolean =
     accept(file, error) {
       getElementInfoInjectionAware(file, document, error)?.element
     }
