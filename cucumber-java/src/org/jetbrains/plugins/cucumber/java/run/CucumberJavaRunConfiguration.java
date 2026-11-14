@@ -206,11 +206,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
    * Returns the path to the JAR with the SM formatter for Cucumber {@code version} in the IDE distribution.
    */
   private static @NotNull String getVersionedFormatterJarPath(@NotNull String formatterJarPath, int version) {
-    Path libDir = Path.of(formatterJarPath).getParent();
-    if (version >= 4) {
-      return libDir.resolve("modules").resolve("intellij.cucumber.jvmFormatter" + version + ".jar").toString();
-    }
-    return libDir.resolve("cucumber-jvmFormatter" + version + ".jar").toString();
+    return Path.of(formatterJarPath).resolveSibling("modules").resolve("intellij.cucumber.jvmFormatter" + version + ".jar").toString();
   }
 
   @Override
