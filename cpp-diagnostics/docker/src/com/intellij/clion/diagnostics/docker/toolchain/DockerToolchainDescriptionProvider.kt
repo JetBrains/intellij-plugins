@@ -8,7 +8,7 @@ import com.jetbrains.cidr.cpp.toolchains.docker.getDockerServerTypeId
 import com.jetbrains.cidr.cpp.toolchains.docker.host.DockerHostBase
 import com.jetbrains.cidr.system.HostMachine
 
-class DockerToolchainDescriptionProvider: ToolchainDescriptionProvider {
+internal class DockerToolchainDescriptionProvider : ToolchainDescriptionProvider {
   override fun describe(toolchain: CPPToolchains.Toolchain, host: HostMachine): LinesSection? {
     if (toolchain.toolSetKind != CPPToolSet.Kind.DOCKER) {
       return null
