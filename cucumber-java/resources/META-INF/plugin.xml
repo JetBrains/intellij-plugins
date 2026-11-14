@@ -16,6 +16,7 @@
 
   <content namespace="jetbrains">
     <module name="intellij.libraries.junit4" loading="embedded"/>
+    <module name="intellij.cucumber.jvmFormatter" loading="embedded"/>
   </content>
   <content>
     <module name="intellij.libraries.hamcrest" loading="embedded"/>

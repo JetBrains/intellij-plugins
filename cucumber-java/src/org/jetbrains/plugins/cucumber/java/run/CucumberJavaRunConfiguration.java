@@ -53,6 +53,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -189,7 +190,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
       if (VersionComparatorUtil.compare(cucumberCoreVersion, String.valueOf(i)) >= 0) {
         if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
           // Running the IDE from normal distribution, attach the JAR
-          result.add(cucumberJvmFormatterClassPath.replace(".jar", i + ".jar"));
+          result.add(getVersionedFormatterJarPath(cucumberJvmFormatterClassPath, i));
         }
         else {
           // Running the IDE from sources, attach the folder with compiled classes
@@ -199,6 +200,13 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
     }
 
     return ArrayUtilRt.toStringArray(result);
+  }
+
+  /**
+   * Returns the path to the JAR with the SM formatter for Cucumber {@code version} in the IDE distribution.
+   */
+  private static @NotNull String getVersionedFormatterJarPath(@NotNull String formatterJarPath, int version) {
+    return Path.of(formatterJarPath).resolveSibling("cucumber-jvmFormatter" + version + ".jar").toString();
   }
 
   @Override

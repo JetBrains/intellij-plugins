@@ -7,10 +7,10 @@ dev_dist_plugin(
     content_modules = [
         # do not sort,
         "intellij.libraries.junit4",
+        "intellij.cucumber.jvmFormatter",
         "intellij.libraries.hamcrest",
         "intellij.libraries.cucumber",
         "intellij.libraries.cucumber.core1",
-        "intellij.cucumber.jvmFormatter",
         "intellij.cucumber.jvmFormatter3",
         "intellij.cucumber.jvmFormatter4",
         "intellij.cucumber.jvmFormatter5",
