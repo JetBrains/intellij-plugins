@@ -17,6 +17,7 @@
   <content namespace="jetbrains">
     <module name="intellij.libraries.junit4" loading="embedded"/>
     <module name="intellij.cucumber.jvmFormatter" loading="embedded"/>
+    <module name="intellij.cucumber.jvmFormatter4" loading="on-demand"/>
     <module name="intellij.cucumber.jvmFormatter5" loading="on-demand"/>
   </content>
   <content>

@@ -207,7 +207,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
    */
   private static @NotNull String getVersionedFormatterJarPath(@NotNull String formatterJarPath, int version) {
     Path libDir = Path.of(formatterJarPath).getParent();
-    if (version == 5) {
+    if (version >= 4) {
       return libDir.resolve("modules").resolve("intellij.cucumber.jvmFormatter" + version + ".jar").toString();
     }
     return libDir.resolve("cucumber-jvmFormatter" + version + ".jar").toString();
