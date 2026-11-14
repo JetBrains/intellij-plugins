@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.intellij.lang.Language
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.qodana.sarif.model.ArtifactContent
 import com.jetbrains.qodana.sarif.model.Region
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
@@ -14,12 +13,11 @@ internal const val MAX_CONTEXT_CHARS_LENGTH = 1800
 class Border(offset: Int, line: Int, val text: String, private val lineBorder: IntRange) {
   var currentOffset = offset
   private var currentLine = line
-  private val chars = text.toCharArray()
 
   fun moveLeft(): Boolean {
     val nextOffset = currentOffset - 1
     if (nextOffset < 0) return false
-    if (chars[nextOffset] == '\n') {
+    if (text[nextOffset] == '\n') {
       if (!lineBorder.contains(currentLine - 1)) return false
       currentLine--
     }
@@ -30,7 +28,7 @@ class Border(offset: Int, line: Int, val text: String, private val lineBorder: I
   fun moveRight(): Boolean {
     val nextOffset = currentOffset + 1
     if (nextOffset < 0 || nextOffset > text.length) return false
-    if (chars[currentOffset] == '\n') {
+    if (text[currentOffset] == '\n') {
       if (!lineBorder.contains(currentLine + 1)) return false
       currentLine++
     }
@@ -42,15 +40,22 @@ class Border(offset: Int, line: Int, val text: String, private val lineBorder: I
 fun getContextRegion(problem: CommonDescriptor,
                               text: String,
                               linesMargin: Int = CONTEXT_MAX_LINES_MARGIN,
-                              fileLanguage: Language? = null): Region? {
+                              fileLanguage: Language? = null): Region? =
+  getContextRegion(problem, FileText(text), linesMargin, fileLanguage)
+
+fun getContextRegion(problem: CommonDescriptor,
+                     fileText: FileText,
+                     linesMargin: Int = CONTEXT_MAX_LINES_MARGIN,
+                     fileLanguage: Language? = null): Region? {
   if (qodanaEnv().QODANA_DISABLE_COLLECT_CONTEXT.value != null) return null
 
-  val offset = getProblemOffset(text, problem) ?: return null
+  val text = fileText.text
+  val offset = getProblemOffset(fileText, problem) ?: return null
   val line = problem.line?.let { it - 1 } ?: return null
   if (problem.length == null) return null
   val leftBorder = Border(offset, line, text, IntRange(line - linesMargin, line + linesMargin))
 
-  val rightBorderLine = StringUtil.offsetToLineColumn(text, offset + problem.length)?.line ?: return null
+  val rightBorderLine = fileText.offsetToLineColumn(offset + problem.length)?.line ?: return null
 
   //non including border symbol itself
   val rightBorder = Border(offset + problem.length, rightBorderLine, text,
@@ -65,7 +70,7 @@ fun getContextRegion(problem: CommonDescriptor,
 
   val leftOffset = max(0, leftBorder.currentOffset)
   val rightOffset = min(rightBorder.currentOffset, text.length)
-  val lineColumn = StringUtil.offsetToLineColumn(text, leftOffset)
+  val lineColumn = fileText.offsetToLineColumn(leftOffset)!!
 
   val region = Region()
     .withStartColumn(lineColumn.column + 1)
@@ -80,9 +85,11 @@ fun getContextRegion(problem: CommonDescriptor,
   return region
 }
 
-internal fun getProblemOffset(text: String, problem: CommonDescriptor): Int? {
+internal fun getProblemOffset(text: String, problem: CommonDescriptor): Int? = getProblemOffset(FileText(text), problem)
+
+internal fun getProblemOffset(fileText: FileText, problem: CommonDescriptor): Int? {
   val line = problem.line?.let { it - 1 } ?: return null
   val column = problem.column ?: return null
   assert(line >= 0)
-  return StringUtil.lineColToOffset(text, line, column)
+  return fileText.lineColToOffset(line, column)
 }

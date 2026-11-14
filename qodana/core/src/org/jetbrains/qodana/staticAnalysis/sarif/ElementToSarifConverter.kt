@@ -30,6 +30,8 @@ data class CommonDescriptor(val file: String, val line: Int?, val column: Int?, 
  * Provides methods to convert tool results from XML to SARIF format. Should be kept in sync with [JsonInspectionsReportConverter] logic
  * and any changes in the XML format of the inspection result.
  */
+private const val MAX_CONVERTED_DESCRIPTIONS = 4096
+
 object ElementToSarifConverter {
   const val FILE = "file"
   const val LINE = "line"
@@ -138,8 +140,26 @@ object ElementToSarifConverter {
       })
   }
 
-  fun safeDescriptionText(description: String?): Message? =
-    Message().withText(description?.let { htmlToPlainText(description) }).withMarkdown(description?.let { htmlToMarkdown(it) })
+  fun safeDescriptionText(description: String?): Message? {
+    if (description == null) return Message().withText(null).withMarkdown(null)
+    val (text, markdown) = convertedDescription(description)
+    return Message().withText(text).withMarkdown(markdown)
+  }
+
+  /**
+   * Problems of one inspection mostly repeat the same description, and each HTML conversion builds
+   * a jsoup document and a flexmark renderer: a third of the conversion of a problem to SARIF.
+   */
+  private val convertedDescriptions = object : LinkedHashMap<String, Pair<String, String>>(256, 0.75f, true) {
+    override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Pair<String, String>>): Boolean = size > MAX_CONVERTED_DESCRIPTIONS
+  }
+
+  private fun convertedDescription(description: String): Pair<String, String> {
+    synchronized(convertedDescriptions) { convertedDescriptions[description] }?.let { return it }
+    val converted = htmlToPlainText(description) to htmlToMarkdown(description)
+    synchronized(convertedDescriptions) { convertedDescriptions[description] = converted }
+    return converted
+  }
 
   private fun getFingerprintData(element: Element): AdditionalFingerprintDataHolder? =
     element.getChild(DefaultInspectionToolResultExporter.INSPECTION_RESULTS_FINGERPRINT_DATA)

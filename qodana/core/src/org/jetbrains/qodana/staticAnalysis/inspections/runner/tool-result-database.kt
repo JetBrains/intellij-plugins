@@ -13,6 +13,8 @@ import org.jetbrains.sqlite.ObjectBinder
 import org.jetbrains.sqlite.SqliteConnection
 import org.jetbrains.sqlite.SqlitePreparedStatement
 import java.nio.file.Path
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 @Language("SQLite")
 private const val TABLE_SCHEMA = """
@@ -49,7 +51,9 @@ private const val TABLE_SCHEMA = """
 """
 
 private const val INSERT_STATEMENT = "INSERT INTO results VALUES (?, ?, ?, ?);"
-private const val SELECT_STATEMENT = "SELECT inspection, hash, json FROM results WHERE inspectionGroup = ? ORDER BY inspection, hash;"
+// In table order: with ORDER BY, SQLite reads the rows in index order, one random page per row, and the results
+// are several hundred megabytes; under memory pressure that is ten times slower than a scan. The caller sorts.
+private const val SELECT_STATEMENT = "SELECT inspection, hash, json FROM results WHERE inspectionGroup = ?;"
 
 private const val SELECT_INSPECTION_IDS = "SELECT DISTINCT inspection FROM results;"
 
@@ -72,6 +76,12 @@ internal const val QODANA_DB_FILENAME = "tool-results.db"
  *  Note, there is no lock file provided, that prevents opening non-closed DB.
  */
 class QodanaToolResultDatabase private constructor(private val connection: SqliteConnection) : AutoCloseable by connection {
+  /**
+   * Serializes writes against [inTransaction]: a connection has one transaction, so a second `BEGIN` would fail
+   * and a statement of another thread would silently become part of the open transaction.
+   */
+  private val writeLock = ReentrantLock()
+
   companion object {
     fun create(path: Path): QodanaToolResultDatabase {
       NioFiles.deleteRecursively(path.resolve(QODANA_DB_FILENAME))
@@ -82,25 +92,49 @@ class QodanaToolResultDatabase private constructor(private val connection: Sqlit
       return db
     }
 
-    fun open(path: Path) =
-      QodanaToolResultDatabase(SqliteConnection(path.resolve(QODANA_DB_FILENAME)))
+    fun open(path: Path): QodanaToolResultDatabase {
+      val connection = SqliteConnection(path.resolve(QODANA_DB_FILENAME))
+      // The database lives only for one run and is deleted after it, so it needs no durability: without this,
+      // every WAL checkpoint waits for fsync, which on Windows (FlushFileBuffers) costs more than the writes.
+      connection.execute("PRAGMA synchronous = OFF;")
+      return QodanaToolResultDatabase(connection)
+    }
   }
 
-  fun insert(inspectionGroup: String, inspectionId: String, hash: String, json: String) {
+  fun insert(inspectionGroup: String, inspectionId: String, hash: String, json: String) = writeLock.withLock {
     connection.execute(INSERT_STATEMENT, arrayOf(inspectionGroup, inspectionId, hash, json))
   }
 
-  fun insertDuplicate(file: String, line: Int, start: Int, end: Int, hash: String, json: String) {
+  /**
+   * Runs [action] in one transaction. Outside a transaction SQLite commits every statement on its own,
+   * and for a few hundred thousand results those commits cost more than the inserts themselves.
+   */
+  fun <T> inTransaction(action: () -> T): T {
+    writeLock.withLock {
+      connection.beginTransaction()
+      try {
+        val result = action()
+        connection.commit()
+        return result
+      }
+      catch (e: Throwable) {
+        connection.rollback()
+        throw e
+      }
+    }
+  }
+
+  fun insertDuplicate(file: String, line: Int, start: Int, end: Int, hash: String, json: String) = writeLock.withLock {
     connection.execute(INSERT_DUPLICATES_STATEMENT, arrayOf<Any>(file, line, start, end, hash, json))
   }
 
-  fun insertMetricsData(rowData: MetricTableRowData) {
+  fun insertMetricsData(rowData: MetricTableRowData) = writeLock.withLock {
     val metricTable: MetricTable = rowData.metricTable
     @Language("SQLite") val insertStatement: String = metricTable.getInsertStatement()
     connection.execute(insertStatement, rowData.getValues())
   }
 
-  fun deleteMetricsDataForFile(filePath: String, metricTable: MetricTable) {
+  fun deleteMetricsDataForFile(filePath: String, metricTable: MetricTable) = writeLock.withLock {
     @Language("SQLite") val deleteStatement: String = metricTable.getDeleteStatementForFile()
     connection.execute(deleteStatement, arrayOf(filePath))
   }
@@ -137,7 +171,7 @@ class QodanaToolResultDatabase private constructor(private val connection: Sqlit
     return MetricColumnClosableQuery(statement, numberOfColumns)
   }
 
-  fun insertRelatedProblem(hash: String, json: String) {
+  fun insertRelatedProblem(hash: String, json: String) = writeLock.withLock {
     connection.execute(INSERT_RELATED_PROBLEM, arrayOf(hash, json))
   }
 
