@@ -1,2 +1,2 @@
-foo2 (typeText=null; priority=0.0; bold)
-foo3 (typeText=null; priority=0.0; bold)
+foo2 (typeText='Ref<UnwrapRef<string>, UnwrapRef<string> | string>'; priority=0.0; bold)
+foo3 (typeText='Ref<UnwrapRef<number>, UnwrapRef<number> | number>'; priority=0.0; bold)

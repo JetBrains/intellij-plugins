@@ -1,2 +1,2 @@
-first (typeText=null; priority=101.0; bold)
-last (typeText=null; priority=101.0; bold)
+first (typeText='any'; priority=101.0; bold)
+last (typeText='any'; priority=101.0; bold)

@@ -1,4 +1,4 @@
-a (typeText=null; priority=101.0; bold)
-b (typeText=null; priority=101.0; bold)
+a (typeText='any'; priority=101.0; bold)
+b (typeText='any'; priority=101.0; bold)
 componentProp (typeText='number'; priority=101.0; bold)
 foo (typeText='HTMLInputElement'; priority=101.0; bold)
