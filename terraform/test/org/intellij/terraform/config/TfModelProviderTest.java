@@ -158,7 +158,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
   public void testAllResourcesForSameProviderHasSamePrefix() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("catchpoint/catchpoint", "paloaltonetworks/scm", "sap-cloud-infrastructure/sci");
+    Set<String> exceptions = Set.of("catchpoint/catchpoint", "paloaltonetworks/scm", "rubrikinc/rubrik", "sap-cloud-infrastructure/sci");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
@@ -180,7 +180,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
   public void testAllDataSourcesForSameProviderHasSamePrefix() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("cloudposse/awsutils", "paloaltonetworks/scm", "sap-cloud-infrastructure/sci");
+    Set<String> exceptions = Set.of("cloudposse/awsutils", "paloaltonetworks/scm", "rubrikinc/rubrik", "sap-cloud-infrastructure/sci");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
