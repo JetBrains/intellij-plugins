@@ -60,6 +60,10 @@ private const val QODANA_PLUGINS_THIRD_PARTY_ACCEPT = "idea.qodana.thirdpartyplu
 
 private const val OPEN_IN_IDE_METADATA_JSON = "open-in-ide.json"
 
+/** The platform property that turns off the FUS upload for all recorders, see `StatisticsUploadAssistant.isSendAllowed`. */
+@VisibleForTesting
+internal const val SUPPRESS_STATISTICS_REPORT_PROPERTY: String = "idea.suppress.statistics.report"
+
 class QodanaInspectionApplication(
   val config: QodanaConfig,
   val projectApi: QDCloudLinterProjectApi?, // null if no token
@@ -102,6 +106,7 @@ class QodanaInspectionApplication(
 
   private suspend fun run() {
     val status = runActivityWithTiming(QodanaActivityKind.LINTER_EXECUTION) {
+      applyAirGappedMode()
       waitForStatisticsSchemaUpdate()
       checkPlugins()
       supervisorScope {
@@ -115,6 +120,17 @@ class QodanaInspectionApplication(
     if (status.code != 0) {
       reporter.reportError(status.description)
     }
+  }
+
+  /**
+   * In a network with no access to the internet, the FUS upload cannot succeed.
+   * Without the upload, the IDE starts no statistics-uploader on exit, and Qodana CLI does not wait for it.
+   */
+  @VisibleForTesting
+  internal fun applyAirGappedMode() {
+    if (!config.airGapped) return
+    System.setProperty(SUPPRESS_STATISTICS_REPORT_PROPERTY, "true")
+    LOG.info("Air-gapped mode: turn off the statistics upload")
   }
 
   @VisibleForTesting
