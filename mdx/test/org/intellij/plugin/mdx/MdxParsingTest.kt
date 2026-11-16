@@ -1,7 +1,7 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.testFramework.ParsingTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.ParsingTestFixture
 import com.intellij.testFramework.TestDataPath
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,8 +15,8 @@ class MdxParsingTest : MdxTestBase() {
    * Parses `parsing/<testName>.mdx` with the REAL MDX language on the shared test application (like
    * every other MDX test), then compares every view-provider root against the checked-in
    * `<testName>.MDX.txt` / `<testName>.MdxJS.txt` snapshots. The snapshot format (whitespace + ranges,
-   * one file per PSI root) is produced by reusing [ParsingTestCase.doCheckResult]. Running on the real
-   * application — instead of the old mock-application [ParsingTestCase] — is what lets this class share
+   * one file per PSI root) is produced by reusing [ParsingTestFixture.doCheckResult]. Running on the real
+   * application — instead of the old mock-application `ParsingTestCase` — is what lets this class share
    * a JVM with the heavy code-insight tests without the parser tree changing under it.
    */
   private fun doTest() {
@@ -24,7 +24,7 @@ class MdxParsingTest : MdxTestBase() {
     val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
     val text = StringUtil.convertLineSeparators(psiFile.text).trim()
     myFixture.configureByText("$testName.mdx", text)
-    ParsingTestCase.doCheckResult(testDataPath, myFixture.file, true, testName, false, true)
+    ParsingTestFixture.doCheckResult(testDataPath, myFixture.file, true, testName, false, true)
   }
 
   @Test

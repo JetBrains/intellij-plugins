@@ -56,7 +56,6 @@ jvm_library(
         "@community//xml/testFramework",
         "//plugins/css/common",
         "//plugins/JavaScriptLanguage/javascript-codeinsight",
-        "@community//libraries/junit4",
         "@community//libraries/kotlinx/coroutines/core",
         "@community//xml/xml-analysis-impl:analysis-impl",
         "@community//xml/impl",

@@ -118,7 +118,6 @@ jvm_library(
         "//contrib/mdx/react",
         "//contrib/mdx/backend",
         "//contrib/mdx/frontend",
-        "@community//libraries/junit4",
         "@community//platform/testFramework/junit5",
         "@community//platform/testFramework/junit5/codeInsight",
         "@community//libraries/junit6",
