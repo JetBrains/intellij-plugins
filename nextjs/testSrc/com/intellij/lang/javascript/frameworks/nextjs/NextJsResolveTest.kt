@@ -1,68 +1,97 @@
 package com.intellij.lang.javascript.frameworks.nextjs
 
+import com.intellij.lang.javascript.JSCodeInsightFixture.Companion.jsCodeInsightFixture
+import com.intellij.lang.javascript.JSFixtureOptions
 import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.lang.javascript.jsProjectFixture
+import com.intellij.openapi.application.EDT
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class NextJsResolveTest : BasePlatformTestCase() {
-  override fun getTestDataPath() = NextJsTestUtil.getTestDataPath() + "resolve/"
+@TestApplication
+class NextJsResolveTest {
+  private val projectFixture = jsProjectFixture()
+  private val js by jsCodeInsightFixture(projectFixture, JSFixtureOptions(NextJsTestUtil.getTestDataPath() + "resolve/", "tsx"))
 
-  fun testPagesResolving() {
+  @Test
+  fun testPagesResolving(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("declaration", testProjectName = "pagesPathAttributeResolve")
   }
 
-  fun testAppResolving() {
+  @Test
+  fun testAppResolving(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("declaration")
   }
 
-  fun testGroupResolving() {
+  @Test
+  fun testGroupResolving(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("declaration")
   }
 
-  fun testGroupResolvingComplex() {
+  @Test
+  fun testGroupResolvingComplex(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("page.tsx")
   }
 
-  fun testSlotResolving() {
+  @Test
+  fun testSlotResolving(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("page.tsx")
   }
 
-  fun testSlugResolving() {
+  @Test
+  fun testSlugResolving(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("[slug]")
   }
 
-  fun testJSEmbeddedContentResolving() {
+  @Test
+  fun testJSEmbeddedContentResolving(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("declaration")
   }
 
-  fun testInterceptResolving1() {
+  @Test
+  fun testInterceptResolving1(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("[slug]")
   }
 
-  fun testInterceptResolving2() {
+  @Test
+  fun testInterceptResolving2(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("page.tsx")
   }
 
-  fun testCatchAllResolving1() {
+  @Test
+  fun testCatchAllResolving1(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("[...catchAll]")
   }
 
-  fun testCatchAllResolving2() {
+  @Test
+  fun testCatchAllResolving2(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("page.tsx")
   }
 
-  fun testCatchAllResolving3() {
+  @Test
+  fun testCatchAllResolving3(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("page.tsx")
   }
 
-  fun testCatchAllResolving4() {
+  @Test
+  fun testCatchAllResolving4(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     doTest("folderForExactMatching1")
   }
 
-  fun testPureReactProject() {
-    checkResolveToDestination(null, getTestName(true), myFixture, getTestName(false), "tsx")
+  @Test
+  fun testPureReactProject(): Unit = timeoutRunBlocking(timeout = 2.minutes) {
+    withContext(Dispatchers.EDT) {
+      checkResolveToDestination(null, js.getTestName(true), js.fixture, js.getTestName(false), "tsx")
+    }
   }
 
-  private fun doTest(destination: String = "", testProjectName: String? = null) {
-    checkResolveToDestination(destination, testProjectName ?: "pathAttributeResolve", myFixture, getTestName(false), "tsx")
+  private suspend fun doTest(destination: String = "", testProjectName: String? = null) {
+    withContext(Dispatchers.EDT) {
+      checkResolveToDestination(destination, testProjectName ?: "pathAttributeResolve", js.fixture, js.getTestName(false), "tsx")
+    }
   }
 }

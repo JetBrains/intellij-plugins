@@ -129,7 +129,6 @@ jvm_library(
         "@community//platform/polySymbols/testFramework",
         "//plugins/JavaScriptLanguage/web-platform:javascript-web",
         "@community//platform/editor-ui-api:editor-ui",
-        "@community//libraries/junit4",
         "@community//platform/scratch/plugin",
     ],
 )
