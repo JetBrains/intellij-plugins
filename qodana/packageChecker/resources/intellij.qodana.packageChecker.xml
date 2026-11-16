@@ -3,6 +3,7 @@
     <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <plugin id="org.intellij.qodana"/>
     <plugin id="org.jetbrains.security.package-checker"/>
+    <module name="intellij.platform.analysis"/>
     <module name="intellij.platform.analysis.impl"/>
     <module name="intellij.platform.core"/>
     <module name="intellij.platform.monolith"/>
@@ -12,6 +13,12 @@
     <listener class="org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerInspectListener"
               topic="com.intellij.codeInspection.ex.InspectListener"/>
   </projectListeners>
+  <extensions defaultExtensionNs="com.intellij.packageChecker">
+    <serviceAvailability implementation="org.jetbrains.qodana.staticAnalysis.packageChecker.QodanaVulnerabilityServiceAvailabilityProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.intellij.qodana">
+    <externalToolsConfigurationProvider implementation="org.jetbrains.qodana.staticAnalysis.packageChecker.PackageCheckerAvailabilityReporter"/>
+  </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <registryKey key="qd.package-checker.cancel.on.failure"
                  defaultValue="true"
