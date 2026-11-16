@@ -1,5 +1,5 @@
 ﻿#AutomaticCompletion:
-# 598 ITEMS #
+# 589 ITEMS #
 
 + accelerator
 + accent-color
@@ -42,15 +42,12 @@
 + background-position-x
 + background-position-y
 + background-repeat
-+ background-repeat-x
-+ background-repeat-y
 + background-size
 + base-palette
 + baseline-shift
 + baseline-source
 + behavior
 + bleed
-+ block-ellipsis
 + block-size
 + border
 + border-block
@@ -157,7 +154,6 @@
 + container-name
 + container-type
 + content-visibility
-+ continue
 + corner-block-end-shape
 + corner-block-start-shape
 + corner-bottom-left-shape
@@ -194,6 +190,7 @@
 + fill-opacity
 + fill-rule
 + filter
++ fit-tolerance
 + flex
 + flex-basis
 + flex-direction
@@ -261,7 +258,6 @@
 + height
 + hyphenate-character
 + hyphenate-limit-chars
-+ hyphenate-limit-lines
 + hyphens
 + image-orientation
 + image-rendering
@@ -289,12 +285,8 @@
 + letter-spacing
 + lighting-color
 + line-break
-+ line-clamp
 + line-gap-override
-+ line-grid
 + line-height
-+ line-snap
-+ link-parameters
 + list-style
 + list-style-image
 + list-style-position
@@ -338,7 +330,6 @@
 + max-block-size
 + max-height
 + max-inline-size
-+ max-lines
 + max-width
 + min-block-size
 + min-height
@@ -432,6 +423,7 @@
 + rx
 + ry
 + scale
++ scroll-axis-lock
 + scroll-behavior
 + scroll-initial-target
 + scroll-margin
@@ -523,6 +515,7 @@
 + text-decoration-line
 + text-decoration-skip
 + text-decoration-skip-ink
++ text-decoration-skip-spaces
 + text-decoration-style
 + text-decoration-thickness
 + text-emphasis
@@ -585,7 +578,6 @@
 + visibility
 + white-space
 + white-space-collapse
-+ white-space-trim
 + widows
 + width
 + will-change
@@ -593,7 +585,6 @@
 + word-break
 + word-spacing
 + word-wrap
-+ wrap-inside
 + writing-mode
 + x
 + y
