@@ -3,6 +3,7 @@
   <dependencies>
     <module name="intellij.libraries.gson"/>
     <module name="intellij.libraries.kotlinx.coroutines.core"/>
+    <module name="intellij.php"/>
     <module name="intellij.php.backend"/>
     <module name="intellij.php.coverage"/>
     <module name="intellij.platform.analysis"/>
