@@ -36,11 +36,13 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
     // Space reports both system names.
     case("space", "jetbrains-space")
     case("gradle", "gradle")
+    case("maven", "maven")
+    case("bitbucket", "bitbucket")
+    case("bitbucket:2026.2.710", "bitbucket", "2026.2.710")
 
     // All other environments are reported as "other".
     case("other", "other")
     case("docker", "other")
-    case("bitbucket", "other")
     case("aws", "other")
     case("unknown", "other")
     // The literal value "undefined" passed by a user is an unknown system, not a missing one.
@@ -127,7 +129,8 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
     }
 
     assertEvent(event, "env",
-                "system" to "other")
+                "system" to "bitbucket",
+                "version" to "2021")
   }
 
   @Test

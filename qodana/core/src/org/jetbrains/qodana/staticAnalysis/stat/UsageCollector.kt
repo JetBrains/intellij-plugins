@@ -26,7 +26,7 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.usage", 17)
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 18)
 
   override fun getGroup() = GROUP.eventLogGroup
 
@@ -50,6 +50,8 @@ object UsageCollector : CounterUsagesCollector() {
     "teamcity",
     "teamcity-cloud",
     "gradle",
+    "maven",
+    "bitbucket",
     "other"
   )
 
