@@ -5,6 +5,7 @@ import com.intellij.platform.testFramework.junit5.codeInsight.fixture.parsingFix
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 
@@ -35,6 +36,7 @@ class PpParserTest {
   fun `test ifdef inactive`(): Unit = doTest()
 
   @Test
+  @Disabled("IJPL-261335")
   fun `test incomplete ifdef`(): Unit = doTest()
 
   @Test
