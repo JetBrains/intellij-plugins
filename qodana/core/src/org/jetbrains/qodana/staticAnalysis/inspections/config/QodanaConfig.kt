@@ -44,12 +44,6 @@ import java.util.Locale
 const val QODANA_YAML_CONFIG_FILENAME: String = "qodana.yaml"
 const val QODANA_YML_CONFIG_FILENAME: String = "qodana.yml"
 
-/**
- * The system property that turns on air-gapped mode when its value is `true`, case-insensitive.
- * Qodana CLI sets it from the option `--air-gapped`. See [QodanaConfig.airGapped].
- */
-const val QODANA_AIR_GAPPED_PROPERTY: String = "qodana.air.gapped"
-
 private const val EMBEDDED_GIT_IGNORE_EXCLUDE: String = "embedded.gitignore"
 
 const val COVERAGE_OUTPUT_DIR: String = "coverage"

@@ -14,7 +14,6 @@ import org.jetbrains.qodana.cloud.api.message
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_AIR_GAPPED_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
@@ -43,6 +42,7 @@ class QodanaInspectionApplicationFactory {
     addOption(null, "report-coverage-problems", true, QodanaBundle.message("report.coverage.problems.option.description"))
     addOption(null, "run-promo", true, QodanaBundle.message("run.promo.inspections.option.description"))
     addOption(null, "disable-sanity", false, QodanaBundle.message("disable.sanity.inspections.option.description"))
+    addOption(null, "air-gapped", false, QodanaBundle.message("air.gapped.option.description"))
     addOption(null, "apply-fixes", false, QodanaBundle.message("apply.fixes.inspections.option.description"))
     addOption(null, "cleanup", false, QodanaBundle.message("cleanup.inspections.option.description"))
     addOption(null, "script", true, QodanaBundle.message("script.option.description"))
@@ -143,7 +143,7 @@ class QodanaInspectionApplicationFactory {
     }?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
-    val airGapped = yamlConfig.airGapped || System.getProperty(QODANA_AIR_GAPPED_PROPERTY).toBoolean()
+    val airGapped = commandLine.hasOption("air-gapped") || yamlConfig.airGapped
     val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.let {
       it.toIntOrNull() ?: throw QodanaConfigurationException("Option --fail-threshold must be an integer, but was '$it'")
     } ?: yamlConfig.failThreshold
