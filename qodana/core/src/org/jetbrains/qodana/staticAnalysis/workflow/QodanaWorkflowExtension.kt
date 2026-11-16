@@ -230,6 +230,13 @@ interface QodanaWorkflowExtension {
   suspend fun afterConfiguration(config: QodanaConfig, project: Project) {}
 
   /**
+   * Called after the inspection profile is loaded and before the analysis starts.
+   * [QodanaRunContext.qodanaProfile] already has the license applied, so implementations can see which inspections run.
+   * This is the successor of the deprecated [beforeLaunch].
+   */
+  suspend fun afterProfileLoaded(context: QodanaRunContext) {}
+
+  /**
    * @deprecated Use [afterConfiguration] instead.
    */
   @Deprecated(
