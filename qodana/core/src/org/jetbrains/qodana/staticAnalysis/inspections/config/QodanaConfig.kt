@@ -207,6 +207,12 @@ data class QodanaConfig(
   val jvm: QodanaJvmConfig,
   val dependencyAnalysis: DependencyAnalysisConfig,
 
+  /**
+   * The network of the run has no access to the internet.
+   * Qodana skips the network operations that cannot succeed there.
+   */
+  val airGapped: Boolean = false,
+
   val skipPreamble: Boolean = System.getProperty("qodana.skip.preamble").toBoolean(), // Set by CLI for second run in scoped script
   val skipResultStrategy: SkipResultStrategy = SkipResultStrategy.fromParameters(),
   val stopThreshold: Int? = System.getProperty("qodana.stop.threshold")?.toInt(),
@@ -258,7 +264,8 @@ data class QodanaConfig(
         }
       ),
       rootJavaProjects: List<Path> = yaml.rootJavaProjects,
-      mavenSettingsPath: Path? = yaml.mavenSettingsPath?.let { if (it.isAbsolute) it.normalize() else projectPath.resolve(it).normalize() }
+      mavenSettingsPath: Path? = yaml.mavenSettingsPath?.let { if (it.isAbsolute) it.normalize() else projectPath.resolve(it).normalize() },
+      airGapped: Boolean = yaml.airGapped,
     ): QodanaConfig {
       val dotnet = yaml.dotnet
       val php = yaml.php
@@ -299,7 +306,8 @@ data class QodanaConfig(
         jvm = jvm,
         dependencyAnalysis = dependencyAnalysis,
         rootJavaProjects = rootJavaProjects,
-        mavenSettingsPath = mavenSettingsPath
+        mavenSettingsPath = mavenSettingsPath,
+        airGapped = airGapped,
       )
     }
   }
