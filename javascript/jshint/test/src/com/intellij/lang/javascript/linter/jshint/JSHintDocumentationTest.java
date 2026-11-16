@@ -1,8 +1,11 @@
 package com.intellij.lang.javascript.linter.jshint;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class JSHintDocumentationTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class JSHintDocumentationTest {
+  @Test
   public void testDocumentationParsing() {
     assertNotNull(JSHintDocumentation.getInstance());
   }

@@ -139,7 +139,6 @@ jvm_library(
         "@community//platform/polySymbols/testFramework",
         "//plugins/JavaScriptLanguage/testFramework",
         "@community//libraries/guava",
-        "@community//libraries/junit4",
         "@community//platform/scratch/plugin",
     ],
 )
