@@ -11,6 +11,7 @@ import com.intellij.dts.core.lang.psi.before
 import com.intellij.dts.core.lang.psi.getDtsPresentableText
 import com.intellij.dts.core.lang.stubs.DTS_NODE_LABEL_INDEX
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -124,6 +125,8 @@ class DtsLabelReference(
   }
 
   override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
+    if (DumbService.isDumb(element.project)) return ResolveResult.EMPTY_ARRAY
+
     val (localScope, includeScope) = createScopes()
 
     val localCandidates = stubGetElements(label, localScope)
@@ -136,6 +139,8 @@ class DtsLabelReference(
   }
 
   override fun getVariants(): Array<Any> {
+    if (DumbService.isDumb(element.project)) return emptyArray()
+
     val (localScope, includeScope) = createScopes()
     val combinedScope = localScope.union(includeScope)
 

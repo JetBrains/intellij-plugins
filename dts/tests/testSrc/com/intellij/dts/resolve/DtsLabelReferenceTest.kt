@@ -3,6 +3,7 @@ package com.intellij.dts.resolve
 import com.intellij.dts.dtsFixture
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.openapi.application.readAction
+import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
@@ -147,6 +148,21 @@ class DtsLabelReferenceTest {
     dts.addFile("test.dtsi", "/ { $target };")
 
     doTest(input)
+  }
+
+  @Test
+  fun `test dumb mode`() = dtsTimeoutRunBlocking {
+    val input = """
+            / { $target };
+            $reference
+        """
+
+    dts.configureByText(input)
+
+    val reference = myFixture.getReferenceAtCaretPositionWithAssertion()
+    DumbModeTestUtils.startEternalDumbModeTask(dts.project).use {
+      assertNull(readAction { reference.resolve() })
+    }
   }
 
   private suspend fun doTest(input: String) {
