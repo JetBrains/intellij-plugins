@@ -4,6 +4,8 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
+import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
+import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
@@ -413,5 +415,43 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
     )
     assertThat(config.profile.base.name).isEqualTo(profileName)
     assertThat(config.profile.base.path).isEqualTo(profilePath)
+  }
+
+  @Test
+  fun `airGapped is off without sources`(): Unit = runBlocking {
+    assertFalse(airGappedConfig(yaml = null, env = null))
+  }
+
+  @Test
+  fun `airGapped from yaml`(): Unit = runBlocking {
+    assertTrue(airGappedConfig(yaml = true, env = null))
+  }
+
+  @Test
+  fun `airGapped from env ignores case`(): Unit = runBlocking {
+    assertTrue(airGappedConfig(yaml = null, env = "TRUE"))
+  }
+
+  @Test
+  fun `airGapped env with not true value is off`(): Unit = runBlocking {
+    assertFalse(airGappedConfig(yaml = null, env = "1"))
+  }
+
+  @Test
+  fun `airGapped env false does not turn off yaml true`(): Unit = runBlocking {
+    assertTrue(airGappedConfig(yaml = true, env = "false"))
+  }
+
+  /** Builds the application with an optional `airGapped` key in qodana.yaml and an optional `QODANA_AIR_GAPPED` value. */
+  private suspend fun airGappedConfig(yaml: Boolean?, env: String?): Boolean {
+    val yamlPath = Paths.get(project.basePath!!).createDirectories().resolve("airgapped.qodana.yaml")
+    yamlPath.writeText(if (yaml == null) "version: \"1.0\"" else "version: \"1.0\"\nairGapped: $yaml")
+    if (env != null) {
+      addQodanaEnvMock(testRootDisposable, object : QodanaEnvEmpty() {
+        override val QODANA_AIR_GAPPED by value(env)
+      })
+    }
+    val app = QodanaInspectionApplicationFactory().buildApplication(listOf("--config", "airgapped.qodana.yaml", "${project.basePath}", "/OUT_PATH"))!!
+    return app.config.airGapped
   }
 }
