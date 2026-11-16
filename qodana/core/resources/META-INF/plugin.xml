@@ -475,6 +475,7 @@
       implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector"/>
     <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.stat.InspectionStatisticsLogger"/>
     <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.vulnerabilities.QodanaVulnerabilityServiceStarter"/>
+    <externalToolsConfigurationProvider implementation="org.jetbrains.qodana.staticAnalysis.vulnerabilities.QodanaVulnerabilityServiceReporter"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.github.SetupGitHubActionsProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.gitlab.SetupGitLabCIProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.teamcity.SetupTeamcityDslProviderFactory"/>
