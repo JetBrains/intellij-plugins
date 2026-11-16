@@ -6,8 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.internal.statistic.eventLog.EventLogConfiguration
-import com.intellij.internal.statistic.updater.StatisticsValidationUpdatedService
-import com.intellij.internal.statistic.updater.updateValidationRules
+import com.intellij.internal.statistic.eventLog.StatisticsEventLogProviderUtil
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.service
@@ -18,7 +17,6 @@ import com.intellij.util.io.createParentDirectories
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
@@ -26,7 +24,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloudclient.asSuccess
@@ -55,6 +53,7 @@ import java.nio.file.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 private const val QODANA_PLUGINS_THIRD_PARTY_ACCEPT = "idea.qodana.thirdpartyplugins.accept"
@@ -120,22 +119,21 @@ class QodanaInspectionApplication(
 
   @VisibleForTesting
   internal suspend fun waitForStatisticsSchemaUpdate(
-    updateSchema: suspend () -> Unit = {
-      // wait for scheduled updated to not accidentally trigger some race condition
-      service<StatisticsValidationUpdatedService>().updatedDeferred.join()
-      updateValidationRules()
-    },
+    timeout: Duration = 1.minutes,
+    isSendEnabled: () -> Boolean = { StatisticsEventLogProviderUtil.getEventLogProviders().any { it.isSendEnabled() } },
+    startUpdate: () -> Deferred<Unit> = { service<QodanaStatisticsSchemaUpdater>().startUpdate() },
   ) {
     if (config.airGapped) {
       LOG.info("Air-gapped mode: skip the statistics schema update")
       return
     }
-    try {
-      withTimeout(1.minutes) {
-        updateSchema()
-      }
+    if (!isSendEnabled()) {
+      LOG.info("FUS sending is not allowed: skip the statistics schema update")
+      return
     }
-    catch (_: TimeoutCancellationException) {
+    val update = startUpdate()
+    if (withTimeoutOrNull(timeout) { update.await() } == null) {
+      update.cancel()
       LOG.warn("Failed to update statistics schema")
     }
   }
