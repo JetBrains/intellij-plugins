@@ -23,7 +23,8 @@ For the build, we can specify the following environment configuration parameters
 | Variable Name                | Default Value                                                    | Comment                                                                                                                                       |
 |------------------------------|------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | TERRAFORM_REGISTRY_HOST      | https://registry.terraform.io                                    |                                                                                                                                               |
-| DOWNLOADS_LIMIT_FOR_PROVIDER | 50000                                                            | Minimum downloads numbers for provider to include it into metadata                                                                            |
+| DOWNLOADS_LIMIT_FOR_PROVIDER | 50000                                                            | Minimum downloads numbers for a community provider to include it into metadata. Providers of the other tiers are always included              |
+| PREVIOUS_METADATA_VERSION    | the last published version                                       | Metadata version whose providers the crawler must build, see [Required providers](#required-providers)                                        |
 | CLEAN_DOWNLOADED_DATA        | true                                                             | Whether or not clean data downloaded from terraform registry after processing. If set to "true", the script will download data on every start |
 | ARTIFACT_GROUP               | org.intellij.plugins.hcl.terraform                               | Maven coordinates for the metadata jar                                                                                                        |
 | ARTIFACT_VERSION             | 2026.3                                                           | Metadata version                                                                                                                              |
@@ -42,6 +43,20 @@ For example, if we want to change an artifact version, we can specify it in the 
 The following folders can be mounted for better diagnostics:
 1. `/opt/terraform-metadata/plugins-meta` stores the extracted schemas metadata files as well as error logs.
 2. `/opt/terraform-metadata/build/libs` stores the generated metadata jar file.
+
+### Required providers
+
+The crawler must build each provider of `src/main/resources/official-providers.list`.
+It must also build each provider of the previous metadata jar.
+The previous jar is the last published jar in `REPO_URL`, or `PREVIOUS_METADATA_VERSION` when it is set.
+For these providers, the downloads limit and the schema size limit do not apply.
+When the provider list of the registry does not show a required provider, the crawler looks it up by name.
+When the registry does not know the provider anymore, the crawler drops it with a warning.
+When a required provider fails to build, the run fails after all providers, and `plugins-meta/failed` holds the errors.
+When a provider cannot be built anymore, add it to `src/main/resources/dropped-providers.list`, and say why in the commit message.
+The crawler still tries each dropped provider without the limits, but its failure does not stop the run.
+When a dropped provider builds again, the crawler adds it to the jar and writes a TeamCity warning.
+Then remove the provider from the list.
 
 ### How to use Teamcity to collect metadata
 
