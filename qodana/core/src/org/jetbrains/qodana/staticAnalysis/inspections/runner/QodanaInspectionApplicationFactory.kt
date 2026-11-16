@@ -20,6 +20,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader.defaultConfigPath
+import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.PrintWriter
@@ -142,6 +143,7 @@ class QodanaInspectionApplicationFactory {
     }?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
+    val airGapped = yamlConfig.airGapped || qodanaEnv().QODANA_AIR_GAPPED.value.equals("true", ignoreCase = true)
     val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.let {
       it.toIntOrNull() ?: throw QodanaConfigurationException("Option --fail-threshold must be an integer, but was '$it'")
     } ?: yamlConfig.failThreshold
@@ -160,6 +162,7 @@ class QodanaInspectionApplicationFactory {
       profilePathFromCli = profilePath,
       baseline = commandLine.getOptionValue("baseline"),
       disableSanityInspections = disableSanity,
+      airGapped = airGapped,
       fixesStrategy = commandLine.fixesStrategy() ?: FixesStrategy.fromString(yamlConfig.fixesStrategy.uppercase()),
       runPromoInspections = runPromo,
       script = script,
