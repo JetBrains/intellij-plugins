@@ -118,12 +118,21 @@ class QodanaInspectionApplication(
     }
   }
 
-  private suspend fun waitForStatisticsSchemaUpdate() {
+  @VisibleForTesting
+  internal suspend fun waitForStatisticsSchemaUpdate(
+    updateSchema: suspend () -> Unit = {
+      // wait for scheduled updated to not accidentally trigger some race condition
+      service<StatisticsValidationUpdatedService>().updatedDeferred.join()
+      updateValidationRules()
+    },
+  ) {
+    if (config.airGapped) {
+      LOG.info("Air-gapped mode: skip the statistics schema update")
+      return
+    }
     try {
       withTimeout(1.minutes) {
-        // wait for scheduled updated to not accidentally trigger some race condition
-        service<StatisticsValidationUpdatedService>().updatedDeferred.join()
-        updateValidationRules()
+        updateSchema()
       }
     }
     catch (_: TimeoutCancellationException) {
