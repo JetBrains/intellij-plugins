@@ -112,7 +112,6 @@ jvm_library(
         "//plugins/JSIntentionPowerPack:javascript-intentions",
         "@community//libraries/kotlinx/serialization/core",
         "@community//libraries/kotlinx/serialization/json",
-        "@community//libraries/junit4",
         "@community//libraries/assertj-core",
         "@community//libraries/junit6",
         "@community//xml/xml-ui-common:ui-common",

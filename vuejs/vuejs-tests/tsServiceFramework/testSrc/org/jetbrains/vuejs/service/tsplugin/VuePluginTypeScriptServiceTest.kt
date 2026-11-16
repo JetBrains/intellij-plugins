@@ -1,7 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.service.tsplugin
 
-import com.intellij.lang.javascript.JSAbstractDocumentationTest
+import com.intellij.lang.javascript.JSDocumentationFixture
 import com.intellij.lang.javascript.modules.JSTempDirFixtureOptions
 import com.intellij.lang.typescript.service.TypeScriptServiceFixture.Companion.typeScriptServiceFixture
 import com.intellij.openapi.application.readActionBlocking
@@ -152,7 +152,7 @@ class VuePluginTypeScriptServiceTest {
   }
 
   private fun checkDoc() {
-    val actualDocText = timeoutRunBlocking { readActionBlocking { JSAbstractDocumentationTest.getQuickDocumentationText(vue.fixture) } }
+    val actualDocText = timeoutRunBlocking { readActionBlocking { JSDocumentationFixture.getQuickDocumentationText(vue.fixture) } }
                         ?: throw AssertionError("No documentation found")
     val expectedDocFilePath = "${vue.testDataPath}/${vue.getTestName(false)}.expected.html"
     val expectedDocText = File(expectedDocFilePath).readText()
