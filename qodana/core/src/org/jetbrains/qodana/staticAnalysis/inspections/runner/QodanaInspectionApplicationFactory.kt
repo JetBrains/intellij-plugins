@@ -14,13 +14,13 @@ import org.jetbrains.qodana.cloud.api.message
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_AIR_GAPPED_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader.defaultConfigPath
-import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.PrintWriter
@@ -143,7 +143,7 @@ class QodanaInspectionApplicationFactory {
     }?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
-    val airGapped = yamlConfig.airGapped || qodanaEnv().QODANA_AIR_GAPPED.value.equals("true", ignoreCase = true)
+    val airGapped = yamlConfig.airGapped || System.getProperty(QODANA_AIR_GAPPED_PROPERTY).toBoolean()
     val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.let {
       it.toIntOrNull() ?: throw QodanaConfigurationException("Option --fail-threshold must be an integer, but was '$it'")
     } ?: yamlConfig.failThreshold

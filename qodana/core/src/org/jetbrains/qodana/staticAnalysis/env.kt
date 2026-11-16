@@ -57,13 +57,6 @@ interface QodanaEnv {
    * `NO_BASELINE`. A run that sees any value must not ask Qodana Cloud for a baseline itself.
    */
   val QODANA_BASELINE_SOURCE: KeyAndValue
-
-  /**
-   * Turns on air-gapped mode when the value is `true`, case-insensitive.
-   * Qodana CLI sets it from the option `--air-gapped`.
-   * See [org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig.airGapped].
-   */
-  val QODANA_AIR_GAPPED: KeyAndValue
 }
 
 private class QodanaEnvImpl : QodanaEnv {
@@ -80,7 +73,6 @@ private class QodanaEnvImpl : QodanaEnv {
   override val QODANA_ENV by env()
   override val QODANA_DISABLE_COLLECT_CONTEXT by env()
   override val QODANA_BASELINE_SOURCE by env()
-  override val QODANA_AIR_GAPPED by env()
 
   private fun env(): ReadOnlyProperty<Any?, QodanaEnv.KeyAndValue> = ReadOnlyProperty { _, property ->
     val key = property.name
@@ -103,7 +95,6 @@ abstract class QodanaEnvEmpty : QodanaEnv {
   override val QODANA_ENV by empty()
   override val QODANA_DISABLE_COLLECT_CONTEXT by empty()
   override val QODANA_BASELINE_SOURCE: QodanaEnv.KeyAndValue by empty()
-  override val QODANA_AIR_GAPPED: QodanaEnv.KeyAndValue by empty()
 
   protected fun value(value: String): ReadOnlyProperty<Any?, QodanaEnv.KeyAndValue> = ReadOnlyProperty { _, property ->
     val key = property.name
@@ -153,7 +144,6 @@ private class QodanaEnvServiceTestImpl : QodanaEnvService {
       override val QODANA_ENV by latestEnvWithValue { QODANA_ENV }
       override val QODANA_DISABLE_COLLECT_CONTEXT by latestEnvWithValue { QODANA_DISABLE_COLLECT_CONTEXT }
       override val QODANA_BASELINE_SOURCE by latestEnvWithValue { QODANA_BASELINE_SOURCE }
-      override val QODANA_AIR_GAPPED by latestEnvWithValue { QODANA_AIR_GAPPED }
     }
 
   private fun latestEnvWithValue(
