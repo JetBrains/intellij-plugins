@@ -37,6 +37,7 @@ class PreconfiguredRunContextFactory(
     if (getApplication().isHeadlessEnvironment) {
       ProfileDescriptionWriter().writeInspectionsReport(context)
     }
+    callQodanaWorkflowExtensions(QodanaWorkflowExtension::afterProfileLoaded, context)
     //Deprecated, kept for backwards compatibility with old plugins
     callQodanaWorkflowExtensions(QodanaWorkflowExtension::beforeLaunch, context)
     return context
