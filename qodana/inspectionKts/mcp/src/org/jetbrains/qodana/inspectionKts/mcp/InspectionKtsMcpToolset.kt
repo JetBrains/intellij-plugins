@@ -6,6 +6,9 @@ import com.intellij.mcpserver.McpToolset
 import com.intellij.mcpserver.annotations.McpDescription
 import com.intellij.mcpserver.annotations.McpTool
 import com.intellij.mcpserver.project
+import com.intellij.openapi.extensions.ExtensionNotApplicableException
+import com.intellij.util.PlatformUtils
+import com.intellij.util.application
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.serialization.Serializable
 import org.jetbrains.qodana.inspectionKts.mcp.impl.DynamicInspectionRunnerParallel.Companion.DEFAULT_TIMEOUT_MINUTES
@@ -23,6 +26,12 @@ import kotlin.time.Duration.Companion.minutes
  * Provides tools for generating PSI trees, fetching inspection examples, and retrieving API documentation.
  */
 class InspectionKtsMcpToolset : McpToolset {
+  init {
+    if (!PlatformUtils.isQodana()) {
+      throw ExtensionNotApplicableException.create()
+    }
+  }
+
   override fun displayName(): String = InspectionKtsMcpBundle.message("toolset.display.name.inspectionKts")
 
   override fun displayDescription(toolName: String): String? = InspectionKtsMcpBundle.message("tool.description.$toolName")
