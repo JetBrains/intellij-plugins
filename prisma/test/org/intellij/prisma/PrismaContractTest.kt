@@ -1,56 +1,43 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma
 
-import com.intellij.testFramework.common.timeoutRunBlocking
-import com.intellij.testFramework.junit5.TestApplication
-import org.assertj.core.api.Assertions.assertThat
-import org.intellij.prisma.completion.PrismaCompletionFixture
-import org.intellij.prisma.completion.prismaCompletionFixture
-import org.intellij.prisma.completion.strings
+import org.intellij.prisma.completion.PrismaCompletionTestBase
 import org.intellij.prisma.lang.isPrismaContractText
-import org.junit.jupiter.api.Test
 
-@TestApplication
-class PrismaContractTest {
-  private val prisma: PrismaCompletionFixture by prismaCompletionFixture("contract")
-
-  @Test
+class PrismaContractTest : PrismaCompletionTestBase("contract") {
   fun testDirective() {
-    assertThat(isPrismaContractText("// use prisma-8\nmodel M {}")).isTrue()
-    assertThat(isPrismaContractText("// use prisma-next")).isTrue()
-    assertThat(isPrismaContractText("//use  prisma-8 ")).isTrue()
-    assertThat(isPrismaContractText("\n\n  // use prisma-8\n")).isTrue()
+    assertTrue(isPrismaContractText("// use prisma-8\nmodel M {}"))
+    assertTrue(isPrismaContractText("// use prisma-next"))
+    assertTrue(isPrismaContractText("//use  prisma-8 "))
+    assertTrue(isPrismaContractText("\n\n  // use prisma-8\n"))
 
-    assertThat(isPrismaContractText("/// use prisma-8")).isFalse()
-    assertThat(isPrismaContractText("// use prisma-80")).isFalse()
-    assertThat(isPrismaContractText("// use prisma-7")).isFalse()
-    assertThat(isPrismaContractText("model M {}\n// use prisma-8")).isFalse()
+    assertFalse(isPrismaContractText("/// use prisma-8"))
+    assertFalse(isPrismaContractText("// use prisma-80"))
+    assertFalse(isPrismaContractText("// use prisma-7"))
+    assertFalse(isPrismaContractText("model M {}\n// use prisma-8"))
   }
 
-  @Test
-  fun testNoPrisma7Keywords(): Unit = timeoutRunBlocking {
-    assertThat(complete("// use prisma-8\nmodel M {}\n<caret>"))
-      .contains("model", "enum")
-      .doesNotContain("datasource", "generator")
+  fun testNoPrisma7Keywords() {
+    val lookupStrings = complete("// use prisma-8\nmodel M {}\n<caret>")
+    assertContainsElements(lookupStrings, "model", "enum")
+    assertDoesntContain(lookupStrings, "datasource", "generator")
   }
 
-  @Test
-  fun testNoNativeTypeAttributes(): Unit = timeoutRunBlocking {
+  fun testNoNativeTypeAttributes() {
     addDatasource()
-    assertThat(complete("model M {\n  id String <caret>\n}")).contains("@db")
-    assertThat(complete("// use prisma-8\nmodel M {\n  id String <caret>\n}")).doesNotContain("@db")
+    assertContainsElements(complete("model M {\n  id String <caret>\n}"), "@db")
+    assertDoesntContain(complete("// use prisma-8\nmodel M {\n  id String <caret>\n}"), "@db")
   }
 
-  @Test
-  fun testNoNativeTypes(): Unit = timeoutRunBlocking {
+  fun testNoNativeTypes() {
     addDatasource()
-    assertThat(complete("model M {\n  id String @db.<caret>\n}")).contains("VarChar")
-    assertThat(complete("// use prisma-8\nmodel M {\n  id String @db.<caret>\n}")).isEmpty()
+    assertContainsElements(complete("model M {\n  id String @db.<caret>\n}"), "VarChar")
+    assertEmpty(complete("// use prisma-8\nmodel M {\n  id String @db.<caret>\n}"))
   }
 
   private fun addDatasource() {
-    prisma.fixture.addFileToProject("datasource.prisma", "datasource db {\n  provider = \"postgresql\"\n}")
+    myFixture.addFileToProject("datasource.prisma", "datasource db {\n  provider = \"postgresql\"\n}")
   }
 
-  private suspend fun complete(text: String): List<String> = prisma.getLookupElements(text).strings
+  private fun complete(text: String): List<String> = getLookupElements(text).strings
 }
