@@ -33,6 +33,7 @@ data class QodanaYamlConfig(
   val onlyDirectory: Path? = null,
   val rootJavaProjects: List<Path> = emptyList(),
   val mavenSettingsPath: Path? = null,
+  val airGapped: Boolean = false,
 
   // deprecated, but used as anySeverity
   val failThreshold: Int? = null,

@@ -6,6 +6,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import java.nio.file.Path
@@ -384,6 +385,32 @@ class QodanaConfigTest {
       version: "1.0"
       """.trimIndent())
     assertEquals(null, config.runPromoInspections)
+  }
+
+  @Test
+  fun `yaml airGapped`() {
+    val config = load("""
+      version: "1.0"
+      airGapped: true
+      """.trimIndent())
+    assertEquals(true, config.airGapped)
+  }
+
+  @Test
+  fun `yaml default airGapped`() {
+    val config = load("""
+      version: "1.0"
+      """.trimIndent())
+    assertEquals(false, config.airGapped)
+  }
+
+  @Test
+  fun `yaml airGapped with not a boolean fails`() {
+    val result = QodanaYamlReader.parse("""
+      version: "1.0"
+      airGapped: maybe
+      """.trimIndent())
+    assertTrue(result.isFailure)
   }
 
   @Test
