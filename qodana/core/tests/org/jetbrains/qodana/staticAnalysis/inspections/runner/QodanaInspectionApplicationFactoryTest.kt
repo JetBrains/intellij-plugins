@@ -4,7 +4,6 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_AIR_GAPPED_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
@@ -418,41 +417,30 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
 
   @Test
   fun `airGapped is off without sources`(): Unit = runBlocking {
-    assertFalse(airGappedConfig(yaml = null, property = null))
+    assertFalse(airGappedConfig(yaml = null, option = false))
   }
 
   @Test
   fun `airGapped from yaml`(): Unit = runBlocking {
-    assertTrue(airGappedConfig(yaml = true, property = null))
+    assertTrue(airGappedConfig(yaml = true, option = false))
   }
 
   @Test
-  fun `airGapped from the system property ignores case`(): Unit = runBlocking {
-    assertTrue(airGappedConfig(yaml = null, property = "TRUE"))
+  fun `airGapped from the option`(): Unit = runBlocking {
+    assertTrue(airGappedConfig(yaml = null, option = true))
   }
 
   @Test
-  fun `airGapped system property with not true value is off`(): Unit = runBlocking {
-    assertFalse(airGappedConfig(yaml = null, property = "1"))
+  fun `airGapped option turns on the mode also with yaml false`(): Unit = runBlocking {
+    assertTrue(airGappedConfig(yaml = false, option = true))
   }
 
-  @Test
-  fun `airGapped system property false does not turn off yaml true`(): Unit = runBlocking {
-    assertTrue(airGappedConfig(yaml = true, property = "false"))
-  }
-
-  /** Builds the application with an optional `airGapped` key in qodana.yaml and an optional value of [QODANA_AIR_GAPPED_PROPERTY]. */
-  private suspend fun airGappedConfig(yaml: Boolean?, property: String?): Boolean {
+  /** Builds the application with an optional `airGapped` key in qodana.yaml and an optional `--air-gapped` option. */
+  private suspend fun airGappedConfig(yaml: Boolean?, option: Boolean): Boolean {
     val yamlPath = Paths.get(project.basePath!!).createDirectories().resolve("airgapped.qodana.yaml")
     yamlPath.writeText(if (yaml == null) "version: \"1.0\"" else "version: \"1.0\"\nairGapped: $yaml")
-    val previous = System.getProperty(QODANA_AIR_GAPPED_PROPERTY)
-    if (property == null) System.clearProperty(QODANA_AIR_GAPPED_PROPERTY) else System.setProperty(QODANA_AIR_GAPPED_PROPERTY, property)
-    try {
-      val app = QodanaInspectionApplicationFactory().buildApplication(listOf("--config", "airgapped.qodana.yaml", "${project.basePath}", "/OUT_PATH"))!!
-      return app.config.airGapped
-    }
-    finally {
-      if (previous == null) System.clearProperty(QODANA_AIR_GAPPED_PROPERTY) else System.setProperty(QODANA_AIR_GAPPED_PROPERTY, previous)
-    }
+    val options = if (option) listOf("--air-gapped") else emptyList()
+    val app = QodanaInspectionApplicationFactory().buildApplication(options + listOf("--config", "airgapped.qodana.yaml", "${project.basePath}", "/OUT_PATH"))!!
+    return app.config.airGapped
   }
 }
