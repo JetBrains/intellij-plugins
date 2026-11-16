@@ -7,6 +7,7 @@ import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
@@ -22,6 +23,9 @@ import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.FileTime
+import kotlin.io.path.fileSize
+import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
 
@@ -39,10 +43,11 @@ private suspend fun readBaselineReport(
   if (baselineFile.notExists()) {
     return null
   }
+  if (!readResults) BaselineHeaderCache.get(baselineFile)?.let { return it }
   try {
     return runInterruptible(StaticAnalysisDispatchers.IO) {
       SarifUtil.readReport(baselineFile, readResults)
-    }
+    }.also { BaselineHeaderCache.put(baselineFile, it) }
   }
   catch (e: JsonSyntaxException) {
     if (e.cause is IOException) {
@@ -50,6 +55,32 @@ private suspend fun readBaselineReport(
       throw JsonSyntaxException("Cannot read baseline report from '${baselineFile}': ${e.cause}")
     }
     throw JsonSyntaxException("Cannot read baseline report from '${baselineFile}': $e", e)
+  }
+}
+
+/**
+ * Keeps the runs of the baseline without their results.
+ *
+ * The analysis reads the whole baseline to compare, and then reads it again without results for the rule names
+ * of the summary; the second read still parses the whole file, half a gigabyte for large projects.
+ * An entry is valid while the size and modification time of the file stay the same.
+ */
+private object BaselineHeaderCache {
+  private class Entry(val path: Path, val size: Long, val modified: FileTime, val header: SarifReport)
+
+  @Volatile
+  private var entry: Entry? = null
+
+  fun get(path: Path): SarifReport? {
+    val cached = entry ?: return null
+    return cached.header.takeIf { cached.path == path && cached.size == path.fileSize() && cached.modified == path.getLastModifiedTime() }
+  }
+
+  fun put(path: Path, report: SarifReport) {
+    val runs = report.runs ?: return
+    // Only the tool and the properties of a run are read without results; share them instead of copying.
+    val header = SarifReport().withRuns(runs.map { Run().withTool(it.tool).withProperties(it.properties) })
+    entry = Entry(path, path.fileSize(), path.getLastModifiedTime(), header)
   }
 }
 

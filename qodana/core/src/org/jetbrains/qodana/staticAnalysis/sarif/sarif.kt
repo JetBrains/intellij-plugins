@@ -43,7 +43,6 @@ import com.jetbrains.qodana.sarif.model.Tool
 import com.jetbrains.qodana.sarif.model.ToolComponent
 import com.jetbrains.qodana.sarif.model.ToolComponentReference
 import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.getQodanaProductName
@@ -393,23 +392,22 @@ internal suspend fun getPhysicalLocation(problem: CommonDescriptor,
   val artifactLocation = getArtifactLocation(problem.file)
   val physicalLocation = PhysicalLocation().withArtifactLocation(artifactLocation)
 
-  val (text, virtualFile) = withContext(StaticAnalysisDispatchers.IO) {
-    val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(problem.file))
-    val text = loadTextFromVirtualFile(virtualFile)
-    text to virtualFile
-  }
+  // No switch to the I/O dispatcher: the file and its cached text are found in memory, and the switch for every problem
+  // cost more than the conversion. A text is read once per file, from the content storage of the VFS.
+  val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(problem.file))
+  val fileText = qodanaFileText(virtualFile)
   val fileLanguage = LanguageUtil.getFileLanguage(virtualFile)
-  if (text != null) {
+  if (fileText != null) {
     // the problem is a "whole file problem" in two cases:
     // the whole file reported or 0 range in start of the file
     // if the whole file is reported as a problem, do not put any region/context region
     // for "whole file" problems don't provide the code region
     val problemIsFile = problem.line == 1 && problem.column == 0 &&
-                        (problem.length == 0 || problem.length == text.length)
+                        (problem.length == 0 || problem.length == fileText.text.length)
     if (!problemIsFile) {
       physicalLocation
-        .withRegion(getRegion(problem, text))
-        .withContextRegion(getContextRegion(problem, text, linesMargin, fileLanguage))
+        .withRegion(getRegionByOffset(problem, fileText.text, getProblemOffset(fileText, problem)))
+        .withContextRegion(getContextRegion(problem, fileText, linesMargin, fileLanguage))
     }
   }
   return physicalLocation

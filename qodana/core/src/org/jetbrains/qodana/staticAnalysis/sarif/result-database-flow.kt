@@ -12,6 +12,7 @@ import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.VULNERABLE_LIBRARIES_INSPECTION_ID
+import java.util.TreeMap
 
 private val LOG = logger<QodanaToolResultDatabase>()
 private val GSON = SarifUtil.createGson()
@@ -33,20 +34,24 @@ fun QodanaToolResultDatabase.resultsFlowByGroup(inspectionGroup: String): Flow<R
   }
 
 private fun QodanaToolResultDatabase.uniqueResultsFlow(inspectionGroup: String): Flow<Result> = flow {
+  // The query returns rows in table order; group them by inspection and hash here, in the order the old ORDER BY gave.
+  // Each row is parsed right away, so no JSON string is kept for the whole read.
+  val resultsByKey = TreeMap<ResultKey, MutableList<Result>>()
   select(inspectionGroup).use { query ->
-    val sameHashResults = mutableListOf<String>()
-    var previousHash = ""
-    for (resultSet in query.executeQuery()) {
-      if (previousHash != resultSet.hash && sameHashResults.any()) {
-        processSameHash(sameHashResults)?.let { emit(it) }
-        sameHashResults.clear()
-      }
-      previousHash = resultSet.hash
-      sameHashResults.add(resultSet.json)
+    for (record in query.executeQuery()) {
+      val result = parseResult(record.json) ?: continue
+      resultsByKey.getOrPut(ResultKey(record.inspectionId, record.hash)) { ArrayList(1) }.add(result)
     }
+  }
+  for (sameHashResults in resultsByKey.values) {
     processSameHash(sameHashResults)?.let { emit(it) }
   }
 }.flowOn(StaticAnalysisDispatchers.IO)
+
+/** Inspection ids and fingerprints are ASCII, so this order is the binary order of SQLite. */
+private data class ResultKey(val inspection: String, val hash: String) : Comparable<ResultKey> {
+  override fun compareTo(other: ResultKey): Int = compareValuesBy(this, other, ResultKey::inspection, ResultKey::hash)
+}
 
 private fun QodanaToolResultDatabase.updateRelatedLocations(result: Result) {
   val rootHash = result.getOrAssignProperties()[RELATED_PROBLEMS_ROOT_HASH_PROP] as? String ?: return
@@ -61,8 +66,7 @@ private fun QodanaToolResultDatabase.updateRelatedLocations(result: Result) {
   }
 }
 
-private fun processSameHash(resultJsons: List<String>): Result? {
-  val results = resultJsons.parseResults()
+private fun processSameHash(results: List<Result>): Result? {
   if (results.isEmpty() || results.size == 1) return results.firstOrNull()
 
   val uniqueResults = results.toSet()
@@ -85,13 +89,13 @@ private fun processSameHash(resultJsons: List<String>): Result? {
   return resultToSubmit
 }
 
-fun List<String>.parseResults(): List<Result> {
-    return this.mapNotNull { json ->
-        try {
-            GSON.fromJson(json, Result::class.java)
-        } catch (e: JsonSyntaxException) {
-          LOG.error("Error of reading results in database '$json'", e)
-          null
-        }
-    }
-}
+fun List<String>.parseResults(): List<Result> = mapNotNull(::parseResult)
+
+private fun parseResult(json: String): Result? =
+  try {
+    GSON.fromJson(json, Result::class.java)
+  }
+  catch (e: JsonSyntaxException) {
+    LOG.error("Error of reading results in database '$json'", e)
+    null
+  }

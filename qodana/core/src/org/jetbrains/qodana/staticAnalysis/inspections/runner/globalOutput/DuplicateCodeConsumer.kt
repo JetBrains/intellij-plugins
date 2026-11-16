@@ -6,14 +6,16 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.Message
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withContext
 import org.jdom.Element
+import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
@@ -22,6 +24,7 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.CommonDescriptor
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
+import org.jetbrains.qodana.staticAnalysis.sarif.qodanaFileText
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.fingerprintOf
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
@@ -63,18 +66,40 @@ class DuplicateCodeConsumer: GlobalOutputConsumer {
 
   private suspend fun consumeDuplicatedCodeXml(root: Element, database: QodanaToolResultDatabase, macroManager: PathMacroManager) {
     val message = Message().withText("Duplicated code").withMarkdown("Duplicated code")
-    for (problem in root.getChildren("problem")) {
+    val rows = root.getChildren("problem").mapNotNull { problem ->
       try {
         macroManager.collapsePathsRecursively(problem)
         val sarif = ElementToSarifConverter.convertFromXmlFormat(problem, macroManager, 0, message) // no fixes here
         val problemLocation = ElementToSarifConverter.commonDescriptor(problem)
         val print = requireNotNull(sarif.fingerprintOf(BaselineEqualityV1)) { "Fingerprints not generated" }
-        database.insertDuplicate(problemLocation.file,
-                                 problemLocation.line ?: 0,
-                                 findOffset(macroManager, problemLocation.file, problemLocation) ?: 0,
-                                 0,
-                                 print,
-                                 gson.toJson(sarif, Result::class.java))
+        DuplicateRow(problemLocation.file,
+                     problemLocation.line ?: 0,
+                     findOffset(macroManager, problemLocation.file, problemLocation) ?: 0,
+                     print,
+                     gson.toJson(sarif, Result::class.java))
+      }
+      catch (e: CancellationException) {
+        throw e
+      }
+      catch (e: Exception) {
+        LOG.warn(e)
+        null
+      }
+    }
+    if (rows.isEmpty()) return
+    // One transaction: outside of it SQLite commits each insert on its own.
+    withContext(StaticAnalysisDispatchers.IO) {
+      try {
+        database.inTransaction {
+          for (row in rows) {
+            try {
+              database.insertDuplicate(row.file, row.line, row.start, 0, row.hash, row.json)
+            }
+            catch (e: Exception) {
+              LOG.warn(e)
+            }
+          }
+        }
       }
       catch (e: Exception) {
         LOG.warn(e)
@@ -82,14 +107,15 @@ class DuplicateCodeConsumer: GlobalOutputConsumer {
     }
   }
 
+  private class DuplicateRow(val file: String, val line: Int, val start: Int, val hash: String, val json: String)
+
   private fun consumeDuplicatedCodeAggregateXml(root: Element, consumer: (List<Problem>, String) -> Unit) {
     consumer(root.getChildren("duplicate").map { DuplicatesProblem(it) }, "DuplicatedCode")
   }
 
   private fun findOffset(macroManager: PathMacroManager, file: String, descriptor: CommonDescriptor): Int? {
     val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPathNonNull(file))
-    if (virtualFile == null || virtualFile.isDirectory) return null
-    val text = VfsUtil.loadText(virtualFile)
+    val text = qodanaFileText(virtualFile) ?: return null
     return getProblemOffset(text, descriptor)
   }
 }

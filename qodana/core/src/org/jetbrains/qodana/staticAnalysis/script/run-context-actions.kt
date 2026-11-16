@@ -61,6 +61,25 @@ suspend fun QodanaRunContext.writeProjectDescriptionBeforeWork(projectStructureP
 }
 
 suspend fun QodanaRunContext.writeProjectDescriptionAfterWork(projectStructureParentPath: Path = config.outPath) {
+  val started = takeStartedProjectDescription(projectStructureParentPath)
+  if (started != null) {
+    started.join()
+    // A cancelled background run wrote nothing reliable; describe the project here, as without the early start.
+    if (!started.isCancelled) return started.await()
+  }
+  describeProjectAfterWork(projectStructureParentPath)
+}
+
+/**
+ * Starts the after-work describers right after the analysis, so that they run while the results are written and read.
+ * In Rider the project model dump alone takes tens of seconds on a 4-core agent.
+ * [writeProjectDescriptionAfterWork] then waits for them instead of starting them.
+ */
+fun QodanaRunContext.startProjectDescriptionAfterWork(projectStructureParentPath: Path = config.outPath) {
+  startProjectDescription(projectStructureParentPath) { describeProjectAfterWork(projectStructureParentPath) }
+}
+
+private suspend fun QodanaRunContext.describeProjectAfterWork(projectStructureParentPath: Path) {
   val projectStructure = projectStructureParentPath.resolve(InspectionApplicationBase.PROJECT_STRUCTURE_DIR)
   runInterruptible(StaticAnalysisDispatchers.IO) {
     projectStructure.toFile().mkdirs()

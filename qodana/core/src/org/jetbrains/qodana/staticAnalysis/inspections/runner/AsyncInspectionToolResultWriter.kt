@@ -11,7 +11,10 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.job
 import kotlinx.coroutines.joinAll
@@ -40,9 +43,13 @@ internal class AsyncInspectionToolResultWriter(
     scope.launch(StaticAnalysisDispatchers.IO, CoroutineStart.LAZY) {
       LOG.info("Async result writer started")
       for (problems in channel) {
-        for (problem in problems) {
-          writeProblem(problem, profileState)
+        // Producers such as Rider send one problem per message, so take whatever is already queued
+        // and write it in one transaction.
+        val batch = ArrayList(problems)
+        while (batch.size < MAX_BATCH_SIZE) {
+          batch.addAll(channel.tryReceive().getOrNull() ?: break)
         }
+        writeProblems(batch, profileState)
       }
     }
 
@@ -69,28 +76,59 @@ internal class AsyncInspectionToolResultWriter(
     scope.coroutineContext.job.cancelAndJoin()
   }
 
-  private suspend fun writeProblem(problem: Problem, profileState: QodanaProfile.QodanaProfileState) {
-    try {
-      val sarif = problem.getSarif(macroManager, database) ?: return
-      val inspectionGroup = profileState.getInspectionState(sarif.ruleId)!!.inspectionGroup.name
-      val fingerprint = requireNotNull(sarif.fingerprintOf(BaselineEqualityV1)) { "Fingerprints not generated" }
-      withContext(StaticAnalysisDispatchers.IO) {
-        database.insert(inspectionGroup,
-                        sarif.ruleId,
-                        fingerprint,
-                        gson.toJson(sarif, Result::class.java))
+  private class Row(val inspectionGroup: String, val ruleId: String, val fingerprint: String, val json: String, val relatedHashFrom: String?)
 
-        val hashFrom = problem.getRelatedProblemHashFrom()
-        if (hashFrom != null) {
-          database.insertRelatedProblem(hashFrom, gson.toJson(sarif, Result::class.java))
+  private suspend fun writeProblems(problems: List<Problem>, profileState: QodanaProfile.QodanaProfileState) {
+    // Conversion may read the database, so it runs before the transaction opens.
+    // It loads file texts and builds JSON, which takes longer than the insert, so it runs on several workers;
+    // the chunks keep their order, so the rows go to the database in the order the problems came.
+    val chunkSize = (problems.size + CONVERSION_PARALLELISM - 1) / CONVERSION_PARALLELISM
+    val rows = coroutineScope {
+      problems.chunked(chunkSize.coerceAtLeast(1))
+        .map { chunk -> async(StaticAnalysisDispatchers.Default) { chunk.mapNotNull { toRow(it, profileState) } } }
+        .awaitAll()
+        .flatten()
+    }
+    if (rows.isEmpty()) return
+    withContext(StaticAnalysisDispatchers.IO) {
+      // A failed BEGIN or COMMIT loses this batch only; the writer goes on with the next one.
+      try {
+        database.inTransaction {
+          for (row in rows) {
+            try {
+              database.insert(row.inspectionGroup, row.ruleId, row.fingerprint, row.json)
+              if (row.relatedHashFrom != null) {
+                database.insertRelatedProblem(row.relatedHashFrom, row.json)
+              }
+            }
+            catch (e: Exception) {
+              LOG.warn(e)
+            }
+          }
         }
       }
+      catch (e: Exception) {
+        LOG.warn(e)
+      }
+    }
+  }
+
+  private suspend fun toRow(problem: Problem, profileState: QodanaProfile.QodanaProfileState): Row? {
+    try {
+      val sarif = problem.getSarif(macroManager, database) ?: return null
+      val inspectionGroup = profileState.getInspectionState(sarif.ruleId)!!.inspectionGroup.name
+      val fingerprint = requireNotNull(sarif.fingerprintOf(BaselineEqualityV1)) { "Fingerprints not generated" }
+      return Row(inspectionGroup, sarif.ruleId, fingerprint, gson.toJson(sarif, Result::class.java), problem.getRelatedProblemHashFrom())
     }
     catch (e: CancellationException) {
       throw e
     }
-    catch(e: Exception) {
+    catch (e: Exception) {
       LOG.warn(e)
+      return null
     }
   }
 }
+
+private const val MAX_BATCH_SIZE = 1000
+private val CONVERSION_PARALLELISM = Runtime.getRuntime().availableProcessors().coerceIn(1, 4)
