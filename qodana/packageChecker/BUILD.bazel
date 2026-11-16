@@ -26,7 +26,6 @@ jvm_library(
         # do not sort,
         "@lib//:kotlin-stdlib",
         "//plugins/package-checker/core:packageChecker",
-        "@community//platform/analysis-api:analysis",
         "@community//platform/analysis-impl",
         "@community//platform/core-api:core",
         "//contrib/qodana",
