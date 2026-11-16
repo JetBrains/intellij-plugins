@@ -169,6 +169,26 @@ class QodanaPolyGeneratedSourcesFilterTest {
   }
 
   @Test
+  fun `a minified tail is minified`() {
+    assertTrue(hasMinifiedTail("function a(b,c){var d=b+c;return d}".repeat(400)))
+  }
+
+  @Test
+  fun `a formatted tail after a minified library is not minified`() {
+    val library = "function a(b,c){var d=b+c;return d}".repeat(400)
+    val handWritten = List(60) { "  var value$it = compute($it);" }.joinToString("\n")
+    assertFalse(hasMinifiedTail(library + "\n" + handWritten))
+  }
+
+  @Test
+  fun `template literals that split a minified bundle into short lines keep its tail minified`() {
+    // A bundle such as vue.global.prod.js or the monaco workers breaks its lines inside template literals.
+    // The start of the file decides by long lines; the tail decides by indentation and spacing only.
+    val bundle = "var t=`a\n`,u=`\n`+e;function f(x){return x+t+u}".repeat(200)
+    assertTrue(hasMinifiedTail(bundle))
+  }
+
+  @Test
   fun `a string keeps its escaped quote`() {
     assertTrue(isMinifiedText("var s='it\\'s';function f(x){return x}".repeat(60)))
   }

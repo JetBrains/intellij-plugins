@@ -28,6 +28,7 @@ private const val SAMPLE_LIMIT = 4096  // JSMinifiedFileGistService.INITIAL_FILE
 private const val MIN_SIZE = 150  // MinifiedFilesUtil.MIN_SIZE
 private const val MIN_LONG_LINE = 120
 private const val MAX_OFFSET = 2048  // MinifiedFilesUtil.MAX_OFFSET
+private const val TAIL_LENGTH = 400  // MinifiedFilesUtil.COUNT_OF_CONSIDERING_CHARACTERS_FROM_END_OF_FILE
 /**
  * Minified code must space a keyword from its operand, and a short token pushes that cost up.
  * `new A;` repeated reaches 0.167, while a formatted one-line text starts at 0.25.
@@ -77,7 +78,33 @@ internal fun hasGoGeneratedMarker(text: CharSequence): Boolean {
  * A bundle can indent a later chunk, so the cap keeps that chunk out of the judgment.
  * Requirement 4 rejects a formatted text that keeps one long line, where the first three see nothing wrong.
  */
-internal fun isMinifiedText(text: CharSequence): Boolean {
+internal fun isMinifiedText(text: CharSequence): Boolean = with(scanCode(text)) {
+  !hasEarlyGap && lines > 0 && code >= MIN_SIZE &&
+  spaceRatio <= MAX_SPACE_RATIO && longLines * 2 >= lines
+}
+
+/**
+ * Reports whether the end of [text] is still minified, the way `MinifiedFilesUtil` checks the end of a file.
+ *
+ * It catches a minified library followed by formatted code, which [isMinifiedText] on the start of the file cannot see.
+ * Only requirements 3 and 4 apply to the last [TAIL_LENGTH] chars: formatted code is indented, while a minified bundle
+ * is not. Requirement 2 does not apply, because a template literal breaks a minified line into short lines and the line
+ * scanner sees those as lines of their own.
+ */
+internal fun hasMinifiedTail(text: CharSequence): Boolean {
+  val startIndex = maxOf(0, text.length - TAIL_LENGTH)
+  val tailText = text.subSequence(startIndex, text.length)
+  return with(scanCode(tailText)) {
+    !hasEarlyGap &&
+    spaceRatio <= MAX_SPACE_RATIO
+  }
+}
+
+internal data class CodeMetrics(val code: Int, val spaces: Int, val lines: Int, val longLines: Int, val hasEarlyGap: Boolean) {
+  val spaceRatio: Double get() = if (code + spaces == 0) 0.0 else spaces.toDouble() / (code + spaces)
+}
+
+internal fun scanCode(text: CharSequence): CodeMetrics {
   val scanner = CodeLineScanner()
   var code = 0
   var spaces = 0
@@ -87,16 +114,13 @@ internal fun isMinifiedText(text: CharSequence): Boolean {
   for (raw in text.lineSequence()) {
     val line = scanner.scan(raw)
     if (line.code == 0) continue
-    if (line.widestGap > 1 && code < MAX_OFFSET) return false
+    if (line.widestGap > 1 && code < MAX_OFFSET) return CodeMetrics(code, spaces, lines, longLines, hasEarlyGap = true)
     code += line.code
     spaces += line.spaces
     lines++
     if (line.code >= MIN_LONG_LINE) longLines++
   }
-
-  if (lines == 0 || code < MIN_SIZE) return false
-  if (spaces.toDouble() / (code + spaces) > MAX_SPACE_RATIO) return false
-  return longLines * 2 >= lines
+  return CodeMetrics(code, spaces, lines, longLines, hasEarlyGap = false)
 }
 
 /**
@@ -131,7 +155,7 @@ class QodanaPolyGeneratedSourcesFilter : GeneratedSourcesFilter() {
   private fun isMinifiedFile(file: VirtualFile): Boolean {
     if (!isMinifiedText(readText(file, SAMPLE_LIMIT))) return false
     if (SingleRootFileViewProvider.isTooLargeForContentLoading(file)) return true
-    return isMinifiedText(readText(file, limit = null))
+    return hasMinifiedTail(readText(file, limit = null))
   }
 
   /**
