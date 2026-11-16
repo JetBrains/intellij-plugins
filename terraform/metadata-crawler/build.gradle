@@ -91,6 +91,9 @@ tasks.register('createContainer', DockerCreateContainer) {
   envVars.put('TERRAFORM_REGISTRY_HOST', System.getenv('TERRAFORM_REGISTRY_HOST') ?: 'https://registry.terraform.io')
   envVars.put('DOWNLOADS_LIMIT_FOR_PROVIDER', System.getenv('DOWNLOADS_LIMIT_FOR_PROVIDER') ?: '50000')
   envVars.put('CLEAN_DOWNLOADED_DATA', System.getenv('CLEAN_DOWNLOADED_DATA') ?: 'true')
+  envVars.put('REPO_URL', repositoryUrl)
+  envVars.put('ARTIFACT_GROUP', artifactGroup)
+  if (System.getenv('PREVIOUS_METADATA_VERSION')) envVars.put('PREVIOUS_METADATA_VERSION', System.getenv('PREVIOUS_METADATA_VERSION'))
   hostConfig.getBinds().put("$metadataPath", "/opt/terraform-metadata/build/libs")
   hostConfig.getBinds().put("$logPath", "/opt/terraform-metadata/plugins-meta")
   hostConfig.memory = 4096L * 1024 * 1024

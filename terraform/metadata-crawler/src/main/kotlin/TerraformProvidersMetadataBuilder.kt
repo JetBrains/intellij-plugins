@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.File
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.URI
 import java.net.URLDecoder
@@ -17,17 +18,23 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.zip.ZipInputStream
 
 object TerraformProvidersMetadataBuilder {
 
   private val objectMapper: ObjectMapper = ObjectMapper()
 
-  private val httpClient: HttpClient = HttpClient.newBuilder().build()
+  private val httpClient: HttpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build()
 
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
   private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 50_000
   private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
   private val maxSchemaSize = System.getenv("MAX_SCHEMA_SIZE")?.toLong() ?: (20L * 1024 * 1024)  // 20 MB by default
+  private val metadataRepoUrl = System.getenv("REPO_URL") ?: "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+  private val metadataGroup = System.getenv("ARTIFACT_GROUP") ?: "org.intellij.plugins.hcl.terraform"
+  private val previousMetadataVersion: String? = System.getenv("PREVIOUS_METADATA_VERSION")
+
+  private const val MAX_ATTEMPTS = 5
 
   private val logger = LoggerFactory.getLogger(TerraformProvidersMetadataBuilder::class.java.simpleName)
 
@@ -35,40 +42,47 @@ object TerraformProvidersMetadataBuilder {
   private val failedProviders = AtomicInteger(0)
   private val skippedProviders = AtomicInteger(0)
 
+  /** Repeats the request after a 429 or 5xx response, with a longer pause after each attempt. */
   private fun getQuery(httpQuery: String): HttpResponse<String> {
     val httpRequest =
       HttpRequest.newBuilder().uri(
         URI(httpQuery)
       ).GET().build()
-    return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
+    var attempt = 1
+    while (true) {
+      val response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
+      val status = response.statusCode()
+      if (status != 429 && status < 500 || attempt == MAX_ATTEMPTS) return response
+      logger.warn("Status $status for $httpQuery, attempt $attempt of $MAX_ATTEMPTS")
+      Thread.sleep(attempt * 10_000L)
+      attempt++
+    }
   }
 
   private fun String.urlDecode(): String = URLDecoder.decode(this, StandardCharsets.UTF_8)
 
-  private fun getProvidersDataFromPages(): Sequence<JsonNode> =
-    getProvidersByTier(Tier.OFFICIAL) +
-    getProvidersByTier(Tier.PARTNER) +
-    getProvidersByTier(Tier.COMMUNITY)
-
-  private fun getProvidersByTier(tier: Tier): Sequence<JsonNode> {
-    logger.info("Loading providers for tier=$tier ...")
-    return sequence {
-      var httpResponse = getQuery("${terraformRegistryHost}/v2/providers?filter[tier]=$tier&sort=-downloads&page[size]=100")
-      do {
-        val jsonResponse = objectMapper.readTree(httpResponse.body())
-        val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
-        val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")?.asLong()
-        logger.info("Loaded tier=$tier page $page of $pageTotal")
-        when (val responseData = jsonResponse["data"]) {
-          is ObjectNode -> yield(responseData)
-          is ArrayNode -> yieldAll(responseData.elements())
-        }
-        val next = jsonResponse.get("links")?.get("next")?.takeIf { !it.isNull }?.asText()?.urlDecode()
-        if (next != null) httpResponse = getQuery("${terraformRegistryHost}${next}")
+  /**
+   * Loads the providers of all tiers, because the registry can add a tier.
+   * The page order can change during the load. Then a provider can come twice, and the function drops the copy.
+   */
+  private fun getProvidersDataFromPages(): List<JsonNode> = sequence {
+    logger.info("Loading providers ...")
+    var httpResponse = getQuery("${terraformRegistryHost}/v2/providers?sort=-downloads&page[size]=100")
+    do {
+      check(httpResponse.statusCode() == 200) { "Failed to load providers from ${httpResponse.uri()}, status=${httpResponse.statusCode()}" }
+      val jsonResponse = objectMapper.readTree(httpResponse.body())
+      val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
+      val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")?.asLong()
+      logger.info("Loaded page $page of $pageTotal")
+      when (val responseData = jsonResponse["data"]) {
+        is ObjectNode -> yield(responseData)
+        is ArrayNode -> yieldAll(responseData.elements())
       }
-      while (next != null)
+      val next = jsonResponse.get("links")?.get("next")?.takeIf { !it.isNull }?.asText()?.urlDecode()
+      if (next != null) httpResponse = getQuery("${terraformRegistryHost}${next}")
     }
-  }
+    while (next != null)
+  }.distinctBy { it.fullName() }.toList()
 
   @JvmStatic
   fun main(args: Array<String>) {
@@ -79,9 +93,15 @@ object TerraformProvidersMetadataBuilder {
 
     val outputDir = File("plugins-meta").apply { mkdirs() }
     val allOut = File(outputDir, "allout.json")
-    val officialProviders = loadOfficialProvidersList()
+    val droppedProviders = loadResourceList("dropped-providers.list")
+    val requiredProviders = loadResourceList("official-providers.list").apply {
+      addAll(loadPreviousProviders())
+      removeAll(droppedProviders)
+    }
+    // The crawler tries a dropped provider as a required one, but its failure does not stop the run.
+    val wantedProviders = requiredProviders + droppedProviders
     if (!allOut.exists()) {
-      objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut, getProvidersDataFromPages().asIterable())
+      objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut, getProvidersDataFromPages())
     }
     logger.info("Providers from $terraformRegistryHost are loaded to $allOut")
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
@@ -93,15 +113,26 @@ object TerraformProvidersMetadataBuilder {
                                       .put("namespace", "terraform")
                                       .put("tier", "${Tier.BUILTIN}"))
     }
-    val providerVendorsTier = listOf(Tier.OFFICIAL, Tier.PARTNER).map { it.toString() }
+    val listedProviders = objectMapper.readTree(allOut).elements().asSequence().toList()
+    val listedNames = listedProviders.mapTo(HashSet()) { it.fullName() } + buildInProvider.fullName()
+    val notListedProviders = wantedProviders.filter { it !in listedNames }.mapNotNull { name ->
+      val data = lookUpProvider(name)
+      if (data == null) {
+        logger.warn("Provider $name is not in the registry anymore, dropping it")
+        requiredProviders.remove(name)
+      }
+      data
+    }
     val mostUsefulProviders = sequenceOf<JsonNode>(buildInProvider) +
-                              objectMapper.readTree(allOut).elements().asSequence()
+                              listedProviders.asSequence()
                                 .filter { providerData ->
                                   val attributes = providerData["attributes"]
                                   val unlisted = attributes["unlisted"].asBoolean()
-                                  !unlisted && (providerVendorsTier.contains(attributes["tier"].asText())
+                                  providerData.fullName() in wantedProviders ||
+                                  !unlisted && (attributes["tier"].asText() != "${Tier.COMMUNITY}"
                                                 || attributes["downloads"].asLong() >= downloadsLimitForProvider)
-                                }
+                                } +
+                              notListedProviders
 
     val generatedJsonFileNames = File(File(outputDir, "resources/model").apply { mkdirs() }, "providers.list")
     mostUsefulProviders.forEach { data ->
@@ -109,14 +140,18 @@ object TerraformProvidersMetadataBuilder {
 
       val name = data["attributes"]["full-name"].asText()
       logger.info("Processing: $name")
-      officialProviders.remove(name)
-      val file = buildProviderMetadata(data, version, outputDir)
+      val file = buildProviderMetadata(data, version, outputDir, required = data.fullName() in wantedProviders)
       if (file.exists()) {
         generatedJsonFileNames.appendText("$name\n")
+        requiredProviders.remove(data.fullName())
+        if (data.fullName() in droppedProviders) {
+          logger.warn("Dropped provider $name builds again")
+          println("##teamcity[message text='Dropped provider $name builds again, remove it from dropped-providers.list' status='WARNING']")
+        }
       }
     }
-    if (officialProviders.isNotEmpty()) {
-      throw IllegalStateException("Not all official providers are loaded. Missing providers: ${officialProviders.joinToString()}")
+    if (requiredProviders.isNotEmpty()) {
+      throw IllegalStateException("Not all required providers are built, see plugins-meta/failed. Missing providers: ${requiredProviders.joinToString()}")
     }
     if (cleanDownloadedData) {
       logger.info("Deleting data about providers from file: $allOut")
@@ -125,16 +160,56 @@ object TerraformProvidersMetadataBuilder {
     logger.info("Providing processing finished, processed $totalProviders providers, failed: $failedProviders, skipped: $skippedProviders")
   }
 
-  private fun loadOfficialProvidersList(): MutableSet<String> {
-    val resource = TerraformProvidersMetadataBuilder::class.java.getResourceAsStream("/official-providers.list")
-    return resource?.use { inputStream ->
-      BufferedReader(InputStreamReader(inputStream)).readLines()
-    }?.toMutableSet() ?: mutableSetOf()
+  private fun loadResourceList(name: String): MutableSet<String> {
+    val inputStream = TerraformProvidersMetadataBuilder::class.java.getResourceAsStream("/$name")
+                      ?: throw IllegalStateException("Resource $name is not found")
+    return inputStream.use { readProvidersList(it) }
   }
 
+  /** Returns the providers of the metadata jar [previousMetadataVersion], or of the last published jar when it is not set. */
+  private fun loadPreviousProviders(): Set<String> {
+    val artifactUrl = "$metadataRepoUrl/${metadataGroup.replace('.', '/')}/terraform-metadata"
+    val version = previousMetadataVersion ?: run {
+      val response = getQuery("$artifactUrl/maven-metadata.xml")
+      check(response.statusCode() == 200) { "Failed to load $artifactUrl/maven-metadata.xml, status=${response.statusCode()}" }
+      Regex("<release>([^<]+)</release>").find(response.body())?.groupValues?.get(1)
+      ?: throw IllegalStateException("$artifactUrl/maven-metadata.xml has no release")
+    }
+    val jarUrl = "$artifactUrl/$version/terraform-metadata-$version.jar"
+    logger.info("Loading the required providers from $jarUrl")
+    val response = httpClient.send(HttpRequest.newBuilder(URI(jarUrl)).GET().build(), HttpResponse.BodyHandlers.ofInputStream())
+    check(response.statusCode() == 200) { "Failed to load $jarUrl, status=${response.statusCode()}" }
+    return ZipInputStream(response.body()).use { zip ->
+      generateSequence { zip.nextEntry }.firstOrNull { it.name == "terraform/model/providers.list" }
+      ?: throw IllegalStateException("$jarUrl has no terraform/model/providers.list")
+      readProvidersList(zip)
+    }
+  }
+
+  /** Returns the lowercase provider names of the [input]. */
+  private fun readProvidersList(input: InputStream): MutableSet<String> =
+    BufferedReader(InputStreamReader(input)).readLines().filter { it.isNotBlank() }.mapTo(HashSet()) { it.trim().lowercase() }
+
+  private fun JsonNode.fullName(): String = this["attributes"]["full-name"].asText().lowercase()
+
+  /**
+   * Returns the registry data of a provider that the provider list does not show,
+   * or null when the registry does not know the provider.
+   */
+  private fun lookUpProvider(name: String): JsonNode? {
+    val response = getQuery("$terraformRegistryHost/v2/providers/$name")
+    return when (response.statusCode()) {
+      200 -> objectMapper.readTree(response.body())["data"]
+      404 -> null
+      else -> throw IllegalStateException("Failed to look up provider $name, status=${response.statusCode()}")
+    }
+  }
+
+  /** Skips a schema over [maxSchemaSize], unless the provider is [required]. */
   private fun buildProviderMetadata(data: JsonNode,
                                     version: String,
-                                    outputDir: File): File {
+                                    outputDir: File,
+                                    required: Boolean): File {
     val fullName = data["attributes"]["full-name"].asText()
     logger.info("Provider: $fullName")
     val namespace = fullName.substringBeforeLast("/")
@@ -161,7 +236,7 @@ object TerraformProvidersMetadataBuilder {
       failedProviders.incrementAndGet()
       logger.error("Metadata build failure for provider $fullName. \n Error: $initError \n Schema Generation Error: $schemaError")
     }
-    else if (schemaSize > maxSchemaSize) {
+    else if (schemaSize > maxSchemaSize && !required) {
       cleanupSchema(schemaFile, parentDir)
       skippedProviders.incrementAndGet()
       logger.warn("Skipping provider $fullName because schema is too large: ${formatMb(schemaSize)} MB")
@@ -309,8 +384,6 @@ object TerraformProvidersMetadataBuilder {
 }
 
 internal enum class Tier(private val tierName: String) {
-  OFFICIAL("official"),
-  PARTNER("partner"),
   COMMUNITY("community"),
   BUILTIN("builtin");
 
