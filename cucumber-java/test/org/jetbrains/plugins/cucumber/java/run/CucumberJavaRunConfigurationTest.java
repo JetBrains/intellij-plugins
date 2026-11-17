@@ -4,7 +4,13 @@ package org.jetbrains.plugins.cucumber.java.run;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.CompositeParameterTargetedValue;
 import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.JavaCommandLineState;
+import com.intellij.execution.configurations.ParameterTargetValuePart;
+import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
@@ -13,6 +19,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -21,11 +28,14 @@ import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.TestDataProvider;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.TimeoutUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
+import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -111,6 +121,24 @@ public class CucumberJavaRunConfigurationTest extends BasePlatformTestCase {
 
     assertEquals("restarted", PlatformTestUtil.waitForFuture(glue, TimeUnit.SECONDS.toMillis(20)));
     assertEquals(2, attempts.get());
+  }
+
+  public void testFeatureFilePathIsMappedToTarget() throws Exception {
+    Path featureFile = FileUtil.createTempFile("test", ".feature", true).toPath();
+    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
+    runConfiguration.setModule(getModule());
+    runConfiguration.setMainClassName("io.cucumber.core.cli.Main");
+    runConfiguration.setGlue("");
+    runConfiguration.setFilePath(featureFile.toString());
+
+    ExecutionEnvironment environment =
+      ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), runConfiguration).build();
+    JavaCommandLineState state = (JavaCommandLineState)runConfiguration.getState(environment.getExecutor(), environment);
+    List<CompositeParameterTargetedValue> parameters = state.getJavaParameters().getProgramParametersList().getTargetedList();
+
+    CompositeParameterTargetedValue featurePath = parameters.get(parameters.size() - 1);
+    assertEquals(featureFile.toString(), featurePath.getLocalValue());
+    assertTrue(featurePath.toString(), ContainerUtil.exists(featurePath.getParts(), part -> part instanceof ParameterTargetValuePart.Path));
   }
 
   @Override

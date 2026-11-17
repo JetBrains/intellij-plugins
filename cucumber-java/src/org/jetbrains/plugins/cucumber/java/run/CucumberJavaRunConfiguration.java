@@ -9,6 +9,7 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.application.ApplicationConfiguration;
+import com.intellij.execution.configurations.CompositeParameterTargetedValue;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.JavaRunConfigurationModule;
@@ -38,6 +39,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.io.NioFiles;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
@@ -52,7 +54,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,15 +125,15 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
         }
 
         String filePath = getFilePath();
-        File f = new File(filePath);
-        if (f.exists()) {
-          if (!f.isDirectory()) {
-            f = f.getParentFile();
-          }
-          params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
+        Path path = NioFiles.toPath(filePath);
+        if (path != null && Files.exists(path)) {
+          Path runDirectory = Files.isDirectory(path) ? path : path.toAbsolutePath().getParent();
+          params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + runDirectory.toAbsolutePath() + "\"");
+          params.getProgramParametersList().add(new CompositeParameterTargetedValue().addPathPart(filePath));
         }
-
-        params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
+        else {
+          params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
+        }
         params.setShortenCommandLine(getShortenCommandLine(), getProject());
         return params;
       }
