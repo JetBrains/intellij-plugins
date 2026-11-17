@@ -63,7 +63,11 @@ jvm_library(
     ),
     associates = ["//contrib/qodana/python/coverage"],
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/main/intellij.platform.monolith.main:monolith-main"],
+    runtime_deps = [
+        # do not sort,
+        "//python/dap-python-plugin/plugin",
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
