@@ -3,3 +3,4 @@
 <App.vue:(24,30):(0,6)>	{ vFocus }
 <App.vue:(247,259):(2,12)>	v-some-focus
 <App.vue:(62,82):(0,6)>	{ vFocus as vSomeFocus }
+<App.vue:(72,82):(0,10)>	as vSomeFocus

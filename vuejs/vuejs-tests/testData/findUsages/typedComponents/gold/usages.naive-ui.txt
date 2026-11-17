@@ -1,4 +1,5 @@
 <Affix.d.ts:(3563,3571):(0,8)>	export default _default;
+<index.d.ts:(20,26):(0,6)>	as NAffix
 <index.d.ts:(9,26):(0,7)>	export { default as NAffix } from './src/Affix';
 <typedComponentsClassic.vue:(141,147):(0,6)>	{NAffix}
 <typedComponentsClassic.vue:(231,237):(0,6)>	NAffix
