@@ -77,7 +77,11 @@ jvm_library(
     ),
     associates = ["//contrib/qodana/git"],
     visibility = ["//visibility:public"],
-    runtime_deps = ["@community//platform/main/intellij.platform.monolith.main:monolith-main"],
+    runtime_deps = [
+        # do not sort,
+        "@community//platform/main/intellij.platform.monolith.main:monolith-main",
+        "@community//plugins/git4idea/testFramework/plugin:plugin_test_lib",
+    ],
     deps = [
         # do not sort,
         "@lib//:kotlin-stdlib",
@@ -102,7 +106,7 @@ jvm_library(
         "//contrib/qodana-test-framework:qodana-testFramework",
         "@community//platform/testFramework",
         "@community//plugins/git4idea/backend",
-        "@community//plugins/git4idea/testFramework:testFramework_test_lib",
+        "@community//plugins/git4idea/testFramework",
         "@community//plugins/git4idea/shared",
         "@community//libraries/junit4",
         "@community//libraries/junit6",
