@@ -582,6 +582,8 @@ jvm_library(
         "@community//platform/platform-impl/ui",
         "@community//platform/statistics/testFramework",
         "@community//platform/statistics/testFramework:testFramework_test_lib",
+        "@community//platform/testFramework/junit5",
+        "@community//platform/testFramework/junit5:junit5_test_lib",
         "//libraries/qodana/configuration",
         "//libraries/qodana/configuration:configuration_test_lib",
         "@community//platform/external-system-impl:externalSystem-impl",
