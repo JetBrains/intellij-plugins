@@ -148,7 +148,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     val sarifResults = resultingRun.results
     when {
       sarifResults == null -> Unit // do nothing if script didn't set results
-      config.baseline != null -> {
+      resultingRun.hasAppliedBaseline() -> {
         val resultsWithBaselineState = sarifResults.filter { it.baselineState != null }
         commandLineResultsPrinter?.printResultsWithBaselineState(
           resultsWithBaselineState,

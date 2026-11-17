@@ -197,11 +197,9 @@ class QodanaInspectionApplicationFactory {
         return null
       }
     }
-    val resolved = resolveBaseline(qodanaConfig.baseline, projectApi?.frontendUrl)
     return QodanaInspectionApplication(
-      qodanaConfig.copy(baseline = resolved.path, baselineSource = resolved.source),
+      qodanaConfig.copy(cloudBaseline = resolveCloudBaseline(qodanaConfig.baseline, projectApi?.frontendUrl)),
       projectApi,
-      temporaryCloudBaselineFile = resolved.temporaryFile,
     )
   }
 

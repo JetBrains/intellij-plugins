@@ -9,9 +9,10 @@ import com.jetbrains.qodana.sarif.model.ArtifactLocation
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
@@ -27,6 +28,7 @@ import java.nio.file.attribute.FileTime
 import kotlin.io.path.fileSize
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.Path
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.notExists
 
 private const val BASELINE_SOURCE_PROPERTY = "baselineSource"
@@ -84,6 +86,10 @@ private object BaselineHeaderCache {
   }
 }
 
+/**
+ * Reads the baseline file of the run. It never downloads the cloud baseline.
+ * The file of a cloud baseline holds only results: it has no rules and no properties of a run.
+ */
 internal suspend fun getBaselineReport(config: QodanaConfig, includeResults: Boolean = true): SarifReport? =
   config.baseline?.let { readBaselineReport(config.baseline, config.projectPath, includeResults) }
 
@@ -93,26 +99,36 @@ internal suspend fun applyBaselineCalculation(
   scope: QodanaAnalysisScope,
   reporter: QodanaMessageReporter
 ) {
-  if (config.baseline == null) return setBaselineSource(report, "NONE")
-  var source = when (config.baselineSource) {
-    QodanaBaselineSource.CLOUD_BASELINE -> "CLOUD"
-    QodanaBaselineSource.LOCAL_BASELINE -> "LOCAL"
-    QodanaBaselineSource.NO_BASELINE -> "NONE"
-  }
-  val baseline = readBaselineReport(config.baseline, config.projectPath) ?: run {
-    reporter.reportError("Can't find baseline report file: ${config.baseline}. Baseline will be calculated against empty report.")
-    source = "NONE"
-    createSarifReport(emptyList())
-  }
-  val options = getOptions(scope, config)
+  // The cloud baseline downloads here, after the analysis, and only when the run has no baseline file.
+  val cloudFile = if (config.baseline == null) config.cloudBaseline?.download() else null
+  try {
+    val baselinePath = config.baseline ?: cloudFile?.toString() ?: return setBaselineSource(report, "NONE")
+    var source = if (config.baseline != null) "LOCAL" else "CLOUD"
+    val baseline = readBaselineReport(baselinePath, config.projectPath) ?: run {
+      reporter.reportError("Can't find baseline report file: $baselinePath. Baseline will be calculated against empty report.")
+      source = "NONE"
+      createSarifReport(emptyList())
+    }
+    val options = getOptions(scope, config)
 
-  // This mutates the `report` parameter!
-  BaselineCalculation.compare(report, baseline, options)
-  setBaselineSource(report, source)
+    // This mutates the `report` parameter!
+    BaselineCalculation.compare(report, baseline, options)
+    setBaselineSource(report, source)
+  }
+  finally {
+    // Only this comparison reads the cloud file.
+    cloudFile?.let { withContext(NonCancellable + StaticAnalysisDispatchers.IO) { it.deleteIfExists() } }
+  }
 }
 
 /** Tells which baseline the analysis applied to [report], `CLOUD`, `LOCAL` or `NONE`. */
-internal fun appliedBaselineSource(report: SarifReport): Any? = report.runs?.firstOrNull()?.properties?.get(BASELINE_SOURCE_PROPERTY)
+internal fun appliedBaselineSource(report: SarifReport): Any? = report.runs?.firstOrNull()?.let(::appliedBaselineSource)
+
+/** Tells which baseline the analysis applied to [run], `CLOUD`, `LOCAL` or `NONE`. */
+internal fun appliedBaselineSource(run: Run): Any? = run.properties?.get(BASELINE_SOURCE_PROPERTY)
+
+/** Tells whether the analysis compared [run] with a baseline file or with a cloud baseline. */
+internal fun Run.hasAppliedBaseline(): Boolean = appliedBaselineSource(this).let { it == "LOCAL" || it == "CLOUD" }
 
 /** Writes to each run of [report] which baseline the analysis applied. */
 private fun setBaselineSource(report: SarifReport, source: String) {

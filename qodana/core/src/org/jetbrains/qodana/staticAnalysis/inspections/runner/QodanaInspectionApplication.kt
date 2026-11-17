@@ -16,14 +16,12 @@ import com.intellij.util.application
 import com.intellij.util.io.createParentDirectories
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.job
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
@@ -35,14 +33,12 @@ import org.jetbrains.qodana.publisher.PublishResult
 import org.jetbrains.qodana.publisher.schemas.UploadedReport
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.addQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToDir
 import org.jetbrains.qodana.staticAnalysis.inspections.config.removeQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.DefaultRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
-import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
@@ -51,7 +47,6 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolute
-import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -63,25 +58,18 @@ private const val OPEN_IN_IDE_METADATA_JSON = "open-in-ide.json"
 class QodanaInspectionApplication(
   val config: QodanaConfig,
   val projectApi: QDCloudLinterProjectApi?, // null if no token
-  private val temporaryCloudBaselineFile: Path? = null,
 ) {
   private val reporter = QodanaMessageReporter.DEFAULT
 
   suspend fun startup() {
-    try {
-      config.license = checkLicense()
+    config.license = checkLicense()
 
-      if (!config.skipPreamble) {
-        printLicenseInfo(config.license)
-        printProductHeader()
-        printAppInfo()
-      }
-      run()
+    if (!config.skipPreamble) {
+      printLicenseInfo(config.license)
+      printProductHeader()
+      printAppInfo()
     }
-    finally {
-      // The analysis and the report both read the baseline, so it is deleted only now.
-      temporaryCloudBaselineFile?.let { withContext(NonCancellable + StaticAnalysisDispatchers.IO) { it.deleteIfExists() } }
-    }
+    run()
   }
 
   @VisibleForTesting
@@ -172,14 +160,13 @@ class QodanaInspectionApplication(
 
   /** Tells which baseline the analysis used, because the problems of the report depend on it. */
   private fun logUsedBaseline(sarif: SarifReport) {
-    // qodana-cli prints this itself once it has resolved the baseline, so a second line would repeat it.
-    if (!qodanaEnv().QODANA_BASELINE_SOURCE.value.isNullOrEmpty()) return
+    // Stage 1 of the scoped script runs without a baseline by order of qodana-cli, and only stage 2 reports the baseline.
+    if (System.getProperty(SKIP_CLOUD_BASELINE_PROPERTY).toBoolean()) return
 
-    val baseline = config.baseline
-    val message = when {
-      baseline == null || appliedBaselineSource(sarif) == "NONE" -> QodanaBundle.message("baseline.used.none")
-      config.baselineSource == QodanaBaselineSource.CLOUD_BASELINE -> QodanaBundle.message("baseline.used.cloud")
-      else -> QodanaBundle.message("baseline.used.file", baseline)
+    val message = when (appliedBaselineSource(sarif)) {
+      "CLOUD" -> QodanaBundle.message("baseline.used.cloud")
+      "LOCAL" -> QodanaBundle.message("baseline.used.file", config.baseline)
+      else -> QodanaBundle.message("baseline.used.none")
     }
     reporter.reportMessage(1, message)
   }

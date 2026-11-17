@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
@@ -36,12 +35,11 @@ import org.jetbrains.qodana.cloud.currentQodanaCloudFrontendUrl
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.report.guid
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.cloudBaseline
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.resolveCloudBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaInIdeRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
@@ -99,9 +97,6 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
     private val _outputFuture = CompletableDeferred<QodanaInIdeOutput?>()
     override val outputFuture: Deferred<QodanaInIdeOutput?> = _outputFuture
 
-    /** The baseline that this run downloaded from Qodana Cloud, or null. */
-    private var temporaryCloudBaselineFile: Path? = null
-
     suspend fun launchQodana(): QodanaInIdeOutput? {
       val timeAnalysisStarted = System.currentTimeMillis()
       try {
@@ -124,7 +119,6 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
         throw e
       }
       finally {
-        temporaryCloudBaselineFile?.let { withContext(NonCancellable + QodanaDispatchers.IO) { it.deleteIfExists() } }
         stateManager.changeState(this, NotRunningImpl())
       }
     }
@@ -167,7 +161,6 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
 
       val yamlFiles = runInIdeParameters.qodanaYamlFile?.let { QodanaYamlFiles.noConfigDir(it) } ?: QodanaYamlFiles.noFiles()
       val baseline = runInIdeParameters.qodanaBaseline
-                     ?: cloudBaseline(currentQodanaCloudFrontendUrl().toExternalForm())?.also { temporaryCloudBaselineFile = it }
 
       val config = QodanaConfig.fromYaml(
         projectPath = projectPath,
@@ -176,11 +169,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
         yaml = runInIdeParameters.qodanaYamlConfig,
         yamlFiles = yamlFiles,
         baseline = baseline?.toString(),
-        baselineSource = when {
-          temporaryCloudBaselineFile != null -> QodanaBaselineSource.CLOUD_BASELINE
-          baseline != null -> QodanaBaselineSource.LOCAL_BASELINE
-          else -> QodanaBaselineSource.NO_BASELINE
-        }
+        cloudBaseline = resolveCloudBaseline(baseline?.toString(), currentQodanaCloudFrontendUrl().toExternalForm()),
       )
 
       val analysisScope = QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)

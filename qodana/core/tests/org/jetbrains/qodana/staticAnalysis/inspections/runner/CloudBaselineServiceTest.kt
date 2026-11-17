@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.replaceService
 import com.intellij.util.ThrowableRunnable
@@ -13,19 +14,26 @@ import org.jetbrains.qodana.cloud.api.IjQDCloudClientProvider
 import org.jetbrains.qodana.cloud.api.IjQDCloudClientProviderTestImpl
 import org.jetbrains.qodana.cloudclient.QDCloudClient
 import org.jetbrains.qodana.cloudclient.QDCloudEnvironment
+import org.jetbrains.qodana.cloudclient.QDCloudException
 import org.jetbrains.qodana.cloudclient.QDCloudHttpClient
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.nio.file.Path
+import java.time.Duration
+import java.util.concurrent.CountDownLatch
 import java.util.zip.GZIPOutputStream
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.notExists
 import kotlin.io.path.readText
 
 /** The frontend that the fake Qodana Cloud of the tests answers for. */
@@ -35,6 +43,8 @@ private const val FRONTEND_URL = "https://tests-qodana.cloud"
 class CloudBaselineServiceTest : QodanaTestCase() {
   private val downloaded = mutableListOf<Path>()
   private var server: HttpServer? = null
+  /** Lets a server that stopped in the middle of a body finish its answer. */
+  private var stalledServer: CountDownLatch? = null
   private val cloudProvider = CountingCloudClientProvider()
 
   override fun setUp() {
@@ -44,6 +54,7 @@ class CloudBaselineServiceTest : QodanaTestCase() {
 
   override fun tearDown() {
     RunAll.runAll(
+      ThrowableRunnable<Throwable> { stalledServer?.countDown() },
       ThrowableRunnable<Throwable> { server?.stop(0) },
       ThrowableRunnable<Throwable> { downloaded.forEach { it.deleteIfExists() } },
       ThrowableRunnable<Throwable> { super.tearDown() },
@@ -51,86 +62,49 @@ class CloudBaselineServiceTest : QodanaTestCase() {
   }
 
   @Test
-  fun `a baseline of the cli stops this run from asking the cloud`() = runTest {
-    // qodana-cli sets the variable for all three outcomes, so any value means it already asked.
-    cliResolved(QodanaBaselineSource.NO_BASELINE.name)
-
-    val resolved = resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL)
-
-    assertEquals(0, cloudProvider.clients)
-    assertNull(resolved.path)
-    assertNull(resolved.temporaryFile)
-    assertEquals(QodanaBaselineSource.NO_BASELINE, resolved.source)
-  }
-
-  @Test
-  fun `an unknown value of the cli also stops this run from asking the cloud`() = runTest {
-    cliResolved("SOMETHING_ELSE")
-
-    val resolved = resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL)
-
-    assertEquals(0, cloudProvider.clients)
-    assertEquals(QodanaBaselineSource.NO_BASELINE, resolved.source)
-  }
-
-  @Test
-  fun `a baseline file of the cli keeps the source that the cli reported`() = runTest {
-    cliResolved(QodanaBaselineSource.CLOUD_BASELINE.name)
-
-    val resolved = resolveBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL)
-
-    assertEquals("given.sarif.json", resolved.path)
-    assertEquals(QodanaBaselineSource.CLOUD_BASELINE, resolved.source)
-    // The file belongs to qodana-cli, so this run must not delete it.
-    assertNull(resolved.temporaryFile)
-  }
-
-  @Test
-  fun `a baseline file of the cli with the local source is a local one`() = runTest {
-    cliResolved(QodanaBaselineSource.LOCAL_BASELINE.name)
-
-    val resolved = resolveBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL)
-
-    assertEquals(0, cloudProvider.clients)
-    assertEquals("given.sarif.json", resolved.path)
-    assertEquals(QodanaBaselineSource.LOCAL_BASELINE, resolved.source)
-    assertNull(resolved.temporaryFile)
-  }
-
-  @Test
-  fun `a baseline file without the variable is a local one`() = runTest {
-    val resolved = resolveBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL)
-
-    assertEquals("given.sarif.json", resolved.path)
-    assertEquals(QodanaBaselineSource.LOCAL_BASELINE, resolved.source)
-    assertNull(resolved.temporaryFile)
-  }
-
-  @Test
-  fun `without the variable and without a file the run asks the cloud`() = runTest {
+  fun `the cli turns the cloud baseline off`() = runTest {
     tokenOnly()
-
-    resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL).temporaryFile?.let(downloaded::add)
-
-    // The fake cloud answers on a host that no test reaches, so only the attempt is observable here.
-    assertEquals(1, cloudProvider.clients)
-  }
-
-  @Test
-  fun `a downloaded baseline is a cloud baseline`() = runTest {
-    tokenOnly()
-    cloudProvider.lintersHost = serve { exchange ->
-      val body = responseWith(entry("a")).toByteArray()
-      exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, body.size.toLong())
-      exchange.responseBody.use { it.write(body) }
+    System.setProperty(SKIP_CLOUD_BASELINE_PROPERTY, "true")
+    try {
+      assertNull(resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
     }
+    finally {
+      System.clearProperty(SKIP_CLOUD_BASELINE_PROPERTY)
+    }
+    assertEquals(0, cloudProvider.clients)
+  }
 
-    val resolved = resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL)
-    resolved.temporaryFile?.let(downloaded::add)
+  @Test
+  fun `a baseline file gives no cloud baseline`() = runTest {
+    tokenOnly()
 
-    assertEquals(QodanaBaselineSource.CLOUD_BASELINE, resolved.source)
-    assertNotNull(resolved.temporaryFile)
-    assertEquals(resolved.temporaryFile.toString(), resolved.path)
+    assertNull(resolveCloudBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL))
+  }
+
+  @Test
+  fun `without the variable and without a file the run gets a cloud baseline that downloads later`() = runTest {
+    tokenOnly()
+
+    assertNotNull(resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+    assertEquals(0, cloudProvider.clients)
+  }
+
+  @Test
+  fun `without a token there is no cloud baseline`() = runTest {
+    assertNull(resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+  }
+
+  @Test
+  fun `the cloud baseline downloads at the first use`() = runTest {
+    tokenOnly()
+    cloudProvider.lintersHost = serveBaseline(entry("a"))
+    val cloud = resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL)!!
+
+    val file = cloud.download()?.also(downloaded::add)
+
+    assertNotNull(file)
+    assertEquals(1, SarifUtil.readReport(file!!).runs.first().results.size)
+    assertEquals(1, cloudProvider.clients)
   }
 
   @Test
@@ -174,8 +148,86 @@ class CloudBaselineServiceTest : QodanaTestCase() {
   }
 
   @Test
-  fun `a source that throws gives no baseline`() = runTest {
-    assertNull(downloadCloudBaseline { throw IllegalStateException("no handler") })
+  fun `a source that always throws gives no baseline after three attempts`() = runTest {
+    var attempts = 0
+
+    val file = downloadCloudBaseline(retryPause = Duration.ZERO) {
+      attempts++
+      throw IOException("the cloud is unreachable")
+    }
+
+    assertNull(file)
+    assertEquals(3, attempts)
+  }
+
+  @Test
+  fun `a failed attempt is tried again`() = runTest {
+    var attempts = 0
+
+    val file = downloadCloudBaseline(retryPause = Duration.ZERO) {
+      attempts++
+      if (attempts == 1) throw IOException("the cloud is unreachable")
+      writeBaseline(responseWith(entry("a")).byteInputStream(), it)
+    }?.also(downloaded::add)
+
+    assertNotNull(file)
+    assertEquals(2, attempts)
+  }
+
+  @Test
+  fun `a failed discovery of the linters api is tried again`() = runTest {
+    tokenOnly()
+    cloudProvider.lintersHost = serveBaseline(entry("a"))
+    cloudProvider.offlineAnswers = 1
+
+    val file = cloudBaselineOf(FRONTEND_URL, retryPause = Duration.ZERO)!!.download()?.also(downloaded::add)
+
+    assertNotNull(file)
+    assertEquals(2, cloudProvider.clients)
+  }
+
+  @Test
+  fun `a forbidden project gives no baseline`() {
+    val host = serve { it.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, -1) }
+
+    assertNull(httpBaseline(host, "the-token", qodanaProductCode()))
+  }
+
+  @Test
+  fun `a community jvm linter asks for the shared jvm baseline`() {
+    var query: String? = null
+    val host = serve { exchange ->
+      query = exchange.requestURI.query
+      val body = responseWith(entry("a")).toByteArray()
+      exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, body.size.toLong())
+      exchange.responseBody.use { it.write(body) }
+    }
+
+    val file = httpBaseline(host, "the-token", "QDJVMC")?.also(downloaded::add)
+
+    assertEquals("toolName=QDJVM", query)
+    // The report of the run carries the product code, so the baseline run keeps it too.
+    assertEquals("QDJVMC", SarifUtil.readReport(file!!).runs.first().tool.driver.name)
+  }
+
+  @Test
+  fun `the cloud tool name is shared by the jvm linters only`() {
+    listOf("QDJVM", "QDJVMC", "QDAND", "QDANDC").forEach { assertEquals("QDJVM", cloudBaselineToolName(it)) }
+    listOf("QDPY", "QDJS", "QDNET").forEach { assertEquals(it, cloudBaselineToolName(it)) }
+  }
+
+  @Test
+  fun `an error answer throws so that the download is tried again`() {
+    val host = serve { it.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, -1) }
+
+    assertThrows<IOException> { httpBaseline(host, "the-token", qodanaProductCode()) }
+  }
+
+  @Test
+  fun `a token that the cloud does not accept gives no baseline`() {
+    val host = serve { it.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, -1) }
+
+    assertNull(httpBaseline(host, "the-token", qodanaProductCode()))
   }
 
   @Test
@@ -219,6 +271,25 @@ class CloudBaselineServiceTest : QodanaTestCase() {
   }
 
   @Test
+  fun `a body that stops arriving fails the download and leaves no file`() {
+    val release = CountDownLatch(1)
+    stalledServer = release
+    val host = serve { exchange ->
+      exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0)
+      exchange.responseBody.write("""{"baseline":[""".toByteArray())
+      exchange.responseBody.flush()
+      release.await()
+    }
+    val before = cloudBaselineFiles()
+
+    val e = assertThrows<IOException> { httpBaseline(host, "the-token", qodanaProductCode(), timeout = Duration.ofSeconds(1)) }
+
+    assertTrue(e.message.orEmpty().contains("stopped arriving"))
+    assertEquals(before, cloudBaselineFiles())
+    assertFalse("the guard must not leave its interrupt on the thread", Thread.currentThread().isInterrupted)
+  }
+
+  @Test
   fun `no content gives no baseline`() {
     // Qodana Cloud answers 204 for a project that does not use the cloud baseline.
     val host = serve { it.sendResponseHeaders(HttpURLConnection.HTTP_NO_CONTENT, -1) }
@@ -234,20 +305,7 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     listOf("0", "-5", "abc", "", "5m").forEach { assertEquals(60L, downloadTimeout(it).seconds) }
   }
 
-  /**
-   * Makes this run look like one that qodana-cli has already resolved the baseline for.
-   *
-   * It also gives a token, because without one the run skips Qodana Cloud anyway and the test would
-   * pass for the wrong reason.
-   */
-  private fun cliResolved(source: String) {
-    addQodanaEnvMock(testRootDisposable, object : QodanaEnvEmpty() {
-      override val QODANA_TOKEN by value("token")
-      override val QODANA_BASELINE_SOURCE by value(source)
-    })
-  }
-
-  /** Gives a token and no resolved source, so the run is free to ask Qodana Cloud. */
+  /** Gives a token, so the run is free to ask Qodana Cloud. */
   private fun tokenOnly() {
     addQodanaEnvMock(testRootDisposable, object : QodanaEnvEmpty() {
       override val QODANA_TOKEN by value("token")
@@ -263,6 +321,8 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     private val delegate = IjQDCloudClientProviderTestImpl()
     var clients: Int = 0
     var lintersHost: String? = null
+    /** The number of the first requests that find Qodana Cloud offline. */
+    var offlineAnswers: Int = 0
 
     override val httpClient: QDCloudHttpClient get() = delegate.httpClient
 
@@ -270,15 +330,28 @@ class CloudBaselineServiceTest : QodanaTestCase() {
       clients++
       val host = lintersHost ?: return delegate.getQDCloudClient(frontendUrl)
       val environment = object : QDCloudEnvironment {
-        override suspend fun getApis(): QDCloudResponse<QDCloudEnvironment.Apis> = qodanaCloudResponse {
-          QDCloudEnvironment.Apis(
-            api = listOf(QDCloudEnvironment.Apis.Api(frontendUrl, majorVersion = 1, minorVersion = 0)),
-            linters = listOf(QDCloudEnvironment.Apis.Api(host, majorVersion = 1, minorVersion = 0)),
-          )
+        override suspend fun getApis(): QDCloudResponse<QDCloudEnvironment.Apis> {
+          if (offlineAnswers > 0) {
+            offlineAnswers--
+            return QDCloudResponse.Error.Offline(QDCloudException.Offline())
+          }
+          return qodanaCloudResponse {
+            QDCloudEnvironment.Apis(
+              api = listOf(QDCloudEnvironment.Apis.Api(frontendUrl, majorVersion = 1, minorVersion = 0)),
+              linters = listOf(QDCloudEnvironment.Apis.Api(host, majorVersion = 1, minorVersion = 0)),
+            )
+          }
         }
       }
       return QDCloudClient(httpClient, environment)
     }
+  }
+
+  /** Starts a server that answers every request with a baseline of [entries], and returns its host. */
+  private fun serveBaseline(vararg entries: String): String = serve { exchange ->
+    val body = responseWith(*entries).toByteArray()
+    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, body.size.toLong())
+    exchange.responseBody.use { it.write(body) }
   }
 
   /** Starts a server that answers every request with [handler], and returns its host. */
@@ -290,8 +363,14 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     return "http://127.0.0.1:${started.address.port}"
   }
 
+  private fun cloudBaselineFiles(): Set<String> {
+    val directory = PathManager.getTempDir()
+    if (directory.notExists()) return emptySet()
+    return directory.listDirectoryEntries("qodana-cloud-baseline*").map { it.name }.toSet()
+  }
+
   private suspend fun download(body: String): Path? =
-    downloadCloudBaseline { writeBaseline(body.byteInputStream(), it) }.also { it?.let(downloaded::add) }
+    downloadCloudBaseline(retryPause = Duration.ZERO) { writeBaseline(body.byteInputStream(), it) }.also { it?.let(downloaded::add) }
 
   private fun responseWith(vararg entries: String): String = """{"baseline":[${entries.joinToString(",")}]}"""
 

@@ -1,10 +1,12 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.jetbrains.qodana.sarif.SarifUtil
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaselineSource
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -21,16 +23,6 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `a cloud baseline gives the cloud source`() {
-    // The run downloaded the baseline itself, or qodana-cli reported a cloud baseline for the file.
-    updateQodanaConfig { it.copy(baselineSource = QodanaBaselineSource.CLOUD_BASELINE) }
-
-    runAnalysis()
-
-    assertEquals("CLOUD", reportedBaselineSource())
-  }
-
-  @Test
   fun `a report that was compared with a cloud baseline gives the local source as the next baseline`() {
     // A report carries the source and not the origin, so a run that uses it as the baseline does not chain CLOUD.
     useCloudComparedReportAsBaseline()
@@ -42,7 +34,7 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
 
   @Test
   fun `a run without a baseline gives the none source`() {
-    updateQodanaConfig { it.copy(baseline = null, baselineSource = QodanaBaselineSource.NO_BASELINE) }
+    updateQodanaConfig { it.copy(baseline = null) }
 
     runAnalysis()
 
@@ -52,6 +44,61 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
   @Test
   fun `a missing baseline file gives the none source`() {
     updateQodanaConfig { it.copy(baseline = "missing.sarif.json") }
+
+    runAnalysis()
+
+    assertEquals("NONE", reportedBaselineSource())
+  }
+
+  @Test
+  fun `a cloud baseline downloads once, gives the cloud source and is deleted after the comparison`() {
+    val cloudFile = Path.of(project.basePath!!).resolve("cloud-baseline.sarif.json")
+    var downloads = 0
+    val cloud = CloudBaseline {
+      downloads++
+      Files.copy(getTestDataPath("baseline-results.sarif.json"), cloudFile)
+    }
+    updateQodanaConfig { it.copy(baseline = null, cloudBaseline = cloud) }
+
+    runAnalysis()
+
+    assertEquals("CLOUD", reportedBaselineSource())
+    assertEquals(1, downloads)
+    assertFalse(Files.exists(cloudFile))
+  }
+
+  @Test
+  fun `a failed analysis does not download the cloud baseline`() {
+    var downloads = 0
+    val cloud = CloudBaseline {
+      downloads++
+      null
+    }
+    updateQodanaConfig { it.copy(baseline = null, cloudBaseline = cloud, stopThreshold = 1) }
+
+    assertThrows<ProcessCanceledException> { runAnalysis() }
+
+    assertEquals(0, downloads)
+  }
+
+  @Test
+  fun `reading the rules of the baseline does not download the cloud baseline`() {
+    var downloads = 0
+    val cloud = CloudBaseline {
+      downloads++
+      null
+    }
+    updateQodanaConfig { it.copy(baseline = null, cloudBaseline = cloud) }
+
+    // The rule names of the summary and the license audit read the baseline without results.
+    assertNull(runBlocking { getBaselineReport(qodanaConfig, includeResults = false) })
+
+    assertEquals(0, downloads)
+  }
+
+  @Test
+  fun `a cloud baseline without a file gives the none source`() {
+    updateQodanaConfig { it.copy(baseline = null, cloudBaseline = CloudBaseline { null }) }
 
     runAnalysis()
 

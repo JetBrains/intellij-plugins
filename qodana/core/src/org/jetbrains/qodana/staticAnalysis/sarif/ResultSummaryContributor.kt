@@ -5,6 +5,7 @@ import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.hasAppliedBaseline
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedDebugLog
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
@@ -27,11 +28,11 @@ internal class ResultSummaryContributor : SarifReportContributor {
       .groupingBy { it }
       .eachCount()
 
-  private fun QodanaConfig.countOnlyNewResultsInSummary(): Boolean {
+  private fun QodanaConfig.countOnlyNewResultsInSummary(run: Run): Boolean {
     val stage = script.parameters[STAGE_ARG]?.toString()
     val scopedBaselinePath = System.getProperty(SCOPED_BASELINE_PROPERTY)
     val enabled = when {
-      baseline != null -> true
+      run.hasAppliedBaseline() -> true
       !QodanaRegistry.isReverseScopedIncludeUnchangedEnabled -> false
       script.name != REVERSE_SCOPED_SCRIPT_NAME -> false
       stage != Stage.OLD.name && stage != Stage.FIXES.name -> false
@@ -44,7 +45,7 @@ internal class ResultSummaryContributor : SarifReportContributor {
   }
 
   override fun contribute(run: Run, project: Project, config: QodanaConfig) {
-    val countOnlyNewResults = config.countOnlyNewResultsInSummary()
+    val countOnlyNewResults = config.countOnlyNewResultsInSummary(run)
     val baselineFilter: (Result) -> Boolean = when {
       !countOnlyNewResults -> { _ -> true }
       else -> { x -> x.baselineState == Result.BaselineState.NEW }
