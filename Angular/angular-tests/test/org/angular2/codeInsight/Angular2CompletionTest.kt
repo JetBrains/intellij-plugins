@@ -18,6 +18,7 @@ import com.intellij.polySymbols.testFramework.noAutoComplete
 import com.intellij.tailwind.lsp.TailwindLspIntegrationProvider
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.util.TimeoutUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
@@ -33,6 +34,8 @@ import org.angular2.TestTsNode
 import org.angular2.lang.Angular2Bundle
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @TestTsNode
 @TestTsGoProxy
@@ -500,21 +503,35 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
     doLookupTest(ANGULAR_CORE_21_2_0, IONIC_ANGULAR_8_4_3, renderTailText = true)
 
   /**
-   * The Tailwind LSP server ignores a `didOpen` notification that comes while the server initializes its projects.
-   * The project of the file then stays disabled, and the server returns no completion items.
+   * The Tailwind LSP server returns no completion items until it builds the project of the file.
+   * The build can take some seconds on a slow machine.
+   *
+   * The Tailwind LSP server also ignores a `didOpen` notification that comes while the server initializes its projects.
+   * The project of the file then stays disabled, and the completion stays empty.
    * This happens when another LSP server, such as TS Go, starts at the same time.
-   * If the completion is empty, restart the Tailwind LSP server to send `didOpen` again.
+   * If the completion stays empty for [TAILWIND_COMPLETION_TIMEOUT], restart the Tailwind LSP server to send `didOpen` again.
    */
   private fun CodeInsightTestFixture.waitUntilTailwindLspServerProvidesCompletion() {
     val hostFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file).virtualFile
     waitUntilFileOpenedByTailwindLspServer(hostFile, sendEventsForExistingClients = true)
     repeat(2) {
-      val lookupElements = noAutoComplete { completeBasic() }
-      LookupManager.hideActiveLookup(project)
-      if (!lookupElements.isNullOrEmpty()) return
+      if (waitUntilCompletionIsNotEmpty(TAILWIND_COMPLETION_TIMEOUT)) return
       waitUntilFileOpenedByTailwindLspServer(hostFile, sendEventsForExistingClients = false) {
         LspClientManager.getInstance(project).stopAndRestartClientsIfNeeded(TailwindLspIntegrationProvider::class.java)
       }
+    }
+    waitUntilCompletionIsNotEmpty(TAILWIND_COMPLETION_TIMEOUT)
+  }
+
+  private fun CodeInsightTestFixture.waitUntilCompletionIsNotEmpty(timeout: Duration): Boolean {
+    val deadline = System.nanoTime() + timeout.inWholeNanoseconds
+    while (true) {
+      val lookupElements = noAutoComplete { completeBasic() }
+      LookupManager.hideActiveLookup(project)
+      if (!lookupElements.isNullOrEmpty()) return true
+      if (System.nanoTime() >= deadline) return false
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      TimeoutUtil.sleep(100)
     }
   }
 
@@ -540,6 +557,10 @@ class Angular2CompletionTest : Angular2TestCase("completion") {
   }
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
+
+  private companion object {
+    val TAILWIND_COMPLETION_TIMEOUT: Duration = 5.seconds
+  }
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
     doTypingTest(null, *modules, dir = dir, extension = extension)
