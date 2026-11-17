@@ -210,7 +210,7 @@ open class VuePluginTypeScriptService(
   }
 
   override fun getProcessName(): String =
-    "Vue + TypeScript"
+    "Vue ${runtime.version.versionString} + TypeScript"
 
   override fun isTypeEvaluationEnabled(): Boolean {
     val settings = VueSettings.instance(project)
