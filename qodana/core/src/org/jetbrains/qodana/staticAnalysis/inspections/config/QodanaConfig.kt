@@ -206,11 +206,6 @@ data class QodanaConfig(
   val php: QodanaPhpConfig?,
   val jvm: QodanaJvmConfig,
   val dependencyAnalysis: DependencyAnalysisConfig,
-
-  /**
-   * The network of the run has no access to the internet.
-   * Qodana skips the network operations that cannot succeed there.
-   */
   val airGapped: Boolean = false,
 
   val skipPreamble: Boolean = System.getProperty("qodana.skip.preamble").toBoolean(), // Set by CLI for second run in scoped script
