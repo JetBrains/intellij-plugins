@@ -1,5 +1,6 @@
 package org.intellij.plugin.mdx
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
@@ -7,6 +8,7 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.TestDataPath
+import org.intellij.plugins.markdown.lang.formatter.settings.MarkdownCustomCodeStyleSettings
 import org.intellij.plugins.markdown.lang.supportsMarkdown
 import org.intellij.plugins.markdown.settings.MarkdownCodeInsightSettings
 import org.junit.jupiter.api.BeforeEach
@@ -34,7 +36,10 @@ class MdxMarkdownListEditingTest : MdxTestBase() {
 
   @Test
   fun testTabCreatesNestedListItemInMdx() {
-    doListEditTest(actionId = EDITOR_TAB_ACTION_ID)
+    CodeStyle.doWithTemporarySettings(myFixture.project, CodeStyle.getSettings(myFixture.project)) { settings ->
+      settings.getCustomSettings(MarkdownCustomCodeStyleSettings::class.java).USE_FIXED_INDENTS_FOR_SUBLISTS = false
+      doListEditTest(actionId = EDITOR_TAB_ACTION_ID)
+    }
   }
 
   @Test
