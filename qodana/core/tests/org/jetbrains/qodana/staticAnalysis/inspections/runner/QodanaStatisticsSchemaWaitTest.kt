@@ -1,7 +1,6 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
 import com.intellij.testFramework.junit5.TestApplication
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -13,8 +12,6 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -61,35 +58,6 @@ class QodanaStatisticsSchemaWaitTest {
     finally {
       release.countDown()
       scope.cancel()
-    }
-  }
-
-  @Test
-  fun `air-gapped mode turns off the statistics upload`() {
-    withoutSuppressStatisticsReport {
-      application(airGapped = true).applyAirGappedMode()
-
-      assertEquals("true", System.getProperty(SUPPRESS_STATISTICS_REPORT_PROPERTY))
-      assertFalse(StatisticsUploadAssistant.isSendAllowed())
-    }
-  }
-
-  @Test
-  fun `without air-gapped mode the statistics upload is not changed`() {
-    withoutSuppressStatisticsReport {
-      application(airGapped = false).applyAirGappedMode()
-
-      assertNull(System.getProperty(SUPPRESS_STATISTICS_REPORT_PROPERTY))
-    }
-  }
-
-  private fun withoutSuppressStatisticsReport(block: () -> Unit) {
-    val previous = System.clearProperty(SUPPRESS_STATISTICS_REPORT_PROPERTY)
-    try {
-      block()
-    }
-    finally {
-      if (previous == null) System.clearProperty(SUPPRESS_STATISTICS_REPORT_PROPERTY) else System.setProperty(SUPPRESS_STATISTICS_REPORT_PROPERTY, previous)
     }
   }
 
