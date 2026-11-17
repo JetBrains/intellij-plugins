@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
@@ -38,24 +39,24 @@ class QodanaFileTextTest : LightPlatformTestCase() {
   fun testKeepsTheLineSeparatorsOfTheFileWhenItsDocumentIsLoaded() {
     val file = createFile("first\r\nsecond\r\n")
     val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
-    assertEquals("first\nsecond\n", document?.text)
+    Assertions.assertEquals("first\nsecond\n", document?.text)
 
-    assertEquals("first\r\nsecond\r\n", qodanaFileText(file)?.text)
+    Assertions.assertEquals("first\r\nsecond\r\n", qodanaFileText(file)?.text)
   }
 
   fun testKeepsTheLineSeparatorsOfTheFileWithoutADocument() {
     val file = createFile("first\r\nsecond\r\n")
-    assertNull(FileDocumentManager.getInstance().getCachedDocument(file))
+    Assertions.assertNull(FileDocumentManager.getInstance().getCachedDocument(file))
 
-    assertEquals("first\r\nsecond\r\n", qodanaFileText(file)?.text)
+    Assertions.assertEquals("first\r\nsecond\r\n", qodanaFileText(file)?.text)
   }
 
   fun testReloadsTheTextAfterTheFileChanges() {
     val file = LightVirtualFile("a.txt", "old")
-    assertEquals("old", qodanaFileText(file)?.text)
+    Assertions.assertEquals("old", qodanaFileText(file)?.text)
 
     file.setContent(null, "new", true)
-    assertEquals("new", qodanaFileText(file)?.text)
+    Assertions.assertEquals("new", qodanaFileText(file)?.text)
   }
 
   private fun createFile(text: String): VirtualFile {
