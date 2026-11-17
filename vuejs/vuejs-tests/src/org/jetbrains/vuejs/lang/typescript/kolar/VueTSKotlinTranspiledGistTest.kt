@@ -70,16 +70,16 @@ class VueTSKotlinTranspiledGistTest {
         TSKotlinFileIndexData.of(parsed)
       }
     }
-    // A script that is not a module gets no data, so each program parses it
-    assertEquals(setOf("External.vue"), expected.filterValues { it == null }.keys)
+    // A script that is not a module gets only the data of an eager file, so each program parses it
+    assertEquals(setOf("External.vue"), expected.filterValues { !it.supportsLazyParsing }.keys)
     val reads = HashMap<String, Int>()
     readAction {
       val program = createProgram(files.values, reads)
       for ((name, file) in files) {
         val second = program.file(file)
         val data = expected.getValue(name)
-        assertEquals(data == null, second.tskotlinIsParsed(), name)
-        if (data == null) continue
+        assertEquals(!data.supportsLazyParsing, second.tskotlinIsParsed(), name)
+        if (!data.supportsLazyParsing) continue
         assertEquals(0, reads[file.path] ?: 0, name)
         assertEquals(data, TSKotlinFileIndexData.of(second), name)
       }
