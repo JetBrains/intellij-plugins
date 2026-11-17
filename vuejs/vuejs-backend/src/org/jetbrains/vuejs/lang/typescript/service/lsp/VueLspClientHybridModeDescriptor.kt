@@ -8,6 +8,7 @@ import com.intellij.lang.typescript.lsp.JSFrameworkLspClientDescriptor
 import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
 import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.Lsp4jClient
 import com.intellij.platform.lsp.api.Lsp4jServer
 import com.intellij.platform.lsp.api.LspServerNotificationsHandler
@@ -31,6 +32,7 @@ import com.intellij.platform.lsp.api.customization.LspWorkspaceSymbolDisabled
 import org.eclipse.lsp4j.Diagnostic
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.VueServiceRuntime
+import org.jetbrains.vuejs.lang.typescript.service.getAppropriateVueLSVersion
 
 class VueLspClientHybridModeDescriptor(
   project: Project,
@@ -88,6 +90,10 @@ class VueLspClientHybridModeDescriptor(
       override val completionCustomizer: LspCompletionCustomizer =
         BaseLspTypeScriptServiceCompletionSupport()
     }
+
+  override fun isSupportedFile(file: VirtualFile): Boolean =
+    super.isSupportedFile(file)
+    && getAppropriateVueLSVersion(project, file) == runtime.version
 
   override fun createLsp4jClient(handler: LspServerNotificationsHandler): Lsp4jClient {
     return VueHybridModeLsp4jClient(
