@@ -43,4 +43,11 @@ public interface PbTypeNameBase extends PbElement {
    */
   @NotNull
   String getShortName();
+
+  /**
+   * Returns the resolved {@link PbNamedTypeElement} for this type name, or <code>null</code> if
+   * this is a built-in type or cannot be resolved.
+   */
+  @Nullable
+  PbNamedTypeElement getDeclaredNamedType();
 }

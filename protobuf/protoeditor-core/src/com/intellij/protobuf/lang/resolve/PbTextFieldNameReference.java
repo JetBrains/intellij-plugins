@@ -26,7 +26,6 @@ import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.protobuf.lang.psi.PbTextFieldName;
 import com.intellij.protobuf.lang.psi.PbTextMessage;
 import com.intellij.protobuf.lang.psi.PbTypeName;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -106,9 +105,8 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
 
       // Make sure that group fields use the capitalized type name rather than the lowercase field
       // name.
-      PbGroupDefinition group =
-          PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbGroupDefinition.class);
-      if (group != null && !name.equals(group.getName())) {
+      if (field.getNavigationElement() instanceof PbGroupDefinition group
+          && !name.equals(group.getName())) {
         return null;
       }
 
@@ -138,9 +136,7 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
       if (fieldType == null) {
         continue;
       }
-      PbGroupDefinition group =
-          PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbGroupDefinition.class);
-      if (group != null) {
+      if (field.getNavigationElement() instanceof PbGroupDefinition group) {
         variants.add(PbSymbolLookupElement.forGroupDefinitionAsField(group, occurrence));
       } else {
         variants.add(PbSymbolLookupElement.withUnusableFieldHighlight(field, occurrence));
