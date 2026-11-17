@@ -126,7 +126,7 @@ jvm_library(
         "@community//tools/intellij.tools.ide.starter:ide-starter",
         "@community//tools/intellij.tools.ide.starter.product.clion:ide-starter-product-clion",
         "//tests/intellij.ide.starter.extended.allure:ide-starter-extended-allure",
-        "//tests/intellij.qodana.integration.testFramework:qodana-integration-testFramework_test_lib",
+        "//tests/intellij.qodana.integration.testFramework:qodana-integration-testFramework",
         "//tests/intellij.ide.starter.extended:ide-starter-extended",
         "@community//libraries/kotlin/test:libraries-kotlinTest",
         "@community//libraries/kotlin/test-assertions-core-jvm:libraries-kotlinTestAssertionsCoreJvm",
