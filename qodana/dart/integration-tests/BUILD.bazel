@@ -34,7 +34,7 @@ jvm_library(
         "@community//libraries/junit6",
         "@community//tools/intellij.tools.ide.starter:ide-starter",
         "@community//tools/intellij.tools.ide.starter.product.idea.ultimate:ide-starter-product-idea-ultimate",
-        "//tests/intellij.qodana.testsFramework:qodana-testsFramework_test_lib",
+        "//tests/intellij.qodana.integration.testFramework:qodana-integration-testFramework_test_lib",
         "//tests/intellij.ide.starter.extended:ide-starter-extended",
     ],
 )
