@@ -1,11 +1,16 @@
 package org.jetbrains.qodana.staticAnalysis.packageChecker
 
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.TestDataPath
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.Notification
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.PACKAGE_CHECKER_EXIT_CODE
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.RUNTIME_ERRORS_EXIT_CODE
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.QodanaConfigureNotificationCollector
+import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaKind
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.vulnerabilities.QodanaVulnerabilityServiceAvailability
@@ -33,15 +38,36 @@ class PackageCheckerAvailabilityReporterTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `unreachable service gives one problem per enabled package-checker inspection`() {
+  fun `unreachable service fails the run`() {
     QodanaVulnerabilityServiceAvailability.getInstance().setStateForTest(VulnerabilityServiceState.Unreachable("connect timed out"))
 
     runAnalysis()
 
-    val results = manager.sarifRun.results.filter { it.message.text.contains("connect timed out") }
-    assertThat(results.map { it.ruleId }).containsExactlyInAnyOrder("VulnerableLibrariesLocal", "MaliciousLibrariesLocal")
-    assertThat(results.flatMap { it.locations.orEmpty() }).isEmpty()
-    assertThat(vulnerabilityNotifications()).isEmpty()
+    assertSarifExitCode(PACKAGE_CHECKER_EXIT_CODE)
+    assertThat(manager.sarifRun.invocations.single().exitCodeDescription).contains("connect timed out")
+  }
+
+  @Test
+  fun `unreachable service with cancellation off gives a tool error and does not fail the run`() {
+    Registry.get(QodanaRegistry.PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY).setValue(false, testRootDisposable)
+    QodanaVulnerabilityServiceAvailability.getInstance().setStateForTest(VulnerabilityServiceState.Unreachable("connect timed out"))
+
+    runAnalysis()
+
+    assertSarifExitCode(0)
+    assertThat(toolErrorNotifications().map { it.message.text }).singleElement().asString().contains("connect timed out")
+  }
+
+  @Test
+  fun `unreachable service with cancellation off fails the run with failOnErrorNotification`() {
+    Registry.get(QodanaRegistry.PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY).setValue(false, testRootDisposable)
+    updateQodanaConfig { it.copy(failOnErrorNotification = true) }
+    QodanaVulnerabilityServiceAvailability.getInstance().setStateForTest(VulnerabilityServiceState.Unreachable("connect timed out"))
+
+    runAnalysis()
+
+    assertSarifExitCode(RUNTIME_ERRORS_EXIT_CODE)
+    assertThat(toolErrorNotifications()).hasSize(1)
   }
 
   @Test
@@ -55,13 +81,14 @@ class PackageCheckerAvailabilityReporterTest : QodanaRunnerTestCase() {
   }
 
   @Test
-  fun `no package-checker inspection gives no report`() {
+  fun `no package-checker inspection gives no report and does not fail the run`() {
     QodanaVulnerabilityServiceAvailability.getInstance().setStateForTest(VulnerabilityServiceState.Unreachable("connect timed out"))
 
     runAnalysis()
 
-    assertThat(manager.sarifRun.results.filter { it.message.text.contains("connect timed out") }).isEmpty()
+    assertSarifExitCode(0)
     assertThat(vulnerabilityNotifications()).isEmpty()
+    assertThat(toolErrorNotifications()).isEmpty()
   }
 
   @Test
@@ -78,11 +105,15 @@ class PackageCheckerAvailabilityReporterTest : QodanaRunnerTestCase() {
     runBeforeAnalysis { config, project -> QodanaConfigureNotificationCollector().configureForQodana(config, project) }
   }
 
-  private fun vulnerabilityNotifications(): List<Notification> {
+  private fun vulnerabilityNotifications(): List<Notification> = notifications(VULNERABILITY_SERVICE_DISABLED_NOTIFICATION)
+
+  private fun toolErrorNotifications(): List<Notification> = notifications(ToolErrorInspectListener.TOOL_ERROR_NOTIFICATION)
+
+  private fun notifications(kind: String): List<Notification> {
     return SarifUtil.readReport(qodanaConfig.outPath / FULL_SARIF_REPORT_NAME)
       .runs.orEmpty()
       .flatMap { it.invocations.orEmpty() }
       .flatMap { it.toolExecutionNotifications.orEmpty() }
-      .filter { it.qodanaKind == VULNERABILITY_SERVICE_DISABLED_NOTIFICATION }
+      .filter { it.qodanaKind == kind }
   }
 }
