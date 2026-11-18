@@ -2,7 +2,7 @@ package {
 
 public class CreateClassOrInterfaceAction11 {
   private function foo(i: int) {
-    foo(<error descr="Argument type Abc is not assignable to parameter type int">new <error descr="Unresolved type Abc">Abc</error>("zz")</error>);
+    foo(new <error descr="Unresolved type Abc">Abc</error>("zz"));
   }
 }
 }

@@ -78,8 +78,15 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           }
           if (resolve instanceof JSClass || resolve == null) {
             JSType typeFromText = JSTypeParser.createType(methodExpr.getProject(), methodExpr.getText(),
-                                                          JSTypeSourceFactory.createTypeSource(methodExpr, false));
-            if (typeFromText != null) type = typeFromText;
+                                                          JSTypeSourceFactory.createTypeSource(methodExpr));
+            if (typeFromText != null) {
+              if (resolve == null) {
+                addAdditionalType(typeFromText);
+              }
+              else {
+                type = typeFromText;
+              }
+            }
           }
         }
         addType(type);

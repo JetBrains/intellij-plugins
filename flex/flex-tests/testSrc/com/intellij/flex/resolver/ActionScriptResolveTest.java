@@ -8,12 +8,17 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSLocalVariable;
 import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSNewExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.junit5.TestApplication;
 import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.Processor;
@@ -24,6 +29,7 @@ import static com.intellij.lang.javascript.JSResolveFixture.buildResolveHandler;
 import static com.intellij.lang.javascript.JSResolveFixture.getElement;
 import static com.intellij.lang.javascript.JSTestFixtures.jsProjectFixture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,6 +60,18 @@ public class ActionScriptResolveTest {
       assertEquals(expected, ((JSNamedElement)element).getName());
       return false;
     };
+  }
+
+  @Test
+  public void testUnresolvedConstructorType() {
+    PsiReference ref = js.get().configureByFileText("var value = new Miss<caret>ing();");
+    JSTestUtils.runInBackgroundReadActionAndWaitVoid(() -> {
+      var expression = PsiTreeUtil.getParentOfType(ref.getElement(), JSNewExpression.class);
+      assertNotNull(expression);
+      var processor = new JSSimpleTypeProcessor();
+      JSTypeEvaluator.evaluateTypes(expression, expression.getContainingFile(), processor);
+      assertInstanceOf(JSAnyType.class, processor.getType());
+    });
   }
 
   @Test
