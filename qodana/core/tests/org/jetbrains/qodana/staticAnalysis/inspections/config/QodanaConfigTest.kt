@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.config
 
 import com.intellij.testFramework.assertInstanceOf
 import org.intellij.lang.annotations.Language
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.CloudBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaConfigurationException
 import org.jetbrains.qodana.util.QodanaMessageReporter
@@ -96,12 +97,21 @@ class QodanaConfigTest {
     assertEquals(true, actual.failOnErrorNotification)
   }
 
-  private fun getQodanaConfig(yaml: QodanaYamlConfig) =
+  @Test
+  fun `a baseline file and a cloud baseline do not go together`() {
+    assertThrows<IllegalArgumentException> {
+      getQodanaConfig(QodanaYamlConfig.EMPTY_V1, baseline = "given.sarif.json", cloudBaseline = CloudBaseline { null })
+    }
+  }
+
+  private fun getQodanaConfig(yaml: QodanaYamlConfig, baseline: String? = null, cloudBaseline: CloudBaseline? = null) =
     QodanaConfig.fromYaml(
       Path.of(".").toAbsolutePath(),
       Path.of("unused"),
       yaml = yaml,
       resultsStorage = Path.of("these cause an env lookup so ignore them"),
+      baseline = baseline,
+      cloudBaseline = cloudBaseline,
       outputFormat = OutputFormat.SARIF_AND_PROJECT_STRUCTURE
     )
 

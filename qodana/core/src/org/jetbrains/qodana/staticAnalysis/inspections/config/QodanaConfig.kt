@@ -216,6 +216,10 @@ data class QodanaConfig(
   var moduleSuspendThreshold: Int = System.getProperty("qodana.module.suspend.threshold", DEFAULT_MODULE_SUSPEND_THRESHOLD).toInt(),
   var projectSuspendThreshold: Int = System.getProperty("qodana.project.suspend.threshold", DEFAULT_PROJECT_SUSPEND_THRESHOLD).toInt(),
 ) {
+  init {
+    require(baseline == null || cloudBaseline == null) { "A run with the baseline file '$baseline' must not download a cloud baseline" }
+  }
+
   companion object {
     fun fromYaml(
       projectPath: Path,
