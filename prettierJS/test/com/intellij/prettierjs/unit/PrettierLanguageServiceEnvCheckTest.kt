@@ -9,10 +9,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
 import com.intellij.prettierjs.PrettierError
 import com.intellij.prettierjs.PrettierLanguageServiceImpl
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.runInEdtAndGet
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -24,15 +31,24 @@ private const val TIMEOUT_SECONDS = 30L
  * Checks that [PrettierLanguageServiceImpl] runs the Prettier package check off the caller thread.
  * The check reads the file system, and the caller may hold the read lock.
  */
-class PrettierLanguageServiceEnvCheckTest : BasePlatformTestCase() {
-  override fun runInDispatchThread(): Boolean = false
+@TestApplication
+class PrettierLanguageServiceEnvCheckTest {
+  companion object {
+    private val projectFixture = sharedCodeInsightProjectFixture()
+  }
 
+  private val myFixture by sharedCodeInsightFixture(projectFixture)
+  private val project get() = myFixture.project
+  private val testRootDisposable get() = myFixture.testRootDisposable
+
+  @Test
   fun testResolveConfigDoesNotWaitForPackageCheck() {
     assertCallerDoesNotWaitForPackageCheck { service, nodePackage ->
       service.resolveConfig("/fake/index.js", nodePackage).thenApply { it?.error }
     }
   }
 
+  @Test
   fun testFormatDoesNotWaitForPackageCheck() {
     assertCallerDoesNotWaitForPackageCheck { service, nodePackage ->
       service.format("/fake/index.js", null, "", nodePackage, null).thenApply { it?.error }
@@ -64,9 +80,9 @@ class PrettierLanguageServiceEnvCheckTest : BasePlatformTestCase() {
 
     val future = try {
       val future = request(service, nodePackage)
-      assertTrue("The package check did not start", checkStarted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS))
-      assertFalse("The caller must not wait for the package check", future.isDone)
-      assertNotSame("The package check must not run on the caller thread", Thread.currentThread(), checkThread.get())
+      assertTrue(checkStarted.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "The package check did not start")
+      assertFalse(future.isDone, "The caller must not wait for the package check")
+      assertNotSame(Thread.currentThread(), checkThread.get(), "The package check must not run on the caller thread")
       future
     }
     finally {

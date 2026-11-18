@@ -2,36 +2,48 @@
 package com.intellij.prettierjs.lsWidget
 
 import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServicePopupSection
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
-import com.intellij.prettierjs.PrettierConfiguration
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.prettierjs.PrettierJSTestUtil
 import com.intellij.prettierjs.PrettierLanguageService
 import com.intellij.prettierjs.PrettierLanguageServiceManager
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.testNameFixture
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * When several cached Prettier services are ancestors of the current file (nested layout), at most one widget item
  * must be [LanguageServicePopupSection.ForCurrentFile]. Each test copies a layout from `testData/lsWidget/<getTestName>`.
  */
-class PrettierWidgetItemsProviderTest : BasePlatformTestCase() {
+@TestApplication
+class PrettierWidgetItemsProviderTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+  private val project get() = myFixture.project
+  private val testName by testNameFixture()
 
-  override fun getTestDataPath(): String = PrettierJSTestUtil.getTestDataPath() + "lsWidget"
+  @BeforeEach
+  fun setUp() {
+    myFixture.testDataPath = PrettierJSTestUtil.getTestDataPath() + "lsWidget"
+  }
 
-  override fun tearDown() {
-    try {
-      PrettierLanguageServiceManager.getInstance(project).terminateServices()
-      // Keep PrettierConfiguration clean for the shared light project, matching PrettierConfigurationTestBase.
-      PrettierConfiguration.getInstance(project).state.configurationMode = null
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
+  @AfterEach
+  fun tearDown() {
+    PrettierLanguageServiceManager.getInstance(project).terminateServices()
   }
 
   /**
@@ -41,7 +53,7 @@ class PrettierWidgetItemsProviderTest : BasePlatformTestCase() {
    * matches using each cached service's own package, so neither path consults the project configuration.
    */
   private fun configureProject(): NodePackage {
-    myFixture.copyDirectoryToProject(getTestName(true), "")
+    myFixture.copyDirectoryToProject(testName, "")
     return NodePackage("/fake/node_modules/prettier")
   }
 
@@ -52,22 +64,27 @@ class PrettierWidgetItemsProviderTest : BasePlatformTestCase() {
   private fun seedServices(nodePackage: NodePackage, expectedCount: Int, vararg contextFiles: VirtualFile) {
     val manager = PrettierLanguageServiceManager.getInstance(project)
     var stableIterations = 0
-    PlatformTestUtil.waitWithEventsDispatching(
-      "Expected $expectedCount cached Prettier service(s)",
-      {
-        for (contextFile in contextFiles) {
-          PrettierLanguageService.getInstance(project, contextFile, nodePackage)
-        }
-        if (manager.jsLinterServices.size == expectedCount) stableIterations++ else stableIterations = 0
-        stableIterations >= 3
-      },
-      20,
-    )
+    timeoutRunBlocking(30.seconds) {
+      withContext(Dispatchers.EDT) {
+        PlatformTestUtil.waitWithEventsDispatching(
+          "Expected $expectedCount cached Prettier service(s)",
+          {
+            for (contextFile in contextFiles) {
+              PrettierLanguageService.getInstance(project, contextFile, nodePackage)
+            }
+            if (manager.jsLinterServices.size == expectedCount) stableIterations++ else stableIterations = 0
+            stableIterations >= 3
+          },
+          20,
+        )
+      }
+    }
   }
 
   private fun widgetItemsFor(currentFile: VirtualFile): List<LanguageServiceWidgetItem> =
-    PrettierWidgetItemsProvider().createWidgetItems(project, currentFile)
+    runReadActionBlocking { PrettierWidgetItemsProvider().createWidgetItems(project, currentFile) }
 
+  @Test
   fun testNestedService() {
     val nodePackage = configureProject()
 
@@ -81,13 +98,14 @@ class PrettierWidgetItemsProviderTest : BasePlatformTestCase() {
     assertEquals(2, items.size)
 
     val current = items.filter { it.widgetActionLocation == LanguageServicePopupSection.ForCurrentFile }
-    assertEquals("exactly one item should be marked ForCurrentFile", 1, current.size)
+    assertEquals(1, current.size, "exactly one item should be marked ForCurrentFile")
 
     val currentText = current.single().createWidgetAction().templatePresentation.text
-    assertTrue("the current-file item should be the nested service, but was: $currentText",
-               currentText != null && currentText.contains("gather-video-common"))
+    assertTrue(currentText != null && currentText.contains("gather-video-common"),
+               "the current-file item should be the nested service, but was: $currentText")
   }
 
+  @Test
   fun testRootService() {
     val nodePackage = configureProject()
 
@@ -99,10 +117,11 @@ class PrettierWidgetItemsProviderTest : BasePlatformTestCase() {
 
     val items = widgetItemsFor(nestedFile)
     assertEquals(1, items.size)
-    assertEquals("the root service must be ForCurrentFile",
-                 LanguageServicePopupSection.ForCurrentFile, items.single().widgetActionLocation)
+    assertEquals(LanguageServicePopupSection.ForCurrentFile, items.single().widgetActionLocation,
+                 "the root service must be ForCurrentFile")
   }
 
+  @Test
   fun testUnsupportedFile() {
     val nodePackage = configureProject()
 
@@ -113,8 +132,8 @@ class PrettierWidgetItemsProviderTest : BasePlatformTestCase() {
     seedServices(nodePackage, expectedCount = 1, nestedFile)
 
     val items = widgetItemsFor(unsupportedFile)
-    assertTrue("a cached service should still be shown", items.isNotEmpty())
-    assertTrue("no item should be ForCurrentFile for an unsupported file",
-               items.none { it.widgetActionLocation == LanguageServicePopupSection.ForCurrentFile })
+    assertTrue(items.isNotEmpty(), "a cached service should still be shown")
+    assertTrue(items.none { it.widgetActionLocation == LanguageServicePopupSection.ForCurrentFile },
+               "no item should be ForCurrentFile for an unsupported file")
   }
 }

@@ -3,16 +3,15 @@ package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.linter.JsLinterManagerListener
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.SavingRequestor
@@ -29,12 +28,28 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.psi.codeStyle.CodeStyleSettingsListener
 import com.intellij.testFramework.LeakHunter
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.createTestOpenProjectOptions
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
 import com.intellij.util.FileContentUtilCore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Files
@@ -48,38 +63,35 @@ import java.util.concurrent.atomic.AtomicInteger
  * A test never asks for a service again before it checks the cached service.
  * A new request creates a new service, and that would hide a termination.
  */
-class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
+@TestApplication
+class PrettierConfigChangeListenerTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+  private val project get() = myFixture.project
+  private val testRootDisposable get() = myFixture.testRootDisposable
+  private val tempDir by tempPathFixture()
   private lateinit var contextFile: VirtualFile
 
-  override fun tearDown() {
-    try {
-      PrettierLanguageServiceManager.getInstance(project).terminateServices()
-      // Keep PrettierConfiguration clean for the shared light project, matching PrettierConfigurationTestBase.
-      val state = PrettierConfiguration.getInstance(project).state
-      state.configurationMode = null
-      state.codeStyleSettingsModifierEnabled = true
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
+  @AfterEach
+  fun terminateServices() {
+    PrettierLanguageServiceManager.getInstance(project).terminateServices()
   }
 
-  fun testCreatingConfigFileTerminatesCachedService() {
+  @Test
+  fun testCreatingConfigFileTerminatesCachedService(): Unit = timeoutRunBlocking {
     val service = cacheService()
 
-    WriteAction.run<Throwable> { root().createChildData(this, ".prettierrc") }
+    edtWriteAction { root().createChildData(this, ".prettierrc") }
 
     assertFalse(isCached(service))
   }
 
-  fun testChangingConfigFileTerminatesCachedServiceBeforeWriteActionEnds() {
+  @Test
+  fun testChangingConfigFileTerminatesCachedServiceBeforeWriteActionEnds(): Unit = timeoutRunBlocking {
     val config = createFile(".prettierrc.json", "{}")
     val service = cacheService()
 
-    WriteAction.run<Throwable> {
+    edtWriteAction {
       VfsUtil.saveText(config, """{"semi": false}""")
       // Formatting cannot run before the write action ends, so it never gets the old service.
       assertFalse(isCached(service))
@@ -89,62 +101,69 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertNotSame(service, PrettierLanguageService.getInstance(project, contextFile, FAKE_PACKAGE))
   }
 
-  fun testDeletingConfigFileTerminatesCachedService() {
+  @Test
+  fun testDeletingConfigFileTerminatesCachedService(): Unit = timeoutRunBlocking {
     val config = createFile("prettier.config.mjs", "export default {}")
     val service = cacheService()
 
-    WriteAction.run<Throwable> { config.delete(this) }
+    edtWriteAction { config.delete(this) }
 
     assertFalse(isCached(service))
   }
 
-  fun testRenamingFileToConfigNameTerminatesCachedService() {
+  @Test
+  fun testRenamingFileToConfigNameTerminatesCachedService(): Unit = timeoutRunBlocking {
     val file = createFile("config.json", "{}")
     val service = cacheService()
 
-    WriteAction.run<Throwable> { file.rename(this, ".prettierrc.json") }
+    edtWriteAction { file.rename(this, ".prettierrc.json") }
 
     assertFalse(isCached(service))
   }
 
-  fun testRenamingConfigFileToOtherNameTerminatesCachedService() {
+  @Test
+  fun testRenamingConfigFileToOtherNameTerminatesCachedService(): Unit = timeoutRunBlocking {
     val config = createFile(".prettierrc", "{}")
     val service = cacheService()
 
-    WriteAction.run<Throwable> { config.rename(this, ".prettierrc.bak") }
+    edtWriteAction { config.rename(this, ".prettierrc.bak") }
 
     assertFalse(isCached(service))
   }
 
-  fun testChangingPropertyOfConfigFileTerminatesCachedService() {
+  @Test
+  fun testChangingPropertyOfConfigFileTerminatesCachedService(): Unit = timeoutRunBlocking {
     val config = createFile(".prettierrc.yaml", "semi: false")
     val service = cacheService()
 
-    WriteAction.run<Throwable> { config.isWritable = false }
+    edtWriteAction { config.isWritable = false }
 
     assertFalse(isCached(service))
   }
 
-  fun testChangingPackageJsonTerminatesCachedService() {
+  @Test
+  fun testChangingPackageJsonTerminatesCachedService(): Unit = timeoutRunBlocking {
     val packageJson = createFile("package.json", "{}")
     val service = cacheService()
 
-    WriteAction.run<Throwable> { VfsUtil.saveText(packageJson, """{"prettier": {"semi": false}}""") }
+    edtWriteAction { VfsUtil.saveText(packageJson, """{"prettier": {"semi": false}}""") }
 
     assertFalse(isCached(service))
   }
 
-  fun testChangingEditorConfigTerminatesCachedService() {
+  @Test
+  fun testChangingEditorConfigTerminatesCachedService(): Unit = timeoutRunBlocking {
     val editorConfig = createFile(".editorconfig", "root = true")
     val service = cacheService()
 
-    WriteAction.run<Throwable> { VfsUtil.saveText(editorConfig, "root = true\n[*]\nindent_size = 4") }
+    edtWriteAction { VfsUtil.saveText(editorConfig, "root = true\n[*]\nindent_size = 4") }
 
     assertFalse(isCached(service))
   }
 
-  fun testRefreshOfExternallyChangedConfigFileTerminatesCachedService() {
-    val dir = createTempDirectory()
+  @Test
+  fun testRefreshOfExternallyChangedConfigFileTerminatesCachedService(): Unit = timeoutRunBlocking {
+    val dir = tempDir
     VfsRootAccess.allowRootAccess(testRootDisposable, dir.toString())
     val configPath = Files.writeString(dir.resolve(".prettierrc.json"), "{}")
     val config = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(configPath)!!
@@ -157,8 +176,9 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertFalse(isCached(service))
   }
 
-  fun testRefreshOfManyUnrelatedExternalChangesKeepsCachedService() {
-    val dir = createTempDirectory()
+  @Test
+  fun testRefreshOfManyUnrelatedExternalChangesKeepsCachedService(): Unit = timeoutRunBlocking {
+    val dir = tempDir
     repeat(REFRESH_FILE_COUNT) { Files.writeString(dir.resolve("file$it.js"), "") }
     val root = loadLocalDirectory(dir, REFRESH_FILE_COUNT)
     val oldListener = subscribeOldListener()
@@ -181,8 +201,9 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertTrue(isCached(service))
   }
 
-  fun testRefreshOfSeveralExternalConfigChangesTerminatesServicesOneTime() {
-    val dir = createTempDirectory()
+  @Test
+  fun testRefreshOfSeveralExternalConfigChangesTerminatesServicesOneTime(): Unit = timeoutRunBlocking {
+    val dir = tempDir
     val names = listOf(".prettierrc.json", "package.json", ".editorconfig") + List(REFRESH_FILE_COUNT) { "file$it.js" }
     for (name in names) {
       Files.writeString(dir.resolve(name), "{}")
@@ -205,12 +226,13 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertFalse(isCached(service))
   }
 
-  fun testUnrelatedChangesKeepCachedService() {
+  @Test
+  fun testUnrelatedChangesKeepCachedService(): Unit = timeoutRunBlocking {
     val script = createFile("src/app.js", "let a = 1")
     val notes = createFile("notes.txt", "")
     val service = cacheService()
 
-    WriteAction.run<Throwable> {
+    edtWriteAction {
       val root = root()
       root.createChildData(this, "main.ts")
       VfsUtil.saveText(script, "let a = 2")
@@ -223,7 +245,8 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertTrue(isCached(service))
   }
 
-  fun testSavingConfigFileNotifiesCodeStyleListenersIfModifierIsEnabled() {
+  @Test
+  fun testSavingConfigFileNotifiesCodeStyleListenersIfModifierIsEnabled(): Unit = timeoutRunBlocking {
     setCodeStyleModifierEnabled(true)
     val config = createFile(".prettierrc.json", "{}")
     val service = cacheService()
@@ -235,7 +258,8 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertEquals(1, notifications.get())
   }
 
-  fun testSavingConfigFileDoesNotNotifyCodeStyleListenersIfModifierIsDisabled() {
+  @Test
+  fun testSavingConfigFileDoesNotNotifyCodeStyleListenersIfModifierIsDisabled(): Unit = timeoutRunBlocking {
     setCodeStyleModifierEnabled(false)
     val config = createFile(".prettierrc.json", "{}")
     val service = cacheService()
@@ -247,19 +271,21 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertEquals(0, notifications.get())
   }
 
-  fun testChangingConfigFileWithoutSaveDoesNotNotifyCodeStyleListeners() {
+  @Test
+  fun testChangingConfigFileWithoutSaveDoesNotNotifyCodeStyleListeners(): Unit = timeoutRunBlocking {
     setCodeStyleModifierEnabled(true)
     val config = createFile(".prettierrc.json", "{}")
     val service = cacheService()
     val notifications = countCodeStyleNotifications()
 
-    WriteAction.run<Throwable> { VfsUtil.saveText(config, """{"semi": false}""") }
+    edtWriteAction { VfsUtil.saveText(config, """{"semi": false}""") }
 
     assertFalse(isCached(service))
     assertEquals(0, notifications.get())
   }
 
-  fun testSavingUnrelatedFileKeepsCachedServiceAndDoesNotNotify() {
+  @Test
+  fun testSavingUnrelatedFileKeepsCachedServiceAndDoesNotNotify(): Unit = timeoutRunBlocking {
     setCodeStyleModifierEnabled(true)
     val service = cacheService()
     val notifications = countCodeStyleNotifications()
@@ -270,7 +296,8 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertEquals(0, notifications.get())
   }
 
-  fun testSaveAnywhereInBatchNotifiesCodeStyleListenersIfModifierIsEnabled() {
+  @Test
+  fun testSaveAnywhereInBatchNotifiesCodeStyleListenersIfModifierIsEnabled(): Unit = timeoutRunBlocking {
     setCodeStyleModifierEnabled(true)
     val service = cacheService()
     val notifications = countCodeStyleNotifications()
@@ -281,7 +308,8 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertEquals(1, notifications.get())
   }
 
-  fun testSaveAnywhereInBatchDoesNotNotifyCodeStyleListenersIfModifierIsDisabled() {
+  @Test
+  fun testSaveAnywhereInBatchDoesNotNotifyCodeStyleListenersIfModifierIsDisabled(): Unit = timeoutRunBlocking {
     setCodeStyleModifierEnabled(false)
     val service = cacheService()
     val notifications = countCodeStyleNotifications()
@@ -292,6 +320,7 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertEquals(0, notifications.get())
   }
 
+  @Test
   fun testEventsForConfigFileNamesRequestReload() {
     val dir = StubFile("dir", isDir = true)
     for (name in RELOAD_FILE_NAMES) {
@@ -305,11 +334,12 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
         "writable change" to VFilePropertyChangeEvent(null, file, VirtualFile.PROP_WRITABLE, true, false),
       )
       for ((kind, event) in events) {
-        assertNotNull("$kind of $name must request a reload", prepareChange(listOf(event)))
+        assertNotNull(prepareChange(listOf(event)), "$kind of $name must request a reload")
       }
     }
   }
 
+  @Test
   fun testEventsForOtherFileNamesDoNotRequestReload() {
     val dir = StubFile("dir", isDir = true)
     for (name in OTHER_FILE_NAMES) {
@@ -322,14 +352,15 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
         "writable change" to VFilePropertyChangeEvent(null, file, VirtualFile.PROP_WRITABLE, true, false),
       )
       for ((kind, event) in events) {
-        assertNull("$kind of $name must not request a reload", prepareChange(listOf(event)))
+        assertNull(prepareChange(listOf(event)), "$kind of $name must not request a reload")
       }
     }
     // A directory with the name package.json is not a package.json file.
     assertNull(prepareChange(listOf(VFileCreateEvent(null, dir, "package.json", true, null, null, null))))
   }
 
-  fun testLargeBatchOfUnrelatedEventsAvoidsVfsLookups() {
+  @Test
+  fun testLargeBatchOfUnrelatedEventsAvoidsVfsLookups(): Unit = timeoutRunBlocking {
     val service = cacheService()
     val dir = StubFile("src", isDir = true)
     val changed = StubFile("app.js")
@@ -368,23 +399,24 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
    * Compares the listener with the old listener on real VFS operations.
    * The new listener also examines the old name of a renamed file, so only a rename away from a config file name differs.
    */
-  fun testListenerMatchesOldListenerExceptForRenameAwayFromConfigName() {
+  @Test
+  fun testListenerMatchesOldListenerExceptForRenameAwayFromConfigName(): Unit = timeoutRunBlocking {
     val oldListener = subscribeOldListener()
     contextFile = createFile("index.js", "")
     val mismatches = mutableListOf<String>()
     var casesWithOldReload = 0
 
     for ((index, case) in parityCases().withIndex()) {
-      val (dir, file) = WriteAction.compute<Pair<VirtualFile, VirtualFile?>, Throwable> {
+      val (dir, file) = edtWriteAction {
         val dir = root().createChildDirectory(this, "case$index")
         dir.createChildDirectory(this, TARGET_DIRECTORY_NAME)
         dir to prepare(case, dir)
       }
-      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      withContext(Dispatchers.EDT) { PlatformTestUtil.dispatchAllEventsInIdeEventQueue() }
       val service = PrettierLanguageService.getInstance(project, contextFile, FAKE_PACKAGE)
       oldListener.reloads = 0
 
-      WriteAction.run<Throwable> { perform(case, dir, file) }
+      edtWriteAction { perform(case, dir, file) }
 
       val oldReloaded = oldListener.reloads > 0
       val newReloaded = !isCached(service)
@@ -395,12 +427,13 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
       }
     }
 
-    assertEmpty(mismatches)
+    assertThat(mismatches).isEmpty()
     // Without a reload in the old listener, the comparison would prove nothing.
     assertTrue(casesWithOldReload > 0)
   }
 
-  fun testCancelledPreparationKeepsCachedService() {
+  @Test
+  fun testCancelledPreparationKeepsCachedService(): Unit = timeoutRunBlocking {
     val service = cacheService()
     val indicator = EmptyProgressIndicator()
     // The first event cancels the preparation. The second event would request a reload.
@@ -421,8 +454,9 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     assertFalse(isCached(service))
   }
 
-  fun testClosedProjectReleasesListenerAndIgnoresPreparedChange() {
-    val otherProject = ProjectManagerEx.getInstanceEx().newProject(createTempDirectory(), createTestOpenProjectOptions())!!
+  @Test
+  fun testClosedProjectReleasesListenerAndIgnoresPreparedChange(): Unit = timeoutRunBlocking {
+    val otherProject = ProjectManagerEx.getInstanceEx().newProject(tempDir, createTestOpenProjectOptions())!!
     val (otherManager, applier) = try {
       val manager = PrettierLanguageServiceManager.getInstance(otherProject)
       manager to prepareChange(saveOfUnrelatedFileAndCreationOfConfigFile(), PrettierConfigChangeListener(manager))!!
@@ -439,9 +473,9 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
   }
 
   /** Caches one service for the project root. Call it one time in a test, after the VFS changes that prepare the test. */
-  private fun cacheService(): PrettierLanguageService {
+  private suspend fun cacheService(): PrettierLanguageService {
     contextFile = createFile("index.js", "")
-    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    withContext(Dispatchers.EDT) { PlatformTestUtil.dispatchAllEventsInIdeEventQueue() }
     val service = PrettierLanguageService.getInstance(project, contextFile, FAKE_PACKAGE)
     assertTrue(isCached(service))
     return service
@@ -459,8 +493,8 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     return ReadAction.computeBlocking<AsyncFileListener.ChangeApplier?, Throwable> { listener.prepareChange(events) }
   }
 
-  private fun applyChange(applier: AsyncFileListener.ChangeApplier) {
-    WriteAction.run<Throwable> { applier.afterVfsChange() }
+  private suspend fun applyChange(applier: AsyncFileListener.ChangeApplier) {
+    edtWriteAction { applier.afterVfsChange() }
   }
 
   private fun saveOfUnrelatedFileAndCreationOfConfigFile(): List<VFileEvent> {
@@ -474,12 +508,6 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
   private fun root(): VirtualFile = myFixture.tempDirFixture.getFile(".")!!
 
   private fun createFile(path: String, text: String): VirtualFile = myFixture.tempDirFixture.createFile(path, text)
-
-  private fun createTempDirectory(): Path {
-    val dir = FileUtil.createTempDirectory("prettier-config-change", null, false)
-    Disposer.register(testRootDisposable) { FileUtil.delete(dir) }
-    return dir.toPath()
-  }
 
   /** Finds the local directory in the VFS and loads its children, so that a later refresh reports each change. */
   private fun loadLocalDirectory(dir: Path, expectedChildCount: Int): VirtualFile {
@@ -550,7 +578,7 @@ class PrettierConfigChangeListenerTest : BasePlatformTestCase() {
     return if (isDirectory) dir.createChildDirectory(this, name) else dir.createChildData(this, name)
   }
 
-  private fun saveDocument(file: VirtualFile, text: String) {
+  private suspend fun saveDocument(file: VirtualFile, text: String) = withContext(Dispatchers.EDT) {
     val documentManager = FileDocumentManager.getInstance()
     val document = documentManager.getDocument(file)!!
     WriteCommandAction.runWriteCommandAction(project) { document.setText(text) }

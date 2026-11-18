@@ -2,31 +2,49 @@
 package com.intellij.prettierjs.unit
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
 import com.intellij.prettierjs.PrettierUtil
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 /**
  * Checks the config file name rule of [PrettierUtil].
  * The listener that terminates the Prettier services uses this rule, and other Prettier features use it too.
  */
-class PrettierUtilConfigFileTest : BasePlatformTestCase() {
+@TestApplication
+class PrettierUtilConfigFileTest {
+  companion object {
+    private val projectFixture = sharedCodeInsightProjectFixture()
+  }
+
+  private val myFixture by sharedCodeInsightFixture(projectFixture)
+
+  @Test
   fun testJsConfigFileNames() = checkConfigFiles(JS_CONFIG_FILE_NAMES, isJs = true, isNonJs = false)
 
+  @Test
   fun testTsConfigFileNames() = checkConfigFiles(TS_CONFIG_FILE_NAMES, isJs = false, isNonJs = false)
 
+  @Test
   fun testDataConfigFileNames() = checkConfigFiles(DATA_CONFIG_FILE_NAMES, isJs = false, isNonJs = true)
 
+  @Test
   fun testOtherFileNames() {
     for (name in OTHER_FILE_NAMES) {
       val file = LightVirtualFile(name)
-      assertFalse(name, PrettierUtil.isConfigFileName(name))
-      assertFalse(name, PrettierUtil.isConfigFile(file))
-      assertFalse(name, PrettierUtil.isJSConfigFile(file))
-      assertFalse(name, PrettierUtil.isNonJSConfigFile(file))
+      assertFalse(PrettierUtil.isConfigFileName(name), name)
+      assertFalse(PrettierUtil.isConfigFile(file), name)
+      assertFalse(PrettierUtil.isJSConfigFile(file), name)
+      assertFalse(PrettierUtil.isNonJSConfigFile(file), name)
     }
   }
 
+  @Test
   fun testPackageJson() {
     val file = LightVirtualFile("package.json")
     assertFalse(PrettierUtil.isConfigFile(file))
@@ -35,6 +53,7 @@ class PrettierUtilConfigFileTest : BasePlatformTestCase() {
     assertFalse(PrettierUtil.isConfigFileOrPackageJson(myFixture.tempDirFixture.findOrCreateDir("package.json")))
   }
 
+  @Test
   fun testNoFile() {
     assertFalse(PrettierUtil.isConfigFile(null as VirtualFile?))
     assertFalse(PrettierUtil.isConfigFileOrPackageJson(null))
@@ -43,11 +62,11 @@ class PrettierUtilConfigFileTest : BasePlatformTestCase() {
   private fun checkConfigFiles(names: List<String>, isJs: Boolean, isNonJs: Boolean) {
     for (name in names) {
       val file = LightVirtualFile(name)
-      assertTrue(name, PrettierUtil.isConfigFileName(name))
-      assertTrue(name, PrettierUtil.isConfigFile(file))
-      assertTrue(name, PrettierUtil.isConfigFileOrPackageJson(file))
-      assertEquals(name, isJs, PrettierUtil.isJSConfigFile(file))
-      assertEquals(name, isNonJs, PrettierUtil.isNonJSConfigFile(file))
+      assertTrue(PrettierUtil.isConfigFileName(name), name)
+      assertTrue(PrettierUtil.isConfigFile(file), name)
+      assertTrue(PrettierUtil.isConfigFileOrPackageJson(file), name)
+      assertEquals(isJs, PrettierUtil.isJSConfigFile(file), name)
+      assertEquals(isNonJs, PrettierUtil.isNonJSConfigFile(file), name)
     }
   }
 }

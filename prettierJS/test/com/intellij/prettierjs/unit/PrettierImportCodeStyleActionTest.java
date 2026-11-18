@@ -3,30 +3,52 @@ package com.intellij.prettierjs.unit;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.openapi.project.Project;
 import com.intellij.prettierjs.PrettierImportCodeStyleAction;
 import com.intellij.prettierjs.PrettierJSTestUtil;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
+import org.junit.jupiter.api.Test;
 
-public class PrettierImportCodeStyleActionTest extends BasePlatformTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightProjectFixture;
+import static com.intellij.testFramework.EdtTestUtil.runInEdtAndGet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestApplication
+public class PrettierImportCodeStyleActionTest {
+  private final TestFixture<Project> projectFixture = codeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsight = codeInsightFixture(projectFixture);
+
+  @Test
   public void testImportFromConfigFile() {
     doTestImport(".prettierrc.json", "{\"tabWidth\": 3}", 3);
   }
 
+  @Test
   public void testImportFromConfigFileNextToPackageJson() {
-    myFixture.addFileToProject(".prettierrc.json", "{\"tabWidth\": 5}");
+    codeInsight.get().addFileToProject(".prettierrc.json", "{\"tabWidth\": 5}");
     doTestImport("package.json", "{}", 5);
   }
 
+  @Test
   public void testUnavailableForOtherFile() {
-    var file = myFixture.addFileToProject("index.js", "").getVirtualFile();
-    var presentation = PrettierJSTestUtil.updateAndPerformAction(PrettierImportCodeStyleAction.ACTION_ID, getProject(), file);
+    CodeInsightTestFixture fixture = codeInsight.get();
+    var file = fixture.addFileToProject("index.js", "").getVirtualFile();
+    var presentation = runInEdtAndGet(
+      () -> PrettierJSTestUtil.updateAndPerformAction(PrettierImportCodeStyleAction.ACTION_ID, fixture.getProject(), file));
     assertFalse(presentation.isEnabledAndVisible());
   }
 
   private void doTestImport(String contextFileName, String contextFileText, int expectedIndentSize) {
-    JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
-      var file = myFixture.addFileToProject(contextFileName, contextFileText).getVirtualFile();
-      var presentation = PrettierJSTestUtil.updateAndPerformAction(PrettierImportCodeStyleAction.ACTION_ID, getProject(), file);
+    CodeInsightTestFixture fixture = codeInsight.get();
+    JSTestUtils.testWithTempCodeStyleSettings(fixture.getProject(), settings -> {
+      var file = fixture.addFileToProject(contextFileName, contextFileText).getVirtualFile();
+      var presentation = runInEdtAndGet(
+        () -> PrettierJSTestUtil.updateAndPerformAction(PrettierImportCodeStyleAction.ACTION_ID, fixture.getProject(), file));
       assertTrue(presentation.isEnabledAndVisible());
       assertEquals(expectedIndentSize, settings.getCommonSettings(JavascriptLanguage.INSTANCE).getIndentOptions().INDENT_SIZE);
     });

@@ -2,11 +2,19 @@
 package com.intellij.prettierjs.unit
 
 import com.intellij.internal.statistic.FUCollectorTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.fus.reporting.model.lion3.LogEvent
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
-class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
+@TestApplication
+class PrettierConfigurationEventLoggingTest {
+  private val prettier by prettierConfigurationFixture()
 
+  @Test
   fun testRootDirectoryAuto() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -15,6 +23,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testRootDirectoryAutoPackageJson() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -23,6 +32,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testRootDirectoryDisabled() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "UNCHANGED",
@@ -31,6 +41,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testSubPackageAuto() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -39,6 +50,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testSubPackageMultipleAuto() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -47,6 +59,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testSubPackageMultipleAutoMixed() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -55,6 +68,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testRootDependencyNestedConfig() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -63,6 +77,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testRootDependencyNestedPackageJsonConfig() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "AUTOMATIC",
@@ -71,6 +86,7 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testSubPackageDisabled() = doTest(
     expectedEventData = mapOf(
       "enabled_status" to "UNCHANGED",
@@ -79,13 +95,14 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
     )
   )
 
+  @Test
   fun testSubPackageDisabledNoPrettier() = doTest(
     expectedEventData = emptyMap()
   )
 
   private fun doTest(expectedEventData: Map<String, Any>) {
     val event = collectEvent {
-      configureAndRun()
+      prettier.configureAndRun()
     }
 
     runInEdtAndWait {
@@ -100,13 +117,13 @@ class PrettierConfigurationEventLoggingTest : PrettierConfigurationTestBase() {
   }
 
   private fun collectEvent(action: () -> Unit): LogEvent? {
-    val events = FUCollectorTestCase.collectLogEvents(testRootDisposable) { action() }
+    val events = FUCollectorTestCase.collectLogEvents(prettier.fixture.testRootDisposable) { action() }
     return events.singleOrNull { it.group.id == "prettier.configuration" }
   }
 
   private fun assertEvent(event: LogEvent, data: Map<String, Any>) {
     val expected = listOf("auto.enable.in.new.project" to data.toSortedMap())
     val actual = listOf(event.event.id to event.event.data.toSortedMap())
-    assertEquals("Event data mismatch.", expected, actual)
+    assertEquals(expected, actual, "Event data mismatch.")
   }
 }

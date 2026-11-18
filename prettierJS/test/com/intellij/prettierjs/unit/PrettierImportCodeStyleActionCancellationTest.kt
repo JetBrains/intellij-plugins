@@ -8,6 +8,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.module.Module
@@ -23,6 +24,8 @@ import com.intellij.openapi.util.io.NioFiles
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
 import com.intellij.prettierjs.PrettierConfig
 import com.intellij.prettierjs.PrettierImportCodeStyleAction
 import com.intellij.prettierjs.PrettierJSTestUtil
@@ -31,10 +34,18 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.OpenProjectTaskBuilder
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.registerExtension
 import com.intellij.testFramework.replaceService
-import com.intellij.util.ui.EDT
+import com.intellij.util.ui.EDT.isCurrentThreadEdt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.nio.file.Files
 import java.util.concurrent.CompletableFuture
@@ -44,9 +55,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.Duration.Companion.minutes
 
 private const val IMPORT_ACTION_ID = PrettierImportCodeStyleAction.ACTION_ID
 private val WAIT_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(30)
+private val TEST_TIMEOUT = 2.minutes
 
 /**
  * Checks that [PrettierImportCodeStyleAction] cancels its pending config lookup in these cases:
@@ -56,110 +69,131 @@ private val WAIT_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(30)
  * Each of these tests first shows that the deferred lookup imports the config when nothing goes away.
  * The tests use static JSON configs, so the importer applies them without Node.js.
  */
-class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
+@TestApplication
+class PrettierImportCodeStyleActionCancellationTest {
+  companion object {
+    private val projectFixture = sharedCodeInsightProjectFixture()
+  }
+
+  private val myFixture by sharedCodeInsightFixture(projectFixture)
+  private val project get() = myFixture.project
+  private val testRootDisposable get() = myFixture.testRootDisposable
   private val installedTabWidths = CopyOnWriteArrayList<Int>()
   private val installFutures = ConcurrentHashMap<Int, CompletableFuture<Unit>>()
   private val notifications = CopyOnWriteArrayList<String>()
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     ApplicationManager.getApplication().registerExtension(PrettierCodeStyleInstaller.EP_NAME, InstallRecorder(), testRootDisposable)
     recordNotifications(project)
   }
 
-  fun testNewImportCancelsPendingImport() = withTempCodeStyleSettings(project) { settings ->
-    val configA = addConfig("a/.prettierrc.json", 3)
-    val configB = addConfig("b/.prettierrc.json", 5)
-    val probeA = probeLookups(configA)
-    val importA = updateImport(project, configA)
-    val importB = updateImport(project, configB)
-    val problems = recordLoggedProblems {
-      try {
-        probeA.startHolding()
-        assertTrue(PrettierJSTestUtil.performAction(IMPORT_ACTION_ID, importA).isPerformed)
-        waitFor(probeA.firstHeldLookup)
-        assertTrue(PrettierJSTestUtil.performAction(IMPORT_ACTION_ID, importB).isPerformed)
-        waitFor(installFuture(5))
-      }
-      finally {
-        probeA.release()
-      }
-      NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
-    }
-    assertEquals("tabWidth values in the order of import", listOf(5), installedTabWidths)
-    assertEquals(5, indentSize(settings))
-    assertEquals(1, notifications.size)
-    assertEmpty(problems)
-  }
-
-  fun testDeletedContextFileCancelsPendingImport() = withTempCodeStyleSettings(project) { settings ->
-    performImportInsideWriteAction(updateImport(project, addConfig("control/.prettierrc.json", 7))) {}
-    NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
-    assertEquals(listOf(7), installedTabWidths)
-    assertEquals(1, notifications.size)
-    installedTabWidths.clear()
-    notifications.clear()
-
-    val config = addConfig("c/.prettierrc.json", 6)
-    val probe = probeLookups(config)
-    val importEvent = updateImport(project, config)
-    val indentBefore = indentSize(settings)
-    val problems = recordLoggedProblems {
-      probe.startCounting()
-      performImportInsideWriteAction(importEvent) { config.delete(this) }
-      NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
-    }
-    assertEquals("lookups of the deleted file", 0, probe.lookups)
-    assertEmpty(installedTabWidths)
-    assertEmpty(notifications)
-    assertEmpty(problems)
-    assertEquals(indentBefore, indentSize(settings))
-  }
-
-  fun testDisposedProjectCancelsPendingImport() {
-    val root = FileUtil.createTempDirectory("prettierImport", null).toPath()
-    try {
-      Files.writeString(Files.createDirectory(root.resolve("control")).resolve(".prettierrc.json"), """{"tabWidth": 7}""")
-      Files.writeString(Files.createDirectory(root.resolve("c")).resolve(".prettierrc.json"), """{"tabWidth": 6}""")
-      VfsRootAccess.allowRootAccess(testRootDisposable, root.toString())
-      val rootDir = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(root)!!
-      val otherProject = ProjectManagerEx.getInstanceEx().newProject(root.resolve("project"), OpenProjectTaskBuilder().build())!!
-      try {
-        val module = WriteAction.compute<Module, RuntimeException> {
-          ModuleManager.getInstance(otherProject).newModule(root.resolve("m.iml"), ModuleTypeManager.getInstance().defaultModuleType.id)
-        }
-        ModuleRootModificationUtil.addContentRoot(module, rootDir)
-        recordNotifications(otherProject)
-
-        // The project has no code style of its own, so the temporary settings keep the import out of the default settings.
-        withTempCodeStyleSettings(otherProject) {
-          performImportInsideWriteAction(updateImport(otherProject, rootDir.findFileByRelativePath("control/.prettierrc.json")!!)) {}
+  @Test
+  fun testNewImportCancelsPendingImport(): Unit = timeoutRunBlocking(TEST_TIMEOUT) {
+    withContext(Dispatchers.EDT) {
+      withTempCodeStyleSettings(project) { settings ->
+        val configA = addConfig("a/.prettierrc.json", 3)
+        val configB = addConfig("b/.prettierrc.json", 5)
+        val probeA = probeLookups(configA)
+        val importA = updateImport(project, configA)
+        val importB = updateImport(project, configB)
+        val problems = recordLoggedProblems {
+          try {
+            probeA.startHolding()
+            assertTrue(PrettierJSTestUtil.performAction(IMPORT_ACTION_ID, importA).isPerformed)
+            waitFor(probeA.firstHeldLookup)
+            assertTrue(PrettierJSTestUtil.performAction(IMPORT_ACTION_ID, importB).isPerformed)
+            waitFor(installFuture(5))
+          }
+          finally {
+            probeA.release()
+          }
           NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
         }
+        assertEquals(listOf(5), installedTabWidths, "tabWidth values in the order of import")
+        assertEquals(5, indentSize(settings))
+        assertEquals(1, notifications.size)
+        assertThat(problems).isEmpty()
+      }
+    }
+  }
+
+  @Test
+  fun testDeletedContextFileCancelsPendingImport(): Unit = timeoutRunBlocking(TEST_TIMEOUT) {
+    withContext(Dispatchers.EDT) {
+      withTempCodeStyleSettings(project) { settings ->
+        performImportInsideWriteAction(updateImport(project, addConfig("control/.prettierrc.json", 7))) {}
+        NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
         assertEquals(listOf(7), installedTabWidths)
         assertEquals(1, notifications.size)
         installedTabWidths.clear()
         notifications.clear()
 
-        val importEvent = updateImport(otherProject, rootDir.findFileByRelativePath("c/.prettierrc.json")!!)
+        val config = addConfig("c/.prettierrc.json", 6)
+        val probe = probeLookups(config)
+        val importEvent = updateImport(project, config)
+        val indentBefore = indentSize(settings)
         val problems = recordLoggedProblems {
-          performImportInsideWriteAction(importEvent) {}
-          // The project is not open, so the close disposes it in one write action and dispatches no events.
-          // Thus, the deferred lookup cannot start before the disposal.
-          ProjectManagerEx.getInstanceEx().forceCloseProject(otherProject)
-          assertTrue(otherProject.isDisposed)
+          probe.startCounting()
+          performImportInsideWriteAction(importEvent) { config.delete(this) }
           NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
         }
-        assertEmpty(installedTabWidths)
-        assertEmpty(notifications)
-        assertEmpty(problems)
-      }
-      finally {
-        PlatformTestUtil.forceCloseProjectWithoutSaving(otherProject)
+        assertEquals(0, probe.lookups, "lookups of the deleted file")
+        assertThat(installedTabWidths).isEmpty()
+        assertThat(notifications).isEmpty()
+        assertThat(problems).isEmpty()
+        assertEquals(indentBefore, indentSize(settings))
       }
     }
-    finally {
-      NioFiles.deleteRecursively(root)
+  }
+
+  @Test
+  fun testDisposedProjectCancelsPendingImport(): Unit = timeoutRunBlocking(TEST_TIMEOUT) {
+    withContext(Dispatchers.EDT) {
+      val root = FileUtil.createTempDirectory("prettierImport", null).toPath()
+      try {
+        Files.writeString(Files.createDirectory(root.resolve("control")).resolve(".prettierrc.json"), """{"tabWidth": 7}""")
+        Files.writeString(Files.createDirectory(root.resolve("c")).resolve(".prettierrc.json"), """{"tabWidth": 6}""")
+        VfsRootAccess.allowRootAccess(testRootDisposable, root.toString())
+        val rootDir = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(root)!!
+        val otherProject = ProjectManagerEx.getInstanceEx().newProject(root.resolve("project"), OpenProjectTaskBuilder().build())!!
+        try {
+          val module = WriteAction.compute<Module, RuntimeException> {
+            ModuleManager.getInstance(otherProject).newModule(root.resolve("m.iml"), ModuleTypeManager.getInstance().defaultModuleType.id)
+          }
+          ModuleRootModificationUtil.addContentRoot(module, rootDir)
+          recordNotifications(otherProject)
+
+          // The project has no code style of its own, so the temporary settings keep the import out of the default settings.
+          withTempCodeStyleSettings(otherProject) {
+            performImportInsideWriteAction(updateImport(otherProject, rootDir.findFileByRelativePath("control/.prettierrc.json")!!)) {}
+            NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
+          }
+          assertEquals(listOf(7), installedTabWidths)
+          assertEquals(1, notifications.size)
+          installedTabWidths.clear()
+          notifications.clear()
+
+          val importEvent = updateImport(otherProject, rootDir.findFileByRelativePath("c/.prettierrc.json")!!)
+          val problems = recordLoggedProblems {
+            performImportInsideWriteAction(importEvent) {}
+            // The project is not open, so the close disposes it in one write action and dispatches no events.
+            // Thus, the deferred lookup cannot start before the disposal.
+            ProjectManagerEx.getInstanceEx().forceCloseProject(otherProject)
+            assertTrue(otherProject.isDisposed)
+            NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
+          }
+          assertThat(installedTabWidths).isEmpty()
+          assertThat(notifications).isEmpty()
+          assertThat(problems).isEmpty()
+        }
+        finally {
+          PlatformTestUtil.forceCloseProjectWithoutSaving(otherProject)
+        }
+      }
+      finally {
+        NioFiles.deleteRecursively(root)
+      }
     }
   }
 
@@ -185,7 +219,7 @@ class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
 
   private fun updateImport(project: Project, config: VirtualFile): AnActionEvent {
     val event = PrettierJSTestUtil.updateAction(IMPORT_ACTION_ID, PrettierJSTestUtil.fileDataContext(project, config))
-    assertTrue("The import is not available for $config", event.presentation.isEnabledAndVisible)
+    assertTrue(event.presentation.isEnabledAndVisible, "The import is not available for $config")
     return event
   }
 
@@ -284,7 +318,7 @@ class PrettierImportCodeStyleActionCancellationTest : BasePlatformTestCase() {
     }
 
     fun onContentCheck(checkedFile: VirtualFile) {
-      if (checkedFile != file || EDT.isCurrentThreadEdt()) return
+      if (checkedFile != file || isCurrentThreadEdt()) return
       if (counting) {
         lookupCount.incrementAndGet()
       }
