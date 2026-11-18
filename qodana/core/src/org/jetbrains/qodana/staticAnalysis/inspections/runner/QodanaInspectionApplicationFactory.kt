@@ -160,7 +160,6 @@ class QodanaInspectionApplicationFactory {
       yaml = yamlConfig,
       profileNameFromCli = profileName,
       profilePathFromCli = profilePath,
-      baseline = commandLine.getOptionValue("baseline"),
       disableSanityInspections = disableSanity,
       airGapped = airGapped,
       fixesStrategy = commandLine.fixesStrategy() ?: FixesStrategy.fromString(yamlConfig.fixesStrategy.uppercase()),
@@ -198,7 +197,7 @@ class QodanaInspectionApplicationFactory {
       }
     }
     return QodanaInspectionApplication(
-      qodanaConfig.copy(cloudBaseline = resolveCloudBaseline(qodanaConfig.baseline, projectApi?.frontendUrl)),
+      qodanaConfig.copy(baseline = resolveBaseline(commandLine.getOptionValue("baseline")?.let { Path.of(it) }, projectApi?.frontendUrl)),
       projectApi,
     )
   }

@@ -25,7 +25,6 @@ import org.jetbrains.qodana.extensions.VcsIgnoredFilesProvider
 import org.jetbrains.qodana.license.QodanaLicense
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.CloudBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.DefaultSeverityIncludeScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ExcludeScopeModifier
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.GitIgnoreExcludeScopeModifier
@@ -176,8 +175,7 @@ data class QodanaConfig(
   val yamlFiles: QodanaYamlFiles,
   val outPath: Path,
   val resultsStorage: Path,
-  val baseline: String?,
-  val cloudBaseline: CloudBaseline? = null,
+  val baseline: QodanaBaseline?,
   val profile: QodanaProfileConfig,
   val profileSource: String,
   val defaultProfileName: String,
@@ -216,10 +214,6 @@ data class QodanaConfig(
   var moduleSuspendThreshold: Int = System.getProperty("qodana.module.suspend.threshold", DEFAULT_MODULE_SUSPEND_THRESHOLD).toInt(),
   var projectSuspendThreshold: Int = System.getProperty("qodana.project.suspend.threshold", DEFAULT_PROJECT_SUSPEND_THRESHOLD).toInt(),
 ) {
-  init {
-    require(baseline == null || cloudBaseline == null) { "A run with the baseline file '$baseline' must not download a cloud baseline" }
-  }
-
   companion object {
     fun fromYaml(
       projectPath: Path,
@@ -227,7 +221,7 @@ data class QodanaConfig(
       yamlFiles: QodanaYamlFiles = QodanaYamlFiles.noFiles(),
       yaml: QodanaYamlConfig = QodanaYamlConfig.EMPTY_V1,
       resultsStorage: Path = getResultsStorage(outPath, getOutputFormat()),
-      baseline: String? = null,
+      baseline: QodanaBaseline? = null,
       profileNameFromCli: String = "",
       profilePathFromCli: String = "",
       profile: QodanaProfileConfig = QodanaProfileConfig.fromYaml(yaml.profile, profileNameFromCli, profilePathFromCli),
@@ -237,7 +231,6 @@ data class QodanaConfig(
       runPromoInspections: Boolean? = yaml.runPromoInspections,
       script: QodanaScriptConfig = yaml.script,
       includeAbsent: Boolean = yaml.includeAbsent,
-      cloudBaseline: CloudBaseline? = null,
       outputFormat: OutputFormat = getOutputFormat(),
       license: QodanaLicense = QodanaLicense(QodanaLicenseType.ULTIMATE_PLUS, false, null),
       onlyDirectory: Path? = yaml.onlyDirectory,
@@ -280,7 +273,6 @@ data class QodanaConfig(
         runPromoInspections = runPromoInspections,
         script = script,
         includeAbsent = includeAbsent,
-        cloudBaseline = cloudBaseline,
         outputFormat = outputFormat,
         license = license,
         onlyDirectory = onlyDirectory,

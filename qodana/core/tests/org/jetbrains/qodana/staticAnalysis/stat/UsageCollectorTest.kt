@@ -5,6 +5,7 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import com.jetbrains.fus.reporting.model.lion3.LogEvent
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector.profileForReporting
@@ -198,6 +199,25 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
   }
 
   @Test
+  fun logConfig_cloud_baseline() {
+    val event = collectEvent {
+      val config = QodanaConfig.fromYaml(Paths.get("").toAbsolutePath(), Paths.get(""), baseline = QodanaBaseline.Cloud { null })
+      UsageCollector.logConfig(config, "qodana.starter", "")
+    }
+
+    assertEvent(event, "config",
+                "bootstrap" to false,
+                "profile" to "starter",
+                "include" to 0,
+                "exclude" to 0,
+                "baselineType" to "cloud",
+                "fixesStrategy" to "none",
+                "includeAbsent" to false,
+                "onlyDirectory" to false
+    )
+  }
+
+  @Test
   fun logConfig_custom() {
     val event = collectEvent {
       val config = QodanaConfig.fromYaml(
@@ -218,7 +238,7 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
         ),
         profileNameFromCli = "qodana.recommended",
         profilePathFromCli = "irrelevant path to inspection profile.xml",
-        baseline = "something not null",
+        baseline = QodanaBaseline.Local(Path.of("something not null")),
         fixesStrategy = FixesStrategy.CLEANUP,
         includeAbsent = true,
         onlyDirectory = Path.of("another thing that's not null")

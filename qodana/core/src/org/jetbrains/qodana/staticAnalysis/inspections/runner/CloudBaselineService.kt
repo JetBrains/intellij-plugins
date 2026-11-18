@@ -18,6 +18,7 @@ import org.jetbrains.qodana.cloud.api.IjQDCloudClient
 import org.jetbrains.qodana.cloud.api.message
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import java.io.FilterInputStream
 import java.io.IOException
@@ -61,21 +62,13 @@ internal fun downloadTimeout(value: String?): Duration {
 }
 
 /**
- * The baseline of a run in Qodana Cloud.
+ * Gives the baseline of a run. It downloads nothing.
  *
- * [download] writes the baseline to a temporary file, or gives null when Qodana Cloud gives no baseline.
- * The caller deletes the file.
+ * A [baselineFile] always wins. Without one, the run gets the cloud baseline of [cloudBaselineOf].
+ * A run with [SKIP_CLOUD_BASELINE_PROPERTY] or without [frontendUrl] gets no cloud baseline.
  */
-class CloudBaseline internal constructor(internal val download: suspend () -> Path?)
-
-/**
- * Gives the cloud baseline of a run. It downloads nothing.
- *
- * A baseline file always wins, so a run with [baselineFile] gets no cloud baseline.
- * A run with [SKIP_CLOUD_BASELINE_PROPERTY] or without [frontendUrl] gets none too, see also [cloudBaselineOf].
- */
-internal fun resolveCloudBaseline(baselineFile: String?, frontendUrl: String?): CloudBaseline? {
-  if (baselineFile != null) return null
+internal fun resolveBaseline(baselineFile: Path?, frontendUrl: String?): QodanaBaseline? {
+  if (baselineFile != null) return QodanaBaseline.Local(baselineFile)
   if (System.getProperty(SKIP_CLOUD_BASELINE_PROPERTY).toBoolean()) {
     LOG.info("qodana-cli turned the cloud baseline of this run off")
     return null
@@ -91,9 +84,9 @@ internal fun cloudBaselineOf(
   frontendUrl: String,
   retryPause: Duration = RETRY_PAUSE,
   readTimeout: Duration = DOWNLOAD_TIMEOUT,
-): CloudBaseline? {
+): QodanaBaseline.Cloud? {
   val token = qodanaEnv().QODANA_TOKEN.value?.takeIf { it.isNotEmpty() } ?: return null
-  return CloudBaseline { downloadCloudBaseline(frontendUrl, token, retryPause, readTimeout) }
+  return QodanaBaseline.Cloud { downloadCloudBaseline(frontendUrl, token, retryPause, readTimeout) }
 }
 
 /**

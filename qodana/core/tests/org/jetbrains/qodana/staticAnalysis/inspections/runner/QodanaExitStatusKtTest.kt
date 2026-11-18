@@ -11,11 +11,13 @@ import com.jetbrains.qodana.sarif.model.Run
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
 import org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.ToolErrorInspectListener
 import org.jetbrains.qodana.staticAnalysis.sarif.resultSummary
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
@@ -24,6 +26,7 @@ import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
 import org.jetbrains.qodana.staticAnalysis.sarif.withKind
 import org.junit.Test
+import java.nio.file.Path
 import kotlin.io.path.Path
 
 class QodanaExitStatusKtTest {
@@ -64,6 +67,8 @@ class QodanaExitStatusKtTest {
       .withProperties(PropertyBag().apply { put("ideaSeverity", severity.name) })
 
   private fun Run.setup(cfg: QodanaConfig = emptyConfig, vararg results: Result) {
+    // In a real run the comparison with the baseline comes first and labels the run, and the summary reads the label.
+    if (cfg.baseline != null) getOrAssignProperties()["baselineSource"] = "LOCAL"
     ResultSummaryContributor().contribute(withResults(results.toList()), DummyProject.getInstance(), cfg)
   }
 
@@ -300,7 +305,7 @@ class QodanaExitStatusKtTest {
   @Test
   fun `should set success with unchanged baseline results`() {
     val cfg = emptyConfig.copy(
-      baseline = "anything that's not null",
+      baseline = QodanaBaseline.Local(Path.of("anything that's not null")),
       failureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = 0))
     )
 
@@ -315,7 +320,7 @@ class QodanaExitStatusKtTest {
   @Test
   fun `should set failure with new baseline results`() {
     val cfg = emptyConfig.copy(
-      baseline = "anything that's not null",
+      baseline = QodanaBaseline.Local(Path.of("anything that's not null")),
       failureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = 0)),
     )
 

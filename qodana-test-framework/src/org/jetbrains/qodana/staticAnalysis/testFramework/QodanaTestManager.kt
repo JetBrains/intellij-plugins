@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileYamlConfig
@@ -88,7 +89,7 @@ class QodanaTestManager {
       testData.outputPath,
       yamlFiles = yamlPath?.let { QodanaYamlFiles.noConfigDir(yamlPath) } ?: QodanaYamlFiles.noFiles(),
       yaml = yamlConfig,
-      baseline = testData.getTestDataPath("baseline-results.sarif.json").takeIf { it.exists() }?.toString(),
+      baseline = testData.getTestDataPath("baseline-results.sarif.json").takeIf { it.exists() }?.let(QodanaBaseline::Local),
       profile = profile,
       disableSanityInspections = true,
       runPromoInspections = false,

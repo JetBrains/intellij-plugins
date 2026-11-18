@@ -39,7 +39,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.resolveCloudBaseline
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.resolveBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaInIdeRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
@@ -160,16 +160,13 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
       val resultsDir = FileUtil.createTempDirectory("qodana_results", null, true)
 
       val yamlFiles = runInIdeParameters.qodanaYamlFile?.let { QodanaYamlFiles.noConfigDir(it) } ?: QodanaYamlFiles.noFiles()
-      val baseline = runInIdeParameters.qodanaBaseline
-
       val config = QodanaConfig.fromYaml(
         projectPath = projectPath,
         outPath = outDir.toPath(),
         resultsStorage = resultsDir.toPath(),
         yaml = runInIdeParameters.qodanaYamlConfig,
         yamlFiles = yamlFiles,
-        baseline = baseline?.toString(),
-        cloudBaseline = resolveCloudBaseline(baseline?.toString(), currentQodanaCloudFrontendUrl().toExternalForm()),
+        baseline = resolveBaseline(runInIdeParameters.qodanaBaseline, currentQodanaCloudFrontendUrl().toExternalForm()),
       )
 
       val analysisScope = QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)

@@ -26,6 +26,7 @@ import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.junit.Test
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
@@ -80,7 +81,7 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     tokenOnly()
     System.setProperty(SKIP_CLOUD_BASELINE_PROPERTY, "true")
     try {
-      assertNull(resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+      assertNull(resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
     }
     finally {
       System.clearProperty(SKIP_CLOUD_BASELINE_PROPERTY)
@@ -89,29 +90,32 @@ class CloudBaselineServiceTest : QodanaTestCase() {
   }
 
   @Test
-  fun `a baseline file gives no cloud baseline`() = runTest {
+  fun `a baseline file wins over the cloud baseline`() = runTest {
     tokenOnly()
 
-    assertNull(resolveCloudBaseline(baselineFile = "given.sarif.json", frontendUrl = FRONTEND_URL))
+    val baseline = resolveBaseline(baselineFile = Path.of("given.sarif.json"), frontendUrl = FRONTEND_URL)
+
+    assertEquals(Path.of("given.sarif.json"), (baseline as QodanaBaseline.Local).path)
+    assertEquals(0, cloudProvider.clients)
   }
 
   @Test
   fun `without the variable and without a file the run gets a cloud baseline that downloads later`() = runTest {
     tokenOnly()
 
-    assertNotNull(resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+    assertInstanceOf(resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL), QodanaBaseline.Cloud::class.java)
     assertEquals(0, cloudProvider.clients)
   }
 
   @Test
   fun `without a token there is no cloud baseline`() = runTest {
-    assertNull(resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+    assertNull(resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
   }
 
   @Test
   fun `the cloud baseline downloads at the first use`() = runTest {
     serveBaseline(entry("a"))
-    val cloud = resolveCloudBaseline(baselineFile = null, frontendUrl = FRONTEND_URL)!!
+    val cloud = resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL) as QodanaBaseline.Cloud
 
     val file = cloud.download()?.also(downloaded::add)
 

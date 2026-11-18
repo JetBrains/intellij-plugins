@@ -13,6 +13,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.OriginalUriBaseId
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
@@ -27,20 +28,17 @@ import java.nio.file.Paths
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.fileSize
 import kotlin.io.path.getLastModifiedTime
-import kotlin.io.path.Path
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.notExists
 
 private const val BASELINE_SOURCE_PROPERTY = "baselineSource"
 
 private suspend fun readBaselineReport(
-  baseline: String,
+  baseline: Path,
   projectPath: Path,
   readResults: Boolean = true,
 ): SarifReport? {
-  val baselineFile = runInterruptible(StaticAnalysisDispatchers.IO) {
-    Path(baseline).takeIf(Path::isAbsolute) ?: projectPath.resolve(baseline)
-  }
+  val baselineFile = baseline.takeIf(Path::isAbsolute) ?: projectPath.resolve(baseline)
 
   if (baselineFile.notExists()) {
     return null
@@ -91,7 +89,7 @@ private object BaselineHeaderCache {
  * The file of a cloud baseline holds only results: it has no rules and no properties of a run.
  */
 internal suspend fun getBaselineReport(config: QodanaConfig, includeResults: Boolean = true): SarifReport? =
-  config.baseline?.let { readBaselineReport(config.baseline, config.projectPath, includeResults) }
+  (config.baseline as? QodanaBaseline.Local)?.let { readBaselineReport(it.path, config.projectPath, includeResults) }
 
 internal suspend fun applyBaselineCalculation(
   report: SarifReport,
@@ -99,12 +97,15 @@ internal suspend fun applyBaselineCalculation(
   scope: QodanaAnalysisScope,
   reporter: QodanaMessageReporter
 ) {
-  // The cloud baseline downloads here, after the analysis, and only when the run has no baseline file.
-  val cloudFile = if (config.baseline == null) config.cloudBaseline?.download() else null
+  val baseline = config.baseline ?: return setBaselineSource(report, "NONE")
+  // The cloud baseline downloads here, after the analysis.
+  val baselinePath = when (baseline) {
+    is QodanaBaseline.Local -> baseline.path
+    is QodanaBaseline.Cloud -> baseline.download() ?: return setBaselineSource(report, "NONE")
+  }
   try {
-    val baselinePath = config.baseline ?: cloudFile?.toString() ?: return setBaselineSource(report, "NONE")
-    var source = if (config.baseline != null) "LOCAL" else "CLOUD"
-    val baseline = readBaselineReport(baselinePath, config.projectPath) ?: run {
+    var source = if (baseline is QodanaBaseline.Cloud) "CLOUD" else "LOCAL"
+    val baselineReport = readBaselineReport(baselinePath, config.projectPath) ?: run {
       reporter.reportError("Can't find baseline report file: $baselinePath. Baseline will be calculated against empty report.")
       source = "NONE"
       createSarifReport(emptyList())
@@ -112,12 +113,12 @@ internal suspend fun applyBaselineCalculation(
     val options = getOptions(scope, config)
 
     // This mutates the `report` parameter!
-    BaselineCalculation.compare(report, baseline, options)
+    BaselineCalculation.compare(report, baselineReport, options)
     setBaselineSource(report, source)
   }
   finally {
     // Only this comparison reads the cloud file.
-    cloudFile?.let { withContext(NonCancellable + StaticAnalysisDispatchers.IO) { it.deleteIfExists() } }
+    if (baseline is QodanaBaseline.Cloud) withContext(NonCancellable + StaticAnalysisDispatchers.IO) { baselinePath.deleteIfExists() }
   }
 }
 
