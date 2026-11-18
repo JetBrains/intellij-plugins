@@ -19,45 +19,64 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper;
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintRule;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.Consumer;
 import com.intellij.util.EmptyConsumer;
 import org.intellij.lang.annotations.Language;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.sharedCodeInsightProjectFixture;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestApplication
+public class TsLintCodeStyleImportBasicTest {
+  private static final TestFixture<Project> projectFixture = sharedCodeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = sharedCodeInsightFixture(projectFixture);
+
+  @Test
   public void testSimpleStringValue() {
-    doTestJson("{\"rules\": {\"semicolon\": [true,\"never\"]}}", (settings) -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
+    doTestJson("{\"rules\": {\"semicolon\": [true,\"never\"]}}", (settings) -> assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
+  @Test
   public void testSimpleNumberValue() {
     doTestJson("{\"rules\": {\"max-line-length\": [true, 12]}}", (settings) -> {
       CommonCodeStyleSettings commonSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
-      Assert.assertEquals(12, commonSettings.RIGHT_MARGIN);
+      assertEquals(12, commonSettings.RIGHT_MARGIN);
     });
   }
 
+  @Test
   public void testDisabledRule() {
     doTestJson("{\"rules\": {\"semicolon\": false}}", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
+      assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
+      assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
 
+  @Test
   public void testDisabledRuleWithOptions() {
     doTestJson("{\"rules\": {\"semicolon\": [false,\"never\"]}}", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
+      assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
+      assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
 
+  @Test
   public void testSeverityOff() {
     doTestJson("""
                  {
@@ -69,11 +88,12 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                    }
                  }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
+      assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
+      assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
 
+  @Test
   public void testSeverityNone() {
     doTestJson("""
                  {
@@ -85,11 +105,12 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                    }
                  }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
+      assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
+      assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
 
+  @Test
   public void testWithSeverityAndSingleStringOption() {
     doTestJson("""
                  {
@@ -101,11 +122,12 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                    }
                  }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertFalse(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
+      assertFalse(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
+      assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
 
+  @Test
   public void testWithOptionsObject() {
     doTestJson("""
                  {
@@ -115,10 +137,11 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                  }
                  """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
+      assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
     });
   }
 
+  @Test
   public void testWithSeverityAndOptionsObject() {
     doTestJson("""
                  {
@@ -131,10 +154,11 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                  }
                  """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
+      assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
     });
   }
 
+  @Test
   public void testWithSeverityAndOptionsObjectInArray() {
     doTestJson("""
                  {
@@ -148,10 +172,11 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                  }
                  """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
+      assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
     });
   }
   
+  @Test
   public void testWithSeverityAndStringArrayOption() {
     doTestJson("""
                  {
@@ -163,11 +188,12 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                    }
                  }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      Assert.assertFalse(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      Assert.assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
+      assertFalse(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
+      assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
 
+  @Test
   public void testWithSeverityAndSingleNumberOption() {
     doTestJson("""
                  {
@@ -183,6 +209,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testWithSeverityAndArrayNumberOption() {
     doTestJson("""
                  {
@@ -198,6 +225,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testStringListRule() {
     doTestJson("""
                  {
@@ -215,11 +243,13 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testSimpleStringValueYaml() {
     doTestYaml("rules:\n" +
-               "    semicolon: [true, \"never\"]", settings -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
+               "    semicolon: [true, \"never\"]", settings -> assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
+  @Test
   public void testSimpleNumberValueYaml() {
     doTestYaml("""
                  rules:
@@ -230,14 +260,16 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testStringValueFromOptionsYaml() {
     doTestYaml("""
                  rules:
                      semicolon:
                          options:
-                             - never""", settings -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
+                             - never""", settings -> assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
+  @Test
   public void testNumberValueFromOptionsYaml() {
     doTestYaml("""
                  rules:
@@ -248,6 +280,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     }); 
   }
 
+  @Test
   public void testNoneSeverityYaml() {
     doTestYaml("""
                  rules:
@@ -259,6 +292,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testStringListRuleYaml() {
     doTestYaml("""
                  rules:
@@ -272,6 +306,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testIndentWithTabs() {
     int indentBefore = 7;
     doTestJson("""
@@ -296,6 +331,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
                });
   }
 
+  @Test
   public void testIndentWithTabsInOptions() {
     doTestJson("""
                  {
@@ -311,6 +347,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testIndentWithSize() {
     doTestJson("""
                  {
@@ -325,6 +362,7 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  @Test
   public void testIndentWithSizeInOptions() {
     doTestJson("""
                  {
@@ -357,15 +395,17 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   private void doTest(String configFileName,
                       String configText,
                       Consumer<CodeStyleSettings> setup, Consumer<CodeStyleSettings> test) {
-    JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
+    CodeInsightTestFixture myFixture = codeInsightFixture.get();
+    Project project = myFixture.getProject();
+    JSTestUtils.testWithTempCodeStyleSettings(project, settings -> {
 
-      CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(myFixture.getProject());
+      CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(project);
       setup.consume(codeStyleSettings);
 
       PsiFile configFile = myFixture.configureByText(configFileName, configText);
-      TsLintConfigWrapper config = TsLintConfigWrapper.Companion.getConfigForFile(configFile);
-      Collection<TsLintRule> rulesToApply = config.getRulesToApply(getProject());
-      config.applyRules(getProject(), rulesToApply);
+      TsLintConfigWrapper config = ReadAction.computeBlocking(() -> TsLintConfigWrapper.Companion.getConfigForFile(configFile));
+      Collection<TsLintRule> rulesToApply = ReadAction.computeBlocking(() -> config.getRulesToApply(project));
+      config.applyRules(project, rulesToApply);
       
       test.consume(codeStyleSettings);
     });
