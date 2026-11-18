@@ -113,6 +113,8 @@ groups:
 inspections:
   - group: QodanaOpengrepInspections
     enabled: true
+  - inspection: OpenGrepGlobalInspection
+    enabled: true # Enabled in the profile, so that Qodana applies its exclusions
   - group: LuaOpengrepRules
     enabled: false
   - group: LuaRmlInspections

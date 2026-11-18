@@ -177,6 +177,8 @@ inspections:
   - inspection: PyPep8Inspection
     severity: WEAK WARNING # It has default INFORMATION severity because it makes a lot of noise during coding. For CI makes sense to enable it
     enabled: true # Explicitly enable, because it is disabled by default INFORMATION severity.
+  - inspection: OpenGrepGlobalInspection
+    enabled: true # Enabled in the profile, so that Qodana applies its exclusions
   - group: PqcMinLevel1
     enabled: true
   - inspection: NullableProblems
