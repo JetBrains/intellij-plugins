@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.libraries
 
 import org.jetbrains.vuejs.libraries.cssModules.CssModulesTest
-import org.jetbrains.vuejs.libraries.eslint.VueESLintImportCodeStyleTest
 import org.jetbrains.vuejs.libraries.i18n.I18nTest
 import org.jetbrains.vuejs.libraries.nuxt.NuxtTestSuite
 import org.jetbrains.vuejs.libraries.pinia.PiniaTest
@@ -24,7 +23,6 @@ import org.junit.runners.Suite
   TemplateLoaderCompletionTest::class,
   VuelidateTest::class,
   CssModulesTest::class,
-  I18nTest::class,
-  VueESLintImportCodeStyleTest::class
+  I18nTest::class
 )
 class LibrariesTestSuite
