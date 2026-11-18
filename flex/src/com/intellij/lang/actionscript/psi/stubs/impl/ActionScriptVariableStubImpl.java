@@ -129,7 +129,7 @@ public final class ActionScriptVariableStubImpl
 
   @Override
   public @Nullable JSType getTypeFromStubDumper(@NotNull PsiElement sourceElement) {
-    JSTypeSource source = JSTypeSourceFactory.createTypeSource(sourceElement, false);
+    JSTypeSource source = JSTypeSourceFactory.createTypeSource(sourceElement);
     return JSTypeParser.parseSerializedType(getProject(), myTypeFromStubDumper, source);
   }
 

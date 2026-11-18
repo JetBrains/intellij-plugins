@@ -101,7 +101,7 @@ public final class ActionScriptParameterStubImpl extends JSParameterStubImpl imp
 
   @Override
   public @Nullable JSType getTypeFromStubDumper(@NotNull PsiElement sourceElement) {
-    JSTypeSource source = JSTypeSourceFactory.createTypeSource(sourceElement, false);
+    JSTypeSource source = JSTypeSourceFactory.createTypeSource(sourceElement);
     return JSTypeParser.parseSerializedType(getProject(), myTypeFromStubDumper, source);
   }
 
