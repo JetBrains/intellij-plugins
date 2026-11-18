@@ -3,6 +3,8 @@ package org.jetbrains.qodana.registry
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.VisibleForTesting
 import java.util.MissingResourceException
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 object QodanaRegistry {
   @VisibleForTesting
@@ -11,6 +13,8 @@ object QodanaRegistry {
   const val SCOPE_EXTENDING_ENABLE_KEY = "qd.scope.extending.enabled"
   @VisibleForTesting
   const val PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY = "qd.package-checker.cancel.on.failure"
+  @VisibleForTesting
+  const val VULNERABILITY_SERVICE_PROBE_TIMEOUT_KEY: String = "qd.vulnerability.service.probe.timeout.seconds"
 
   val isQodanaLicenseAgreementCallbackEnabled: Boolean
     get() = Registry.`is`("qd.license.agreement.callback.enabled", true)
@@ -26,6 +30,9 @@ object QodanaRegistry {
 
   val isPackageCheckerCancelOnFailureEnabled: Boolean
     get() = Registry.`is`(PACKAGE_CHECKER_CANCEL_ON_FAILURE_KEY, true)
+
+  val vulnerabilityServiceProbeTimeout: Duration
+    get() = Registry.intValue(VULNERABILITY_SERVICE_PROBE_TIMEOUT_KEY, 5).seconds
 
   val openSarifInEditor: Boolean
     get() = Registry.`is`("qd.open.sarif.in.editor", false)

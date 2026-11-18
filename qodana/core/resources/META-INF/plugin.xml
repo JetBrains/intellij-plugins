@@ -196,6 +196,7 @@
     <registryKey defaultValue="100" description="Number of commits to load from VCS per request, used to search Qodana Cloud report relevant to current revision" key="qd.vcs.revision.page.size" restartRequired="true"/>
     <registryKey defaultValue="10" description="Max number of requests to VCS, used to search Qodana Cloud report relevant to current revision" key="qd.vcs.revision.max.pages" restartRequired="true"/>
     <registryKey defaultValue="2" description="Retry attempts count to Qodana Cloud server on failed report download" key="qd.cloud.download.retries.count"/>
+    <registryKey defaultValue="5" description="Timeout in seconds of the check of the JetBrains vulnerability service before the analysis" key="qd.vulnerability.service.probe.timeout.seconds"/>
     <registryKey defaultValue="false" description="Use whole distribution for .inspection.kts" key="qd.inspection.kts.all.distribution.for.dependencies"/>
     <registryKey defaultValue="true" description="Use inspection.kts dependencies limited only to flexinspect" key="qd.inspection.kts.limited.dependencies"/>
 
