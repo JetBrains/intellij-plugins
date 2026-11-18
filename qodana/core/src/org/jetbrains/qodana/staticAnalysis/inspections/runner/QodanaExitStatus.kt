@@ -26,7 +26,7 @@ internal const val PACKAGE_CHECKER_EXIT_CODE = 1
  * Arbitrary, but based on https://man.freebsd.org/cgi/man.cgi?query=sysexits
  * EX_SOFTWARE (70)  An	internal software error has been detected.
  */
-private const val RUNTIME_ERRORS_EXIT_CODE = 70
+internal const val RUNTIME_ERRORS_EXIT_CODE = 70
 private const val BULLET_POINT = "\n- "
 
 private const val MATCHED_BY_PROPERTY = "matchedMethod"
