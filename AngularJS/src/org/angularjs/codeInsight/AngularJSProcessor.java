@@ -221,7 +221,7 @@ public final class AngularJSProcessor {
               && resolved.getParent() instanceof JSArgumentList) {
             JSQualifiedName qName = JSSymbolUtil.getLiteralValueAsQualifiedName((JSLiteralExpression)resolved);
             if (qName != null) {
-              namespace = JSNamedTypeFactory.createNamespace(qName, JSContext.INSTANCE, resolved);
+              namespace = JSNamedTypeFactory.createNamespace(qName, JSContext.INSTANCE, resolved, true);
             }
           }
         }
