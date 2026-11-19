@@ -26,7 +26,7 @@ private constructor(
     JSCodeBasedType {
 
   constructor(member: JSRecordType.PropertySignature, decorator: ES6Decorator?, decoratorArgumentIndex: Int)
-    : this(JSTypeSourceFactory.createTypeSource(member.memberSource.singleElement!!, false),
+    : this(JSTypeSourceFactory.createTypeSource(member.memberSource.singleElement!!),
            member, decorator, decoratorArgumentIndex)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType =

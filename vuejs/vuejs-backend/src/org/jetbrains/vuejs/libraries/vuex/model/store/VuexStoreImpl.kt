@@ -165,7 +165,7 @@ class VuexGetterImpl(
     VuexGetter {
 
   private val jsType: JSType?
-    get() = (source as? JSTypeOwner)?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(source, false), it) }
+    get() = (source as? JSTypeOwner)?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(source), it) }
 
   override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl =
     VueImplicitElement(qualifiedName.substring(namespace.length), jsType, source, JSImplicitElement.Type.Property, true)

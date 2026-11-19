@@ -471,7 +471,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         is JSImplicitElement -> {
           provider = sourceElement.context ?: sourceElement
           sourceElement.jsType?.let {
-            JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement, false))
+            JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement))
           }
         }
         is JSFunctionProperty -> sourceElement.returnType
@@ -483,7 +483,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
           }
           else {
             sourceElement.getJSType(JSTypeEngineMode.Service)?.let {
-              JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement, false))
+              JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement))
             }
           }
         }

@@ -401,8 +401,8 @@ fun JSType.fixPrimitiveTypes(): JSType =
 private fun getPropTypeFromConstructor(expression: JSExpression): JSType {
   // WEB-80110 getJSType(JSTypeEngineMode.Service) breaks VueCompletionTest$WithoutServiceTest#testCastedObjectProps
   return getPropTypeFromGenericType((expression as? TypeScriptAsExpression)?.type?.jsType)
-         ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
-                           JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
+         ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression)),
+                           JSTypeSourceFactory.createTypeSource(expression.containingFile))
 }
 
 fun getPropTypeFromGenericType(jsType: JSType?): JSType? {
