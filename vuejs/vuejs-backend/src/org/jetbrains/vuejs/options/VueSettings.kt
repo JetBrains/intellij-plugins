@@ -27,7 +27,11 @@ import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspIntegrationHybridMo
 class VueSettings(private val project: Project) :
   SimplePersistentStateComponent<VueSettings.State>(State()) {
 
-  var serviceType: VueLSMode by state::serviceType
+  var serviceType: VueLSMode
+    get() = state.serviceType
+    set(value) {
+      state.serviceType = value
+    }
 
   val useTypesFromServer: Boolean
     get() {
