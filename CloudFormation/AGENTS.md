@@ -42,7 +42,7 @@ These notes are specific to `contrib/CloudFormation` and its `metadata-crawler` 
 
 - If completion or inspection behavior changes, add or update tests under `contrib/CloudFormation/src/test/kotlin/com/intellij/aws/cloudformation/tests/` and matching `testData` files.
 - `YamlExamplesTest` treats "no problems" as the absence of a `*.expected` file. Do not add an empty expected file for clean examples.
-- If you modify iml files, run the `IntelliJConfigurationFilesFormatTest` to verify the formatting.
+- If you modify iml files, run `./tests.cmd --module intellij.projectStructureTests --test com.intellij.ideaProjectStructure.slow.IntelliJConfigurationFilesFormatTest` to verify the formatting.
 
 ## Final steps
 
