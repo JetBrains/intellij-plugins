@@ -48,20 +48,8 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
       }
     }
 
-    /**
-     * We don't restart services in [VueSettings]; the configurable restarts them on apply instead.
-     */
-    var lastAppliedState = settings.state
-
     onApply {
-      val current = settings.state
-      if (current != lastAppliedState) {
-        restartVueServicesAsync(project)
-      }
-      lastAppliedState = current
-    }
-    onReset {
-      lastAppliedState = settings.state
+      restartVueServicesAsync(project)
     }
   }
 
