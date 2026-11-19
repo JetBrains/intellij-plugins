@@ -1,4 +1,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+
+# the plugin layout copies this directory to the plugin distribution
+pkg_files(
+    name = "rb_resources",
+    srcs = glob(["src/rb/**"]),
+    strip_prefix = strip_prefix.from_pkg("src"),
+    visibility = ["//ruby/plugin:__pkg__"],
+)
 
 ### auto-generated section `dev intellij.ruby.testing` start
 filegroup(
