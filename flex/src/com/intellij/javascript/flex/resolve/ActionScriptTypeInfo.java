@@ -91,7 +91,7 @@ public final class ActionScriptTypeInfo {
 
   public void addBaseObjectType() {
     final JSQualifiedNameImpl name = JSQualifiedNameImpl.create(JSCommonTypeNames.OBJECT_CLASS_NAME, null);
-    final JSNamespace namespace = JSNamedTypeFactory.createNamespace(name, JSContext.INSTANCE, null, false);
+    final JSNamespace namespace = JSNamedTypeFactory.createNamespace(name, JSContext.INSTANCE, null, true);
     myContextLevels.add(new ActionScriptContextLevel(namespace, JSLookupPriority.OBJECT_AND_FUNCTION_MEMBERS_NESTING_LEVEL));
   }
 
