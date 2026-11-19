@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -31,7 +31,6 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.RemoveConfigurabl
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.ui.navigation.Place;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
 
@@ -65,11 +65,11 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
   }
 
   @Override
-  public boolean addModuleNodeChildren(final Module module,
-                                       final MasterDetailsComponent.MyNode moduleNode,
-                                       final Runnable treeNodeNameUpdater) {
+  public void addModuleNodeChildren(final Module module,
+                                    final MasterDetailsComponent.MyNode moduleNode,
+                                    final Runnable treeNodeNameUpdater) {
     if (!(ModuleType.get(module) instanceof FlexModuleType)) {
-      return false;
+      return;
     }
 
     final List<CompositeConfigurable> configurables = myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater);
@@ -78,8 +78,6 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
         moduleNode.add(new BuildConfigurationNode(configurable));
       }
     }
-
-    return !configurables.isEmpty();
   }
 
   @Override
@@ -136,7 +134,7 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
   }
 
   @Override
-  public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,
+  public Collection<AnAction> createAddActions(final Supplier<MasterDetailsComponent.MyNode> selectedNodeRetriever,
                                                final Runnable treeNodeNameUpdater,
                                                final Project project,
                                                final MasterDetailsComponent.MyNode root) {
@@ -150,12 +148,12 @@ public final class FlexBuildConfigurationsExtension extends ModuleStructureExten
 
       @Override
       public void update(final @NotNull AnActionEvent e) {
-        e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
+        e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.get()) != null);
       }
 
       @Override
       public void actionPerformed(final @NotNull AnActionEvent e) {
-        final Module module = getFlexModuleForNode(selectedNodeRetriever.compute());
+        final Module module = getFlexModuleForNode(selectedNodeRetriever.get());
         myConfigurator.addConfiguration(module, treeNodeNameUpdater);
       }
     });
