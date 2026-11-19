@@ -63,6 +63,104 @@ class XmlSemanticFingerprintsTest : BasePlatformTestCase() {
     assertMatchingFingerprints(before, after)
   }
 
+  fun testXmlTagFingerprintIgnoresNewRootTagAttribute() {
+    val before = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <extensions defaultExtensionNs="com.intellij">
+          <extension point="com.intellij.foo" implementation="a.b.C"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent(), ::extensionTag)
+    val after = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin visibility="public">
+        <extensions defaultExtensionNs="com.intellij">
+          <extension point="com.intellij.foo" implementation="a.b.C"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent(), ::extensionTag)
+
+    assertMatchingFingerprints(before, after)
+  }
+
+  fun testXmlTagFingerprintIgnoresResourceBundleOfActions() {
+    val before = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <actions resource-bundle="messages.OldBundle">
+          <action id="sample" class="a.b.SampleAction"/>
+        </actions>
+      </idea-plugin>
+    """.trimIndent(), ::actionTag)
+    val after = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <actions resource-bundle="messages.NewBundle">
+          <action id="sample" class="a.b.SampleAction"/>
+        </actions>
+      </idea-plugin>
+    """.trimIndent(), ::actionTag)
+
+    assertMatchingFingerprints(before, after)
+  }
+
+  fun testXmlTagFingerprintIgnoresOrderOfRegistration() {
+    val before = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <extensions defaultExtensionNs="com.intellij">
+          <lang.parserDefinition language="Sample" implementationClass="a.b.SampleParserDefinition"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent(), ::parserDefinitionTag)
+    val after = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <extensions defaultExtensionNs="com.intellij">
+          <lang.parserDefinition language="Sample" implementationClass="a.b.SampleParserDefinition" order="first"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent(), ::parserDefinitionTag)
+
+    assertMatchingFingerprints(before, after)
+  }
+
+  fun testXmlTagFingerprintsOfRegistrationsWithDifferentImplementationClassesDoNotMatch() {
+    val first = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <extensions defaultExtensionNs="com.intellij">
+          <lang.parserDefinition language="Sample" implementationClass="a.b.FirstParserDefinition"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent(), ::parserDefinitionTag)
+    val second = fingerprintState("META-INF/plugin.xml", """
+      <idea-plugin>
+        <extensions defaultExtensionNs="com.intellij">
+          <lang.parserDefinition language="Sample" implementationClass="a.b.SecondParserDefinition"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent(), ::parserDefinitionTag)
+
+    assertDifferentFingerprints(first, second)
+  }
+
+  fun testXmlTagFingerprintIgnoresClassChildTagsOfJpaPersistenceUnit() {
+    val before = fingerprintState("META-INF/persistence.xml", """
+      <persistence>
+        <persistence-unit name="sample">
+          <class>a.b.Second</class>
+          <properties/>
+        </persistence-unit>
+      </persistence>
+    """.trimIndent(), ::persistenceUnitPropertiesTag)
+    val after = fingerprintState("META-INF/persistence.xml", """
+      <persistence>
+        <persistence-unit name="sample">
+          <class>a.b.First</class>
+          <class>a.b.Second</class>
+          <properties/>
+        </persistence-unit>
+      </persistence>
+    """.trimIndent(), ::persistenceUnitPropertiesTag)
+
+    assertMatchingFingerprints(before, after)
+  }
+
   fun testXmlTextFingerprintIgnoresDependencyReorder() {
     val before = fingerprintState("pom.xml", """
       <project>
@@ -227,6 +325,18 @@ class XmlSemanticFingerprintsTest : BasePlatformTestCase() {
              ?.subTags
              ?.single { it.localName == "extension" && it.getAttributeValue("point") == "com.intellij.foo" }
            ?: error("Missing extension tag")
+  }
+
+  private fun actionTag(rootTag: XmlTag): XmlTag {
+    return rootTag.findFirstSubTag("actions")?.findFirstSubTag("action") ?: error("Missing action tag")
+  }
+
+  private fun parserDefinitionTag(rootTag: XmlTag): XmlTag {
+    return rootTag.findFirstSubTag("extensions")?.findFirstSubTag("lang.parserDefinition") ?: error("Missing parser definition tag")
+  }
+
+  private fun persistenceUnitPropertiesTag(rootTag: XmlTag): XmlTag {
+    return rootTag.findFirstSubTag("persistence-unit")?.findFirstSubTag("properties") ?: error("Missing properties tag")
   }
 
   private fun targetDependencyTag(rootTag: XmlTag): XmlTag {

@@ -30,6 +30,20 @@ internal object XmlSemanticIdentityExtractor {
     "forClass",
   )
 
+  /**
+   * Attributes that name the registered class or extension point. Unlike [STABLE_SELECTOR_NAMES], they are only attributes.
+   * A child tag of such a name, like `<class>` of a JPA `persistence-unit`, is no selector.
+   */
+  private val CLASS_ATTRIBUTE_SELECTOR_NAMES = listOf(
+    "implementationClass",
+    "serviceImplementation",
+    "service",
+    "class",
+    "className",
+    "instance",
+    "qualifiedName",
+  )
+
   fun extractIdentity(element: PsiElement): String? {
     if (element.containingFile?.language != XMLLanguage.INSTANCE) return null
     val target = findTarget(element) ?: return null
@@ -119,17 +133,19 @@ internal object XmlSemanticIdentityExtractor {
     }
   }
 
+  /**
+   * The selectors tell [tag] apart from its siblings of the same name.
+   * They read only the attributes and child tags of [STABLE_SELECTOR_NAMES] and the attributes of [CLASS_ATTRIBUTE_SELECTOR_NAMES].
+   * A tag without them falls back to its text.
+   *
+   * Other attributes are no selectors, like `visibility` of `<idea-plugin>` or `resource-bundle` of `<actions>`.
+   * So a change of such an attribute keeps the identity of each tag in the file.
+   */
   private fun tagSelectors(tag: XmlTag): List<String> {
     val stableSelectors = STABLE_SELECTOR_NAMES.mapNotNull { selectorName ->
       stableAttributeSelector(tag, selectorName) ?: stableChildSelector(tag, selectorName)
-    }
+    } + CLASS_ATTRIBUTE_SELECTOR_NAMES.mapNotNull { selectorName -> stableAttributeSelector(tag, selectorName) }
     if (stableSelectors.isNotEmpty()) return stableSelectors
-
-    val attributeFallback = tag.attributes
-      .filterNot { it.isNamespaceDeclaration }
-      .sortedBy { attributeSortKey(it) }
-      .map(::attributeSegment)
-    if (attributeFallback.isNotEmpty()) return attributeFallback
 
     val textFallback = tag.value.trimmedText
       .takeIf { tag.subTags.isEmpty() && it.isNotBlank() }
@@ -151,14 +167,6 @@ internal object XmlSemanticIdentityExtractor {
   private fun attributeSegment(attribute: XmlAttribute): String {
     val attributeValue = attribute.displayValue.orEmpty().ifBlank { attribute.value.orEmpty() }
     return "attr:${qualifiedName(attribute.localName, attribute.namespace)}=${normalizeValue(attributeValue)}"
-  }
-
-  private fun attributeSortKey(attribute: XmlAttribute): String {
-    return buildString {
-      append(attribute.namespace)
-      append('\u0000')
-      append(attribute.localName)
-    }
   }
 
   private fun qualifiedName(localName: String, namespace: String): String {
