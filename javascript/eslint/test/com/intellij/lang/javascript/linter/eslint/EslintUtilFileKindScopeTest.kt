@@ -3,9 +3,24 @@ package com.intellij.lang.javascript.linter.eslint
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.sharedCodeInsightProjectFixture
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class EslintUtilFileKindScopeTest : BasePlatformTestCase() {
+@TestApplication
+class EslintUtilFileKindScopeTest {
+  companion object {
+    private val projectFixture = sharedCodeInsightProjectFixture()
+  }
+
+  private val myFixture by sharedCodeInsightFixture(projectFixture)
+  private val project get() = projectFixture.get()
+
   private fun setFilesPattern(pattern: String) {
     val configuration = EslintConfiguration.getInstance(project)
     val prev = configuration.extendedState.getState()
@@ -13,6 +28,7 @@ class EslintUtilFileKindScopeTest : BasePlatformTestCase() {
     configuration.setExtendedState(configuration.isEnabled, newState)
   }
 
+  @Test
   fun testReturnsNullForFileOutsideContent() { // Match all JS files to isolate the isInContent() branch
     setFilesPattern("**/*.js")
 
@@ -31,6 +47,7 @@ class EslintUtilFileKindScopeTest : BasePlatformTestCase() {
     assertNull(EslintUtil.getFileKind(psiFile))
   }
 
+  @Test
   fun testReturnsNullWhenFileDoesNotMatchFilesPattern() { // Only allow files under src/**/*.js
     setFilesPattern("src/**/*.js")
 
@@ -43,6 +60,7 @@ class EslintUtilFileKindScopeTest : BasePlatformTestCase() {
     assertNull(EslintUtil.getFileKind(notMatched))
   }
 
+  @Test
   fun testReturnsNonNullWhenFileInContentAndMatchesPattern() {
     setFilesPattern("src/**/*.js")
 

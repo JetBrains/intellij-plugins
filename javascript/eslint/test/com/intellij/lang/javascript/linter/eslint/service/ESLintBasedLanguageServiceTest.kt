@@ -15,13 +15,26 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
+import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightProjectFixture
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.common.timeoutRunBlocking
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 
-class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
-  fun testHighlightSuspendingExecutesCommandAndParsesResponse() = timeoutRunBlocking {
+@TestApplication
+class ESLintBasedLanguageServiceTest {
+  private val projectFixture = codeInsightProjectFixture()
+  private val myFixture by codeInsightFixture(projectFixture)
+  private val project get() = projectFixture.get()
+
+  @Test
+  fun testHighlightSuspendingExecutesCommandAndParsesResponse(): Unit = timeoutRunBlocking {
     val service = createService(createQueue(highlightResponse()))
     val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())
 
@@ -37,7 +50,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertEquals("GetErrors", service.executedCommand!!.command)
   }
 
-  fun testHighlightSuspendingAddsTheCapNoteToTruncatedStderr() = timeoutRunBlocking {
+  @Test
+  fun testHighlightSuspendingAddsTheCapNoteToTruncatedStderr(): Unit = timeoutRunBlocking {
     val service = createService(createQueue(highlightResponse(stderr = "Could not read file", truncated = true)))
     val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())
 
@@ -46,7 +60,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertEquals("Could not read file\n" + EslintBundle.message("eslint.service.stderr.truncated"), response!!.stderr)
   }
 
-  fun testHighlightSuspendingReturnsStderrOfResponse() = timeoutRunBlocking {
+  @Test
+  fun testHighlightSuspendingReturnsStderrOfResponse(): Unit = timeoutRunBlocking {
     val service = createService(createQueue(highlightResponse(stderr = "Could not read file [object Object]")))
     val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())
 
@@ -57,7 +72,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertEquals(1, response.value.size)
   }
 
-  fun testHighlightSuspendingStopsTheServiceAfterRepeatedUnexpectedExits() = timeoutRunBlocking {
+  @Test
+  fun testHighlightSuspendingStopsTheServiceAfterRepeatedUnexpectedExits(): Unit = timeoutRunBlocking {
     val service = createService()
     repeat(ESLintBasedLanguageService.MAX_UNEXPECTED_EXITS) { service.registerUnexpectedExitForTest() }
 
@@ -68,7 +84,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertNull(service.processIfCreated)
   }
 
-  fun testFixFileSuspendingStopsTheServiceAfterRepeatedUnexpectedExits() = timeoutRunBlocking {
+  @Test
+  fun testFixFileSuspendingStopsTheServiceAfterRepeatedUnexpectedExits(): Unit = timeoutRunBlocking {
     val service = createService()
     repeat(ESLintBasedLanguageService.MAX_UNEXPECTED_EXITS) { service.registerUnexpectedExitForTest() }
 
@@ -79,7 +96,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertNull(service.processIfCreated)
   }
 
-  fun testFixFileSuspendingExecutesCommandAndProcessesResponse() = timeoutRunBlocking {
+  @Test
+  fun testFixFileSuspendingExecutesCommandAndProcessesResponse(): Unit = timeoutRunBlocking {
     val service = createService(createQueue(fixFileResponse()))
     val requestData = createRequestData(createLocalFile(), "const value = 1", createConfigFile())
 
@@ -91,7 +109,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertEquals("FixErrors", service.executedCommand!!.command)
   }
 
-  fun testHighlightSuspendingReturnsServiceCreationFailureResponse() = timeoutRunBlocking {
+  @Test
+  fun testHighlightSuspendingReturnsServiceCreationFailureResponse(): Unit = timeoutRunBlocking {
     val service = createService(null)
     val requestData = createRequestData(createLocalFile(), "const value = 1")
 
@@ -101,7 +120,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertFalse(response.isNoConfigFile)
   }
 
-  fun testHighlightSuspendingReturnsNullForBlankContentWithoutStartingProcess() = timeoutRunBlocking {
+  @Test
+  fun testHighlightSuspendingReturnsNullForBlankContentWithoutStartingProcess(): Unit = timeoutRunBlocking {
     val service = createService()
     val requestData = createRequestData(createLocalFile(), " \n\t")
 
@@ -109,7 +129,8 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertNull(service.processIfCreated)
   }
 
-  fun testFixFileSuspendingReturnsNullForNonLocalFileWithoutStartingProcess() = timeoutRunBlocking {
+  @Test
+  fun testFixFileSuspendingReturnsNullForNonLocalFileWithoutStartingProcess(): Unit = timeoutRunBlocking {
     val service = createService()
     val requestData = createRequestData(LightVirtualFile("test.js", "const value = 1"), "const value = 1")
 
@@ -117,6 +138,7 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
     assertNull(service.processIfCreated)
   }
 
+  @Test
   fun testCompletableFutureApiKeepsEarlyNulls() {
     val service = createService()
 
@@ -131,7 +153,7 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
                                           NodePackage(nodePackageDirectory.path),
                                           myFixture.tempDirFixture.findOrCreateDir("."),
                                           queue)
-      .also { Disposer.register(testRootDisposable, it) }
+      .also { Disposer.register(myFixture.testRootDisposable, it) }
   }
 
   private fun createLocalFile(): VirtualFile = createLocalVirtualFile("src/test.js", "const value = 1")
@@ -140,7 +162,7 @@ class ESLintBasedLanguageServiceTest : BasePlatformTestCase() {
 
   private fun createLocalVirtualFile(relativePath: String, content: String): VirtualFile {
     val root = Files.createTempDirectory("eslint-based-language-service-test")
-    Disposer.register(testRootDisposable) { root.toFile().deleteRecursively() }
+    Disposer.register(myFixture.testRootDisposable) { root.toFile().deleteRecursively() }
     val path = root.resolve(relativePath)
     Files.createDirectories(path.parent)
     Files.writeString(path, content)

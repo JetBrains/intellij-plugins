@@ -6,118 +6,161 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.json.codeinsight.JsonStandardComplianceInspection;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
-import com.intellij.lang.javascript.linter.eslint.EslintTestUtil;
 import com.intellij.lang.javascript.linter.eslint.EslintUtil;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.junit5.TestApplication;
+import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.jsonSchema.impl.inspections.JsonSchemaComplianceInspection;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EslintConfigHighlightingTest extends BasePlatformTestCase {
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightProjectFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.testNameFixture;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@TestApplication
+@TestDataPath("$PROJECT_ROOT/contrib/javascript/eslint/testData/linter/eslint/config/highlighting")
+public class EslintConfigHighlightingTest {
   public static final String ESLINTRC = ".eslintrc-schema.json";
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    myFixture.enableInspections(JsonStandardComplianceInspection.class);
-    myFixture.enableInspections(JsonSchemaComplianceInspection.class);
+  private final TestFixture<Project> projectFixture = codeInsightProjectFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsight = codeInsightFixture(projectFixture);
+  private final TestFixture<String> testName = testNameFixture();
+
+  @BeforeEach
+  void setUp() {
+    codeInsight.get().enableInspections(JsonStandardComplianceInspection.class);
+    codeInsight.get().enableInspections(JsonSchemaComplianceInspection.class);
   }
 
-  @Override
-  protected String getBasePath() {
-    return EslintTestUtil.ESLINT_TEST_DATA_RELATIVE_PATH + "/linter/eslint/config/highlighting";
-  }
-
+  @Test
   public void testCommentAcceptance() {
-    myFixture.testHighlighting(true, false, true, getFilePath(getTestName(true)));
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.testHighlighting(true, false, true, getFilePath(testName.get()));
   }
 
+  @Test
   public void testYamlAcceptance() {
-    PsiFile psiFile = myFixture.configureByFile(getFilePath(getTestName(true)));
-    assertEquals(JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE, psiFile.getLanguage());
+    CodeInsightTestFixture fixture = codeInsight.get();
+    PsiFile psiFile = fixture.configureByFile(getFilePath(testName.get()));
+    Assertions.assertEquals(JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE, psiFile.getLanguage());
   }
 
+  @Test
   public void testSampleConfig() {
-    myFixture.testHighlighting(true, false, true, getFilePath(getTestName(true)));
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.testHighlighting(true, false, true, getFilePath(testName.get()));
   }
 
+  @Test
   public void testConfigWithOverrides() {
-    myFixture.testHighlighting(true, false, true, getFilePath(getTestName(true)));
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.testHighlighting(true, false, true, getFilePath(testName.get()));
   }
 
+  @Test
   public void testNavigationToJsonSchema() {
-    myFixture.configureByFiles("schemaResolve/.eslintrc");
-    int offset = myFixture.getCaretOffset();
-    final PsiElement resolve = GotoDeclarationAction.findTargetElement(getProject(), myFixture.getEditor(), offset);
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("\"comma-dangle\"", resolve.getText());
-    Assert.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
-    Assert.assertNotEquals(myFixture.getFile(), resolve.getContainingFile());
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFiles("schemaResolve/.eslintrc");
+    ReadAction.run(() -> {
+      int offset = fixture.getCaretOffset();
+      final PsiElement resolve = GotoDeclarationAction.findTargetElement(fixture.getProject(), fixture.getEditor(), offset);
+      Assertions.assertNotNull(resolve);
+      Assertions.assertEquals("\"comma-dangle\"", resolve.getText());
+      Assertions.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
+      Assertions.assertNotEquals(fixture.getFile(), resolve.getContainingFile());
+    });
   }
 
+  @Test
   public void testSchemaResolveCorrectFile() {
-    myFixture.configureByFiles(getTestName(true) + "/.eslintrc");
-    int offset = myFixture.getCaretOffset();
-    final PsiElement resolve = GotoDeclarationAction.findTargetElement(getProject(), myFixture.getEditor(), offset);
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("\"env\"", resolve.getText());
-    Assert.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
-    Assert.assertNotEquals(myFixture.getFile(), resolve.getContainingFile());
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFiles(testName.get() + "/.eslintrc");
+    ReadAction.run(() -> {
+      int offset = fixture.getCaretOffset();
+      final PsiElement resolve = GotoDeclarationAction.findTargetElement(fixture.getProject(), fixture.getEditor(), offset);
+      Assertions.assertNotNull(resolve);
+      Assertions.assertEquals("\"env\"", resolve.getText());
+      Assertions.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
+      Assertions.assertNotEquals(fixture.getFile(), resolve.getContainingFile());
+    });
   }
 
+  @Test
   public void testNavigationToJsonSchemaBrowserProperty() {
-    myFixture.configureByFiles("schemaBrowserResolve/.eslintrc.json");
-    int offset = myFixture.getCaretOffset();
-    final PsiElement resolve = GotoDeclarationAction.findTargetElement(getProject(), myFixture.getEditor(), offset);
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("\"browser\"", resolve.getText());
-    Assert.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
-    Assert.assertNotEquals(myFixture.getFile(), resolve.getContainingFile());
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFiles("schemaBrowserResolve/.eslintrc.json");
+    ReadAction.run(() -> {
+      int offset = fixture.getCaretOffset();
+      final PsiElement resolve = GotoDeclarationAction.findTargetElement(fixture.getProject(), fixture.getEditor(), offset);
+      Assertions.assertNotNull(resolve);
+      Assertions.assertEquals("\"browser\"", resolve.getText());
+      Assertions.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
+      Assertions.assertNotEquals(fixture.getFile(), resolve.getContainingFile());
+    });
   }
 
+  @Test
   public void testEslintConfigInPackageJsonCompletion() {
-    myFixture.configureByFile(getTestName(true) + "/package.json");
-    final LookupElement[] elements = myFixture.completeBasic();
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFile(testName.get() + "/package.json");
+    final LookupElement[] elements = fixture.completeBasic();
     final Set<String> strings = new HashSet<>(ContainerUtil.map(Arrays.asList(elements), LookupElement::getLookupString));
-    assertTrue(strings.contains("\"rules\""));
-    assertTrue(strings.contains("\"globals\""));
+    Assertions.assertTrue(strings.contains("\"rules\""));
+    Assertions.assertTrue(strings.contains("\"globals\""));
   }
 
+  @Test
   public void testEslintConfigInPackageJsonNavigation1() {
-    myFixture.configureByFile(getTestName(true) + "/package.json");
-    int offset = myFixture.getCaretOffset();
-    final PsiElement resolve = GotoDeclarationAction.findTargetElement(getProject(), myFixture.getEditor(), offset);
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("\"env\"", resolve.getText());
-    Assert.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
-    Assert.assertNotEquals(myFixture.getFile(), resolve.getContainingFile());
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFile(testName.get() + "/package.json");
+    ReadAction.run(() -> {
+      int offset = fixture.getCaretOffset();
+      final PsiElement resolve = GotoDeclarationAction.findTargetElement(fixture.getProject(), fixture.getEditor(), offset);
+      Assertions.assertNotNull(resolve);
+      Assertions.assertEquals("\"env\"", resolve.getText());
+      Assertions.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
+      Assertions.assertNotEquals(fixture.getFile(), resolve.getContainingFile());
+    });
   }
 
+  @Test
   public void testEslintConfigInPackageJsonNavigation2() {
-    myFixture.configureByFile(getTestName(true) + "/package.json");
-    int offset = myFixture.getCaretOffset();
-    final PsiElement resolve = GotoDeclarationAction.findTargetElement(getProject(), myFixture.getEditor(), offset);
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("\"arrow-spacing\"", resolve.getText());
-    Assert.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
-    Assert.assertNotEquals(myFixture.getFile(), resolve.getContainingFile());
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFile(testName.get() + "/package.json");
+    ReadAction.run(() -> {
+      int offset = fixture.getCaretOffset();
+      final PsiElement resolve = GotoDeclarationAction.findTargetElement(fixture.getProject(), fixture.getEditor(), offset);
+      Assertions.assertNotNull(resolve);
+      Assertions.assertEquals("\"arrow-spacing\"", resolve.getText());
+      Assertions.assertEquals(ESLINTRC, resolve.getContainingFile().getName());
+      Assertions.assertNotEquals(fixture.getFile(), resolve.getContainingFile());
+    });
   }
 
+  @Test
   public void testTopLevelPropertiesWithHints() {
-    myFixture.configureByFile(getFilePath(getTestName(true)));
-    myFixture.complete(CompletionType.BASIC);
-    assertSameElements(ContainerUtil.map(myFixture.getLookupElementStrings(), StringUtil::unquoteString),
+    CodeInsightTestFixture fixture = codeInsight.get();
+    fixture.configureByFile(getFilePath(testName.get()));
+    fixture.complete(CompletionType.BASIC);
+    assertThat(ContainerUtil.map(fixture.getLookupElementStrings(), StringUtil::unquoteString)).containsExactlyInAnyOrder(
                        "extends", "ecmaFeatures", "overrides", "settings",
                        "parser", "rules", "env", "globals", "parserOptions", "plugins", "root", "noInlineConfig", "ignorePatterns");
-    final LookupElement[] elements = myFixture.getLookupElements();
+    final LookupElement[] elements = fixture.getLookupElements();
     assertElementHasHint(elements, "env", "An environment defines global variables that are predefined.");
     assertElementHasHint(elements, "overrides", "Allows to override configuration for files and folders, specified by glob patterns");
   }
@@ -127,10 +170,10 @@ public class EslintConfigHighlightingTest extends BasePlatformTestCase {
                                            final @NotNull String hint) {
     final LookupElement env =
       Arrays.stream(elements).filter(el -> name.equals(StringUtil.unquoteString(el.getLookupString()))).findFirst().orElse(null);
-    Assert.assertNotNull(env);
+    Assertions.assertNotNull(env);
     final LookupElementPresentation presentation = new LookupElementPresentation();
     env.renderElement(presentation);
-    Assert.assertEquals(hint, presentation.getTypeText());
+    Assertions.assertEquals(hint, presentation.getTypeText());
   }
 
   private static String getFilePath(@NotNull String subDirectoryName) {

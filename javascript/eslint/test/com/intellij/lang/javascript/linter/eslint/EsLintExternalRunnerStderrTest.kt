@@ -1,9 +1,9 @@
 package com.intellij.lang.javascript.linter.eslint
 
 import com.intellij.util.AnsiCsiUtil
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 /**
  * The IDE reports the stderr output of a lint only when it holds a logged exception (WEB-78300).

@@ -6,10 +6,22 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.formatter.StandardJSCodeStyle
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class StandardJSCodeStyleTest : BasePlatformTestCase() {
+@TestApplication
+class StandardJSCodeStyleTest {
+  companion object {
+    private val projectFixture = projectFixture()
+  }
 
+  private val project get() = projectFixture.get()
+
+  @Test
   fun testApplyAndIsInstalled() {
     JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { settings ->
       val common: CommonCodeStyleSettings = settings.getCommonSettings(JavascriptLanguage)
@@ -142,6 +154,7 @@ class StandardJSCodeStyleTest : BasePlatformTestCase() {
     }
   }
 
+  @Test
   fun testIsNotInstalledWithNonStandardSettings() {
     JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { settings: CodeStyleSettings ->
       StandardJSCodeStyle().apply(settings)

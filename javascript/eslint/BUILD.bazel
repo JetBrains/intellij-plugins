@@ -143,7 +143,6 @@ jvm_library(
     deps = [
         # do not sort,
         "@community//libraries/jetbrains/annotations",
-        "@community//libraries/junit4",
         "//contrib/javascript/eslint",
         "//plugins/JavaScriptLanguage/testFramework",
         "@community//platform/testFramework",

@@ -2,22 +2,32 @@ package com.intellij.lang.javascript.linter.eslint
 
 import com.intellij.execution.filters.FileHyperlinkRawData
 import com.intellij.lang.javascript.linter.eslint.filter.EslintErrorFilter
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class EslintErrorLinkFilterTest : BasePlatformTestCase() {
-  private lateinit var filter: EslintErrorFilter
-
-  @Throws(Exception::class)
-  public override fun setUp() {
-    super.setUp()
-    filter = EslintErrorFilter(project, null)
+@TestApplication
+class EslintErrorLinkFilterTest {
+  companion object {
+    private val projectFixture = projectFixture()
   }
 
+  private lateinit var filter: EslintErrorFilter
+
+  @BeforeEach
+  fun setUp() {
+    filter = EslintErrorFilter(projectFixture.get(), null)
+  }
+
+  @Test
   fun testMisc() {
     doNegativeTest("")
     doNegativeTest(" ")
   }
 
+  @Test
   fun testMultilineWithAbsolutePath() {
     doNegativeTest("> eslint .")
     doNegativeTest("")
@@ -37,6 +47,7 @@ class EslintErrorLinkFilterTest : BasePlatformTestCase() {
                    "/home/user/link-examples/eslint/file2.js", 32, 5, 2, 16)
   }
 
+  @Test
   fun testMultilineWithRelativePath() {
     doNegativeTest("Compiled with warnings.")
     doNegativeTest("src/App.tsx")
