@@ -1,5 +1,5 @@
 #!/usr/bin/env kotlin
-@file:Repository("https://cache-redirector.jetbrains.com/intellij-dependencies")
+@file:Repository("https://cache-redirector.jetbrains.com/maven/ultimate-public")
 @file:Repository("https://cache-redirector.jetbrains.com/maven-central")
 @file:DependsOn("org.jetbrains.qodana:qodana-cloud-kotlin-client:0.2.12")
 
