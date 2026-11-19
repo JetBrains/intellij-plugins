@@ -138,7 +138,7 @@ public final class MeteorHelpersFrameworkIndexingHandler extends FrameworkIndexi
     final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name, null);
 
     elementBuilder
-      .setNamespace(JSNamedTypeFactory.createNamespace(JSQualifiedNameImpl.create(HASH_NAMESPACE, null), JSContext.INSTANCE, null, false))
+      .setNamespace(JSNamedTypeFactory.createNamespace(JSQualifiedNameImpl.create(HASH_NAMESPACE, null), JSContext.INSTANCE, null, true))
       .setAccessType(JSAttributeList.AccessType.PUBLIC)
       .setType(JSImplicitElement.Type.Property);
 
@@ -160,7 +160,7 @@ public final class MeteorHelpersFrameworkIndexingHandler extends FrameworkIndexi
 
     final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(value, null)
       .setNamespace(JSNamedTypeFactory.createNamespace(JSQualifiedNameImpl.create(METEOR_TEMPLATE_RESOLVED_TYPE, null),
-                                                       JSContext.INSTANCE, null, false))
+                                                       JSContext.INSTANCE, null, true))
       .setAccessType(JSAttributeList.AccessType.PUBLIC)
       .setType(JSImplicitElement.Type.Tag);
 
