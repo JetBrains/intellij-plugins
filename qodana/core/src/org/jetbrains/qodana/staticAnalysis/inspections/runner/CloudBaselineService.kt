@@ -13,7 +13,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
-import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.cloud.api.IjQDCloudClient
 import org.jetbrains.qodana.cloud.api.message
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
@@ -25,6 +25,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -149,11 +150,14 @@ internal fun cloudBaselineToolName(productCode: String): String = when (productC
 private suspend fun httpBaseline(host: String, qodanaToken: String, toolName: String, readTimeout: Duration): Path? {
   val query = URLEncoder.encode(cloudBaselineToolName(toolName), StandardCharsets.UTF_8)
   val url = "${host.removeSuffix("/")}/linters/baseline?toolName=$query"
+  val apiHost = URI(url).host
   val job = currentCoroutineContext().job
-  return runInterruptible(StaticAnalysisDispatchers.IO) {
+  // An interrupt does not end a read of HttpURLConnection, so CancellableStream stops a cancelled download.
+  return withContext(StaticAnalysisDispatchers.IO) {
     HttpRequests.request(url)
-      .tuner { it.setRequestProperty("Authorization", "Bearer $qodanaToken") }
-      .readTimeout(readTimeout.inWholeMilliseconds.toInt())
+      // HttpRequests runs the tuner again for each redirect, and the token must not go to another host.
+      .tuner { if (it.url.host == apiHost) it.setRequestProperty("Authorization", "Bearer $qodanaToken") }
+      .readTimeout(readTimeout.inWholeMilliseconds.coerceAtMost(Int.MAX_VALUE.toLong()).toInt())
       .connect { request ->
         if ((request.connection as HttpURLConnection).responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
           LOG.info("Qodana Cloud keeps no baseline for the project")
@@ -165,10 +169,7 @@ private suspend fun httpBaseline(host: String, qodanaToken: String, toolName: St
   }
 }
 
-/**
- * Stops the download at the next read after [job] is cancelled.
- * An interrupt does not end a read of [HttpURLConnection], so `runInterruptible` alone cannot stop the download.
- */
+/** Stops the download at the next read after [job] is cancelled. */
 private class CancellableStream(body: InputStream, private val job: Job) : FilterInputStream(body) {
   override fun read(): Int {
     job.ensureActive()

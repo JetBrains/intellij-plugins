@@ -53,6 +53,8 @@ private const val FRONTEND_URL = "https://tests-qodana.cloud"
 class CloudBaselineServiceTest : QodanaTestCase() {
   private val downloaded = mutableListOf<Path>()
   private var server: HttpServer? = null
+  /** A second server, for the target of a redirect. */
+  private var otherServer: HttpServer? = null
   /** Runs the handlers, so that a handler that waits does not block the next attempt. */
   private val handlers: ExecutorService = Executors.newCachedThreadPool()
   /** The number of requests that the fake linters API got. */
@@ -70,6 +72,7 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     RunAll.runAll(
       ThrowableRunnable<Throwable> { stalledServer.countDown() },
       ThrowableRunnable<Throwable> { server?.stop(0) },
+      ThrowableRunnable<Throwable> { otherServer?.stop(0) },
       ThrowableRunnable<Throwable> { handlers.shutdownNow() },
       ThrowableRunnable<Throwable> { downloaded.forEach { it.deleteIfExists() } },
       ThrowableRunnable<Throwable> { super.tearDown() },
@@ -263,6 +266,45 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     assertEquals("toolName=${cloudBaselineToolName(qodanaProductCode())}", query)
     assertEquals("Bearer token", authorization)
     assertEquals("gzip", acceptEncoding)
+  }
+
+  @Test
+  fun `a redirect to another host does not get the token`() = runTest {
+    tokenOnly()
+    var redirectedAuthorization: String? = "not asked"
+    val target = HttpServer.create(InetSocketAddress(0), 0)
+    otherServer = target
+    target.executor = handlers
+    target.createContext("/") { exchange ->
+      exchange.use {
+        redirectedAuthorization = it.requestHeaders.getFirst("Authorization")
+        val body = responseWith(entry("a")).toByteArray()
+        it.sendResponseHeaders(HttpURLConnection.HTTP_OK, body.size.toLong())
+        it.responseBody.use { out -> out.write(body) }
+      }
+    }
+    target.start()
+    // The API host is 127.0.0.1, so localhost is another host for the client.
+    val location = "http://localhost:${target.address.port}/storage/baseline.json"
+    var apiAuthorization: String? = null
+    cloudProvider.lintersHost = serve { exchange ->
+      apiAuthorization = exchange.requestHeaders.getFirst("Authorization")
+      exchange.responseHeaders.add("Location", location)
+      exchange.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_TEMP, -1)
+    }
+
+    val file = download()
+
+    assertNotNull(file)
+    assertEquals("Bearer token", apiAuthorization)
+    assertNull(redirectedAuthorization)
+  }
+
+  @Test
+  fun `a read timeout beyond the range of a socket timeout still downloads`() = runTest {
+    serveBaseline(entry("a"))
+
+    assertNotNull(download(readTimeout = Duration.INFINITE))
   }
 
   @Test
