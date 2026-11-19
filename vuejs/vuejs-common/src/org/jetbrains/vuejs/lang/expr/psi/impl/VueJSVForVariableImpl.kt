@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.JSCommonTypeNames
 import com.intellij.lang.javascript.psi.JSEvaluableElement
@@ -164,12 +163,12 @@ class VueJSVForVariableImpl(node: ASTNode) :
   }
 
   private fun getVForVarType(source: PsiElement, vararg types: (JSTypeSource) -> JSType): JSType? {
-    val typeSource = JSTypeSourceFactory.createTypeSource(source, DialectDetector.isTypeScript(source))
+    val typeSource = JSTypeSourceFactory.createTypeSource(source)
     return getVForVarType(source, *types.map { it(typeSource) }.toTypedArray())
   }
 
   private fun getVForVarType(source: PsiElement, vararg types: JSType): JSType? {
-    val typeSource = JSTypeSourceFactory.createTypeSource(source, DialectDetector.isTypeScript(source))
+    val typeSource = JSTypeSourceFactory.createTypeSource(source)
     val tupleType = JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false)
     return (tupleType.toArrayType(false) as JSArrayType).type
   }
