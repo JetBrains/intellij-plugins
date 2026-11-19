@@ -1,38 +1,36 @@
 package org.jetbrains.vuejs.lang
 
+import com.intellij.openapi.application.EDT
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import one.util.streamex.StreamEx
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import kotlin.time.Duration.Companion.minutes
 
-@RunWith(com.intellij.testFramework.Parameterized::class)
-class VueWebTypesDocumentationTest : BasePlatformTestCase() {
+@TestApplication
+class VueWebTypesDocumentationTest {
+  private val hybrid by hybridFixture(TEST_DATA_PATH)
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = TEST_DATA_PATH
-
-  override fun getBasePath(): String = "/"
-
-  @Before
+  @BeforeEach
   fun before() {
     myFixture.configureVueDependencies("test-lib" to "0.0.0")
     myFixture.copyDirectoryToProject("node_modules", "node_modules")
   }
 
-  @Parameterized.Parameter
-  @JvmField
-  var myFileName: String? = null
-
-  @Test
-  fun testTypes() {
-    defaultTest()
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("testNames")
+  fun testTypes(myFileName: String): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    defaultTest(myFileName)
   }
 
-  private fun defaultTest() {
-    myFixture.configureByFile("${myFileName!!}.vue")
+  private fun defaultTest(myFileName: String) {
+    myFixture.configureByFile("${myFileName}.vue")
     myFixture.checkDocumentationAtCaret()
   }
 
@@ -41,20 +39,10 @@ class VueWebTypesDocumentationTest : BasePlatformTestCase() {
     val TEST_DATA_PATH = getVueTestDataPath() + "/documentation/web-types"
 
     @JvmStatic
-    @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
-    fun testNames(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<String> {
-      val testData = File(TEST_DATA_PATH)
-      return StreamEx.of(*testData.listFiles()!!)
+    fun testNames(): List<String> =
+      File(TEST_DATA_PATH).listFiles()!!
         .filter { file -> file.isFile && file.name.endsWith(".vue") }
         .map { file -> file.name.substring(0, file.name.length - 4) }
-        .toList()
-    }
-
-    @JvmStatic
-    @Parameterized.Parameters
-    fun data(): Collection<Any> {
-      return ArrayList()
-    }
   }
 
 }

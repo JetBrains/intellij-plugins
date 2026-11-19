@@ -2,14 +2,19 @@
 package org.jetbrains.vuejs.pug
 
 import com.intellij.lang.javascript.inspections.JSIncompatibleTypesComparisonInspection
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.junit.jupiter.api.Test
 
-class PugTemplateTest : BasePlatformTestCase() {
+@TestApplication
+class PugTemplateTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/pug/")
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/pug/"
-
+  @Test
   fun testJadeExtendsResolve() {
     myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("jadeExtends", ".")
@@ -17,6 +22,7 @@ class PugTemplateTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  @Test
   fun testPugExtendsResolve() {
     myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("pugExtends", ".")
@@ -24,32 +30,39 @@ class PugTemplateTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  @Test
   fun testInjectedExpressions() {
     myFixture.enableInspections(JSIncompatibleTypesComparisonInspection())
     myFixture.configureByFile("injectedExpressions.vue")
     myFixture.checkHighlighting()
   }
 
+  @Test
   fun testLineCommenterWithinTemplate() {
     doCommenterTest(true)
   }
 
+  @Test
   fun testLineCommenterCaret() {
     doCommenterTest(true)
   }
 
+  @Test
   fun testLineCommenterAcrossTemplate() {
     doCommenterTest(true)
   }
 
+  @Test
   fun testLineCommenterBinding() {
     doCommenterTest(true)
   }
 
+  @Test
   fun testBlockCommenterBinding() {
     doCommenterTest(false)
   }
 
+  @Test
   fun testHtmlTagTyping() {
     myFixture.configureByFile("htmlTagTyping.vue")
     myFixture.type("te")
@@ -58,15 +71,16 @@ class PugTemplateTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("htmlTagTyping_after.vue")
   }
 
+  @Test
   fun testComponentCompletion() {
     myFixture.configureByFiles("componentCompletion.vue", "htmlTagTyping.vue")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "HtmlTagTyping", "html-tag-typing",
+    assertThat(myFixture.lookupElementStrings!!).contains("HtmlTagTyping", "html-tag-typing",
                            "template", "component", "suspense", "teleport")
   }
 
   private fun doCommenterTest(lineCommenter: Boolean) {
-    val name = getTestName(true)
+    val name = hybrid.getTestName(true)
     myFixture.configureByFile("$name.vue")
     myFixture.performEditorAction(if (lineCommenter) "CommentByLineComment" else "CommentByBlockComment")
     myFixture.checkResultByFile("${name}_after.vue")

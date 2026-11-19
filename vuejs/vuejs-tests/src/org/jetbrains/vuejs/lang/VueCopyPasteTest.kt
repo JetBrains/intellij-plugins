@@ -3,66 +3,85 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.pasteAndWaitJSCopyPasteService
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.openapi.application.EDT
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueCopyPasteTest : BasePlatformTestCase() {
-  override fun getBasePath(): String = ""
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/copyPaste"
+@TestApplication
+class VueCopyPasteTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/copyPaste")
+  private val myFixture get() = hybrid.fixture
 
   private fun doTest() {
-    myFixture.copyDirectoryToProject(getTestName(false), ".")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(false), ".")
     myFixture.configureFromTempProjectFile("Source.vue")
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
     myFixture.configureFromTempProjectFile("Destination.vue")
     myFixture.pasteAndWaitJSCopyPasteService()
-    myFixture.checkResultByFile(getTestName(false) + "/Destination_after.vue")
+    myFixture.checkResultByFile(hybrid.getTestName(false) + "/Destination_after.vue")
   }
 
-  fun testSimpleWithImports() {
+  @Test
+  fun testSimpleWithImports(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testSimpleWithNoImports() {
+  @Test
+  fun testSimpleWithNoImports(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testSimpleWithImportsBindingContext() {
+  @Test
+  fun testSimpleWithImportsBindingContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testScriptSetupComponent() {
+  @Test
+  fun testScriptSetupComponent(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testScriptSetupToOptionsComponent() {
+  @Test
+  fun testScriptSetupToOptionsComponent(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testES6ToTemplateExpression() {
+  @Test
+  fun testES6ToTemplateExpression(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testTemplateExpressionToES6() {
+  @Test
+  fun testTemplateExpressionToES6(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testES6ToTemplateExpressionInjected() {
+  @Test
+  fun testES6ToTemplateExpressionInjected(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testTemplateExpressionInjectedToES6() {
+  @Test
+  fun testTemplateExpressionInjectedToES6(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testOptionsToOptionsComponent() {
+  @Test
+  fun testOptionsToOptionsComponent(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testOptionsToScriptSetupComponent() {
+  @Test
+  fun testOptionsToScriptSetupComponent(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testEmptyScriptSetup() {
+  @Test
+  fun testEmptyScriptSetup(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 

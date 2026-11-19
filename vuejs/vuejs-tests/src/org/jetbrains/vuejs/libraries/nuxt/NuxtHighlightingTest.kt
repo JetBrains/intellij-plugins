@@ -3,8 +3,9 @@ package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.testFramework.IndexingTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -12,16 +13,21 @@ import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.libraries.nuxt.library.getDotNuxtFolderManagerCoroutineScope
 import org.jetbrains.vuejs.libraries.nuxt.library.resetDotNuxtFolderManager
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class NuxtHighlightingTest : BasePlatformTestCase() {
+@TestApplication
+class NuxtHighlightingTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/nuxt/highlighting")
+  private val myFixture get() = hybrid.fixture
+  private val project get() = myFixture.project
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/nuxt/highlighting"
-
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     resetDotNuxtFolderManager(project)
   }
 
+  @Test
   fun testRefToStatic() {
     myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
     myFixture.copyDirectoryToProject("ref-to-static", ".")
@@ -31,6 +37,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
+  @Test
   fun testSrcDir() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
@@ -42,6 +49,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
   /**
    * Keep in mind that Nuxt's concept of auto imports is different from WebStorm's one. It should be called implicit imports.
    */
+  @Test
   fun testNuxtAutoImports() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject("nuxtAutoImports", ".")
@@ -51,6 +59,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
+  @Test
   fun testNuxtGlobalComponents() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject("nuxtGlobalComponents", ".")
@@ -61,6 +70,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
+  @Test
   fun testNuxtExtendedGlobalComponents() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject("nuxtExtendedGlobalComponents", ".")
@@ -71,13 +81,15 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
+  @Test
   fun testDefineNuxtComponentWorksLikeDefineComponent() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
-    myFixture.configureByFile(getTestName(false) + ".vue")
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     myFixture.checkHighlighting()
   }
   
+  @Test
   fun testNoErrorForUnresolvedPathAttribute() {
     myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
     myFixture.copyDirectoryToProject("pathAttributeHighlighting", ".")

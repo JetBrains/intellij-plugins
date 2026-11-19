@@ -1,35 +1,46 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.openapi.application.EDT
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.psi.css.CssPseudoClass
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Test
 import java.util.Arrays.asList
+import kotlin.time.Duration.Companion.minutes
 
-class VueCssResolveTest : BasePlatformTestCase() {
+@TestApplication
+class VueCssResolveTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/cssClass")
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/cssClass"
-
-  fun testNgClassCodeCompletion() {
+  @Test
+  fun testNgClassCodeCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFiles("basic.vue")
     for (prefix in asList("{", "[", "")) {
       myFixture.moveToOffsetBySignature("=\"$prefix'foo1 b<caret>'")
       myFixture.completeBasic()
-      UsefulTestCase.assertSameElements(myFixture.lookupElementStrings!!, "bar", "boo")
+      assertThat(myFixture.lookupElementStrings!!).containsExactlyInAnyOrder("bar", "boo")
     }
     myFixture.moveToOffsetBySignature(", foo1: true<caret>}\"")
     myFixture.type(",")
     myFixture.completeBasic()
 
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "bar", "boo", "foo")
+    assertThat(myFixture.lookupElementStrings!!).contains("bar", "boo", "foo")
   }
 
-  fun testNgClassReferences() {
+  @Test
+  fun testNgClassReferences(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFiles("basic.vue")
     for (prefix in asList("{", "[", "")) {
       myFixture.resolveReference("=\"$prefix'fo<caret>o b")
@@ -41,8 +52,9 @@ class VueCssResolveTest : BasePlatformTestCase() {
     myFixture.assertUnresolvedReference(", f<caret>oo1: true}\"")
   }
 
-  fun testPseudoWithSelector() {
-    myFixture.configureByFiles(getTestName(true) + ".vue")
+  @Test
+  fun testPseudoWithSelector(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFiles(hybrid.getTestName(true) + ".vue")
 
     assertEquals(":deep(.foo > .bar)",
                  myFixture.resolveReference("class=\"<caret>bar\"").parentOfType<CssPseudoClass>()?.text)
@@ -51,7 +63,7 @@ class VueCssResolveTest : BasePlatformTestCase() {
                  myFixture.resolveReference("class=\"<caret>foo\"").parentOfType<CssPseudoClass>()?.text)
 
     // resolves to the attribute itself instead of a css class, consistent with the current behavior WEB-279
-    assertInstanceOf(myFixture.resolveReference("class=\"<caret>background\""), XmlAttributeValue::class.java)
+    assertInstanceOf(XmlAttributeValue::class.java, myFixture.resolveReference("class=\"<caret>background\""))
   }
 
 }

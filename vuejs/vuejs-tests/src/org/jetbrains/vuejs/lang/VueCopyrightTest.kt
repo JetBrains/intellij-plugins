@@ -1,11 +1,21 @@
 package org.jetbrains.vuejs.lang
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.openapi.application.EDT
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.maddyhome.idea.copyright.CopyrightProfile
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightFactory
-import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueCopyrightTest : BasePlatformTestCase() {
+@TestApplication
+class VueCopyrightTest {
+  private val hybrid by hybridFixture("")
+  private val myFixture get() = hybrid.fixture
+
   @Throws(Exception::class)
 
   private fun updateCopyright() {
@@ -14,12 +24,13 @@ class VueCopyrightTest : BasePlatformTestCase() {
     options.keyword = "Copyright"
     val copyright = UpdateCopyrightFactory.createUpdateCopyright(myFixture.project, myFixture.module,
                                                                  myFixture.file, options)
-    TestCase.assertNotNull(copyright)
+    assertNotNull(copyright)
     copyright!!.prepare()
     copyright.complete()
   }
 
-  fun testUpdateCopyright() {
+  @Test
+  fun testUpdateCopyright(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("UpdateCopyright.vue",
                               """<template>Hello!</template>
 """)

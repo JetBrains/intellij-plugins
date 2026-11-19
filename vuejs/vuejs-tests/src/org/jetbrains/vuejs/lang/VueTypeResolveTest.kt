@@ -9,19 +9,31 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
+import com.intellij.openapi.application.EDT
 import com.intellij.polySymbols.testFramework.findOffsetBySignature
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.parentOfTypes
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
 private const val PREFIX_INTERPOLATION = "{{ "
 
-class VueTypeResolveTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/typeResolve/"
+@TestApplication
+class VueTypeResolveTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/typeResolve/")
+  private val myFixture get() = hybrid.fixture
+  private val project get() = myFixture.project
+  private val testRootDisposable get() = myFixture.testRootDisposable
 
-  fun testVForJS() {
+  @Test
+  fun testVForJS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFile("vFor-js.vue")
     testVFor(Triple("el", "any,number | string", "number"),
              Triple("num", "number", "number"),
@@ -29,7 +41,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
              Triple("obj", "any,string | number", "string | number"))
   }
 
-  fun testVForTS() {
+  @Test
+  fun testVForTS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFile("vFor-ts.vue")
     testVFor(Triple("el", "string", "number"),
              Triple("num", "number", "number"),
@@ -43,7 +56,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
              Triple("union", "number | string", "number"))
   }
 
-  fun testVForScriptSetupTS() {
+  @Test
+  fun testVForScriptSetupTS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByFile("vForScriptSetup-ts.vue")
     testVFor(
@@ -54,7 +68,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testVForScriptSetupTS_strict() {
+  @Test
+  fun testVForScriptSetupTS_strict(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("vForScriptSetup-ts-strict.vue")
@@ -65,7 +80,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testVForScriptSetupJS() {
+  @Test
+  fun testVForScriptSetupJS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByFile("vForScriptSetup-js.vue")
     testVFor(
@@ -75,7 +91,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testPropsWithDefaultTS() {
+  @Test
+  fun testPropsWithDefaultTS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("propsWithDefault-ts.vue")
@@ -100,7 +117,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testPropsWithDefaultScriptSetupTS() {
+  @Test
+  fun testPropsWithDefaultScriptSetupTS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("propsWithDefaultScriptSetup-ts.vue")
@@ -111,7 +129,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testModelPropsTS() {
+  @Test
+  fun testModelPropsTS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("modelProps-ts.vue")
@@ -125,7 +144,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testScriptCaseSensitivity() {
+  @Test
+  fun testScriptCaseSensitivity(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("scriptCaseSensitivity.vue")
@@ -136,7 +156,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testSlotTS() {
+  @Test
+  fun testSlotTS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFile("slot-ts.vue")
 
     doTest(
@@ -148,10 +169,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInject() {
+  @Test
+  fun testInject(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "literal" to "string",
@@ -167,11 +189,12 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectStrictNullChecks() {
+  @Test
+  fun testInjectStrictNullChecks(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "message" to "\"hello\" | undefined",
@@ -179,11 +202,12 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectWithDefault() {
+  @Test
+  fun testInjectWithDefault(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "message" to "\"hello\"",
@@ -191,10 +215,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectSymbol() {
+  @Test
+  fun testInjectSymbol(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "myLocalInject" to "{name: string}",
@@ -203,10 +228,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectSymbolTs() {
+  @Test
+  fun testInjectSymbolTs(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "myLocalInject" to "{name: string}",
@@ -215,10 +241,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectSymbolProvideInCall() {
+  @Test
+  fun testInjectSymbolProvideInCall(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "myLocalInject" to "{name: string}",
@@ -227,10 +254,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectSymbolProvideInApp() {
+  @Test
+  fun testInjectSymbolProvideInApp(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "myLocalInject" to "{name?: string, lang?: Lang}",
@@ -240,10 +268,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectCallTypeEvaluation() {
+  @Test
+  fun testInjectCallTypeEvaluation(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "stringInject" to "string",
@@ -252,10 +281,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testInjectCallTypeEvaluationVue2() {
+  @Test
+  fun testInjectCallTypeEvaluationVue2(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_7_14)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "stringInject" to "string",
@@ -264,10 +294,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testPropsWithJsDoc() {
+  @Test
+  fun testPropsWithJsDoc(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "prop1" to "{strVar: (string | string[])}",
@@ -288,9 +319,10 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testPropsVue2WithJsDoc() {
+  @Test
+  fun testPropsVue2WithJsDoc(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_7_14)
-    myFixture.configureByFile("${getTestName(true)}.vue")
+    myFixture.configureByFile("${hybrid.getTestName(true)}.vue")
 
     doTest(
       "barProp" to "{userName: string, password: string}",
@@ -299,18 +331,20 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testTypeofImportRef() {
+  @Test
+  fun testTypeofImportRef(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     // WEB-56524
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureByFile("typeof-import-ref.ts")
     assertEquals("Ref&lt;UnwrapRef&lt;string&gt;&gt;", JSTestUtils.getExpressionTypeFromEditor(myFixture))
   }
 
-  fun testDefineSlotType() {
+  @Test
+  fun testDefineSlotType(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "pageTitle" to "string | undefined",
@@ -322,11 +356,12 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testDefineSlotDefault() {
+  @Test
+  fun testDefineSlotDefault(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "fie<caret>ld.class" to "FieldSlotPropText",
@@ -339,11 +374,12 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testDefineExpose() {
+  @Test
+  fun testDefineExpose(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "type HelloPro<caret>ps" to "{readonly msg: string}",
@@ -354,11 +390,12 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testDefineSlotTypedProp() {
+  @Test
+  fun testDefineSlotTypedProp(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
-    myFixture.copyDirectoryToProject(getTestName(true), "")
-    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), "")
+    myFixture.configureFromTempProjectFile("${hybrid.getTestName(false)}.vue")
 
     doTest(
       "bar" to "number",
@@ -372,14 +409,14 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     for (test in testCases) {
       for (i in 1..iterations) {
         val element = findElementBySignature("{{ ${test.first}<caret>$i")
-        TestCase.assertNotNull("${test.first}$i", element)
+        assertNotNull(element, "${test.first}$i")
         val type = test.second.split(',').let { if (i == 3) it.last() else it.first() }
-        assertEquals("${test.first}$i", type, getElementTypeText(element))
+        assertEquals(type, getElementTypeText(element), "${test.first}$i")
       }
 
       val index = findElementBySignature("${test.first}<caret>2Ind }}")
-      TestCase.assertNotNull("${test.first}2Ind", index)
-      assertEquals("${test.first}2Ind", test.third, getElementTypeText(index))
+      assertNotNull(index, "${test.first}2Ind")
+      assertEquals(test.third, getElementTypeText(index), "${test.first}2Ind")
     }
   }
 
@@ -388,9 +425,9 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       for (test in testCases) {
         val caretMarker = if (test.first.contains("<caret>")) "" else "<caret>"
         val element = findElementBySignature("$prefix$caretMarker${test.first}")
-        assertNotNull(test.first, element)
+        assertNotNull(element, test.first)
         val expected = test.second
-        assertEquals(test.first, expected, getElementTypeText(element))
+        assertEquals(expected, getElementTypeText(element), test.first)
       }
     }
   }

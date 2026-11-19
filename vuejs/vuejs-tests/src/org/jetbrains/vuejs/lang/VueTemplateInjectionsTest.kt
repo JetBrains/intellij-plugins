@@ -3,69 +3,57 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.openapi.application.readAction
 import com.intellij.polySymbols.testFramework.findOffsetBySignature
-import com.intellij.psi.PsiDocumentManager
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
-import one.util.streamex.StreamEx
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import kotlin.time.Duration.Companion.minutes
 
-@RunWith(com.intellij.testFramework.Parameterized::class)
-class VueTemplateInjectionsTest : BasePlatformTestCase() {
+@TestApplication
+class VueTemplateInjectionsTest {
+  private val hybrid by hybridFixture(testDataPath)
+  private val myFixture get() = hybrid.fixture
 
-  @Parameterized.Parameter
-  @JvmField
-  var myFileName: String? = null
-
-  @Test
-  fun doSingleTest() {
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("testNames")
+  fun doSingleTest(myFileName: String): Unit = timeoutRunBlocking(timeout = 2.minutes) {
     myFixture.configureVueDependencies()
-    myFixture.configureByFile(myFileName!!)
+    myFixture.configureByFile(myFileName)
 
-    val injectedLanguageManager = InjectedLanguageManager.getInstance(project)
+    readAction {
+      val injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.project)
 
-    PsiDocumentManager.getInstance(project).commitAllDocuments()
+      assertEquals(VueLanguage, injectedLanguageManager.findInjectedElementAt(
+        myFixture.file, myFixture.file.findOffsetBySignature("</<caret>div>"))?.containingFile?.language)
 
-    TestCase.assertEquals(VueLanguage, injectedLanguageManager.findInjectedElementAt(
-      myFixture.file, myFixture.file.findOffsetBySignature("</<caret>div>"))?.containingFile?.language)
+      val injectedElement = injectedLanguageManager.findInjectedElementAt(
+        myFixture.file, myFixture.file.findOffsetBySignature("<caret>title + foo"))
 
-    val injectedElement = injectedLanguageManager.findInjectedElementAt(
-      myFixture.file, myFixture.file.findOffsetBySignature("<caret>title + foo"))
+      assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpressionContent::class.java))
 
-    TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpressionContent::class.java))
-
-    val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()?.context
-    TestCase.assertTrue(resolved!!.text, resolved.text.contains("Check me"))
-  }
-
-  override fun getTestDataPath(): String {
-    return Companion.testDataPath
+      val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()?.context
+      assertTrue(resolved!!.text.contains("Check me"), resolved.text)
+    }
   }
 
   companion object {
     val testDataPath: String = getVueTestDataPath() + "/injection/template/"
 
-    @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
     @JvmStatic
-    fun testNames(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<String> {
-      val testData = File(testDataPath)
-      return StreamEx.of(*testData.listFiles()!!)
+    fun testNames(): List<String> =
+      File(testDataPath).listFiles()!!
         .filter { file -> file.name.endsWith("js") || file.name.endsWith("ts") }
         .map { file -> file.name }
-        .toList()
-    }
-
-    @Parameterized.Parameters
-    @JvmStatic
-    fun data(): Collection<Any> {
-      return ArrayList()
-    }
   }
 
 }

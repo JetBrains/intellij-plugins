@@ -1,52 +1,70 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.openapi.application.EDT
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueExternalFilesLinkingTest : BasePlatformTestCase() {
+@TestApplication
+class VueExternalFilesLinkingTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/externalFiles")
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/externalFiles"
-
-  fun testLinkedTemplateVue() {
+  @Test
+  fun testLinkedTemplateVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest(targetFile = "main.vue")
   }
 
-  fun testLinkedScriptVue() {
+  @Test
+  fun testLinkedScriptVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest(mainFile = "main.vue")
   }
 
-  fun testLinkedScriptTemplateVue() {
+  @Test
+  fun testLinkedScriptTemplateVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedScriptTemplateVueDecorators() {
+  @Test
+  fun testLinkedScriptTemplateVueDecorators(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedTemplateJSExportImport() {
+  @Test
+  fun testLinkedTemplateJSExportImport(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedTemplateJSExportImportDecorators() {
+  @Test
+  fun testLinkedTemplateJSExportImportDecorators(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedTemplateJSExportRequire() {
+  @Test
+  fun testLinkedTemplateJSExportRequire(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedTemplateJSExportRequireDecorators() {
+  @Test
+  fun testLinkedTemplateJSExportRequireDecorators(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedTemplateJSVueInitImport() {
+  @Test
+  fun testLinkedTemplateJSVueInitImport(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
   }
 
-  fun testLinkedTemplateJSExportXTemplate() {
+  @Test
+  fun testLinkedTemplateJSExportXTemplate(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doTest()
 
     myFixture.configureFromTempProjectFile("script.js")
@@ -60,9 +78,9 @@ class VueExternalFilesLinkingTest : BasePlatformTestCase() {
   }
 
   private fun doTest(mainFile: String = "template.html", targetFile: String = "script.js") {
-    val testName = getTestName(true)
+    val testName = hybrid.getTestName(true)
     val targetSignature = if (testName.endsWith("Decorators")) "@Prop <caret>foo" else "\"<caret>foo\""
-    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.copyDirectoryToProject(hybrid.getTestName(true), ".")
     myFixture.configureVueDependencies()
     myFixture.configureFromTempProjectFile(mainFile)
     myFixture.moveToOffsetBySignature("{{ <caret>foo }}")

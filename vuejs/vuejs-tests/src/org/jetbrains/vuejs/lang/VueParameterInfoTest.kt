@@ -13,11 +13,22 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.openapi.application.EDT
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueParameterInfoTest : BasePlatformTestCase() {
+@TestApplication
+class VueParameterInfoTest {
+  private val hybrid by hybridFixture("")
+  private val myFixture get() = hybrid.fixture
 
-  fun testTypeScriptParametersHint() {
+  @Test
+  fun testTypeScriptParametersHint(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
     myFixture.addFileToProject("api.vue", "<script lang='ts'>\n" +
                                           "    export function isApiResponse(s:String,b:boolean){}\n" +

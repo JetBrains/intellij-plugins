@@ -16,46 +16,62 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.Pair
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.NullableFunction
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.vuejs.editor.VueInterpolationBracesCompleter
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueTypedHandlerTest : BasePlatformTestCase() {
-  fun testBracketsClosing() {
+@TestApplication
+class VueTypedHandlerTest {
+  private val hybrid by hybridFixture("")
+  private val myFixture get() = hybrid.fixture
+
+  @Test
+  fun testBracketsClosing(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "{<caret>")
     myFixture.type("{")
     myFixture.checkResult("{{<caret>}}")
   }
 
-  fun testBracketsNotClosingTwice() {
+  @Test
+  fun testBracketsNotClosingTwice(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "{<caret>}}")
     myFixture.type("{")
     myFixture.checkResult("{{<caret>}}")
   }
 
-  fun testBracketsNotBreakingAtEnd() {
+  @Test
+  fun testBracketsNotBreakingAtEnd(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "{{<caret>")
     myFixture.type("}")
     myFixture.checkResult("{{}}<caret>")
   }
 
-  fun testClosingBracketsSkipped() {
+  @Test
+  fun testClosingBracketsSkipped(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "{{<caret>}}")
     myFixture.type("}")
     myFixture.checkResult("{{}<caret>}")
   }
 
-  fun testSecondClosingBracket() {
+  @Test
+  fun testSecondClosingBracket(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "{{}<caret>")
     myFixture.type("}")
     myFixture.checkResult("{{}}<caret>")
   }
 
-  fun testInsertWhitespace() {
+  @Test
+  fun testInsertWhitespace(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "{<caret>")
     val settings = JSCodeStyleSettings.getSettings(myFixture.file)
     val oldWhitespace = settings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS
@@ -70,69 +86,79 @@ class VueTypedHandlerTest : BasePlatformTestCase() {
   }
 
   @Throws(Exception::class)
-  fun testOneSymbolDelimiterStartCompletes() {
+  @Test
+  fun testOneSymbolDelimiterStartCompletes(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, "<caret>")
     doInterpolationBracesCompleterTest("$", "#", '$', true)
     myFixture.checkResult("$ <caret> #")
   }
 
   @Throws(Exception::class)
-  fun testMixedDelimitersAlreadyHasEnding() {
+  @Test
+  fun testMixedDelimitersAlreadyHasEnding(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>#")
     doInterpolationBracesCompleterTest("$$", "#", '$', false)
     myFixture.checkResult("$$<caret>#")
   }
 
   @Throws(Exception::class)
-  fun testMixedDelimitersCompletionNoStartTypeOver() {
+  @Test
+  fun testMixedDelimitersCompletionNoStartTypeOver(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>$")
     doInterpolationBracesCompleterTest("$$", "#", '$', false)
     myFixture.checkResult("$$<caret>#$")
   }
 
   @Throws(Exception::class)
-  fun testOneSymbolDelimiterEndAdded() {
+  @Test
+  fun testOneSymbolDelimiterEndAdded(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>")
     doInterpolationBracesCompleterTest("$", "$", '$', false)
     myFixture.checkResult("$$<caret>")
   }
 
   @Throws(Exception::class)
-  fun testOneSymbolDelimiterTypeOver() {
+  @Test
+  fun testOneSymbolDelimiterTypeOver(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "$<caret>$")
     doInterpolationBracesCompleterTest("$", "$", '$', false)
     myFixture.checkResult("$$<caret>")
   }
 
   @Throws(Exception::class)
-  fun testOneSymbolDelimiterTypeOverOneSymbol() {
+  @Test
+  fun testOneSymbolDelimiterTypeOverOneSymbol(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "#1<caret>$")
     doInterpolationBracesCompleterTest("#", "$", '$', false)
     myFixture.checkResult("#1$<caret>")
   }
 
   @Throws(Exception::class)
-  fun testDoNotCompleteEndWithoutStart() {
+  @Test
+  fun testDoNotCompleteEndWithoutStart(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "abc {<caret>")
     doInterpolationBracesCompleterTest("{{", "}}", '}', false)
     myFixture.checkResult("abc {}<caret>")
   }
 
   @Throws(Exception::class)
-  fun testThreeSymbolDelimiters() {
+  @Test
+  fun testThreeSymbolDelimiters(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "{{<caret>")
     doInterpolationBracesCompleterTest("{{{", "}}}", '{', false)
     myFixture.checkResult("{{{<caret>}}}")
   }
 
   @Throws(Exception::class)
-  fun testThreeSymbolDelimitersEndTypeOver() {
+  @Test
+  fun testThreeSymbolDelimitersEndTypeOver(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, "{{{text}}<caret>}")
     doInterpolationBracesCompleterTest("{{{", "}}}", '}', false)
     myFixture.checkResult("{{{text}}}<caret>")
   }
 
-  fun testNoInterpolationInsideScript() {
+  @Test
+  fun testNoInterpolationInsideScript(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, """
 <template></template>
 <script>{<caret></script>
@@ -144,7 +170,8 @@ class VueTypedHandlerTest : BasePlatformTestCase() {
 """)
   }
 
-  fun testNoInterpolationInsideScriptContents() {
+  @Test
+  fun testNoInterpolationInsideScriptContents(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(HtmlFileType.INSTANCE, """
 <template></template>
 <script>{<caret>
@@ -160,7 +187,8 @@ export default
 """)
   }
 
-  fun testBracesCompletionInsideVueScriptContents() {
+  @Test
+  fun testBracesCompletionInsideVueScriptContents(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText(VueFileType, """
 <template></template>
 <script>
@@ -176,7 +204,8 @@ export default {<caret>}
 """)
   }
 
-  fun testTypeClosingCol() {
+  @Test
+  fun testTypeClosingCol(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("TypeClosingCol.vue", """
 <template>
   <div>

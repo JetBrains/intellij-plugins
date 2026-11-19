@@ -6,16 +6,29 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.codeInsight.template.TemplateActionContext
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import com.intellij.openapi.application.EDT
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.vuejs.liveTemplate.VueComponentDescriptorLiveTemplateContextType
 import org.jetbrains.vuejs.liveTemplate.VueInsideTagLiveTemplateContextType
 import org.jetbrains.vuejs.liveTemplate.VueScriptLiveTemplateContextType
 import org.jetbrains.vuejs.liveTemplate.VueTemplateLiveTemplateContextType
 import org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueLiveTemplatesTest : BasePlatformTestCase() {
-  fun testTopLevelVueApplicable() {
+@TestApplication
+class VueLiveTemplatesTest {
+  private val hybrid by hybridFixture("")
+  private val myFixture get() = hybrid.fixture
+  private val project get() = myFixture.project
+
+  @Test
+  fun testTopLevelVueApplicable(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val cases = listOf(
       Triple(true, "", ".vue"),
       Triple(false, "", ".js"),
@@ -30,7 +43,8 @@ class VueLiveTemplatesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testTemplateApplicable() {
+  @Test
+  fun testTemplateApplicable(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val cases = listOf(
       Triple(false, "", ".vue"),
       Triple(false, "<div><caret></div>", ".html"),
@@ -47,7 +61,8 @@ class VueLiveTemplatesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testInsideTagApplicable() {
+  @Test
+  fun testInsideTagApplicable(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val cases = listOf(
       Triple(false, "", ".vue"),
       Triple(false, "<template><caret></template>", ".vue"),
@@ -67,7 +82,8 @@ class VueLiveTemplatesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testInsideScriptApplicable() {
+  @Test
+  fun testInsideScriptApplicable(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val cases = listOf(
       Triple(false, "", ".vue"),
       Triple(false, "<template><caret></template>", ".vue"),
@@ -84,7 +100,8 @@ class VueLiveTemplatesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testInsideComponentDescriptorApplicable() {
+  @Test
+  fun testInsideComponentDescriptorApplicable(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
     val cases = listOf(
       Triple(false, "", ".vue"),
@@ -107,7 +124,8 @@ class VueLiveTemplatesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testVAction() {
+  @Test
+  fun testVAction(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("VAction.vue", """
 <script>
 export default {
@@ -118,7 +136,7 @@ export default {
     val editor = myFixture.editor
     ListTemplatesAction().actionPerformedImpl(project, editor)
     val lookup = LookupManager.getActiveLookup(editor) as LookupImpl?
-    TestCase.assertNotNull(lookup)
+    assertNotNull(lookup)
     lookup!!.finishLookup(Lookup.NORMAL_SELECT_CHAR)
     myFixture.checkResult("""
 <script>
@@ -134,7 +152,8 @@ export default {
   }
 
   private fun doTestIsApplicable(context: TemplateContextType, value: Boolean) {
-    TestCase.assertEquals("Wrong in: ${myFixture.file.name}, text: \"${myFixture.file.text}\"",
-                          value, context.isInContext(TemplateActionContext.expanding(myFixture.file, myFixture.caretOffset)))
+    assertEquals(value,
+                 context.isInContext(TemplateActionContext.expanding(myFixture.file, myFixture.caretOffset)),
+                 "Wrong in: ${myFixture.file.name}, text: \"${myFixture.file.text}\"")
   }
 }

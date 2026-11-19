@@ -10,6 +10,7 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -18,44 +19,51 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.context.PolyContextProvider
 import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
 import com.intellij.polySymbols.framework.PolySymbolFramework.Companion.KIND_FRAMEWORK
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.testFramework.ParsingTestCase
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.ui.UIUtil
 import com.intellij.webcore.libraries.ScriptingLibraryModel
-import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueInjectionTest : BasePlatformTestCase() {
+@TestApplication
+class VueInjectionTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/injection/")
+  private val myFixture get() = hybrid.fixture
+  private val project get() = myFixture.project
+  private val testRootDisposable get() = myFixture.testRootDisposable
+  private val testDataPath get() = myFixture.testDataPath
+
   private var oldAutoComplete = false
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     val settings = CodeInsightSettings.getInstance()
     oldAutoComplete = settings.AUTOCOMPLETE_ON_CODE_COMPLETION
     settings.AUTOCOMPLETE_ON_CODE_COMPLETION = false
     myFixture.configureByText("a.vue", "")  // to enable vue in the project
   }
 
-  override fun tearDown() {
-    try {
-      CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = oldAutoComplete
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
+  @AfterEach
+  fun tearDown() {
+    CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = oldAutoComplete
   }
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/injection/"
-
-  fun testSimpleInterpolationInHtml() {
+  @Test
+  fun testSimpleInterpolationInHtml(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
     myFixture.configureByText("SimpleInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
@@ -69,20 +77,22 @@ class VueInjectionTest : BasePlatformTestCase() {
     </div>
   </body>
 </html>""")
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testSimpleInterpolationInVue() {
+  @Test
+  fun testSimpleInterpolationInVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
     myFixture.configureByText("SimpleInterpolationInVue.vue", """<template>
     <div>
       {{ 1 + <caret>2 }}
     </div>
 </template>""")
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testCustomDelimitersInterpolationInVue() {
+  @Test
+  fun testCustomDelimitersInterpolationInVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
       [[ 1 + 2 ]]
@@ -97,7 +107,8 @@ new Vue({
     checkParseTree()
   }
 
-  fun testCustomDelimitersInterpolationInVueVariant() {
+  @Test
+  fun testCustomDelimitersInterpolationInVueVariant(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
       <% 1 +2 %>
@@ -112,7 +123,8 @@ new Vue({
     checkParseTree()
   }
 
-  fun testCustomDelimitersInterpolationInVueVariantJS() {
+  @Test
+  fun testCustomDelimitersInterpolationInVueVariantJS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("CustomDelimitersInterpolationInVueVariantJS.js", """
 new Vue({
   delimiters: ['<%', '%>']
@@ -127,7 +139,8 @@ new Vue({
     checkParseTree()
   }
 
-  fun testNoCommentDelimitersInterpolationInVue() {
+  @Test
+  fun testNoCommentDelimitersInterpolationInVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
       [[ 1 + <caret>2 ]
@@ -139,11 +152,12 @@ new Vue({
 })
 </script>
 """)
-    TestCase.assertEquals(VueLanguage, myFixture.file.language)
+    assertEquals(VueLanguage, myFixture.file.language)
     checkParseTree()
   }
 
-  fun testCustomDelimitersInterpolationInHtml() {
+  @Test
+  fun testCustomDelimitersInterpolationInHtml(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
     myFixture.configureByText("CustomDelimitersInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
@@ -162,10 +176,11 @@ new Vue({
 })
 </script>
 </html>""")
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testCommentIntersectsDelimitersInterpolationInHtml() {
+  @Test
+  fun testCommentIntersectsDelimitersInterpolationInHtml(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("CommentIntersectsDelimitersInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -178,11 +193,12 @@ new Vue({
     </div>
   </body>
 </html>""")
-    TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.file.language)
+    assertEquals(HTMLLanguage.INSTANCE, myFixture.file.language)
     checkParseTree()
   }
 
-  fun testCustomDelimitersOldDoNotWorkInHtml() {
+  @Test
+  fun testCustomDelimitersOldDoNotWorkInHtml(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
     myFixture.configureByText("CustomDelimitersOldDoNotWorkInHtml.html", """<!DOCTYPE html>
 <html>
@@ -202,17 +218,19 @@ new Vue({
 })
 </script>
 </html>""")
-    TestCase.assertEquals(VueLanguage, myFixture.file.language)
+    assertEquals(VueLanguage, myFixture.file.language)
     checkParseTree()
   }
 
-  fun testMultipleInterpolationsInVue() {
+  @Test
+  fun testMultipleInterpolationsInVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val text = "This is {{interpolation}} in text, and {{another}}{{two}}"
     myFixture.configureByText("MultipleInterpolationsInVue.vue", "<template>${text}</template>")
     checkParseTree()
   }
 
-  fun testMultipleInterpolationsWithNewLinesInVue() {
+  @Test
+  fun testMultipleInterpolationsWithNewLinesInVue(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val text = """
 This is {{interpolation
 
@@ -222,75 +240,86 @@ another}}{{two}}"""
     checkParseTree()
   }
 
-  fun testInjectionByConfigDelimitersAssignmentJS() {
+  @Test
+  fun testInjectionByConfigDelimitersAssignmentJS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.js", "Vue.config.delimiters = ['<%', '%>']")
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.vue", "<template><% <caret> %></template>")
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testInjectionByOptionsDelimitersAssignmentJS() {
+  @Test
+  fun testInjectionByOptionsDelimitersAssignmentJS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.js", "Vue.options.delimiters = ['<%', '%>']")
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.vue", "<template><% <caret> %></template>")
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testInjectionByConfigDelimitersAssignment() {
+  @Test
+  fun testInjectionByConfigDelimitersAssignment(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("InjectionByConfigDelimitersAssignment.vue", """
 <template><% <caret> %></template>
 <script>
 Vue.config.delimiters = ['<%', '%>']
 </script>
 """)
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testInjectionByOptionsDelimitersAssignment() {
+  @Test
+  fun testInjectionByOptionsDelimitersAssignment(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByText("InjectionByConfigDelimitersAssignment.vue", """
 <template><% <caret> %></template>
 <script>
 Vue.options.delimiters = ['<%', '%>']
 </script>
 """)
-    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
+    assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
-  fun testAttrValueInjection() {
-    myFixture.configureByFile(getTestName(false) + ".vue")
+  @Test
+  fun testAttrValueInjection(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     checkParseTree()
   }
 
-  fun testPugAttrValueInjection() {
-    myFixture.configureByFile(getTestName(false) + ".vue")
+  @Test
+  fun testPugAttrValueInjection(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     checkParseTree()
   }
 
-  fun testNoInjectionInXml() {
-    myFixture.configureByFile(getTestName(false) + ".xml")
+  @Test
+  fun testNoInjectionInXml(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".xml")
     checkParseTree()
   }
 
-  fun testI18nTag() {
-    myFixture.configureByFile(getTestName(false) + ".vue")
+  @Test
+  fun testI18nTag(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     checkParseTree()
   }
 
-  fun testStubbedAttribute() {
-    myFixture.configureByFile(getTestName(false) + ".vue")
+  @Test
+  fun testStubbedAttribute(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     checkParseTree()
   }
 
-  fun testTemplateInjectionVueLib() {
-    myFixture.configureByFile(getTestName(false) + ".js")
+  @Test
+  fun testTemplateInjectionVueLib(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".js")
     checkParseTree(".off")
     JSTestUtils.addJsLibrary(project, "vue", myFixture.testRootDisposable, null,
                              myFixture.tempDirFixture.createFile("foo.js"), null, ScriptingLibraryModel.LibraryLevel.GLOBAL)
     checkParseTree(".on")
   }
 
-  fun testForbiddenVueContext() {
+  @Test
+  fun testForbiddenVueContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies()
 
-    myFixture.configureByFile(getTestName(false) + ".html")
+    myFixture.configureByFile(hybrid.getTestName(false) + ".html")
     checkParseTree(".off")
 
     val disposable = Disposer.newDisposable()
@@ -337,7 +366,8 @@ Vue.options.delimiters = ['<%', '%>']
     }
   }
 
-  fun testCompletionInsideInjectedI18NContents() {
+  @Test
+  fun testCompletionInsideInjectedI18NContents(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     ApplicationManager.getApplication().extensionArea
       .getExtensionPoint(CompletionContributor.EP)
       .registerExtension(
@@ -357,18 +387,20 @@ Vue.options.delimiters = ['<%', '%>']
     myFixture.completeBasic()
     // Check that completion actually works without throwing exceptions.
     // It should suggest the element from the test YAML contributor
-    assertContainsElements(myFixture.lookupElementStrings!!, "keep-alive")
+    assertThat(myFixture.lookupElementStrings!!).contains("keep-alive")
   }
 
-  fun testTypingInI18NTag() {
-    myFixture.configureByFile(getTestName(false) + ".vue")
+  @Test
+  fun testTypingInI18NTag(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     myFixture.type(':')
     myFixture.type('"')
     checkParseTree()
   }
 
-  fun testTypingLangAttr() {
-    myFixture.configureByFile(getTestName(false) + ".vue")
+  @Test
+  fun testTypingLangAttr(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
+    myFixture.configureByFile(hybrid.getTestName(false) + ".vue")
     toParseTreeText(myFixture.file) // expands lazy tokens deeply
     myFixture.type("\b\bts") // js -> ts
     PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -376,7 +408,8 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   private fun checkParseTree(suffix: String = "") {
-    ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "${suffix}.txt", toParseTreeText(myFixture.file))
+    PlatformTestUtil.assertSameLinesWithFile(testDataPath + "/" + hybrid.getTestName(false) + "${suffix}.txt",
+                                             toParseTreeText(myFixture.file))
   }
 
   private fun toParseTreeText(file: PsiFile): String {

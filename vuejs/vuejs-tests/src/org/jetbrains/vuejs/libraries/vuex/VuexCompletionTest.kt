@@ -2,26 +2,38 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.findOffsetBySignature
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.lang.commonJsProperties
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.filterOutDollarPrefixedProperties
 import org.jetbrains.vuejs.lang.filterOutJsKeywordsGlobalObjectsAndCommonProperties
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.isGenericJsItem
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.time.Duration.Companion.minutes
 
-class VuexCompletionTest : BasePlatformTestCase() {
+@TestApplication
+class VuexCompletionTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/vuex/completion")
+  private val myFixture get() = hybrid.fixture
+  private val testDataPath get() = myFixture.testDataPath
+  private val project get() = myFixture.project
 
   private val mappersAndStore = setOf("mapActions", "mapGetters", "mapMutations", "mapState", "rootStore")
 
@@ -47,44 +59,48 @@ class VuexCompletionTest : BasePlatformTestCase() {
       and { !it.lookupString.contains("=>") }
       and { it.lookupString !in listOf("commit", "dispatch", "categoryModule") })
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/completion"
-
-  fun testBasicGettersCompletion() {
+  @Test
+  fun testBasicGettersCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicGetter.vue", "basicGetter.js")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "getter1", "getter_2")
+    assertThat(myFixture.lookupElementStrings!!).contains("getter1", "getter_2")
   }
 
-  fun testBasicMutationsCompletion() {
+  @Test
+  fun testBasicMutationsCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicMutations.vue", "basicMutations.js")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "mutation1")
+    assertThat(myFixture.lookupElementStrings!!).contains("mutation1")
   }
 
-  fun testBasicMutations2Completion() {
+  @Test
+  fun testBasicMutations2Completion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicMutations2.js")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "mutation1")
+    assertThat(myFixture.lookupElementStrings!!).contains("mutation1")
   }
 
-  fun testBasicActionsCompletion() {
+  @Test
+  fun testBasicActionsCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicActions.vue", "basicActions.js")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "action1", "action_2")
+    assertThat(myFixture.lookupElementStrings!!).contains("action1", "action_2")
   }
 
-  fun testVuexActions2Completion() {
+  @Test
+  fun testVuexActions2Completion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("basicActions2.vue", "basicActions2.ts")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "action1", "action_2")
+    assertThat(myFixture.lookupElementStrings!!).contains("action1", "action_2")
   }
 
-  fun testStorefrontDirectGetter() {
+  @Test
+  fun testStorefrontDirectGetter(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { return this.\$store.getters['<caret>']", section = "computed")
     doItemsTest(0, "foo() { return this.store.getters['<caret>']", section = "computed")
@@ -99,7 +115,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                  "cartCoupon\t", "this.\$store.getters['cart/getCoupon']", section = "computed")
   }
 
-  fun testStorefrontDirectState() {
+  @Test
+  fun testStorefrontDirectState(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { return this.\$store.state.<caret>", section = "computed", renderPriority = true,
                 lookupFilter = filterOutNoise)
@@ -107,7 +124,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                 lookupFilter = filterOutNoise)
   }
 
-  fun testStorefrontDirectDispatch() {
+  @Test
+  fun testStorefrontDirectDispatch(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { this.\$store.dispatch('<caret>', code) }", section = "methods")
     doItemsTest(0, "foo() { this.store.dispatch('<caret>', code) }", section = "methods")
@@ -134,7 +152,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                  "cartCoupon\t", "('cart/applyCoupon', code)", section = "methods")
   }
 
-  fun testStorefrontDirectCommit() {
+  @Test
+  fun testStorefrontDirectCommit(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { this.\$store.commit('<caret>', code) }", section = "methods")
     doItemsTest(0, "foo() { this.store.commit('<caret>', code) }", section = "methods")
@@ -164,7 +183,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                  "cartset\t", "('cart/breadcrumbs/set', code)", section = "methods")
   }
 
-  fun testStorefrontMapGetters() {
+  @Test
+  fun testStorefrontMapGetters(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapGetters(<caret>", section = "computed",
                 renderPriority = true, lookupFilter = filterOutNoise)
@@ -220,7 +240,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                 renderPriority = true, lookupFilter = filterOutNoise)
   }
 
-  fun testStorefrontMapState() {
+  @Test
+  fun testStorefrontMapState(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapState(<caret>", section = "computed",
                 renderPriority = true, lookupFilter = filterOutNoise)
@@ -294,7 +315,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
 
   }
 
-  fun testStorefrontMapActions() {
+  @Test
+  fun testStorefrontMapActions(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapActions(<caret>", section = "methods",
                 renderPriority = true, lookupFilter = filterOutNoise)
@@ -367,7 +389,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                 additionalContent = namespacedDecoratorsCode)
   }
 
-  fun testStorefrontMapMutations() {
+  @Test
+  fun testStorefrontMapMutations(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapMutations(<caret>", section = "methods",
                 renderPriority = true, lookupFilter = filterOutNoise and filterOutMappersAndStore)
@@ -438,7 +461,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                 additionalContent = namespacedDecoratorsCode)
   }
 
-  fun testStorefrontStoreActionContext() {
+  @Test
+  fun testStorefrontStoreActionContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     val categoryActions = "store/category/actions.ts"
     // context
@@ -586,7 +610,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                      lookupFilter = filterOutNoise and { it.lookupString.startsWith("\"") })
   }
 
-  fun testStorefrontStoreGettersContext() {
+  @Test
+  fun testStorefrontStoreGettersContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     val cartGetters = "store/cart/getters.ts"
 
@@ -613,7 +638,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
 
   }
 
-  fun testStorefrontStoreMutationsContext() {
+  @Test
+  fun testStorefrontStoreMutationsContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     val breadcrumbs = "store/cart/breadcrumbs/index.ts"
 
@@ -626,7 +652,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                      lookupFilter = filterOutNoise)
   }
 
-  fun testFunctionInit() {
+  @Test
+  fun testFunctionInit(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.FunctionInit)
 
     val module = "store/myVuexModule.js"
@@ -638,7 +665,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(3, "...mapActions(['<caret>'", section = "methods")
   }
 
-  fun testStorefrontThisCompletion() {
+  @Test
+  fun testStorefrontThisCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureByFile("storefront-mappers-JS.vue")
     prepareFiles(project)
@@ -649,14 +677,16 @@ class VuexCompletionTest : BasePlatformTestCase() {
     checkItems(1, true, true, true, lookupFilter = filterOutDollarPrefixedProperties)
   }
 
-  fun testStarImportCompletion() {
+  @Test
+  fun testStarImportCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.StarImport)
     doItemsTest(0, "...mapGetters({foo:'<caret>'", section = "computed", renderPriority = true)
     doItemsTest(1, "...mapState({foo:'<caret>'", section = "computed", renderPriority = true)
     doItemsTest(2, "...mapActions(['<caret>'", section = "methods", renderPriority = true)
   }
 
-  fun testCompositionShoppingCart() {
+  @Test
+  fun testCompositionShoppingCart(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
     val fileName = "test.vue"
     myFixture.copyFileToProject("composition-shopping-cart.vue", fileName)
@@ -691,7 +721,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     myFixture.completeBasic()
     myFixture.type(toType)
     PsiDocumentManager.getInstance(project).commitAllDocuments()
-    TestCase.assertEquals(expectedContents, myFixture.file.findElementAt(myFixture.caretOffset)?.context?.context?.text)
+    assertEquals(expectedContents, myFixture.file.findElementAt(myFixture.caretOffset)?.context?.context?.text)
   }
 
   private fun doStoreItemsTest(id: Int,
@@ -753,7 +783,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
            ${content}
         ${if (section != null) "}" else ""}
       }""".trimIndent()
-    myFixture.configureByText("${getTestName(true)}.${if (js) "js" else "ts"}", fileContents)
+    myFixture.configureByText("${hybrid.getTestName(true)}.${if (js) "js" else "ts"}", fileContents)
   }
 
   private fun checkItems(id: Int,
@@ -765,7 +795,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     var checkFileName: String
     checkFileName = "gold/${myFixture.file.name}.${id}.txt"
     if (!File("$testDataPath/$checkFileName").exists()) {
-      checkFileName = "gold/${getTestName(true)}.${id}.txt"
+      checkFileName = "gold/${hybrid.getTestName(true)}.${id}.txt"
       FileUtil.createIfDoesntExist(File("$testDataPath/$checkFileName"))
     }
     myFixture.renderLookupItems(renderPriority, renderType, renderTailText, lookupFilter = lookupFilter)

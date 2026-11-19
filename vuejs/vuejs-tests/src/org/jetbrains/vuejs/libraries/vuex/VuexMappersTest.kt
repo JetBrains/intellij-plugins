@@ -3,38 +3,48 @@ package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.junit5.TestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.junit.jupiter.api.Test
 
-class VuexMappersTest : BasePlatformTestCase() {
+@TestApplication
+class VuexMappersTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/vuex/mappers")
+  private val myFixture get() = hybrid.fixture
+  private val project get() = myFixture.project
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/mappers"
-
+  @Test
   fun testBasicVue() {
     myFixture.configureVueDependencies()
     myFixture.configureByFile("basicVue.vue")
     checkBasic()
   }
 
+  @Test
   fun testBasicExternal() {
     myFixture.configureVueDependencies()
     myFixture.configureByFiles("basicExternal.vue", "basicExternal.js")
     checkBasic()
   }
 
+  @Test
   fun testBasicInline() {
     myFixture.configureVueDependencies()
     myFixture.configureByFile("basicInline.js")
     checkBasic()
   }
 
+  @Test
   fun testDecoratedVue() {
     myFixture.configureVueDependencies()
     myFixture.configureByFile("decoratedVue.vue")
     checkDecorated()
   }
 
+  @Test
   fun testDecoratedExternal() {
     myFixture.configureVueDependencies()
     myFixture.configureByFiles("decoratedExternal.vue", "decoratedExternal.js")
@@ -44,8 +54,8 @@ class VuexMappersTest : BasePlatformTestCase() {
   private fun checkBasic() {
     prepareFiles(project)
     myFixture.completeBasic()
-    assertDoesntContain(myFixture.lookupElementStrings!!, "foo", "bar", "doneTodosCount2", "count2", "increment2")
-    assertContainsElements(myFixture.lookupElementStrings!!,
+    assertThat(myFixture.lookupElementStrings!!).doesNotContain("foo", "bar", "doneTodosCount2", "count2", "increment2")
+    assertThat(myFixture.lookupElementStrings!!).contains(
                            "comp1", "a", "b", "c", "count", "countAlias", "countPlusLocalState",
                            "doneTodosCount", "anotherGetter", "doneCount", "increment", "incrementBy",
                            "add", "incrementAction", "incrementByAction", "addAction")
@@ -54,8 +64,8 @@ class VuexMappersTest : BasePlatformTestCase() {
   private fun checkDecorated() {
     prepareFiles(project)
     myFixture.completeBasic()
-    assertDoesntContain(myFixture.lookupElementStrings!!, "foo")
-    assertContainsElements(myFixture.lookupElementStrings!!,
+    assertThat(myFixture.lookupElementStrings!!).doesNotContain("foo")
+    assertThat(myFixture.lookupElementStrings!!).contains(
                            "propFoo", "a", "b", "increment", "incrementBy",
                            "stateFoo", "stateBar", "getterFoo", "actionFoo", "mutationFoo",
                            "moduleGetterFoo", "fru", "bar", "baz", "qux")

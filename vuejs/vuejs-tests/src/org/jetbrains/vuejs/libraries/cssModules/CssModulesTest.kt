@@ -2,51 +2,63 @@
 package org.jetbrains.vuejs.libraries.cssModules
 
 import com.intellij.javascript.testFramework.web.checkJsUsages
+import com.intellij.openapi.application.EDT
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.ComparisonFailure
-import junit.framework.TestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class CssModulesTest : BasePlatformTestCase() {
+@TestApplication
+class CssModulesTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/cssModules")
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/cssModules"
-
-  fun testRootCompletion() {
+  @Test
+  fun testRootCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFiles("cssModule.vue")
     myFixture.moveToOffsetBySignature("{{ <caret>\$style")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "\$style", "myStyle", "theStyle")
-    assertDoesntContain(myFixture.lookupElementStrings!!, "noStyle")
+    assertThat(myFixture.lookupElementStrings!!).contains("\$style", "myStyle", "theStyle")
+    assertThat(myFixture.lookupElementStrings!!).doesNotContain("noStyle")
   }
 
-  fun testStyleCompletion() {
+  @Test
+  fun testStyleCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFiles("cssModule.vue")
     myFixture.moveToOffsetBySignature("{{ \$style.<caret>")
     myFixture.completeBasic()
-    TestCase.assertEquals(listOf("bar", "constructor", "foo", "hasOwnProperty", "isPrototypeOf", "la", "la2", "la3", "local4",
+    assertEquals(listOf("bar", "constructor", "foo", "hasOwnProperty", "isPrototypeOf", "la", "la2", "la3", "local4",
                                  "propertyIsEnumerable", "toLocaleString", "toString", "valueOf"),
                           myFixture.lookupElementStrings!!.sorted())
   }
 
-  fun testMyStyleCompletion() {
+  @Test
+  fun testMyStyleCompletion(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFiles("cssModule.vue")
     myFixture.moveToOffsetBySignature("{{ myStyle.<caret>")
     myFixture.completeBasic()
-    TestCase.assertEquals(listOf("\"my-stuff\"", "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable",
-                                 "toLocaleString", "toString", "valueOf"), myFixture.lookupElementStrings!!.sorted())
+    assertEquals(listOf("\"my-stuff\"", "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable",
+                        "toLocaleString", "toString", "valueOf"), myFixture.lookupElementStrings!!.sorted())
   }
 
-  fun testHighlighting() {
+  @Test
+  fun testHighlighting(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFiles("cssModule.highlighting.vue")
     myFixture.checkHighlighting()
   }
 
-  fun testResolve() {
+  @Test
+  fun testResolve(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFile("cssModule.vue")
 
     myFixture.resolveReference("\$st<caret>yle.")
@@ -64,14 +76,11 @@ class CssModulesTest : BasePlatformTestCase() {
     )) {
       try {
         if (result != null) {
-          TestCase.assertEquals(result, myFixture.resolveReference(signature).context?.context?.text)
+          assertEquals(result, myFixture.resolveReference(signature).context?.context?.text)
         }
         else {
           myFixture.assertUnresolvedReference(signature, true)
         }
-      }
-      catch (e: ComparisonFailure) {
-        throw ComparisonFailure(signature + ":" + e.message, e.expected, e.actual).initCause(e)
       }
       catch (e: AssertionError) {
         throw AssertionError(signature + ":" + e.message, e)
@@ -79,7 +88,8 @@ class CssModulesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testUsages() {
+  @Test
+  fun testUsages(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureByFile("cssModule.vue")
     myFixture.checkJsUsages(".b<caret>ar", "bar-usages")
   }

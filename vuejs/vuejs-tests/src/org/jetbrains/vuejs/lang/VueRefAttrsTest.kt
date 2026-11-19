@@ -1,17 +1,25 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.util.Disposer
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.ComparisonFailure
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VueRefAttrsTest : BasePlatformTestCase() {
+@TestApplication
+class VueRefAttrsTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/refAttrs")
+  private val myFixture get() = hybrid.fixture
+  private val testRootDisposable get() = myFixture.testRootDisposable
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/refAttrs"
-
-  fun testJSCompletionAndRename() {
+  @Test
+  fun testJSCompletionAndRename(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByFile("js.vue")
 
@@ -34,7 +42,8 @@ class VueRefAttrsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("js.after.vue")
   }
 
-  fun testTSCompletionAndRename() {
+  @Test
+  fun testTSCompletionAndRename(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByFile("ts.vue")
 
@@ -57,11 +66,13 @@ class VueRefAttrsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("ts.after.vue")
   }
 
-  fun testResolve() {
+  @Test
+  fun testResolve(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    myFixture.setCaresAboutInjection(false)
+    val fixture = myFixture
+    fixture.setCaresAboutInjection(false)
     Disposer.register(testRootDisposable) {
-      myFixture.setCaresAboutInjection(true)
+      fixture.setCaresAboutInjection(true)
     }
     for ((signature, result, fileName) in listOf(
       Triple("\$refs.input<caret>Ref", "ref='<caret>inputRef'", "js.after.vue"),
@@ -80,16 +91,14 @@ class VueRefAttrsTest : BasePlatformTestCase() {
         myFixture.configureByFile("js.after.vue")
         myFixture.checkGotoDeclaration(signature, result, fileName)
       }
-      catch (e: ComparisonFailure) {
-        throw ComparisonFailure(signature + ":" + e.message, e.expected, e.actual).initCause(e)
-      }
       catch (e: AssertionError) {
         throw AssertionError(signature + ":" + e.message, e)
       }
     }
   }
 
-  fun testHighlighting() {
+  @Test
+  fun testHighlighting(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("js.highlighting.vue")

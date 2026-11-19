@@ -16,18 +16,23 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.junit5.TestApplication
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class VueCreateTsVariableTest : BasePlatformTestCase() {
+@TestApplication
+class VueCreateTsVariableTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/intentions/createVariable")
+  private val myFixture get() = hybrid.fixture
 
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     myFixture.enableInspections(JSUnresolvedReferenceInspection(),
                                 TypeScriptUnresolvedReferenceInspection())
   }
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/intentions/createVariable"
-
+  @Test
   fun testCreateVariableWorksInVueTs() {
     myFixture.configureByFile("before.vue")
     myFixture.launchAction(myFixture.findSingleIntention(

@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.DIRECTIVE
@@ -33,9 +33,13 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDire
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.PRE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.SHOW
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.TEXT
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class VueAttributeNameParserTest : UsefulTestCase() {
+@TestApplication
+class VueAttributeNameParserTest {
 
+  @Test
   fun testPlainAttributes() {
     expect("foo", "foo", PLAIN, injectJS = false, requiresAttributeValue = true)
     expect("foo.a.bbb.c", "foo", PLAIN, setOf("a", "bbb", "c"), injectJS = false, requiresAttributeValue = false)
@@ -87,6 +91,7 @@ class VueAttributeNameParserTest : UsefulTestCase() {
 
   }
 
+  @Test
   fun testDirectives() {
     expect("v-foo", "foo", null, CUSTOM, injectJS = true, requiresAttributeValue = false)
     expect("v-foo:arg", "foo", "arg", CUSTOM, injectJS = true, requiresAttributeValue = false)
@@ -147,9 +152,9 @@ class VueAttributeNameParserTest : UsefulTestCase() {
                      isShorthand: Boolean = false) {
     expect(attributeName, name, DIRECTIVE, modifiers, injectJS, requiresAttributeValue)
     val info = VueAttributeNameParser.parse(attributeName) as VueDirectiveInfo
-    assertEquals("$attributeName - wrong directive kind", directiveKind, info.directiveKind)
-    assertEquals("$attributeName - wrong directive arguments", arguments, info.arguments)
-    assertEquals("$attributeName - wrong isShorthand value", isShorthand, info.isShorthand)
+    assertEquals(directiveKind, info.directiveKind, "$attributeName - wrong directive kind")
+    assertEquals(arguments, info.arguments, "$attributeName - wrong directive arguments")
+    assertEquals(isShorthand, info.isShorthand, "$attributeName - wrong isShorthand value")
   }
 
   private fun expect(attributeName: String,
@@ -161,11 +166,11 @@ class VueAttributeNameParserTest : UsefulTestCase() {
                      contextTag: String? = null,
                      isTopLevelTag: Boolean = false) {
     val info = VueAttributeNameParser.parse(attributeName, contextTag, isTopLevelTag)
-    assertEquals("$attributeName - wrong parsed name", name, info.name)
-    assertEquals("$attributeName - wrong kind", attributeKind, info.kind)
-    assertEquals("$attributeName - wrong modifiers", modifiers, info.modifiers)
-    assertEquals("$attributeName - wrong injectJS value", injectJS, info.injectJS)
-    assertEquals("$attributeName - wrong requires attr value", requiresAttributeValue, info.requiresValue)
+    assertEquals(name, info.name, "$attributeName - wrong parsed name")
+    assertEquals(attributeKind, info.kind, "$attributeName - wrong kind")
+    assertEquals(modifiers, info.modifiers, "$attributeName - wrong modifiers")
+    assertEquals(injectJS, info.injectJS, "$attributeName - wrong injectJS value")
+    assertEquals(requiresAttributeValue, info.requiresValue, "$attributeName - wrong requires attr value")
   }
 
 }

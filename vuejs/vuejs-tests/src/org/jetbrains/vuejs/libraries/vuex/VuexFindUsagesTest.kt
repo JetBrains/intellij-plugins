@@ -2,14 +2,22 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.javascript.testFramework.web.checkJsUsages
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.openapi.application.EDT
+import com.intellij.polySymbols.testFramework.hybridFixture
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VuexFindUsagesTest : BasePlatformTestCase() {
+@TestApplication
+class VuexFindUsagesTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/vuex/findUsages")
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/findUsages"
-
-  fun testStorefront() {
+  @Test
+  fun testStorefront(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     with(myFixture) {
       configureStore(VuexTestStore.Storefront)
       copyFileToProject("../resolve/storefront-component.ts", "storefront-component.ts")
@@ -70,7 +78,8 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testShoppingCart() {
+  @Test
+  fun testShoppingCart(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     with(myFixture) {
       configureStore(VuexTestStore.ShoppingCart)
       checkUsages("store/modules/cart.js", "cart",
@@ -86,7 +95,8 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
     }
   }
 
-  fun testSimpleStore() {
+  @Test
+  fun testSimpleStore(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     with(myFixture) {
       myFixture.configureStore(VuexTestStore.SimpleStore)
 
@@ -99,7 +109,7 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
   }
 
   private fun checkUsages(filePath: String, goldFileSuffix: String, vararg signatures: String) {
-    val testName = getTestName(true)
+    val testName = hybrid.getTestName(true)
     myFixture.configureFromTempProjectFile(filePath)
     for ((i, signature) in signatures.withIndex()) {
       myFixture.checkJsUsages(signature, "$testName.$goldFileSuffix${if (signatures.size > 1) ".$i" else ""}")

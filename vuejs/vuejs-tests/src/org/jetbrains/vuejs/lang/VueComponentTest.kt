@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.polySymbols.PolySymbol
@@ -13,13 +14,16 @@ import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.search.PsiLinkedPolySymbol
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.PsiFileImpl
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.util.asSafely
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.VueComponent
@@ -42,9 +46,12 @@ import org.jetbrains.vuejs.model.VueSlot
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.VueTemplate
 import org.jetbrains.vuejs.model.callSignature
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
@@ -74,15 +81,16 @@ import org.junit.runners.JUnit4
  * } */
  * ```
  */
-@RunWith(JUnit4::class)
-class VueComponentTest :
-  BasePlatformTestCase() {
+@TestApplication
+class VueComponentTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/component")
+  private val myFixture get() = hybrid.fixture
+  private val psiManager get() = PsiManager.getInstance(myFixture.project)
+  private val project get() = myFixture.project
+  private val testRootDisposable get() = myFixture.testRootDisposable
 
-  override fun getTestDataPath(): String =
-    getVueTestDataPath() + "/component"
-
-  override fun setUp() {
-    super.setUp()
+  @BeforeEach
+  fun setUp() {
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
@@ -228,7 +236,7 @@ class VueComponentTest :
     strictNullChecksDiffer: Boolean = false,
     addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
     additionalDependencies: Map<String, String> = emptyMap(),
-  ) {
+  ): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     var file = configureTestProject(addNodeModules, additionalDependencies) as PsiFileImpl
 
     val textWithMarkers = file.text
@@ -251,7 +259,7 @@ class VueComponentTest :
   private fun doSingleStrictnessTest(
     strictNullChecks: Boolean,
     addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_5_0),
-  ) {
+  ): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val file = configureTestProject(addNodeModules) as PsiFileImpl
 
     if (strictNullChecks) {
@@ -276,7 +284,7 @@ class VueComponentTest :
     myFixture.checkHighlighting()
 
     val newModel = buildComponentModel(file)
-    val expectedFile = "${getTestName(false)}.${if (appendSuffixToExpected) "strictNullChecks." else ""}expected.txt"
+    val expectedFile = "${hybrid.getTestName(false)}.${if (appendSuffixToExpected) "strictNullChecks." else ""}expected.txt"
     myFixture.checkTextByFile(newModel, expectedFile)
 
     assertNull(file.stub)
@@ -307,7 +315,7 @@ class VueComponentTest :
         additionalDependencies = additionalDependencies,
       )
     }
-    return myFixture.configureByFile(getTestName(false) + "." + extension)
+    return myFixture.configureByFile(hybrid.getTestName(false) + "." + extension)
   }
 
   /**

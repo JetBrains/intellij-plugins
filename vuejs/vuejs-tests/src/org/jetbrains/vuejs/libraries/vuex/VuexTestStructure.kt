@@ -2,10 +2,13 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.idea.IJIgnore
+import com.intellij.openapi.application.EDT
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexAction
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
@@ -14,65 +17,80 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModule
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStore
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VuexTestStructure : BasePlatformTestCase() {
+@TestApplication
+class VuexTestStructure {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/vuex/structure")
+  private val myFixture get() = hybrid.fixture
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/structure"
-
-  fun testNuxtJs() {
+  @Test
+  fun testNuxtJs(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTestStructure(false)
   }
 
-  fun testNuxtJs2() {
+  @Test
+  fun testNuxtJs2(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureByText("foo.vue", "<script>export default{}</script>")
-    TestCase.assertNull(VuexModelManager.getVuexStoreContext(myFixture.file))
+    assertNull(VuexModelManager.getVuexStoreContext(myFixture.file))
   }
 
-  fun testStorefront() {
+  @Test
+  fun testStorefront(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     doTestStructure()
   }
 
-  fun testShoppingCart() {
+  @Test
+  fun testShoppingCart(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.ShoppingCart)
     doTestStructure()
   }
 
-  fun testCounterHot() {
+  @Test
+  fun testCounterHot(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.CounterHot)
     doTestStructure()
   }
 
-  fun testSimpleStore() {
+  @Test
+  fun testSimpleStore(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.SimpleStore)
     doTestStructure()
   }
 
   @IJIgnore(issue = "AT-3959")
-  fun testFunctionInit() {
+  @Test
+  fun testFunctionInit(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.FunctionInit)
     doTestStructure()
   }
 
-  fun testComics() {
+  @Test
+  fun testComics(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Comics)
     doTestStructure()
   }
 
-  fun testCompositionCounter() {
+  @Test
+  fun testCompositionCounter(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.CompositionCounter)
     doTestStructure()
   }
 
-  fun testCompositionShoppingCart() {
+  @Test
+  fun testCompositionShoppingCart(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
     doTestStructure()
   }
 
-  fun testWithRecursiveProp() {
+  @Test
+  fun testWithRecursiveProp(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.RecursiveStore)
     doTestStructure()
   }
@@ -83,7 +101,7 @@ class VuexTestStructure : BasePlatformTestCase() {
     }
     val context = VuexModelManager.getVuexStoreContext(myFixture.file)!!
     myFixture.configureByText("check.txt", printContext(context))
-    myFixture.checkResultByFile(getTestName(false) + ".txt")
+    myFixture.checkResultByFile(hybrid.getTestName(false) + ".txt")
   }
 
   private fun printContext(context: VuexStoreContext): String {

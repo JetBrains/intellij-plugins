@@ -2,21 +2,31 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
+import com.intellij.polySymbols.testFramework.hybridFixture
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.ComparisonFailure
-import junit.framework.TestCase
+import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.junit5.TestApplication
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
-class VuexResolveTest : BasePlatformTestCase() {
+@TestApplication
+class VuexResolveTest {
+  private val hybrid by hybridFixture(getVueTestDataPath() + "/libraries/vuex/resolve")
+  private val myFixture get() = hybrid.fixture
+  private val project get() = myFixture.project
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/resolve"
-
-  fun testStorefrontComponentStoreAccess() {
+  @Test
+  fun testStorefrontComponentStoreAccess(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       // Direct indexed getter
       "this.\$store.getters['cart/get<caret>Coupon']" to "cart/getters.ts:2139:JSProperty",
@@ -48,7 +58,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "rootStore.commit({type: 'cart/bread<caret>crumbs/set'" to "cart/index.ts:831:JSProperty")
   }
 
-  fun testStorefrontComponentMappedGetters() {
+  @Test
+  fun testStorefrontComponentMappedGetters(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       // Plain dictionary
       "isVirtualCart: 'cart/is<caret>VirtualCart'" to "cart/getters.ts:2359:JSProperty",
@@ -73,7 +84,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "'breadcrumbs/getBreadcrumbs<caret>Routes'])" to "breadcrumbs/index.ts:333:JSProperty")
   }
 
-  fun testStorefrontComponentMappedState() {
+  @Test
+  fun testStorefrontComponentMappedState(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       // Plain string dictionary
       "micro: 'cart/isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
@@ -115,7 +127,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "return getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty")
   }
 
-  fun testStorefrontComponentMappedActions() {
+  @Test
+  fun testStorefrontComponentMappedActions(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       // Plain array
       "...mapActions(['cart/configure<caret>Item'])" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
@@ -132,7 +145,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "(dispatch) => dispatch({type: 'configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty")
   }
 
-  fun testStorefrontComponentMappedMutations() {
+  @Test
+  fun testStorefrontComponentMappedMutations(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       // Plain array
       "'cart/breadcrumbs/s<caret>et'\n    ])" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
@@ -150,7 +164,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "commit => commit({type: 's<caret>et'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty")
   }
 
-  fun testStorefrontComponentNamespacedHelpers() {
+  @Test
+  fun testStorefrontComponentNamespacedHelpers(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       "storefront-namespaced-component.ts",
       // Getters array
@@ -206,7 +221,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "commit('breadcrumbs/s<caret>et') //2" to null)
   }
 
-  fun testStorefrontComponentDecorators() {
+  @Test
+  fun testStorefrontComponentDecorators(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     doStorefrontTest(
       "storefront-decorated-component.ts",
       "@Getter('cart/isVirtual<caret>Cart')" to "cart/getters.ts:2359:JSProperty",
@@ -241,7 +257,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       "@cartModule.Mutation('bread<caret>crumbs/set')" to "cart/index.ts:831:JSProperty")
   }
 
-  fun testRootNamespacedAction() {
+  @Test
+  fun testRootNamespacedAction(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("root-namespaced-module.ts")
     doTest(false,
@@ -259,7 +276,8 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/inner/root<caret>Action'" to null)
   }
 
-  fun testRootNamespacedActionJS() {
+  @Test
+  fun testRootNamespacedActionJS(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureVueDependencies("vuex" to "^3.0.1")
     myFixture.configureByFiles("root-namespaced-module.js")
     doTest(false,
@@ -277,7 +295,8 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/inner/root<caret>Action'" to null)
   }
 
-  fun testStorefrontStoreActionsContext() {
+  @Test
+  fun testStorefrontStoreActionsContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureFromTempProjectFile("store/category/actions.ts")
     doTest(false,
@@ -325,7 +344,8 @@ class VuexResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testStorefrontStoreGettersContext() {
+  @Test
+  fun testStorefrontStoreGettersContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureFromTempProjectFile("store/cart/getters.ts")
     doTest(false,
@@ -339,7 +359,8 @@ class VuexResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testStorefrontStoreMutationsContext() {
+  @Test
+  fun testStorefrontStoreMutationsContext(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureFromTempProjectFile("store/cart/breadcrumbs/index.ts")
     doTest(false,
@@ -347,7 +368,8 @@ class VuexResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testShoppingCartResolution() {
+  @Test
+  fun testShoppingCartResolution(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.ShoppingCart)
     myFixture.configureFromTempProjectFile("store/modules/cart.js")
     doTest(false,
@@ -365,7 +387,8 @@ class VuexResolveTest : BasePlatformTestCase() {
            "state.al<caret>l" to "modules/products.js:70:JSProperty")
   }
 
-  fun testCounterHotResolution() {
+  @Test
+  fun testCounterHotResolution(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.CounterHot)
     myFixture.configureFromTempProjectFile("store/actions.js")
     doTest(false,
@@ -394,7 +417,8 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'inc<caret>rement'" to "store/actions.js:13:JSVariable")
   }
 
-  fun testNuxtJsResolution() {
+  @Test
+  fun testNuxtJsResolution(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTest(false,
@@ -421,7 +445,8 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/change<caret>Data'" to null)
   }
 
-  fun testCompositionApiResolution() {
+  @Test
+  fun testCompositionApiResolution(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     myFixture.configureStore(VuexTestStore.CompositionCounter)
     myFixture.configureByFile("composition-counter.vue")
     doTest(
@@ -434,7 +459,8 @@ class VuexResolveTest : BasePlatformTestCase() {
     )
   }
 
-  fun testStoreModuleCaching() {
+  @Test
+  fun testStoreModuleCaching(): Unit = timeoutRunBlocking(timeout = 2.minutes, context = Dispatchers.EDT) {
     val constFragment = "const counterModule"
 
     myFixture.configureVueDependencies("vuex" to "*")
@@ -442,7 +468,7 @@ class VuexResolveTest : BasePlatformTestCase() {
     myFixture.configureByFile("storeModuleCaching/store/index.js")
     val appFile = myFixture.configureByFile("storeModuleCaching/App.vue")
 
-    TestCase.assertNotNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
+    assertNotNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
 
     WriteCommandAction.runWriteCommandAction(project) {
       PsiDocumentManager.getInstance(project).getDocument(storeModuleFile)?.let { document ->
@@ -451,7 +477,7 @@ class VuexResolveTest : BasePlatformTestCase() {
       }
     }
 
-    TestCase.assertNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
+    assertNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
 
     WriteCommandAction.runWriteCommandAction(project) {
       PsiDocumentManager.getInstance(project).getDocument(storeModuleFile)?.let { document ->
@@ -460,7 +486,7 @@ class VuexResolveTest : BasePlatformTestCase() {
       }
     }
 
-    TestCase.assertNotNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
+    assertNotNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
   }
 
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
@@ -494,11 +520,8 @@ class VuexResolveTest : BasePlatformTestCase() {
           if (result is JSImplicitElement) {
             result = result.context!!
           }
-          TestCase.assertEquals(output, "${result.containingFile.parent!!.name}/${result.containingFile.name}:${result.textOffset}:$result")
+          assertEquals(output, "${result.containingFile.parent!!.name}/${result.containingFile.name}:${result.textOffset}:$result")
         }
-      }
-      catch (e: ComparisonFailure) {
-        throw ComparisonFailure(signature + ":" + e.message, e.expected, e.actual).initCause(e)
       }
       catch (e: AssertionError) {
         throw AssertionError(signature + ":" + e.message, e)

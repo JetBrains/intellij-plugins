@@ -1,32 +1,29 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.expr
 
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.testFramework.FileBasedTestCaseHelperEx
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
 
-@RunWith(com.intellij.testFramework.Parameterized::class)
-class VueJSParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHelperEx {
+/**
+ * Runs one test for each `.js` file of the test data. Each line of the file is one expression.
+ */
+@TestApplication
+class VueJSParserTest {
 
-  override fun getTestDataPath(): String {
-    return getVueTestDataPath() + "/expr/parser"
-  }
-
-  override fun getFileSuffix(fileName: String): String? {
-    return if (fileName.endsWith("js")) fileName else null
-  }
-
-  @Test
-  fun runSingle() {
-    doSingleTest(myFileSuffix, myTestDataPath)
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("testFiles")
+  fun runSingle(suffix: String) {
+    doSingleTest(suffix, testDataPath)
   }
 
   private fun doSingleTest(suffix: String, path: String) {
@@ -43,15 +40,22 @@ class VueJSParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHel
     for (line in StringUtil.splitByLines(text, false)) {
       if (result.isNotEmpty()) result.append("------\n")
 
-      val psiFile = PsiFileFactory.getInstance(project)
-        .createFileFromText("test.js.$attributeName.$extension", VueJSLanguage, line)
-
-      result.append(DebugUtil.psiToString(psiFile, true, false))
+      result.append(runReadActionBlocking {
+        val psiFile = PsiFileFactory.getInstance(projectFixture.get())
+          .createFileFromText("test.js.$attributeName.$extension", VueJSLanguage, line)
+        DebugUtil.psiToString(psiFile, true, false)
+      })
     }
-    UsefulTestCase.assertSameLinesWithFile(File(path, suffix.replace("js", "txt")).toString(), result.toString())
+    PlatformTestUtil.assertSameLinesWithFile(File(path, suffix.replace("js", "txt")).toString(), result.toString())
   }
 
-  override fun getRelativeBasePath(): String {
-    return ""
+  companion object {
+    private val projectFixture = projectFixture()
+
+    private val testDataPath: String = getVueTestDataPath() + "/expr/parser"
+
+    @JvmStatic
+    fun testFiles(): List<String> =
+      File(testDataPath).list()!!.filter { it.endsWith("js") }.sorted()
   }
 }
