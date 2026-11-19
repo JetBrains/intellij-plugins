@@ -60,8 +60,10 @@ fun dtsFixture(
 
   val methodName = testNameFixture(lowerCaseFirstLetter = false).init()
 
-  val settings = CodeStyle.getSettings(codeInsight.project).getIndentOptions(DtsFileType)
-  settings.USE_TAB_CHARACTER = false
+  // Configure the settings before other threads can read them (CPP-53251).
+  val settings = CodeStyle.createTestSettings()
+  settings.getIndentOptions(DtsFileType).USE_TAB_CHARACTER = false
+  CodeStyle.setTemporarySettings(codeInsight.project, settings)
 
   val testName = methodName
     .replace(Regex("[#@_.,-]+"), " ")
