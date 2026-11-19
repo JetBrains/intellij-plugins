@@ -3,10 +3,12 @@ package org.angularjs;
 
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.polySymbols.testFramework.PolySymbolsTestUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
@@ -14,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public final class AngularTestUtil {
 
@@ -41,22 +43,24 @@ public final class AngularTestUtil {
                                                              final String varName,
                                                              final Class<T> varClass,
                                                              @NotNull CodeInsightTestFixture fixture) {
-    PsiElement resolve = resolveReference(signature, fixture);
-    assertInstanceOf(resolve, varClass);
-    assertEquals(varName, varClass.cast(resolve).getName());
-    return (T)resolve;
+    return ReadAction.compute(() -> {
+      PsiElement resolve = resolveReference(signature, fixture);
+      assertInstanceOf(varClass, resolve);
+      assertEquals(varName, varClass.cast(resolve).getName());
+      return (T)resolve;
+    });
   }
 
   public static void moveToOffsetBySignature(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
-    PolySymbolsTestUtil.moveToOffsetBySignature(fixture, signature);
+    EdtTestUtil.runInEdtAndWait(() -> PolySymbolsTestUtil.moveToOffsetBySignature(fixture, signature));
   }
 
   public static int findOffsetBySignature(String signature, final PsiFile psiFile) {
-    return PolySymbolsTestUtil.findOffsetBySignature(psiFile, signature);
+    return ReadAction.compute(() -> PolySymbolsTestUtil.findOffsetBySignature(psiFile, signature));
   }
 
   @NotNull
   public static PsiElement resolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
-    return PolySymbolsTestUtil.resolveReference(fixture, signature);
+    return ReadAction.compute(() -> PolySymbolsTestUtil.resolveReference(fixture, signature));
   }
 }

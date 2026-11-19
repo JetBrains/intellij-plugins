@@ -176,7 +176,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/diagrams",
         "//contrib/AngularJS:angularJS",
         "//plugins/JavaScriptLanguage/javascript-psi-impl",
-        "@community//libraries/junit4",
+        "@community//libraries/assertj-core",
         "@community//platform/scratch/plugin",
     ],
 )
