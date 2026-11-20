@@ -3,15 +3,26 @@ package org.jetbrains.astro.codeInsight.highlighting
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.AstroTestMode
 import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroQuickFixHighlightingTest {
+class AstroQuickFixHighlightingTest :
+  AstroQuickFixHighlightingTestBase() {
 
-  private val astro: AstroFixture by astroFixture("codeInsight/highlighting/quickFix", useLsp = true)
+  @TestApplication
+  class WithTsGoProxyTest :
+    AstroQuickFixHighlightingTestBase(testMode = AstroTestMode.TS_GO_PROXY)
+}
+
+abstract class AstroQuickFixHighlightingTestBase(
+  testMode: AstroTestMode = AstroTestMode.ASTRO_LSP,
+) {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/highlighting/quickFix", testMode)
 
   @BeforeEach
   fun allowDocumentChangesDuringHighlighting() {

@@ -151,6 +151,7 @@
                      key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
 
     <platform.lsp.integrationProvider implementation="org.jetbrains.astro.service.AstroLspIntegrationProvider" />
+    <typescript.go.contentMappedFileSupport implementation="org.jetbrains.astro.service.AstroTypeScriptGoContentMappedFileSupport"/>
     <gotoDeclarationHandler implementation="org.jetbrains.astro.editor.AstroGotoDeclarationHandler" order="first"/>
     <projectConfigurable parentId="settings.typescriptcompiler"
                          instance="org.jetbrains.astro.service.settings.AstroServiceConfigurable"

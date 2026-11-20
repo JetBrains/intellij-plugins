@@ -15,11 +15,18 @@ pkg_files(
     strip_prefix = strip_prefix.from_pkg(),
 )
 
+pkg_files(
+    name = "astro_content_mapper_resources",
+    srcs = glob(["astro-content-mapper/**"]),
+    strip_prefix = strip_prefix.from_pkg(),
+)
+
 ### auto-generated section `dev intellij.astro` start
 filegroup(
     name = "dist_resources",
     srcs = glob(
         [
+            "astro-content-mapper/**",
             "astro-language-server/**",
             "typescript-astro-plugin/**",
         ],
@@ -30,10 +37,12 @@ filegroup(
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     file_prefixes = {
+        "astro-content-mapper": "contrib/Astro/astro-content-mapper",
         "astro-language-server": "contrib/Astro/astro-language-server",
         "typescript-astro-plugin": "contrib/Astro/typescript-astro-plugin",
     },
     files = {
+        "astro-content-mapper": "//contrib/Astro:dist_resources",
         "astro-language-server": "//contrib/Astro:dist_resources",
         "typescript-astro-plugin": "//contrib/Astro:dist_resources",
     },
@@ -62,6 +71,7 @@ ij_plugin_module(
     non_classpath_data = [
         ":astro_language_server_resources",
         ":typescript_astro_plugin_resources",
+        ":astro_content_mapper_resources",
     ],
     resource_strip_prefix = "resources",
     resources = glob(

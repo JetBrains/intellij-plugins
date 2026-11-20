@@ -4,14 +4,25 @@ import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.openapi.util.registry.RegistryManager
 import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.AstroTestMode
 import org.jetbrains.astro.astroFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TestApplication
-class AstroCompletionTest {
+class AstroCompletionTest :
+  AstroCompletionTestBase() {
 
-  private val astro: AstroFixture by astroFixture("codeInsight/completion", useLsp = true)
+  @TestApplication
+  class WithTsGoProxyTest :
+    AstroCompletionTestBase(testMode = AstroTestMode.TS_GO_PROXY)
+}
+
+abstract class AstroCompletionTestBase(
+  testMode: AstroTestMode = AstroTestMode.ASTRO_LSP,
+) {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/completion", testMode)
 
   @BeforeEach
   fun increaseServiceItemsLimit() {
@@ -88,7 +99,7 @@ class AstroCompletionTest {
   fun testAliasedComponentImport() =
     astro.doConfiguredTest(dir = true, configureFileName = "src/layout/App.astro") {
       completeBasic()
-      checkResultByFile("${astro.testName}/src/layout/App.after.astro")
+      checkResultByFile(astro.tsGoTestDataFile("${astro.testName}/src/layout/App.after.astro"))
     }
 
   @Test

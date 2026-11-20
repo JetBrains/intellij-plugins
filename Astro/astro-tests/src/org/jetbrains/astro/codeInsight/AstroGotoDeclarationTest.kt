@@ -1,15 +1,37 @@
 package org.jetbrains.astro.codeInsight
 
+import com.intellij.lang.javascript.TrackFailedTestExtension
 import com.intellij.testFramework.junit5.TestApplication
 import org.jetbrains.astro.AstroFixture
+import org.jetbrains.astro.AstroTestMode
 import org.jetbrains.astro.astroFixture
 import org.jetbrains.astro.AstroTestModule
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 @TestApplication
-class AstroGotoDeclarationTest {
+class AstroGotoDeclarationTest :
+  AstroGotoDeclarationTestBase() {
 
-  private val astro: AstroFixture by astroFixture("codeInsight/navigation/declaration", useLsp = true)
+  @TestApplication
+  class WithTsGoProxyTest :
+    AstroGotoDeclarationTestBase(testMode = AstroTestMode.TS_GO_PROXY) {
+
+    @RegisterExtension
+    @JvmField
+    val rule: TrackFailedTestExtension = TrackFailedTestExtension(
+      // With TypeScript 7, the navigation from a namespaced React component shows the usages, not the declaration
+      "testReactNamespacedAsFieldComponent",
+      "testReactMultipleNamespacedComponent",
+    )
+  }
+}
+
+abstract class AstroGotoDeclarationTestBase(
+  testMode: AstroTestMode = AstroTestMode.ASTRO_LSP,
+) {
+
+  private val astro: AstroFixture by astroFixture("codeInsight/navigation/declaration", testMode)
 
   @Test
   fun testAstroComponentProp() =

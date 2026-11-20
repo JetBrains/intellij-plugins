@@ -1,0 +1,22 @@
+{
+  "name": "@astrojs/ts-content-mapper",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "typescript": {
+    "contentMapper": {
+      "exec": [
+        "node",
+        "lib/server.mjs"
+      ],
+      "dynamicConfig": false
+    }
+  },
+  "devDependencies": {
+    "@astrojs/ts-content-mapper": "0.2.0",
+    "rolldown": "latest"
+  },
+  "scripts": {
+    "build": "rolldown --config"
+  }
+}

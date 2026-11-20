@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*.ts", "src/**/*.astro"],
+  "contentMappers": [
+    { "package": "@astrojs/ts-content-mapper", "extensions": [".astro"] }
+  ]
+}
