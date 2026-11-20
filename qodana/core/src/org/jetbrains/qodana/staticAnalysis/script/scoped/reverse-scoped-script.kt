@@ -10,6 +10,7 @@ import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_INSPECTIONS_NAMES
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
@@ -64,13 +65,13 @@ private fun Run.reverseScopedDebugSummary(): String {
 
 private fun logReverseScopedDebug(label: String, run: Run, config: QodanaConfig) {
   if (!ReverseScopedDebugLog.isEnabled) return
-  ReverseScopedDebugLog.log { "REVERSE-SCOPED DEBUG [$label] baseline=${config.baseline ?: "<null>"} ${run.reverseScopedDebugSummary()}" }
+  ReverseScopedDebugLog.log { "REVERSE-SCOPED DEBUG [$label] baseline=${config.baseline} ${run.reverseScopedDebugSummary()}" }
   val matchedButWithoutBaselineState = run.results.orEmpty().count {
     it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
   }
-  if (config.baseline == null && matchedButWithoutBaselineState > 0) {
+  if (config.baseline == QodanaBaseline.None && matchedButWithoutBaselineState > 0) {
     ReverseScopedDebugLog.log {
-      "REVERSE-SCOPED DEBUG [$label] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. These results were matched by reverse-scoped diff but will still be counted by result summary / exit thresholds because config.baseline is null."
+      "REVERSE-SCOPED DEBUG [$label] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. These results were matched by reverse-scoped diff but will still be counted by result summary / exit thresholds because config.baseline is None."
     }
   }
 }

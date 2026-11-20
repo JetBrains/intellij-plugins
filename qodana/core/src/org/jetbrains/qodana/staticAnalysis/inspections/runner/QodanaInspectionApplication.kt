@@ -33,7 +33,6 @@ import org.jetbrains.qodana.publisher.PublishResult
 import org.jetbrains.qodana.publisher.schemas.UploadedReport
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.addQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToDir
@@ -166,7 +165,7 @@ class QodanaInspectionApplication(
 
     val message = when (appliedBaselineSource(sarif)) {
       "CLOUD" -> QodanaBundle.message("baseline.used.cloud")
-      "LOCAL" -> QodanaBundle.message("baseline.used.file", (config.baseline as? QodanaBaseline.Local)?.path)
+      "LOCAL" -> QodanaBundle.message("baseline.used.file", config.baseline.path)
       else -> QodanaBundle.message("baseline.used.none")
     }
     reporter.reportMessage(1, message)

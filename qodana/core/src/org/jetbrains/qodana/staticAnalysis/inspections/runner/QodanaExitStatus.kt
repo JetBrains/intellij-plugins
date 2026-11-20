@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.qodana.sarif.model.Notification
 import com.jetbrains.qodana.sarif.model.Run
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageData
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
@@ -67,14 +68,14 @@ internal fun setInvocationExitStatus(run: Run, config: QodanaConfig) {
 
   if (ReverseScopedDebugLog.isEnabled) {
     ReverseScopedDebugLog.log {
-      "REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] baseline=${config.baseline ?: "<null>"} summary=$summary thresholds=${config.failureConditions} baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}"
+      "REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] baseline=${config.baseline} summary=$summary thresholds=${config.failureConditions} baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}"
     }
     val matchedButWithoutBaselineState = run.results.orEmpty().count {
       it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
     }
-    if (config.baseline == null && matchedButWithoutBaselineState > 0) {
+    if (config.baseline == QodanaBaseline.None && matchedButWithoutBaselineState > 0) {
       ReverseScopedDebugLog.log {
-        "REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. Thresholds will use the summary above because config.baseline is null."
+        "REVERSE-SCOPED DEBUG [setInvocationExitStatus/before] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. Thresholds will use the summary above because config.baseline is None."
       }
     }
   }
@@ -158,14 +159,14 @@ private fun checkCoverageThresholds(run: Run, config: QodanaConfig): Sequence<St
     }
 
 private fun checkDependencyLicenses(run: Run, config: QodanaConfig): Sequence<String> {
-  val conditions = config.failureConditions.dependencyLicenses
-  if (!conditions.failOnProhibited && !conditions.failOnUnknown) return emptySequence()
+  (val failOnProhibited, val failOnUnknown) = config.failureConditions.dependencyLicenses
+  if (!failOnProhibited && !failOnUnknown) return emptySequence()
   val audit = run.dependencyLicenseAudit
   return sequence {
-    if (conditions.failOnProhibited && audit[DEPENDENCY_AUDIT_PROHIBITED] == true) {
+    if (failOnProhibited && audit[DEPENDENCY_AUDIT_PROHIBITED] == true) {
       yield(QodanaBundle.message("exit.dependency.prohibited.licenses"))
     }
-    if (conditions.failOnUnknown && audit[DEPENDENCY_AUDIT_UNKNOWN] == true) {
+    if (failOnUnknown && audit[DEPENDENCY_AUDIT_UNKNOWN] == true) {
       yield(QodanaBundle.message("exit.dependency.unknown.licenses"))
     }
   }

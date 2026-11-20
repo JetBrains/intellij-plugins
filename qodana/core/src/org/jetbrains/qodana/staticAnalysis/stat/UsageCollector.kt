@@ -16,7 +16,6 @@ import org.jetbrains.qodana.license.QodanaLicense
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaBaseline
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
 import org.jetbrains.qodana.ui.ci.CIFile
@@ -251,11 +250,7 @@ object UsageCollector : CounterUsagesCollector() {
     args += onlyDirectoryField with (config.onlyDirectory != null)
     args += fixesStrategyField with config.fixesStrategy
     args += includeAbsentField with config.includeAbsent
-    args += baselineField with when (config.baseline) {
-      null -> "none"
-      is QodanaBaseline.Local -> "local"
-      is QodanaBaseline.Cloud -> "cloud"
-    }
+    args += baselineField with config.baseline.source.lowercase()
     configEvent.log(args)
   }
 

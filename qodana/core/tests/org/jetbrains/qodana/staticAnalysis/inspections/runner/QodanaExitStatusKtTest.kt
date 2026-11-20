@@ -68,7 +68,7 @@ class QodanaExitStatusKtTest {
 
   private fun Run.setup(cfg: QodanaConfig = emptyConfig, vararg results: Result) {
     // In a real run the comparison with the baseline comes first and labels the run, and the summary reads the label.
-    if (cfg.baseline != null) getOrAssignProperties()["baselineSource"] = "LOCAL"
+    if (cfg.baseline != QodanaBaseline.None) getOrAssignProperties()["baselineSource"] = cfg.baseline.source
     ResultSummaryContributor().contribute(withResults(results.toList()), DummyProject.getInstance(), cfg)
   }
 

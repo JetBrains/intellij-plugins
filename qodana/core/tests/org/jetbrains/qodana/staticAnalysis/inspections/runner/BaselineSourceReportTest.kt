@@ -35,7 +35,7 @@ class BaselineSourceReportTest : QodanaRunnerTestCase() {
 
   @Test
   fun `a run without a baseline gives the none source`() {
-    updateQodanaConfig { it.copy(baseline = null) }
+    updateQodanaConfig { it.copy(baseline = QodanaBaseline.None) }
 
     runAnalysis()
 

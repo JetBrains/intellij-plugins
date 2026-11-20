@@ -84,7 +84,7 @@ class CloudBaselineServiceTest : QodanaTestCase() {
     tokenOnly()
     System.setProperty(SKIP_CLOUD_BASELINE_PROPERTY, "true")
     try {
-      assertNull(resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+      assertEquals(QodanaBaseline.None, resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
     }
     finally {
       System.clearProperty(SKIP_CLOUD_BASELINE_PROPERTY)
@@ -112,7 +112,7 @@ class CloudBaselineServiceTest : QodanaTestCase() {
 
   @Test
   fun `without a token there is no cloud baseline`() = runTest {
-    assertNull(resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
+    assertEquals(QodanaBaseline.None, resolveBaseline(baselineFile = null, frontendUrl = FRONTEND_URL))
   }
 
   @Test

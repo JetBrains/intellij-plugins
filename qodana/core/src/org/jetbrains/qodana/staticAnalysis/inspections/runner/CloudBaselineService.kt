@@ -68,13 +68,13 @@ internal fun downloadTimeout(value: String?): Duration {
  * A [baselineFile] always wins. Without one, the run gets the cloud baseline of [cloudBaselineOf].
  * A run with [SKIP_CLOUD_BASELINE_PROPERTY] or without [frontendUrl] gets no cloud baseline.
  */
-internal fun resolveBaseline(baselineFile: Path?, frontendUrl: String?): QodanaBaseline? {
+internal fun resolveBaseline(baselineFile: Path?, frontendUrl: String?): QodanaBaseline {
   if (baselineFile != null) return QodanaBaseline.Local(baselineFile)
   if (System.getProperty(SKIP_CLOUD_BASELINE_PROPERTY).toBoolean()) {
     LOG.info("qodana-cli turned the cloud baseline of this run off")
-    return null
+    return QodanaBaseline.None
   }
-  return frontendUrl?.let { cloudBaselineOf(it) }
+  return frontendUrl?.let { cloudBaselineOf(it) } ?: QodanaBaseline.None
 }
 
 /**

@@ -39,7 +39,7 @@ internal class ResultSummaryContributor : SarifReportContributor {
       else -> scopedBaselinePath != null
     }
     ReverseScopedDebugLog.log {
-      "REVERSE-SCOPED DEBUG [ResultSummaryContributor/countOnlyNewResultsInSummary] baseline=${baseline ?: "<null>"} script=${script.name} stage=${stage ?: "<null>"} scopedBaseline=${scopedBaselinePath ?: "<null>"} enabled=$enabled"
+      "REVERSE-SCOPED DEBUG [ResultSummaryContributor/countOnlyNewResultsInSummary] baseline=$baseline script=${script.name} stage=${stage ?: "<null>"} scopedBaseline=${scopedBaselinePath ?: "<null>"} enabled=$enabled"
     }
     return enabled
   }
@@ -68,14 +68,14 @@ internal class ResultSummaryContributor : SarifReportContributor {
     if (!ReverseScopedDebugLog.isEnabled) return
     val filterMode = if (countOnlyNewResults) "BASELINE_NEW_ONLY" else "ALL_RESULTS"
     ReverseScopedDebugLog.log {
-      "REVERSE-SCOPED DEBUG [ResultSummaryContributor] baseline=${config.baseline ?: "<null>"} filter=$filterMode summary=$summary baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}"
+      "REVERSE-SCOPED DEBUG [ResultSummaryContributor] baseline=${config.baseline} filter=$filterMode summary=$summary baselineState=${run.debugBaselineStateCounts()} matchedBy=${run.debugMatchedByCounts()}"
     }
     val matchedButWithoutBaselineState = run.results.orEmpty().count {
       it.baselineState == null && (it.properties?.get(MATCHED_BY_PROPERTY) as? String) != null
     }
     if (!countOnlyNewResults && matchedButWithoutBaselineState > 0) {
       ReverseScopedDebugLog.log {
-        "REVERSE-SCOPED DEBUG [ResultSummaryContributor] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. They are counted because NEW-only filtering is enabled only when config.baseline != null."
+        "REVERSE-SCOPED DEBUG [ResultSummaryContributor] matchedButWithoutBaselineState=$matchedButWithoutBaselineState. They are counted because NEW-only filtering is enabled only when the run applied a baseline."
       }
     }
   }

@@ -49,8 +49,7 @@ internal class DependencyLicenseAuditContributor : SarifReportContributor {
       )
 
       // In incremental mode consider only dependencies not already present in the baseline.
-      val baselineDetails = config.baseline
-        ?.let { getBaselineReport(config, includeResults = false) }
+      val baselineDetails = getBaselineReport(config, includeResults = false)
         ?.runs?.firstOrNull()?.dependencyLicenseAuditDetails
 
       run.dependencyLicenseAudit = newDependencyAuditFlags(current, baselineDetails)
