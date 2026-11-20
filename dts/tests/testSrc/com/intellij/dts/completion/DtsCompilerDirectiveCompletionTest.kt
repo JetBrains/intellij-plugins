@@ -1,5 +1,6 @@
 package com.intellij.dts.completion
 
+import com.intellij.dts.dtsWithConfiguredFile
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import org.assertj.core.api.Assertions.assertThat
@@ -69,7 +70,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest(needsZephyr = false
   }
 
   @Test
-  fun testNoLookup() {
+  fun testNoLookup() = dtsTimeoutRunBlocking {
     val contexts = listOf(
       "prop = <caret>",
       "prop = <<caret>>",
@@ -79,9 +80,7 @@ class DtsCompilerDirectiveCompletionTest : DtsCompletionTest(needsZephyr = false
     )
 
     for (context in contexts) {
-      dts.configureByText(context)
-
-      val items = myFixture.completeBasic()
+      val items = dts.dtsWithConfiguredFile(context) { myFixture.completeBasic() }
       assertNotNull(items, context)
       assertThat(items.filter { it.lookupString.startsWith('/') }).describedAs(context).isEmpty()
     }

@@ -1,13 +1,12 @@
 package com.intellij.dts.completion
 
+import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.dts.core.zephyr.binding.DtsZephyrBundledBindings
 import com.intellij.dts.dtsFixture
 import com.intellij.dts.dtsProjectFixture
-import com.intellij.openapi.application.EDT
+import com.intellij.dts.dtsWithConfiguredFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -69,11 +68,11 @@ abstract class DtsCompletionTest(needsZephyr: Boolean) {
     }
   }
 
-  private suspend fun doCompletion(lookupString: String) {
+  private fun doCompletion(lookupString: String) {
     val items = myFixture.completeBasic() ?: return
     val lookupItem = items.find { it.lookupString == lookupString } ?: return
-    withContext(Dispatchers.EDT) { myFixture.lookup.currentItem = lookupItem }
-    myFixture.type('\n')
+    myFixture.lookup.currentItem = lookupItem
+    myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
   }
 
   protected suspend fun doCompletionTest(
@@ -88,8 +87,7 @@ abstract class DtsCompletionTest(needsZephyr: Boolean) {
       val embeddedInput = surrounding.replace("<embed>", apply(input))
       val embeddedAfter = surrounding.replace("<embed>", apply(after))
 
-      dts.configureByText(embeddedInput)
-      doCompletion(lookupString)
+      dts.dtsWithConfiguredFile(embeddedInput) { doCompletion(lookupString) }
       myFixture.checkResult(embeddedAfter)
     }
   }
@@ -102,9 +100,7 @@ abstract class DtsCompletionTest(needsZephyr: Boolean) {
   ) {
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
       val embeddedInput = surrounding.replace("<embed>", apply(input))
-      dts.configureByText(embeddedInput)
-
-      val items = myFixture.completeBasic()
+      val items = dts.dtsWithConfiguredFile(embeddedInput) { myFixture.completeBasic() }
       assertNotNull(items)
       assertThat(items).isEmpty()
     }

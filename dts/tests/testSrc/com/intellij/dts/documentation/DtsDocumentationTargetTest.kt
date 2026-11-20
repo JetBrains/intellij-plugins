@@ -1,9 +1,10 @@
 package com.intellij.dts.documentation
 
 import com.intellij.dts.dtsFixture
+import com.intellij.dts.dtsWithConfiguredFile
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.lang.documentation.ide.IdeDocumentationTargetProvider
-import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.smartReadAction
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
@@ -82,7 +83,7 @@ class DtsDocumentationTargetTest {
   private suspend fun assertOneDocumentationTarget() {
     val provider = IdeDocumentationTargetProvider.getInstance(dts.project)
 
-    val targets = readAction {
+    val targets = smartReadAction(dts.project) {
       provider.documentationTargets(myFixture.editor, myFixture.file, myFixture.caretOffset)
     }
 
@@ -96,9 +97,7 @@ class DtsDocumentationTargetTest {
   }
 
   private suspend fun doLookupTest(text: String) {
-    dts.configureByText(text)
-
-    val completion = myFixture.completeBasic().toList()
+    val completion = dts.dtsWithConfiguredFile(text) { myFixture.completeBasic().toList() }
     assertThat(completion).isNotEmpty()
 
     assertOneDocumentationTarget()

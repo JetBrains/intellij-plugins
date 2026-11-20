@@ -1,6 +1,7 @@
 package com.intellij.dts.completion
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.dts.dtsWithConfiguredFile
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import org.assertj.core.api.Assertions.assertThat
@@ -92,9 +93,9 @@ class DtsLabelReferenceTest : DtsCompletionTest(needsZephyr = true) {
 
   @Test
   fun testEmptyOverlay() = dtsTimeoutRunBlocking {
-    myFixture.configureByText("esp32.overlay", "&<caret>")
+    val items = dts.dtsWithConfiguredFile("&<caret>", fileName = "esp32.overlay") { myFixture.completeBasic() }
 
-    assertThat(myFixture.completeBasic()).hasSize(56)
+    assertThat(items).hasSize(56)
   }
 
   private suspend fun doTest(
@@ -106,9 +107,8 @@ class DtsLabelReferenceTest : DtsCompletionTest(needsZephyr = true) {
     useNodeContentVariations: Boolean = false,
   ) {
     applyVariations(useRootContentVariations, useNodeContentVariations) { apply ->
-      dts.configureByText("$prefix\n${apply(input)}\n$suffix")
-
-      val lookups = myFixture.complete(CompletionType.BASIC)
+      val items = dts.dtsWithConfiguredFile("$prefix\n${apply(input)}\n$suffix") { myFixture.complete(CompletionType.BASIC) }
+      val lookups = items
         .map { it.lookupString }
         .filter { it != "variations_label" }
 

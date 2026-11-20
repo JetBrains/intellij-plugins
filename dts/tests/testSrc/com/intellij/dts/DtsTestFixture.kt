@@ -5,6 +5,7 @@ import com.intellij.dts.core.lang.DtsFileType
 import com.intellij.dts.core.settings.DtsSettings
 import com.intellij.dts.core.zephyr.DtsZephyrProvider
 import com.intellij.idea.AppMode
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
@@ -21,6 +22,8 @@ import com.intellij.testFramework.junit5.fixture.testFixture
 import com.intellij.testFramework.junit5.fixture.testNameFixture
 import com.intellij.util.asSafely
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.fail
 import java.nio.file.Files
 import java.nio.file.Path
@@ -47,6 +50,21 @@ private val defaultTestTimeout = 5.minutes
 fun dtsTimeoutRunBlocking(action: suspend CoroutineScope.() -> Unit) {
   timeoutRunBlocking(defaultTestTimeout, action = action)
 }
+
+/**
+ * Configures a file with [text] and then runs [action] on EDT, in one block.
+ *
+ * Dumb mode needs the write-intent lock to start. The block holds the lock from the end of the index wait in
+ * `configureByText` to the end of [action], so dumb mode cannot start in between (CPP-53251).
+ * Thus, [action] must not wait for indexes or for other EDT events.
+ *
+ * @param fileName the name of the file. When it is null, the name comes from [text], see [DtsTestFixture.configureByText].
+ */
+suspend fun <T> DtsTestFixture.dtsWithConfiguredFile(text: String, fileName: String? = null, action: () -> T): T =
+  withContext(Dispatchers.EDT) {
+    if (fileName == null) configureByText(text) else codeInsight.configureByText(fileName, text)
+    action()
+  }
 
 fun dtsFixture(
   projectFixture: TestFixture<Project>,

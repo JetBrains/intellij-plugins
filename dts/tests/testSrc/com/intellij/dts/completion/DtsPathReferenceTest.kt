@@ -1,6 +1,7 @@
 package com.intellij.dts.completion
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.dts.dtsWithConfiguredFile
 import com.intellij.dts.dtsTimeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import org.assertj.core.api.Assertions.assertThat
@@ -44,9 +45,9 @@ class DtsPathReferenceTest : DtsCompletionTest(needsZephyr = true) {
 
   @Test
   fun testEmptyOverlay() = dtsTimeoutRunBlocking {
-    myFixture.configureByText("esp32.overlay", "&{/<caret>} {};")
+    val items = dts.dtsWithConfiguredFile("&{/<caret>} {};", fileName = "esp32.overlay") { myFixture.completeBasic() }
 
-    assertThat(myFixture.completeBasic()).hasSize(10)
+    assertThat(items).hasSize(10)
   }
 
   private suspend fun doTest(
@@ -63,9 +64,8 @@ class DtsPathReferenceTest : DtsCompletionTest(needsZephyr = true) {
                 ${apply(input)}
             """.trimIndent()
 
-      dts.configureByText(text)
-
-      val lookups = myFixture.complete(CompletionType.BASIC).map { it.lookupString }
+      val items = dts.dtsWithConfiguredFile(text) { myFixture.complete(CompletionType.BASIC) }
+      val lookups = items.map { it.lookupString }
 
       if (paths.isEmpty()) {
         assertThat(lookups).isEmpty()
