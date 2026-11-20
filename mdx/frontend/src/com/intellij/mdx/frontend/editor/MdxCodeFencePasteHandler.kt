@@ -4,7 +4,10 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import com.intellij.openapi.editor.actionSystem.EditorTextInsertHandler
+import com.intellij.util.Producer
 import org.intellij.plugin.mdx.editor.MdxCodeFenceSandbox
+import java.awt.datatransfer.Transferable
 
 /**
  * Paste inside an MDX code fence, replayed in a sandbox of the fence language (see [MdxCodeFenceSandbox]);
@@ -22,14 +25,25 @@ import org.intellij.plugin.mdx.editor.MdxCodeFenceSandbox
  * Unlike the MDX Enter handler, this is not an
  * [com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler]: the platform paste handler opens its own
  * write actions (under a cancellable progress), so it must not be wrapped in one.
+ *
+ * A drop of text in the editor calls the [EditorTextInsertHandler] of the paste chain with the dropped content.
+ * This handler gives that content to the sandbox and to [baseHandler], so the drop does not paste the clipboard.
  */
-internal class MdxCodeFencePasteHandler(private val baseHandler: EditorActionHandler?) : EditorActionHandler() {
+internal class MdxCodeFencePasteHandler(private val baseHandler: EditorActionHandler?) : EditorActionHandler(), EditorTextInsertHandler {
   override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
     baseHandler?.isEnabled(editor, caret, dataContext) == true
 
   override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext?) {
     if (!MdxCodeFenceSandbox.replay(editor, "EditorPaste")) {
       baseHandler?.execute(editor, caret, dataContext)
+    }
+  }
+
+  override fun execute(editor: Editor, dataContext: DataContext?, producer: Producer<out Transferable>?) {
+    if (MdxCodeFenceSandbox.replay(editor, "EditorPaste", producer)) return
+    when (baseHandler) {
+      is EditorTextInsertHandler -> baseHandler.execute(editor, dataContext, producer)
+      else -> baseHandler?.execute(editor, null, dataContext)
     }
   }
 }

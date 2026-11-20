@@ -3,22 +3,27 @@ package org.intellij.plugin.mdx.editor
 import com.intellij.ide.DataManager
 import com.intellij.injected.editor.DocumentWindow
 import com.intellij.injected.editor.EditorWindow
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.CustomizedDataContext
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
+import com.intellij.openapi.editor.actionSystem.EditorTextInsertHandler
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.Producer
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.injection.MarkdownCodeFenceUtils
 import org.intellij.plugins.markdown.injection.aliases.CodeFenceLanguageGuesser
+import java.awt.datatransfer.Transferable
 
 /**
  * Replays an editor action that lands inside an MDX code fence in a throwaway file of the fence language.
@@ -34,8 +39,11 @@ object MdxCodeFenceSandbox {
    * If the caret (and any selection) sits inside an MDX code fence body, runs [actionId] against a sandbox of
    * the fence language and writes the result back, returning true. Returns false if the action does not apply
    * (no fence, multiple carets, selection crossing the fence boundary, ...) so the caller can fall back.
+   *
+   * A non-null [producer] supplies the inserted content, for example the text of a drop. Then the replay calls the
+   * [EditorTextInsertHandler] of [actionId] instead of the action handler, and the clipboard stays out of it.
    */
-  fun replay(editor: Editor, actionId: String): Boolean {
+  fun replay(editor: Editor, actionId: String, producer: Producer<out Transferable>? = null): Boolean {
     val project = editor.project ?: return false
     if (!editor.document.isWritable || editor.isViewer || editor.caretModel.caretCount != 1) return false
 
@@ -121,7 +129,14 @@ object MdxCodeFenceSandbox {
       }
       // The action handler asserts a current command; one is active in the intercepted action, so this names it.
       CommandProcessor.getInstance().executeCommand(project, {
-        EditorActionManager.getInstance().getActionHandler(actionId).execute(sandboxEditor, null, sandboxContext)
+        if (producer == null) {
+          EditorActionManager.getInstance().getActionHandler(actionId).execute(sandboxEditor, null, sandboxContext)
+        }
+        else {
+          val insertHandler = (ActionManager.getInstance().getAction(actionId) as? EditorAction)
+            ?.getHandlerOfType(EditorTextInsertHandler::class.java)
+          insertHandler?.execute(sandboxEditor, sandboxContext, producer)
+        }
       }, null, null)
       documentManager.commitDocument(sandboxDocument)
 

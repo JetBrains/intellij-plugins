@@ -2,7 +2,12 @@ package org.intellij.plugin.mdx
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.injected.editor.EditorWindow
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.actionSystem.EditorAction
+import com.intellij.openapi.editor.actionSystem.EditorTextInsertHandler
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -57,8 +62,8 @@ class MdxFormatterTest : MdxTestBase() {
     }
   }
 
-  private fun expectedText(): String {
-    val virtualFile = myFixture.copyFileToProject("${testName}_after.mdx")
+  private fun expectedText(after: String = "${testName}_after"): String {
+    val virtualFile = myFixture.copyFileToProject("$after.mdx")
     val psiFile = myFixture.psiManager.findFile(virtualFile) ?: error("No PSI file for $virtualFile")
     return psiFile.text
   }
@@ -82,6 +87,20 @@ class MdxFormatterTest : MdxTestBase() {
     CopyPasteManager.getInstance().setContents(StringSelection(clipboard))
     myFixture.performEditorAction("EditorPaste")
     assertEquals(expectedText(), hostDocumentText())
+  }
+
+  /**
+   * Drops [dropped] at the fixture's caret the way `EditorImpl.handleDrop` does: through the [EditorTextInsertHandler] of
+   * the paste chain, in the host editor. The clipboard holds other text, so the result shows which content is inserted.
+   */
+  private fun dropText(dropped: String) {
+    CopyPasteManager.getInstance().setContents(StringSelection("CLIPSRC"))
+    val hostEditor = ((myFixture.editor as? EditorWindow)?.delegate ?: myFixture.editor) as EditorEx
+    val pasteAction = ActionManager.getInstance().getAction("EditorPaste") as EditorAction
+    val insertHandler = pasteAction.getHandlerOfType(EditorTextInsertHandler::class.java) ?: error("No EditorTextInsertHandler")
+    CommandProcessor.getInstance().executeCommand(myFixture.project, {
+      insertHandler.execute(hostEditor, hostEditor.dataContext) { StringSelection(dropped) }
+    }, null, null)
   }
 
   @Test
@@ -693,6 +712,22 @@ class MdxFormatterTest : MdxTestBase() {
    */
   @Test
   fun testPasteIntoTopLevelCodeFenceIsFormatted() = doPasteTest()
+
+  /** A drop into an indented fence inserts the dropped text, not the clipboard, at the fence base. WEB-80501. */
+  @Test
+  fun testDropIntoIndentedCodeFenceInsertsDroppedText() {
+    myFixture.configureByFile("PasteIntoIndentedCodeFenceIsIndentedToFenceBase.mdx")
+    dropText("const a = 1\nif (a) {\n  console.log(a)\n}")
+    assertEquals(expectedText("PasteIntoIndentedCodeFenceIsIndentedToFenceBase_after"), hostDocumentText())
+  }
+
+  /** A drop outside a code fence inserts the dropped text, not the clipboard. WEB-80501. */
+  @Test
+  fun testDropOutsideCodeFenceInsertsDroppedText() {
+    myFixture.configureByText("drop.mdx", "Some <caret>text\n")
+    dropText("DROPPED ")
+    assertEquals("Some DROPPED text\n", hostDocumentText())
+  }
 
   /**
    * A fence whose body has no code yet has no indentation to infer the sandbox base from, so it must come from
