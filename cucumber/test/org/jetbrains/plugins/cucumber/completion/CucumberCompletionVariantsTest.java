@@ -18,6 +18,16 @@ public class CucumberCompletionVariantsTest extends BasePlatformTestCase {
     doTestVariants();
   }
 
+  // Any scenario may get Examples (since Gherkin 6): the keyword is offered in a plain Scenario: ...
+  public void testExamplesInScenario() throws Throwable {
+    doTestVariants();
+  }
+
+  // ... and in a Scenario Outline: that has no Examples yet, which is a plain scenario until it gets one.
+  public void testExamplesInOutlineWithoutExamples() throws Throwable {
+    doTestVariants();
+  }
+
   private void doTestVariants() throws Throwable {
     myCompletionTester.doTestVariantsInner(getTestName(true) + ".feature", GherkinFileType.INSTANCE);
   }

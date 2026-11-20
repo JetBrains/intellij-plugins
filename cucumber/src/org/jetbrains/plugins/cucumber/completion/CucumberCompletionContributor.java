@@ -189,7 +189,10 @@ public final class CucumberCompletionContributor extends CompletionContributor {
       addKeywordsToResult(table.getScenarioOutlineKeywords(), result, true, SCENARIO_OUTLINE_KEYWORD_PRIORITY, true);
     }
 
-    if (PsiTreeUtil.getParentOfType(originalPosition, GherkinScenarioOutlineImpl.class, GherkinExamplesBlockImpl.class) != null) {
+    // Any scenario may get Examples (since Gherkin 6), so offer the keyword inside every scenario but Background.
+    final GherkinScenario scenario = PsiTreeUtil.getParentOfType(originalPosition, GherkinScenario.class);
+    if ((scenario != null && !scenario.isBackground())
+        || PsiTreeUtil.getParentOfType(originalPosition, GherkinScenarioOutlineImpl.class, GherkinExamplesBlockImpl.class) != null) {
       keywords.addAll(table.getExampleSectionKeywords());
     }
     // add to result

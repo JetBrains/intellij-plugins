@@ -138,6 +138,27 @@ public class GherkinLexerTest extends TestCase {
     );
   }
 
+  // Any scenario may have Examples, so a <placeholder> in a Scenario: or Example: title is a parameter too.
+  public void testPlainScenarioWithParameter() {
+    doTest(
+      "Feature: test\n" +
+      "  Scenario: Opening <scan> Scan Settings",
+      "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-13", "WHITE_SPACE:13-16", "SCENARIO_KEYWORD:16-24",
+      "COLON:24-25", "WHITE_SPACE:25-26", "TEXT:26-33", "WHITE_SPACE:33-34", "STEP_PARAMETER_BRACE:34-35", "STEP_PARAMETER_TEXT:35-39",
+      "STEP_PARAMETER_BRACE:39-40", "WHITE_SPACE:40-41", "TEXT:41-54"
+    );
+  }
+
+  public void testExampleWithParameter() {
+    doTest(
+      "Feature: test\n" +
+      "  Example: Opening <scan> Scan Settings",
+      "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-13", "WHITE_SPACE:13-16", "SCENARIO_KEYWORD:16-23",
+      "COLON:23-24", "WHITE_SPACE:24-25", "TEXT:25-32", "WHITE_SPACE:32-33", "STEP_PARAMETER_BRACE:33-34", "STEP_PARAMETER_TEXT:34-38",
+      "STEP_PARAMETER_BRACE:38-39", "WHITE_SPACE:39-40", "TEXT:40-53"
+    );
+  }
+
   public void testUnicodeWhitespace() {
     doTest("|\u3000\n", "PIPE:0-1", "WHITE_SPACE:1-3");
   }

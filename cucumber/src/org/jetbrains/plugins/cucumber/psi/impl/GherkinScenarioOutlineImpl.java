@@ -37,7 +37,8 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
 
   @Override
   protected String getPresentableText() {
-    return buildPresentableText("Scenario Outline");
+    // The keyword as written: a Scenario: or Example: with Examples is an outline too.
+    return buildPresentableText(getScenarioKeyword());
   }
 
   @Override
