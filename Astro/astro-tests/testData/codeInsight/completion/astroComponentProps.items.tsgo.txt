@@ -1,0 +1,8 @@
+complex (typeText='"one" | "two" | "three"'; priority=10.0; typeGreyed)
+title (typeText='string'; priority=10.0; typeGreyed)
+version (typeText='number'; priority=10.0; typeGreyed)
+children={$1} (typeText='(property) astroHTML.JSX.IntrinsicAttributes.children?: unknown'; priority=4.0; typeGreyed)
+slot={$1} (typeText='(property) astroHTML.JSX.IntrinsicAttributes.slot?: string | null | undefined'; priority=4.0; typeGreyed)
+xml:base (typeText=null; priority=0.0)
+xml:lang (typeText=null; priority=0.0)
+xml:space (typeText=null; priority=0.0)

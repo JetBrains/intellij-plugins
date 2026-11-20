@@ -2,6 +2,8 @@
 package org.jetbrains.astro.service
 
 import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.TypeScriptCompilerVersionType
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.lsp.LspServerActivationRule
 import com.intellij.lang.typescript.lsp.LspServerLoader
@@ -10,6 +12,7 @@ import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.lang.typescript.lsp.ServiceActivationHelper
 import com.intellij.lang.typescript.lsp.TSPluginActivationRule
 import com.intellij.lang.typescript.lsp.TSPluginLoader
+import com.intellij.lang.typescript.lsp.TypeScriptGoChecker
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
@@ -83,5 +86,21 @@ object AstroActivationHelper : ServiceActivationHelper {
 
   override fun isEnabledInSettings(project: Project): Boolean {
     return getAstroServiceSettings(project).serviceMode == AstroServiceMode.ENABLED
+           && isAstroServiceCompatibleTypeScriptEnabled(project)
   }
+}
+
+/**
+ * `true` if the classic `tsserver` serves the project, so the Astro services can run.
+ * TypeScript-Go serves the Astro files itself, so the result is `false` for each source of TypeScript-Go:
+ * the bundled package, a package in `node_modules`, or an explicit path.
+ */
+internal fun isAstroServiceCompatibleTypeScriptEnabled(
+  project: Project,
+): Boolean {
+  // The recommended TypeScript-Go package can still download, and until then no package info is available.
+  if (TypeScriptCompilerSettings.getSettings(project).versionType == TypeScriptCompilerVersionType.TS_GO_PROXY_RECOMMENDED_VERSION)
+    return false
+
+  return !TypeScriptGoChecker(project).isUseTypeScriptGo()
 }
