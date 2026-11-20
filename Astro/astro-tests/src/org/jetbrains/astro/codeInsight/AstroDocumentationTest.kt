@@ -7,8 +7,16 @@ import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroTestMode
 
-class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentation", useLsp = true) {
+class AstroDocumentationTest : AstroDocumentationTestBase() {
+
+  class WithTsGoProxyTest : AstroDocumentationTestBase(testMode = AstroTestMode.TS_GO_PROXY)
+}
+
+abstract class AstroDocumentationTestBase(
+  testMode: AstroTestMode = AstroTestMode.ASTRO_LSP,
+) : AstroCodeInsightTestCase("codeInsight/documentation", testMode) {
 
   override fun setUp() {
     super.setUp()
@@ -33,14 +41,14 @@ class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentati
 
   fun testComponentProp() {
     doConfiguredTest(additionalFiles = listOf("component.astro")) {
-      checkDocumentationAtCaret()
+      checkDocumentationAtCaret(fileSuffix = expectedDocumentationFileSuffix)
     }
   }
 
   //region Test configuration and helper methods
   private fun doTest() {
     doConfiguredTest {
-      checkDocumentationAtCaret()
+      checkDocumentationAtCaret(fileSuffix = expectedDocumentationFileSuffix)
     }
   }
 
@@ -48,7 +56,9 @@ class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentati
     lookupFilter: (item: LookupElementInfo) -> Boolean = { true },
   ) {
     doConfiguredTest {
-      checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true, lookupItemFilter = lookupFilter)
+      checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true,
+                       expectedItemsFileNameInfixProvider = this@AstroDocumentationTestBase::getCodeCompletionExpectedItemsFileNameInfix,
+                       lookupItemFilter = lookupFilter)
     }
   }
   //endregion

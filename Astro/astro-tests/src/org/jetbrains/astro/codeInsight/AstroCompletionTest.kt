@@ -3,8 +3,16 @@ package org.jetbrains.astro.codeInsight
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.openapi.util.registry.RegistryManager
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroTestMode
 
-class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", useLsp = true) {
+class AstroCompletionTest : AstroCompletionTestBase() {
+
+  class WithTsGoProxyTest : AstroCompletionTestBase(testMode = AstroTestMode.TS_GO_PROXY)
+}
+
+abstract class AstroCompletionTestBase(
+  testMode: AstroTestMode = AstroTestMode.ASTRO_LSP,
+) : AstroCodeInsightTestCase("codeInsight/completion", testMode) {
   override fun setUp() {
     super.setUp()
     RegistryManager.getInstance().get("typescript.service.completion.serviceItemsLimit").setValue(2000, myFixture.testRootDisposable)
@@ -64,7 +72,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
   fun testAliasedComponentImport() =
     doConfiguredTest(dir = true, configureFileName = "src/layout/App.astro") {
       completeBasic()
-      checkResultByFile("$testName/src/layout/App.after.astro")
+      checkResultByFile(tsGoTestDataFile("$testName/src/layout/App.after.astro"))
     }
 
   fun testAwait() = doEditorTypingTest(

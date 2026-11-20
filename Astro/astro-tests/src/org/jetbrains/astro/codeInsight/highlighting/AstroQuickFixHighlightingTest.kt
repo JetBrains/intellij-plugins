@@ -2,8 +2,16 @@ package org.jetbrains.astro.codeInsight.highlighting
 
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroTestMode
 
-class AstroQuickFixHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting/quickFix", useLsp = true) {
+class AstroQuickFixHighlightingTest : AstroQuickFixHighlightingTestBase() {
+
+  class WithTsGoProxyTest : AstroQuickFixHighlightingTestBase(testMode = AstroTestMode.TS_GO_PROXY)
+}
+
+abstract class AstroQuickFixHighlightingTestBase(
+  testMode: AstroTestMode = AstroTestMode.ASTRO_LSP,
+) : AstroCodeInsightTestCase("codeInsight/highlighting/quickFix", testMode) {
 
   override fun setUp() {
     super.setUp()
