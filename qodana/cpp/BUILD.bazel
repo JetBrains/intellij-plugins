@@ -60,7 +60,7 @@ jvm_library(
         "@community//platform/ide-core-impl",
         "//CIDR/clion-makefile/core",
         "//CIDR/cidr-execution",
-        "//CIDR/clion-compdb",
+        "//CIDR/clion-compdb/core",
         "//CIDR/clion-meson/core",
         "//CIDR/cidr-util",
         "@community//platform/backend/observation",

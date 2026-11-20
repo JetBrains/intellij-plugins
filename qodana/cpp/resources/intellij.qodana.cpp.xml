@@ -2,11 +2,11 @@
   <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
   <dependencies>
     <plugin id="org.jetbrains.plugins.clion.radler"/>
-    <plugin id="com.intellij.clion-compdb"/>
     <module name="intellij.cidr.coverage"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.psi.base"/>
     <module name="intellij.cidr.util"/>
+    <module name="intellij.clion.compdb.core"/>
     <module name="intellij.clion.coverage"/>
     <module name="intellij.clion.makefile.core"/>
     <module name="intellij.clion.meson.core"/>

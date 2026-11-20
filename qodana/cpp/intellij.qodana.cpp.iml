@@ -52,7 +52,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
     <orderEntry type="module" module-name="intellij.clion.makefile.core" />
     <orderEntry type="module" module-name="intellij.cidr.execution" />
-    <orderEntry type="module" module-name="intellij.clion.compdb" />
+    <orderEntry type="module" module-name="intellij.clion.compdb.core" />
     <orderEntry type="module" module-name="intellij.clion.meson.core" />
     <orderEntry type="module" module-name="intellij.cidr.util" />
     <orderEntry type="module" module-name="intellij.platform.backend.observation" />
