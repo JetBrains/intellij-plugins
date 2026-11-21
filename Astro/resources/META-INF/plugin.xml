@@ -138,6 +138,7 @@
     <polySymbols.queryScopeContributor implementation="org.jetbrains.astro.polySymbols.AstroSymbolQueryScopeContributor"/>
     <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.polySymbols.AstroSymbolQueryResultsCustomizer$Factory"/>
     <polySymbols.codeCompletionItemCustomizer implementation="org.jetbrains.astro.polySymbols.AstroCodeCompletionItemCustomizer" />
+    <polySymbols.psiLinkedSymbol host="org.jetbrains.astro.lang.AstroFileImpl"/>
 
     <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />
 
