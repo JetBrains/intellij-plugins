@@ -36,6 +36,7 @@ jvm_library(
         "@community//platform/backend/observation",
         "@community//python/python-sdk/backend",
         "@community//python/python-pyproject:pyproject",
+        "@community//python/python-psi-api:psi",
     ],
 )
 ### auto-generated section `build intellij.qodana.python.community` end

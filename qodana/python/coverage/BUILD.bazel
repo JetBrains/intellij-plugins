@@ -36,6 +36,7 @@ jvm_library(
         "//python/coverage",
         "@community//plugins/coverage-common:coverage",
         "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+        "@community//python/python-psi-api:psi",
     ],
 )
 ### auto-generated section `build intellij.qodana.python.coverage` end
