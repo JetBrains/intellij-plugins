@@ -91,7 +91,7 @@ internal class PbPythonMessageType(
         }
 
         // Optional[paramType]
-        PyUnionType.unionOrUnknown(paramType, builtins.noneType)?.let { optionalType ->
+        PyUnionType.unionOrUnknown(paramType, builtins.noneTypeOrUnknown)?.let { optionalType ->
           PyCallableParameterImpl.nonPsi(fieldName, optionalType, noneExpr, field)
         }
       }
