@@ -82,6 +82,7 @@ jvm_library(
         "@community//platform/testFramework/junit5",
         "@community//platform/projectModel-api:projectModel",
         "@community//python/openapi:community",
+        "@community//python/python-psi-api:psi",
         "//contrib/qodana",
         "@community//python/junit5Tests-framework:community-junit5Tests-framework_test_lib",
         "@community//python/python-sdk/backend",
