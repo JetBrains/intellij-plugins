@@ -1,9 +1,9 @@
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.appcode.reveal.plugin` start
-dev_dist_plugin(
+dist_plugin(
     content_modules = ["intellij.appcode.reveal"],
     main_module = "intellij.appcode.reveal.plugin",
 )

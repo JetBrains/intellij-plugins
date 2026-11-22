@@ -1,14 +1,14 @@
-load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dev_dist_complex_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dist_complex_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.serial.monitor` start
-dev_dist_plugin(
+dist_plugin(
     descriptor = "src/main/resources/META-INF/plugin.xml",
     main_module = "intellij.serial.monitor",
 )
 
-dev_dist_complex_plugin(
+dist_complex_plugin(
     artifact_inputs = {
         "//contrib/serial-monitor:serial-monitor.jar": "intellij.serial.monitor",
     },

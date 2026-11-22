@@ -11,7 +11,7 @@ pkg_files(
 
 ### auto-generated section `dev intellij.ruby.testing` start
 filegroup(
-    name = "dev_dist_resources",
+    name = "dist_resources",
     srcs = glob(
         ["src/rb/testing/**"],
     ),

@@ -1,27 +1,27 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.prettierJS` start
 filegroup(
-    name = "dev_dist_resources",
+    name = "dist_resources",
     srcs = glob(
         ["gen/prettierLanguageService/**"],
     ),
     visibility = ["//visibility:public"],
 )
 
-dev_dist_plugin(
+dist_plugin(
     content_modules = ["intellij.prettierJS.eslint"],
     descriptor = "resources/META-INF/plugin.xml",
     file_prefixes = {
         "prettierLanguageService": "contrib/prettierJS/gen/prettierLanguageService",
     },
     files = {
-        "prettierLanguageService": "//contrib/prettierJS:dev_dist_resources",
+        "prettierLanguageService": "//contrib/prettierJS:dist_resources",
     },
     jars = {
         "lib/prettierJS.jar": ["intellij.prettierJS"],

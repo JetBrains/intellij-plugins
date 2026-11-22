@@ -7,7 +7,7 @@ load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 content_module_jar(module = ":backend")
 
 filegroup(
-    name = "dev_dist_resources",
+    name = "dist_resources",
     srcs = glob(
         [
             "vue-language-tools/**",

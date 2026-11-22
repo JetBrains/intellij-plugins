@@ -1,26 +1,26 @@
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 ### auto-generated section `dev intellij.javascript.eslint` start
 filegroup(
-    name = "dev_dist_resources",
+    name = "dist_resources",
     srcs = glob(
         ["plugin-resources/languageService/**"],
     ),
     visibility = ["//visibility:public"],
 )
 
-dev_dist_plugin(
+dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     file_prefixes = {
         "languageService": "contrib/javascript/eslint/plugin-resources/languageService",
     },
     files = {
-        "languageService": "//contrib/javascript/eslint:dev_dist_resources",
+        "languageService": "//contrib/javascript/eslint:dist_resources",
     },
     jars = {
         "lib/javascript-eslint.jar": ["intellij.javascript.eslint"],

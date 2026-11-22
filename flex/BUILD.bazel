@@ -1,6 +1,6 @@
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dev_dist_plugin")
+load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 
 # the `lib` directory, which UltimateRepositoryModules.kt copies to the plugin distribution
@@ -11,7 +11,7 @@ pkg_files(
 )
 
 ### auto-generated section `dev intellij.flex` start
-dev_dist_plugin(
+dist_plugin(
     content_modules = [
         # do not sort,
         "intellij.flex.css",
