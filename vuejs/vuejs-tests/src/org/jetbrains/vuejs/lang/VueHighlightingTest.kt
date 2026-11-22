@@ -13,13 +13,16 @@ import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.polySymbols.testFramework.HybridFixtureContext
 import com.intellij.polySymbols.testFramework.PolySymbolsTestConfigurator
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
+import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.testFramework.runInInitMode
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
@@ -1207,10 +1210,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testDirectivesFromFunctionPlugin_vapor() {
-    vue.doHighlightingTest(
-      VueTestModule.VUE_3_6_0,
-      configureFileName = "App.vue",
-    )
+    vue.doVaporDirectiveHighlightingTest()
   }
 
   @Test
@@ -1220,10 +1220,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() {
-    vue.doHighlightingTest(
-      VueTestModule.VUE_3_6_0,
-      configureFileName = "App.vue",
-    )
+    vue.doVaporDirectiveHighlightingTest()
   }
 
   @Test
@@ -1233,10 +1230,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() {
-    vue.doHighlightingTest(
-      VueTestModule.VUE_3_6_0,
-      configureFileName = "App.vue",
-    )
+    vue.doVaporDirectiveHighlightingTest()
   }
 
   @Test
@@ -1246,10 +1240,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testDirectivesFromObjectPlugin_vapor() {
-    vue.doHighlightingTest(
-      VueTestModule.VUE_3_6_0,
-      configureFileName = "App.vue",
-    )
+    vue.doVaporDirectiveHighlightingTest()
   }
 
   @Test
@@ -1259,10 +1250,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() {
-    vue.doHighlightingTest(
-      VueTestModule.VUE_3_6_0,
-      configureFileName = "App.vue",
-    )
+    vue.doVaporDirectiveHighlightingTest()
   }
 
   @Test
@@ -1272,10 +1260,7 @@ abstract class VueHighlightingTestBase protected constructor(
 
   @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() {
-    vue.doHighlightingTest(
-      VueTestModule.VUE_3_6_0,
-      configureFileName = "App.vue",
-    )
+    vue.doVaporDirectiveHighlightingTest()
   }
 
   @Test
@@ -1376,6 +1361,31 @@ open class VueHighlightingFixture(
 
   override val defaultDirName: String
     get() = adjustDefaultDirName(super.defaultDirName)
+
+  /** Removes the highlighting markers before the language server opens the file. */
+  fun doVaporDirectiveHighlightingTest() {
+    val fileName = "App.vue"
+    lateinit var expected: ExpectedHighlightingData
+    val prepareHighlighting = object : PolySymbolsTestConfigurator {
+      override fun configure(fixture: CodeInsightTestFixture) {
+        runInEdtAndWait {
+          val file = fixture.tempDirFixture.getFile(fileName)!!
+          val documentManager = FileDocumentManager.getInstance()
+          val document = documentManager.getDocument(file)!!
+          expected = ExpectedHighlightingData(document, true, true, false)
+          expected.init()
+          documentManager.saveDocument(document)
+        }
+      }
+    }
+    doConfiguredTest(
+      VueTestModule.VUE_3_6_0,
+      configureFileName = fileName,
+      configurators = listOf(prepareHighlighting),
+    ) {
+      collectAndCheckExpectedHighlighting(expected)
+    }
+  }
 
   override fun setUp() {
     super.setUp()
