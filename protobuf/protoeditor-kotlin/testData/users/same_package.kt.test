@@ -1,0 +1,36 @@
+package demo.proto
+
+// EXPECT-NEXT: user.proto / User
+fun javaApiSamePackageMessageClass() {
+  val user = Use<caret>r.newBuilder().build()
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun javaApiSamePackageBuilderSetter() {
+  val user = User.newBuilder()
+    .set<caret>Name("Alice")
+    .build()
+}
+
+// EXPECT-NEXT: user.proto / Role
+fun javaApiSamePackageEnumClass() {
+  val role = Ro<caret>le.ADMIN
+}
+
+// EXPECT-NEXT: user.proto / ADMIN
+fun javaApiSamePackageEnumValue() {
+  val role = Role.AD<caret>MIN
+}
+
+// EXPECT-NEXT: user.proto / User
+fun kotlinDslSamePackageFactory() {
+  val user = us<caret>er {
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslSamePackageField() {
+  val user = user {
+    na<caret>me = "Alice"
+  }
+}

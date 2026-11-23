@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package naming;
+
+option java_package = "demo.naming";
+option java_multiple_files = true;
+
+message NamingCollisionMessage {
+  optional string name = 1;
+  optional string has_name = 2;
+  optional string clear_name = 3;
+  repeated string aliases = 4;
+  optional int32 aliases_count = 5;
+  optional string aliases_list = 6;
+  map<string, int32> labels = 7;
+  optional int32 labels_count = 8;
+}

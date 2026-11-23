@@ -1,0 +1,9 @@
+package demo
+
+import demo.proto.UserKt
+
+// EXPECT-NEXT: user.proto / User.When
+fun kotlinDslQualifiedNestedFactoryForKeywordMessageName() {
+  val keywordMessage = UserKt.wh<caret>en_ {
+  }
+}

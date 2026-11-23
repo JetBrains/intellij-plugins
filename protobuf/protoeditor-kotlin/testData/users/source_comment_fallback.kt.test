@@ -1,0 +1,37 @@
+package demo
+
+import demo.proto.UserKt
+import demo.proto.address
+import demo.proto.user
+
+// EXPECT-NEXT: user.proto / User
+fun kotlinDslFactoryThroughSourceComment() {
+  val user = us<caret>er {
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.name
+fun kotlinDslFieldThroughSourceComment() {
+  val user = user {
+    na<caret>me = "Alice"
+  }
+}
+
+// EXPECT-NEXT: user.proto / Address
+fun kotlinDslSecondFactoryThroughSourceComment() {
+  val address = add<caret>ress {
+  }
+}
+
+// EXPECT-NEXT: user.proto / Address.city
+fun kotlinDslSecondFieldThroughSourceComment() {
+  val address = address {
+    ci<caret>ty = "Yerevan"
+  }
+}
+
+// EXPECT-NEXT: user.proto / User.When
+fun qualifiedNestedKotlinDslFactoryThroughSourceComment() {
+  val nested = UserKt.wh<caret>en_ {
+  }
+}
