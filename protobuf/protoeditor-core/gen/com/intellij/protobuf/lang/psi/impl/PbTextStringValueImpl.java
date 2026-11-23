@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.protobuf.lang.psi.PbTextTypes.*;
 import com.intellij.protobuf.lang.psi.*;
 
-public class PbTextStringValueImpl extends PbTextElementBase implements PbTextStringValue {
+public class PbTextStringValueImpl extends PbTextStringValueMixin implements PbTextStringValue {
 
   public PbTextStringValueImpl(ASTNode node) {
     super(node);

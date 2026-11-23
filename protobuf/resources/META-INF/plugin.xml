@@ -206,6 +206,8 @@
     <lang.foldingBuilder language="prototext" implementationClass="com.intellij.protobuf.ide.folding.ProtoFoldingBuilder"/>
     <spellchecker.support language="prototext" implementationClass="com.intellij.protobuf.ide.spelling.PbTextSpellcheckingStrategy"/>
     <lang.commenter language="prototext" implementationClass="com.intellij.protobuf.ide.editing.PbTextCommenter"/>
+    <lang.elementManipulator forClass="com.intellij.protobuf.lang.psi.PbTextStringValue"
+                             implementationClass="com.intellij.protobuf.lang.psi.impl.PbTextStringValueManipulator"/>
 
     <!-- Schema definition -->
     <psi.referenceContributor language="prototext"
