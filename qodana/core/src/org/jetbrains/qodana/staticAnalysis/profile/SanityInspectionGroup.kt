@@ -13,13 +13,7 @@ internal class SanityInspectionGroup(name: String, profile: QodanaInspectionProf
 
   override fun applyConfig(config: QodanaConfig, project: Project, addDefaultExclude: Boolean): SanityInspectionGroup {
     super.applyConfig(config, project, addDefaultExclude)
-    val excludeModifiers = config.getExcludeModifiers(addDefaultExclude, project)
-    if (excludeModifiers.isEmpty()) return this
-
-    val profileManager = QodanaInspectionProfileManager.getInstance(project)
-    val newProfile = QodanaInspectionProfile.clone(profile, "qodana.sanity.profile(base:${profile.name})", profileManager)
-
-    excludeModifiers.forEach { it.updateProfileScopes(newProfile, project, config.projectPath) }
+    val newProfile = calculateNewProfileForGroup(config, project, addDefaultExclude, "qodana.sanity.profile(base:${profile.name})") ?: return this
     return SanityInspectionGroup(name, newProfile)
   }
 }

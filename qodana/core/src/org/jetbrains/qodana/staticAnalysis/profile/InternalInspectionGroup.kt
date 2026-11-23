@@ -30,13 +30,7 @@ internal class InternalInspectionGroup(profile: QodanaInspectionProfile) : Named
 
   override fun applyConfig(config: QodanaConfig, project: Project, addDefaultExclude: Boolean): InternalInspectionGroup {
     super.applyConfig(config, project, addDefaultExclude)
-    val excludeModifiers = config.getExcludeModifiers(addDefaultExclude, project)
-    if (excludeModifiers.isEmpty()) return this
-
-    val profileManager = QodanaInspectionProfileManager.getInstance(project)
-    val newProfile = QodanaInspectionProfile.clone(profile, "qodana.internal.profile(base:${profile.name})", profileManager)
-
-    excludeModifiers.forEach { it.updateProfileScopes(newProfile, project, config.projectPath) }
+    val newProfile = calculateNewProfileForGroup(config, project, addDefaultExclude, "qodana.internal.profile(base:${profile.name})") ?: return this
     return InternalInspectionGroup(newProfile)
   }
 }

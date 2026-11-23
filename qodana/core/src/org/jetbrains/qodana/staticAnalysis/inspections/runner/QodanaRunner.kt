@@ -383,10 +383,13 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     val ext = sarifRun.tool.extensions
     val taxa = sarifRun.tool.driver.taxa
     val results = sarifRun.results
+    val internalResults = sarifRun.properties?.get(INTERNAL_INSPECTIONS_RESULTS_KEY)
 
     sarifRun.tool.withExtensions(emptySet())
     sarifRun.tool.driver.withTaxa(emptyList())
     sarifRun.withResults(emptyList())
+    // don't store internal results in short sarif
+    sarifRun.properties?.remove(INTERNAL_INSPECTIONS_RESULTS_KEY)
     try {
       writeReport(config.outPath.resolve(prefix + SHORT_SARIF_REPORT_NAME), sarif)
     }
@@ -394,6 +397,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       sarifRun.tool.withExtensions(ext)
       sarifRun.tool.driver.withTaxa(taxa)
       sarifRun.withResults(results)
+      internalResults?.let { sarifRun.properties?.set(INTERNAL_INSPECTIONS_RESULTS_KEY, it) }
     }
   }
 

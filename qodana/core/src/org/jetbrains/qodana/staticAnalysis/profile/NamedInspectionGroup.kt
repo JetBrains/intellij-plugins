@@ -18,6 +18,22 @@ abstract class NamedInspectionGroup(val name: String, val profile: QodanaInspect
     }
     return this
   }
+
+  protected fun calculateNewProfileForGroup(
+    config: QodanaConfig,
+    project: Project,
+    addDefaultExclude: Boolean,
+    group: String
+  ): QodanaInspectionProfile? {
+    val excludeModifiers = config.getExcludeModifiers(addDefaultExclude, project)
+    if (excludeModifiers.isEmpty()) return null
+
+    val profileManager = QodanaInspectionProfileManager.getInstance(project)
+    val newProfile = QodanaInspectionProfile.clone(profile, group, profileManager)
+
+    excludeModifiers.forEach { it.updateProfileScopes(newProfile, project, config.projectPath) }
+    return newProfile
+  }
 }
 
 open class GroupState(val context: QodanaGlobalInspectionContext, val inspectionGroup: NamedInspectionGroup) {

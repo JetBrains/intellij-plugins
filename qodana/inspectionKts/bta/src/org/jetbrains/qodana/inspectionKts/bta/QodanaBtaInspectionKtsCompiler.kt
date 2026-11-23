@@ -125,6 +125,11 @@ private suspend fun compileInspectionKtsFileViaBta(
     val outcome = rawResult as BtaCompiled
 
     val processor = CompiledInspectionKtsPostProcessorFactory.getProcessor(outcome.result)
+    // BTA path doesn't hold an IdeScriptEngine reference, so the compiling URLClassLoader (and its
+    // on-disk output) would otherwise become collectible the moment this call returns — breaking
+    // already-compiled inspections from other files that load classes lazily. Retain it via
+    // `keepAlive` for as long as these inspections stay registered; the temp output dir is freed
+    // only once that classloader is unreachable (see the Cleaner in `BtaCompiledScriptExecutor.execute`).
     if (processor == null) {
       val inspectionsKts = extractInspectionKtsResults(outcome.result)
       InspectionKtsCompilationResult.Compiled(inspectionsKts, emptySet(), scriptContentHash, outcome.keepAlive)
@@ -144,11 +149,6 @@ private suspend fun compileInspectionKtsFileViaBta(
     return InspectionKtsCompilationResult.Error(e, scriptContentHash)
   }
 
-  // BTA path doesn't hold an IdeScriptEngine reference, so the compiling URLClassLoader (and its
-  // on-disk output) would otherwise become collectible the moment this call returns — breaking
-  // already-compiled inspections from other files that load classes lazily. Retain it via
-  // `keepAlive` for as long as these inspections stay registered; the temp output dir is freed
-  // only once that classloader is unreachable (see the Cleaner in `BtaCompiledScriptExecutor.execute`).
   LOG.debug("BTA compilation completed: $file")
   return compiled
 }
