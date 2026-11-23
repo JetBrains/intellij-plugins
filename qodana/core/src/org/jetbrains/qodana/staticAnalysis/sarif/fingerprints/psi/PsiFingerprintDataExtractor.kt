@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.AdditionalFingerprintDataHolder
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.areStructuralFingerprintsEnabled
 
@@ -13,6 +14,7 @@ internal object PsiFingerprintDataExtractor {
   }
 
   private fun extractXmlSemanticIdentity(element: PsiElement): AdditionalFingerprintDataHolder {
+    if (!QodanaRegistry.isXmlSemanticIdentityEnabled) return AdditionalFingerprintDataHolder.EMPTY
     val identity = QodanaXmlSemanticIdentityProvider.EP_NAME.extensionList.firstNotNullOfOrNull { it.extractIdentity(element) }
     return identity?.let(AdditionalFingerprintDataHolder::fromXmlSemanticIdentity) ?: AdditionalFingerprintDataHolder.EMPTY
   }

@@ -21,6 +21,8 @@ object QodanaRegistry {
   const val INSPECTION_VETO_ENABLE_KEY: String = "qd.inspection.veto.enabled"
   @VisibleForTesting
   const val REVERSE_SCOPED_INCLUDE_UNCHANGED_ENABLE_KEY: String = "qd.reverse.scoped.include.unchanged.enabled"
+  @VisibleForTesting
+  const val XML_SEMANTIC_IDENTITY_ENABLE_KEY: String = "qd.xml.semantic.identity.enabled"
 
   val isQodanaLicenseAgreementCallbackEnabled: Boolean
     get() = Registry.`is`("qd.license.agreement.callback.enabled", true)
@@ -48,6 +50,10 @@ object QodanaRegistry {
 
   val isReverseScopedIncludeUnchangedEnabled: Boolean
     get() = Registry.`is`(REVERSE_SCOPED_INCLUDE_UNCHANGED_ENABLE_KEY, false)
+
+  /** The XML semantic identity of a problem in a plain XML file replaces its location in the baseline fingerprints. */
+  val isXmlSemanticIdentityEnabled: Boolean
+    get() = Registry.`is`(XML_SEMANTIC_IDENTITY_ENABLE_KEY, false)
 
   val openSarifInEditor: Boolean
     get() = Registry.`is`("qd.open.sarif.in.editor", false)

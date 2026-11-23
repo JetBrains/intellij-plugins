@@ -74,8 +74,14 @@ internal data class AdditionalFingerprintDataHolder(
       return AdditionalFingerprintDataHolder(xmlSemanticIdentity = XmlSemanticIdentity(identity))
     }
 
+    /** Reads the property: the holder, or the flat map of the inspection data that the SARIF converter stores. */
     fun fromSerialized(value: Any?): AdditionalFingerprintDataHolder {
-      return value as? AdditionalFingerprintDataHolder ?: EMPTY
+      @Suppress("UNCHECKED_CAST")
+      return when (value) {
+        is AdditionalFingerprintDataHolder -> value
+        is Map<*, *> -> fromInspectionFingerprintData(value as Map<String, String>)
+        else -> EMPTY
+      }
     }
   }
 }

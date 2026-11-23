@@ -39,6 +39,12 @@ internal data object BaselineEqualityV2 : FingerprintCalculator {
       graph.edges.forEachNotNull { it.hash(hasher) }
     }
     result.codeFlows.forEachNotNull { it.hash(hasher, includeDescription = false) }
-    hasher.put(additionalFingerprintData.stableHashCode())
+    if (xmlSemanticIdentity == null) {
+      // The property is the flat map of the inspection data, hashed as before the XML identity.
+      hasher.put(result.properties?.get(ADDITIONAL_FINGERPRINT_DATA)?.hashCode())
+    }
+    else {
+      hasher.put(additionalFingerprintData.stableHashCode())
+    }
   }
 }

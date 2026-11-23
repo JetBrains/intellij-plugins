@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.xml.XMLLanguage
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
@@ -15,12 +16,34 @@ import com.jetbrains.qodana.sarif.model.PhysicalLocation
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Region
 import com.jetbrains.qodana.sarif.model.Result
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.additionalFingerprintData
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.psi.PsiFingerprintDataExtractor
 import org.junit.Assert.assertNotEquals
 
 class XmlSemanticFingerprintsTest : BasePlatformTestCase() {
+  override fun setUp() {
+    super.setUp()
+    setXmlSemanticIdentityEnabled(true)
+  }
+
+  fun testXmlProblemsHaveNoXmlSemanticIdentityWithoutTheRegistryKey() {
+    setXmlSemanticIdentityEnabled(false)
+    val psiFile = PsiFileFactory.getInstance(project).createFileFromText("plugin.xml", XMLLanguage.INSTANCE, """
+      <idea-plugin>
+        <extensions defaultExtensionNs="com.intellij">
+          <extension point="com.intellij.foo" implementation="a.b.C"/>
+        </extensions>
+      </idea-plugin>
+    """.trimIndent()) as XmlFile
+
+    val props = PropertyBag()
+    PsiFingerprintDataExtractor.extract(extensionTag(psiFile.rootTag ?: error("Missing root tag"))).storeIn(props)
+
+    assertNull(props[BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA])
+  }
+
   fun testXmlAttributeValueFingerprintIgnoresFileRename() {
     val before = fingerprintState("META-INF/plugin-old.xml", """
       <idea-plugin>
@@ -272,6 +295,10 @@ class XmlSemanticFingerprintsTest : BasePlatformTestCase() {
     PsiFingerprintDataExtractor.extract(styleTag).storeIn(props)
 
     assertNull(props.additionalFingerprintData().xmlSemanticIdentity)
+  }
+
+  private fun setXmlSemanticIdentityEnabled(enabled: Boolean) {
+    Registry.get(QodanaRegistry.XML_SEMANTIC_IDENTITY_ENABLE_KEY).setValue(enabled, testRootDisposable)
   }
 
   private fun fingerprintState(

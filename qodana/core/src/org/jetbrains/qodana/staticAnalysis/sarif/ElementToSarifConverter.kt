@@ -17,8 +17,7 @@ import com.jetbrains.qodana.sarif.model.Message
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.AdditionalFingerprintDataHolder
-import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.mergeAdditionalFingerprintData
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.textFormat.escapeContentInTag
 import org.jetbrains.qodana.staticAnalysis.sarif.textFormat.htmlToMarkdown
@@ -66,7 +65,7 @@ object ElementToSarifConverter {
 
     getFingerprintData(problem)?.let { fingerprintData ->
       val props = result.properties ?: PropertyBag()
-      props.mergeAdditionalFingerprintData(fingerprintData)
+      props[BaselineEqualityV2.ADDITIONAL_FINGERPRINT_DATA] = fingerprintData
       result.properties = props
     }
 
@@ -161,11 +160,10 @@ object ElementToSarifConverter {
     return converted
   }
 
-  private fun getFingerprintData(element: Element): AdditionalFingerprintDataHolder? =
+  private fun getFingerprintData(element: Element): Map<String, String>? =
     element.getChild(DefaultInspectionToolResultExporter.INSPECTION_RESULTS_FINGERPRINT_DATA)
       ?.attributes
       ?.associate { attr -> attr.name to attr.value }
-      ?.let(AdditionalFingerprintDataHolder::fromInspectionFingerprintData)
       ?.takeUnless { it.isEmpty() }
 
   private fun getLogicalLocation(problem: Element): Set<LogicalLocation>? {

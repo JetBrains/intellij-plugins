@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 /**
  * Gives the semantic identity of an XML problem for the baseline fingerprints.
  *
- * The identity replaces the problem location in `equalIndicator/v2`.
+ * The identity replaces the problem location in `equalIndicator/v2`, only when the registry key `qd.xml.semantic.identity.enabled` is on.
  * A problem keeps its fingerprint when its XML file moves or when the tags around it change order.
  */
 interface QodanaXmlSemanticIdentityProvider {
