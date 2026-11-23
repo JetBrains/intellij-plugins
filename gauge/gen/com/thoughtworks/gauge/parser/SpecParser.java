@@ -23,39 +23,15 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         b = adapt_builder_(t, b, this, null);
         Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-        if (t == ARG) {
-            r = arg(b, 0);
-        } else if (t == DYNAMIC_ARG) {
-            r = dynamicArg(b, 0);
-        } else if (t == KEYWORD) {
-            r = keyword(b, 0);
-        } else if (t == SCENARIO) {
-            r = scenario(b, 0);
-        } else if (t == SPEC_DETAIL) {
-            r = specDetail(b, 0);
-        } else if (t == STATIC_ARG) {
-            r = staticArg(b, 0);
-        } else if (t == STEP) {
-            r = step(b, 0);
-        } else if (t == TABLE) {
-            r = table(b, 0);
-        } else if (t == TABLE_BODY) {
-            r = tableBody(b, 0);
-        } else if (t == TABLE_HEADER) {
-            r = tableHeader(b, 0);
-        } else if (t == TABLE_ROW_VALUE) {
-            r = tableRowValue(b, 0);
-        } else if (t == TAGS) {
-            r = tags(b, 0);
-        } else if (t == TEARDOWN) {
-            r = teardown(b, 0);
-        } else {
-            r = parse_root_(t, b, 0);
-        }
+        r = parse_root_(t, b);
         exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
     }
 
-    protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
+    protected boolean parse_root_(IElementType t, PsiBuilder b) {
+        return parse_root_(t, b, 0);
+    }
+
+    static boolean parse_root_(IElementType t, PsiBuilder b, int l) {
         return specFile(b, l + 1);
     }
 
@@ -103,7 +79,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // (comment)* scenarioHeading (comment)* tags? (comment)* (step | comment)*
+    // (comment)* scenarioHeading (comment)* tags? (comment)* table? (step | comment)*
     public static boolean scenario(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "scenario")) return false;
         if (!nextTokenIs(b, "<scenario>", COMMENT, SCENARIO_HEADING)) return false;
@@ -115,6 +91,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
         r = r && scenario_3(b, l + 1);
         r = r && scenario_4(b, l + 1);
         r = r && scenario_5(b, l + 1);
+        r = r && scenario_6(b, l + 1);
         exit_section_(b, l, m, r, false, null);
         return r;
     }
@@ -122,11 +99,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (comment)*
     private static boolean scenario_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "scenario_0")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!scenario_0_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "scenario_0", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -144,11 +120,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (comment)*
     private static boolean scenario_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "scenario_2")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!scenario_2_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "scenario_2", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -173,11 +148,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (comment)*
     private static boolean scenario_4(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "scenario_4")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!scenario_4_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "scenario_4", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -192,26 +166,30 @@ public class SpecParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // (step | comment)*
+    // table?
     private static boolean scenario_5(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "scenario_5")) return false;
-        int c = current_position_(b);
+        table(b, l + 1);
+        return true;
+    }
+
+    // (step | comment)*
+    private static boolean scenario_6(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "scenario_6")) return false;
         while (true) {
-            if (!scenario_5_0(b, l + 1)) break;
-            if (!empty_element_parsed_guard_(b, "scenario_5", c)) break;
-            c = current_position_(b);
+            int c = current_position_(b);
+            if (!scenario_6_0(b, l + 1)) break;
+            if (!empty_element_parsed_guard_(b, "scenario_6", c)) break;
         }
         return true;
     }
 
     // step | comment
-    private static boolean scenario_5_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "scenario_5_0")) return false;
+    private static boolean scenario_6_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "scenario_6_0")) return false;
         boolean r;
-        Marker m = enter_section_(b);
         r = step(b, l + 1);
         if (!r) r = comment(b, l + 1);
-        exit_section_(b, m, null, r);
         return r;
     }
 
@@ -244,11 +222,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (comment | tags | keyword | table)*
     private static boolean specDetail_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specDetail_1")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!specDetail_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "specDetail_1", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -257,23 +234,20 @@ public class SpecParser implements PsiParser, LightPsiParser {
     private static boolean specDetail_1_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specDetail_1_0")) return false;
         boolean r;
-        Marker m = enter_section_(b);
         r = comment(b, l + 1);
         if (!r) r = tags(b, l + 1);
         if (!r) r = keyword(b, l + 1);
         if (!r) r = table(b, l + 1);
-        exit_section_(b, m, null, r);
         return r;
     }
 
     // (step|comment)*
     private static boolean specDetail_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specDetail_2")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!specDetail_2_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "specDetail_2", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -282,10 +256,8 @@ public class SpecParser implements PsiParser, LightPsiParser {
     private static boolean specDetail_2_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specDetail_2_0")) return false;
         boolean r;
-        Marker m = enter_section_(b);
         r = step(b, l + 1);
         if (!r) r = comment(b, l + 1);
-        exit_section_(b, m, null, r);
         return r;
     }
 
@@ -307,11 +279,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (comment)*
     private static boolean specFile_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specFile_0")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!specFile_0_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "specFile_0", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -329,11 +300,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // scenario*
     private static boolean specFile_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specFile_2")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!scenario(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "specFile_2", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -393,11 +363,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         Marker m = enter_section_(b);
         r = step_1_0(b, l + 1);
-        int c = current_position_(b);
         while (r) {
+            int c = current_position_(b);
             if (!step_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "step_1", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, m, null, r);
         return r;
@@ -407,21 +376,18 @@ public class SpecParser implements PsiParser, LightPsiParser {
     private static boolean step_1_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "step_1_0")) return false;
         boolean r;
-        Marker m = enter_section_(b);
         r = arg(b, l + 1);
         if (!r) r = consumeToken(b, STEP);
-        exit_section_(b, m, null, r);
         return r;
     }
 
     // (comment)*
     private static boolean step_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "step_2")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!step_2_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "step_2", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -461,11 +427,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     public static boolean tableBody(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableBody")) return false;
         Marker m = enter_section_(b, l, _NONE_, TABLE_BODY, "<table body>");
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!tableBody_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "tableBody", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, l, m, true, false, null);
         return true;
@@ -489,11 +454,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         Marker m = enter_section_(b);
         r = tableBody_0_1_0(b, l + 1);
-        int c = current_position_(b);
         while (r) {
+            int c = current_position_(b);
             if (!tableBody_0_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "tableBody_0_1", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, m, null, r);
         return r;
@@ -515,11 +479,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // WHITESPACE*
     private static boolean tableBody_0_1_0_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableBody_0_1_0_0")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, WHITESPACE)) break;
             if (!empty_element_parsed_guard_(b, "tableBody_0_1_0_0", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -534,11 +497,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // WHITESPACE*
     private static boolean tableBody_0_1_0_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableBody_0_1_0_2")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, WHITESPACE)) break;
             if (!empty_element_parsed_guard_(b, "tableBody_0_1_0_2", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -571,11 +533,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         Marker m = enter_section_(b);
         r = tableHeader_1_0(b, l + 1);
-        int c = current_position_(b);
         while (r) {
+            int c = current_position_(b);
             if (!tableHeader_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "tableHeader_1", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, m, null, r);
         return r;
@@ -595,11 +556,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // TABLE_HEADER*
     private static boolean tableHeader_1_0_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableHeader_1_0_0")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, TABLE_HEADER)) break;
             if (!empty_element_parsed_guard_(b, "tableHeader_1_0_0", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -625,11 +585,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (TABLE_BORDER)*
     private static boolean tableHeader_3_0_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableHeader_3_0_0")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, TABLE_BORDER)) break;
             if (!empty_element_parsed_guard_(b, "tableHeader_3_0_0", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -653,11 +612,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, TABLE_ROW_VALUE);
-        int c = current_position_(b);
         while (r) {
+            int c = current_position_(b);
             if (!consumeToken(b, TABLE_ROW_VALUE)) break;
             if (!empty_element_parsed_guard_(b, "tableRowValue_0", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, m, null, r);
         return r;
@@ -669,11 +627,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         Marker m = enter_section_(b);
         r = tableRowValue_1_0(b, l + 1);
-        int c = current_position_(b);
         while (r) {
+            int c = current_position_(b);
             if (!tableRowValue_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "tableRowValue_1", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, m, null, r);
         return r;
@@ -700,11 +657,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, DYNAMIC_ARG);
-        int c = current_position_(b);
         while (r) {
+            int c = current_position_(b);
             if (!consumeToken(b, DYNAMIC_ARG)) break;
             if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_1", c)) break;
-            c = current_position_(b);
         }
         exit_section_(b, m, null, r);
         return r;
@@ -713,11 +669,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // WHITESPACE*
     private static boolean tableRowValue_1_0_3(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableRowValue_1_0_3")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, WHITESPACE)) break;
             if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_3", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -725,11 +680,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // TABLE_ROW_VALUE*
     private static boolean tableRowValue_1_0_4(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableRowValue_1_0_4")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, TABLE_ROW_VALUE)) break;
             if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_4", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -737,11 +691,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // WHITESPACE*
     private static boolean tableRowValue_1_0_5(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableRowValue_1_0_5")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!consumeToken(b, WHITESPACE)) break;
             if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_5", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -775,11 +728,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (comment)*
     private static boolean teardown_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "teardown_1")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!teardown_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "teardown_1", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -797,11 +749,10 @@ public class SpecParser implements PsiParser, LightPsiParser {
     // (step | comment | TEARDOWN_IDENTIFIER)*
     private static boolean teardown_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "teardown_2")) return false;
-        int c = current_position_(b);
         while (true) {
+            int c = current_position_(b);
             if (!teardown_2_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "teardown_2", c)) break;
-            c = current_position_(b);
         }
         return true;
     }
@@ -810,11 +761,9 @@ public class SpecParser implements PsiParser, LightPsiParser {
     private static boolean teardown_2_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "teardown_2_0")) return false;
         boolean r;
-        Marker m = enter_section_(b);
         r = step(b, l + 1);
         if (!r) r = comment(b, l + 1);
         if (!r) r = consumeToken(b, TEARDOWN_IDENTIFIER);
-        exit_section_(b, m, null, r);
         return r;
     }
 
