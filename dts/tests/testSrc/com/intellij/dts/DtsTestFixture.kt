@@ -10,7 +10,9 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
 import com.intellij.platform.testFramework.junit5.codeInsight.fixture.codeInsightFixture
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.TestObservation
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
@@ -86,6 +88,9 @@ fun dtsFixture(
   val testName = methodName
     .replace(Regex("[#@_.,-]+"), " ")
     .toPascalCase()
+
+  TestObservation.awaitConfiguration(codeInsight.project)
+  IndexingTestUtil.suspendUntilIndexesAreReady(codeInsight.project)
 
   initialized(DtsTestFixture(codeInsight, testName, extension)) {}
 }
