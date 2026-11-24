@@ -7,7 +7,7 @@ import {CommonModule} from "@angular/common";
   imports: [CommonModule],
   standalone: true,
   template: `
-    <div>{{bar.<error descr="Qualifier of 'length' is possibly undefined">length</error>}}</div>
+    <div>{{<error descr="Qualifier of 'length' is possibly undefined">bar</error>.length}}</div>
     
     <div *ngIf="bar">
       <div>{{bar.length}}</div>
@@ -21,7 +21,7 @@ import {CommonModule} from "@angular/common";
       <div [title]="item.length" *ngIf="item"></div>
     </div>
     
-    <div>{{bar.<error descr="Qualifier of 'length' is possibly undefined">length</error>}}</div>
+    <div>{{<error descr="Qualifier of 'length' is possibly undefined">bar</error>.length}}</div>
   `,
 })
 export class FlowComponent {
