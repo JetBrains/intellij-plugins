@@ -75,6 +75,7 @@ f:com.intellij.dts.core.completion.DtsCommenter
 - getLineCommentPrefix():java.lang.String
 f:com.intellij.dts.core.completion.DtsCompletionContributor
 - com.intellij.codeInsight.completion.CompletionContributor
+- com.intellij.openapi.project.DumbAware
 - <init>():V
 f:com.intellij.dts.core.completion.DtsCompletionContributor$AutoPopup
 - com.intellij.codeInsight.editorActions.TypedHandlerDelegate
