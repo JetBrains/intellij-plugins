@@ -11,6 +11,9 @@ import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.StructuralFingerpr
 private const val AST_SHAPE_DEPTH = 2
 private const val DIRECT_PSI_ELEMENT_ONLY_DEPTH = 1
 
+/** The id of `XMLLanguage.INSTANCE`. This module does not depend on the XML PSI module. */
+private const val XML_LANGUAGE_ID = "XML"
+
 private data class EnclosingScopeNameAndType(val enclosingScopeName: String?, val enclosingScopeType: String?) {
   companion object {
     val EMPTY = EnclosingScopeNameAndType(null, null)
@@ -23,9 +26,12 @@ object PsiSignalExtractor {
     val provider = QodanaPsiStructuralFingerprintsProvider.forLanguage(element.language)
     val (enclosingScopeName, enclosingScopeType) = extractEnclosingScopeNameAndType(element, provider)
     val astShape = serializeEnclosingElement(element, provider)
-    val problemElementType = elementTypeName(element)?.ifEmpty { null }
+    val problemElementType = if (isInPlainXmlFile(element)) null else elementTypeName(element)?.ifEmpty { null }
     return StructuralFingerprintSignals(astShape, enclosingScopeName, enclosingScopeType, problemElementType)
   }
+
+  private fun isInPlainXmlFile(element: PsiElement): Boolean =
+    element.containingFile?.language?.id == XML_LANGUAGE_ID
 
   /**
    * Single walk up the PSI tree producing:
