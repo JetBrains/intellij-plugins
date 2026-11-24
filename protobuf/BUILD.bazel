@@ -1,5 +1,6 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
+load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.protoeditor` start
@@ -19,11 +20,7 @@ dist_plugin(
         "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml": "intellij.protoeditor.python.xml",
     },
     jars = {
-        "lib/protoeditor.jar": [
-            "intellij.protoeditor",
-            "intellij.protoeditor.go",
-            "intellij.protoeditor.jvm",
-        ],
+        "lib/protoeditor.jar": ["intellij.protoeditor"],
     },
     main_module = "intellij.protoeditor",
     mode_refused_content_modules = {
@@ -64,10 +61,26 @@ jvm_library(
 )
 ### auto-generated section `build intellij.protoeditor` end
 
+### auto-generated section `plugin intellij.protoeditor` start
+ij_plugin(
+    name = "protoeditor_plugin",
+    descriptor_module = ":protoeditor",
+    content_modules = [
+        # do not sort,
+        "//contrib/protobuf/protoeditor-core",
+        "//contrib/protobuf/protoeditor-go",
+        "//contrib/protobuf/protoeditor-python",
+        "//contrib/protobuf/protoeditor-jvm",
+    ],
+    visibility = ["//visibility:public"],
+)
+### auto-generated section `plugin intellij.protoeditor` end
+
 ### auto-generated section `iml intellij.protoeditor` start
 jps_module(
     name = "intellij.protoeditor",
     descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
     target = "protoeditor",
 )
 ### auto-generated section `iml intellij.protoeditor` end
