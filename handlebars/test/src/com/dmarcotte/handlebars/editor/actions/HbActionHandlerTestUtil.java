@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.EditorTestFixture;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,8 +49,12 @@ public final class HbActionHandlerTestUtil {
   public static void doCharTest(@NotNull CodeInsightTestFixture fixture, final char charToType, @NotNull String before, @NotNull String expected) {
     EditorActionManager.getInstance();
     final TypedAction typedAction = TypedAction.getInstance();
-    doExecuteActionTest(fixture, before, expected,
-                        () -> typedAction.actionPerformed(fixture.getEditor(), charToType, ((EditorEx)fixture.getEditor()).getDataContext()));
+    Runnable typing = () -> typedAction.actionPerformed(fixture.getEditor(), charToType, ((EditorEx)fixture.getEditor()).getDataContext());
+    validateTestStrings(before, expected);
+    fixture.configureByText(HbFileType.INSTANCE, before);
+    EditorTestFixture.runLetterTyping(charToType, fixture.getEditor(), fixture.getProject(), typing,
+                                      () -> EdtTestUtil.runInEdtAndWait(() -> performWriteAction(fixture.getProject(), typing)));
+    fixture.checkResult(expected);
   }
 
   /**
