@@ -6,13 +6,14 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 dist_plugin(
     content_modules = [
         # do not sort,
+        "intellij.protoeditor.core",
         "intellij.protoeditor.go",
         "intellij.protoeditor.python",
         "intellij.protoeditor.jvm",
-        "intellij.protoeditor.core",
     ],
     descriptor = "resources/META-INF/plugin.xml",
     descriptors = {
+        "//contrib/protobuf/protoeditor-core:resources/intellij.protoeditor.core.xml": "intellij.protoeditor.core.xml",
         "//contrib/protobuf/protoeditor-go:resources/intellij.protoeditor.go.xml": "intellij.protoeditor.go.xml",
         "//contrib/protobuf/protoeditor-jvm:resources/intellij.protoeditor.jvm.xml": "intellij.protoeditor.jvm.xml",
         "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml": "intellij.protoeditor.python.xml",
@@ -22,7 +23,6 @@ dist_plugin(
             "intellij.protoeditor",
             "intellij.protoeditor.go",
             "intellij.protoeditor.jvm",
-            "intellij.protoeditor.core",
         ],
     },
     main_module = "intellij.protoeditor",
@@ -58,7 +58,6 @@ jvm_library(
     visibility = ["//visibility:public"],
     runtime_deps = [
         # do not sort,
-        "//contrib/protobuf/protoeditor-core",
         "@community//libraries/protobuf-java-util",
         "@community//platform/structure-view-impl:structureView",
     ],

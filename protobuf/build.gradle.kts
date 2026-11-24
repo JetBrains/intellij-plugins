@@ -137,7 +137,7 @@ sealed class ProtobufPluginLayout(
       majorIdeVersion,
       listOf("com.intellij.java"),
       listOf("intellij.spellchecker"),
-      listOf("intellij.protoeditor.jvm"),
+      listOf("intellij.protoeditor.core", "intellij.protoeditor.jvm"),
       arrayOf("protoeditor-jvm/src", "protoeditor-core/src", "protoeditor-core/gen"),
       arrayOf("protoeditor-jvm/resources", "resources", "protoeditor-core/resources"),
       arrayOf("protoeditor-jvm/test", "protoeditor-core/test"),

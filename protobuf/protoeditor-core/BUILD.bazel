@@ -1,6 +1,11 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.protoeditor.core` start
+content_module_jar(module = ":protoeditor-core")
+### auto-generated section `dev intellij.protoeditor.core` end
 
 ### auto-generated section `build intellij.protoeditor.core` start
 jvm_library(
@@ -66,6 +71,7 @@ jvm_library(
 ### auto-generated section `iml intellij.protoeditor.core` start
 jps_module(
     name = "intellij.protoeditor.core",
+    descriptors = ["resources/intellij.protoeditor.core.xml"],
     target = "protoeditor-core",
 )
 ### auto-generated section `iml intellij.protoeditor.core` end
