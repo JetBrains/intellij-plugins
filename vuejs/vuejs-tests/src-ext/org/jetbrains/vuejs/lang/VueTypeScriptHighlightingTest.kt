@@ -40,7 +40,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() 
         }
 
         override fun configureEditorFile(name: String) {
-          val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/$name")
+          val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/${noServiceTestFile(name)}")
           val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
           this.fixture.configureByText(VueFileType, surroundWithScriptTag(text))
         }

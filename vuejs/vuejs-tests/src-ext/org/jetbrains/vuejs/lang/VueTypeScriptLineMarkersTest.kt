@@ -44,7 +44,7 @@ class VueTypeScriptLineMarkersTest {
       }
 
       override fun configureEditorFile(name: String) {
-        val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/$name")
+        val tsFile = StandardFileSystems.local().findFileByPath("$testDataPath/${noServiceTestFile(name)}")
         var text: String = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
         val testName = getTestName(true)
         localVarsMap[testName]?.forEach {
