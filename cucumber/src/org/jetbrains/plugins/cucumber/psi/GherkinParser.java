@@ -128,11 +128,9 @@ public class GherkinParser implements PsiParser {
       // tags
       parseTags(builder);
 
-      // scenarios
-      IElementType startTokenType = builder.getTokenType();
-      final boolean outline = startTokenType == SCENARIO_OUTLINE_KEYWORD;
+      // scenarios: since Gherkin 6 the keyword does not decide it - a scenario with Examples is an outline
       builder.advanceLexer();
-      parseScenario(builder);
+      final boolean outline = parseScenario(builder);
       marker.done(outline ? GherkinElementTypes.SCENARIO_OUTLINE : GherkinElementTypes.SCENARIO);
     }
     if (ruleMarker != null) {
@@ -140,7 +138,9 @@ public class GherkinParser implements PsiParser {
     }
   }
 
-  private static void parseScenario(PsiBuilder builder) {
+  /** Parses one scenario's body; returns whether it has an Examples block. */
+  private static boolean parseScenario(PsiBuilder builder) {
+    boolean hasExamples = false;
     while (!atScenarioEnd(builder)) {
       if (builder.getTokenType() == TAG) {
         final PsiBuilder.Marker marker = builder.mark();
@@ -161,12 +161,14 @@ public class GherkinParser implements PsiParser {
         parseStep(builder);
       }
       else if (builder.getTokenType() == EXAMPLES_KEYWORD) {
+        hasExamples = true;
         parseExamplesBlock(builder);
       }
       else {
         builder.advanceLexer();
       }
     }
+    return hasExamples;
   }
 
   private static boolean atScenarioEnd(PsiBuilder builder) {

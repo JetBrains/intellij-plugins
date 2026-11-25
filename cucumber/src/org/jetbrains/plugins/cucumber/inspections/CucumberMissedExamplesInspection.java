@@ -5,13 +5,12 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 
 
 public final class CucumberMissedExamplesInspection extends GherkinInspection {
@@ -28,18 +27,28 @@ public final class CucumberMissedExamplesInspection extends GherkinInspection {
   @Override
   public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new GherkinElementVisitor() {
+      // A scenario with Examples is an outline and never visited here. Any other scenario - whatever its
+      // keyword - needs Examples only when a step uses a <placeholder> that nothing would fill.
       @Override
-      public void visitScenarioOutline(GherkinScenarioOutline outline) {
-        super.visitScenarioOutline(outline);
-
-        final GherkinExamplesBlockImpl block = PsiTreeUtil.getChildOfType(outline, GherkinExamplesBlockImpl.class);
-        if (block == null) {
-          ASTNode[] keyword = outline.getNode().getChildren(GherkinTokenTypes.KEYWORDS);
-          if (keyword.length > 0) {
-
-            holder.registerProblem(outline, keyword[0].getTextRange().shiftRight(-outline.getTextOffset()),
-                                   CucumberBundle.message("inspection.missed.example.msg.name"), new CucumberCreateExamplesSectionFix());
+      public void visitScenario(GherkinScenario scenario) {
+        super.visitScenario(scenario);
+        if (scenario.isBackground()) {
+          return;
+        }
+        boolean usesPlaceholder = false;
+        for (GherkinStep step : scenario.getSteps()) {
+          if (!step.getParamsSubstitutions().isEmpty()) {
+            usesPlaceholder = true;
+            break;
           }
+        }
+        if (!usesPlaceholder) {
+          return;
+        }
+        ASTNode[] keyword = scenario.getNode().getChildren(GherkinTokenTypes.KEYWORDS);
+        if (keyword.length > 0) {
+          holder.registerProblem(scenario, keyword[0].getTextRange().shiftRight(-scenario.getTextOffset()),
+                                 CucumberBundle.message("inspection.missed.example.msg.name"), new CucumberCreateExamplesSectionFix());
         }
       }
     };
