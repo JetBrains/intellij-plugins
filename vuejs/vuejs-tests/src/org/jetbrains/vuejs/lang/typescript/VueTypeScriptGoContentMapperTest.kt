@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.lang.javascript.TrackFailedTestExtension
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.lsp.TypeScriptContentMapperContribution
 import com.intellij.lang.typescript.lsp.TypeScriptGoContentMappedFileSupport
@@ -27,11 +28,19 @@ import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.copyBundledVueContentMapper
 import org.jetbrains.vuejs.vueFixture
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 @TestApplication
 class VueTypeScriptGoContentMapperTest {
 
   private val vue: VueContentMapperFixture by vueFixture(VueTestMode.TS_GO_PROXY) { VueContentMapperFixture(it) }
+
+  @RegisterExtension
+  @JvmField
+  val rule: TrackFailedTestExtension = TrackFailedTestExtension(
+    // TSGo gets `includeCompletionsForImportStatements=false` because of IJPL-155741
+    "testDefaultImportCompletionInTypeScript",
+  )
 
   @Test
   fun testNoTsconfig() {

@@ -53,8 +53,6 @@ class VueCompletionTest :
       "testComputedTypeJS",
       "testComputedTypeTS",
       "testVueOutObjectLiteralTs",
-      // reproducible in test only
-      "testCompleteComponentWithDefineOptions",
     )
   }
 
