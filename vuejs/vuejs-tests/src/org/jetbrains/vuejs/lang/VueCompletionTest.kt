@@ -40,8 +40,6 @@ class VueCompletionTest :
       "testComputedTypeTS",
       "testScriptSetupGeneric",
       "testVueOutObjectLiteralTs",
-      // reproducible in test only
-      "testCompleteComponentWithDefineOptions",
     )
 
     override fun getCodeCompletionExpectedItemsLocation(dir: Boolean, dirName: String): String {
