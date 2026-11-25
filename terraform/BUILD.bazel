@@ -18,11 +18,6 @@ dist_plugin(
         "lib/terraform-metadata.jar": ["@ultimate_lib//:terraform-terraform-metadata"],
     },
     main_module = "intellij.terraform",
-    module_descriptors = [
-        "//contrib/terraform/copyright:resources/intellij.terraform.copyright.xml",
-        "//contrib/terraform/terraform-template:resource/intellij.terraform.template.xml",
-        "//contrib/terraform/watchers:resources/intellij.terraform.watchers.xml",
-    ],
     module_labels = {"intellij.terraform": "//contrib/terraform"},
 )
 ### auto-generated section `dev intellij.terraform` end

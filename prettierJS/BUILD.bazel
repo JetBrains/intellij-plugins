@@ -23,7 +23,6 @@ dist_plugin(
     jars = {"lib/prettierJS.jar": ["intellij.prettierJS"]},
     main_module = "intellij.prettierJS",
     mode_refused_content_modules = {"frontend": ["intellij.prettierJS.eslint"]},
-    module_descriptors = ["//contrib/prettierJS/prettierJS-eslint:resources/intellij.prettierJS.eslint.xml"],
     module_labels = {"intellij.prettierJS": "//contrib/prettierJS"},
 )
 ### auto-generated section `dev intellij.prettierJS` end

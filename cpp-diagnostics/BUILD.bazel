@@ -24,11 +24,6 @@ dist_plugin(
             "intellij.clion.diagnostics.docker",
         ],
     },
-    module_descriptors = [
-        "//contrib/cpp-diagnostics/cmake:resources/intellij.clion.diagnostics.cmake.xml",
-        "//contrib/cpp-diagnostics/core:resources/intellij.clion.diagnostics.core.xml",
-        "//contrib/cpp-diagnostics/docker:resources/intellij.clion.diagnostics.docker.xml",
-    ],
     module_labels = {"intellij.clion.diagnostics": "//contrib/cpp-diagnostics:clion-diagnostics"},
 )
 ### auto-generated section `dev intellij.clion.diagnostics` end

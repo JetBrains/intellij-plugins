@@ -27,11 +27,6 @@ dist_plugin(
             "intellij.angular.tslint",
         ],
     },
-    module_descriptors = [
-        "//contrib/Angular/angular-backend:resources/intellij.angular.backend.xml",
-        "//contrib/Angular/angular-free:resources/intellij.angular.free.xml",
-        "//contrib/Angular/angular-tslint:resources/intellij.angular.tslint.xml",
-    ],
     module_labels = {"intellij.angular.plugin": "//contrib/Angular/angular-plugin"},
 )
 ### auto-generated section `dev intellij.angular.plugin` end

@@ -13,10 +13,6 @@ dist_plugin(
     jars = {"lib/postcss-plugin.jar": ["intellij.postcss.plugin"]},
     main_module = "intellij.postcss.plugin",
     mode_refused_content_modules = {"frontend": ["intellij.postcss.paid"]},
-    module_descriptors = [
-        "//contrib/postcss/copyright:resources/intellij.postcss.copyright.xml",
-        "//contrib/postcss/paid:resources/intellij.postcss.paid.xml",
-    ],
     module_labels = {"intellij.postcss.plugin": "//contrib/postcss/plugin"},
 )
 ### auto-generated section `dev intellij.postcss.plugin` end

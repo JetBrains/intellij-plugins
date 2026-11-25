@@ -21,12 +21,6 @@ dist_plugin(
             "intellij.protoeditor.jvm",
         ],
     },
-    module_descriptors = [
-        "//contrib/protobuf/protoeditor-core:resources/intellij.protoeditor.core.xml",
-        "//contrib/protobuf/protoeditor-go:resources/intellij.protoeditor.go.xml",
-        "//contrib/protobuf/protoeditor-jvm:resources/intellij.protoeditor.jvm.xml",
-        "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml",
-    ],
     module_labels = {"intellij.protoeditor": "//contrib/protobuf:protoeditor"},
 )
 ### auto-generated section `dev intellij.protoeditor` end

@@ -31,10 +31,6 @@ dist_plugin(
             "intellij.javascript.karma.debug",
         ],
     },
-    module_descriptors = [
-        "//contrib/js-karma/coverage:resources/intellij.javascript.karma.coverage.xml",
-        "//contrib/js-karma/debug:resources/intellij.javascript.karma.debug.xml",
-    ],
     module_labels = {"intellij.karma": "//contrib/js-karma:karma"},
 )
 ### auto-generated section `dev intellij.karma` end

@@ -38,17 +38,6 @@ dist_plugin(
             "intellij.vuejs.webpack",
         ],
     },
-    module_descriptors = [
-        "//contrib/vuejs/vue-free:resources/intellij.vuejs.free.xml",
-        "//contrib/vuejs/vuejs-backend:resources/intellij.vuejs.backend.xml",
-        "//contrib/vuejs/vuejs-common:resources/intellij.vuejs.common.xml",
-        "//contrib/vuejs/vuejs-copyright:resources/intellij.vuejs.copyright.xml",
-        "//contrib/vuejs/vuejs-debugger:resources/intellij.vuejs.debugger.xml",
-        "//contrib/vuejs/vuejs-eslint:resources/intellij.vuejs.eslint.xml",
-        "//contrib/vuejs/vuejs-markdown:resources/intellij.vuejs.markdown.xml",
-        "//contrib/vuejs/vuejs-prettier:resources/intellij.vuejs.prettier.xml",
-        "//contrib/vuejs/vuejs-webpack:resources/intellij.vuejs.webpack.xml",
-    ],
     module_labels = {"intellij.vuejs.plugin": "//contrib/vuejs/vuejs-plugin:plugin"},
 )
 ### auto-generated section `dev intellij.vuejs.plugin` end

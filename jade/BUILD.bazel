@@ -19,10 +19,6 @@ dist_plugin(
             "intellij.jade.watcher",
         ],
     },
-    module_descriptors = [
-        "//contrib/jade/css:resources/intellij.jade.css.xml",
-        "//contrib/jade/watcher:resources/intellij.jade.watcher.xml",
-    ],
     module_labels = {"intellij.jade": "//contrib/jade"},
 )
 ### auto-generated section `dev intellij.jade` end

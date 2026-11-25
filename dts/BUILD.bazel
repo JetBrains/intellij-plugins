@@ -14,11 +14,6 @@ dist_plugin(
     jars = {"lib/dts.jar": ["intellij.dts"]},
     main_module = "intellij.dts",
     mode_refused_content_modules = {"frontend": ["intellij.dts.cmake"]},
-    module_descriptors = [
-        "//contrib/dts/cmake:resources/intellij.dts.cmake.xml",
-        "//contrib/dts/core:resources/intellij.dts.core.xml",
-        "//contrib/dts/pp:resources/intellij.dts.pp.xml",
-    ],
     module_labels = {"intellij.dts": "//contrib/dts"},
 )
 ### auto-generated section `dev intellij.dts` end

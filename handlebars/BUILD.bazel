@@ -11,7 +11,6 @@ dist_plugin(
     jars = {"lib/handlebars.jar": ["intellij.handlebars"]},
     main_module = "intellij.handlebars",
     mode_refused_content_modules = {"frontend": ["intellij.handlebars.javascript"]},
-    module_descriptors = ["//contrib/handlebars/javascript:resources/intellij.handlebars.javascript.xml"],
     module_labels = {"intellij.handlebars": "//contrib/handlebars"},
 )
 ### auto-generated section `dev intellij.handlebars` end

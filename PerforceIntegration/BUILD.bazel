@@ -10,7 +10,6 @@ dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
     jars = {"lib/vcs-perforce.jar": ["intellij.vcs.perforce"]},
     main_module = "intellij.vcs.perforce",
-    module_descriptors = ["//contrib/PerforceIntegration/perforce_util:resources/intellij.vcs.perforce.util.xml"],
     module_jar_paths = {"intellij.vcs.perforce.util": "lib/intellij.vcs.perforce.util.jar"},
     module_labels = {"intellij.vcs.perforce": "//contrib/PerforceIntegration:vcs-perforce"},
 )
