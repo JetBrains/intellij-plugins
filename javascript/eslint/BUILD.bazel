@@ -17,19 +17,11 @@ filegroup(
 
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
-    file_prefixes = {
-        "languageService": "contrib/javascript/eslint/plugin-resources/languageService",
-    },
-    files = {
-        "languageService": "//contrib/javascript/eslint:dist_resources",
-    },
-    jars = {
-        "lib/javascript-eslint.jar": ["intellij.javascript.eslint"],
-    },
+    file_prefixes = {"languageService": "contrib/javascript/eslint/plugin-resources/languageService"},
+    files = {"languageService": "//contrib/javascript/eslint:dist_resources"},
+    jars = {"lib/javascript-eslint.jar": ["intellij.javascript.eslint"]},
     main_module = "intellij.javascript.eslint",
-    module_labels = {
-        "intellij.javascript.eslint": "//contrib/javascript/eslint:eslint",
-    },
+    module_labels = {"intellij.javascript.eslint": "//contrib/javascript/eslint"},
 )
 ### auto-generated section `dev intellij.javascript.eslint` end
 

@@ -16,28 +16,15 @@ filegroup(
 )
 
 dist_plugin(
-    content_modules = ["intellij.prettierJS.eslint"],
+    content_modules = {"intellij.prettierJS.eslint": "//contrib/prettierJS/prettierJS-eslint:eslint"},
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/prettierJS/prettierJS-eslint:resources/intellij.prettierJS.eslint.xml": "intellij.prettierJS.eslint.xml",
-    },
-    file_prefixes = {
-        "prettierLanguageService": "contrib/prettierJS/gen/prettierLanguageService",
-    },
-    files = {
-        "prettierLanguageService": "//contrib/prettierJS:dist_resources",
-    },
-    jars = {
-        "lib/prettierJS.jar": ["intellij.prettierJS"],
-    },
+    file_prefixes = {"prettierLanguageService": "contrib/prettierJS/gen/prettierLanguageService"},
+    files = {"prettierLanguageService": "//contrib/prettierJS:dist_resources"},
+    jars = {"lib/prettierJS.jar": ["intellij.prettierJS"]},
     main_module = "intellij.prettierJS",
-    mode_refused_content_modules = {
-        "frontend": ["intellij.prettierJS.eslint"],
-    },
-    module_labels = {
-        "intellij.prettierJS": "//contrib/prettierJS:prettierJS",
-        "intellij.prettierJS.eslint": "//contrib/prettierJS/prettierJS-eslint:eslint",
-    },
+    mode_refused_content_modules = {"frontend": ["intellij.prettierJS.eslint"]},
+    module_descriptors = ["//contrib/prettierJS/prettierJS-eslint:resources/intellij.prettierJS.eslint.xml"],
+    module_labels = {"intellij.prettierJS": "//contrib/prettierJS"},
 )
 ### auto-generated section `dev intellij.prettierJS` end
 

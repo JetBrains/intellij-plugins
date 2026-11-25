@@ -5,21 +5,14 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.jhipster.plugin` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.jhipster",
-        "intellij.jhipster.backend",
-        "intellij.jhipster.uml",
-        "intellij.jhipster.frontend",
-    ],
-    main_module = "intellij.jhipster.plugin",
-    module_labels = {
-        "intellij.jhipster": "//contrib/jhipster:jhipster",
-        "intellij.jhipster.backend": "//contrib/jhipster/backend:backend",
-        "intellij.jhipster.frontend": "//contrib/jhipster/frontend:frontend",
-        "intellij.jhipster.plugin": "//contrib/jhipster/plugin:plugin",
-        "intellij.jhipster.uml": "//contrib/jhipster/uml:uml",
+    content_modules = {
+        "intellij.jhipster": "//contrib/jhipster",
+        "intellij.jhipster.backend": "//contrib/jhipster/backend",
+        "intellij.jhipster.uml": "//contrib/jhipster/uml",
+        "intellij.jhipster.frontend": "//contrib/jhipster/frontend",
     },
+    main_module = "intellij.jhipster.plugin",
+    module_labels = {"intellij.jhipster.plugin": "//contrib/jhipster/plugin"},
 )
 ### auto-generated section `dev intellij.jhipster.plugin` end
 

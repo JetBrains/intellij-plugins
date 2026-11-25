@@ -6,22 +6,13 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.vcs.perforce` start
 dist_plugin(
-    content_modules = ["intellij.vcs.perforce.util"],
+    content_modules = {"intellij.vcs.perforce.util": "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util"},
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/PerforceIntegration/perforce_util:resources/intellij.vcs.perforce.util.xml": "intellij.vcs.perforce.util.xml",
-    },
-    jars = {
-        "lib/vcs-perforce.jar": ["intellij.vcs.perforce"],
-    },
+    jars = {"lib/vcs-perforce.jar": ["intellij.vcs.perforce"]},
     main_module = "intellij.vcs.perforce",
-    module_jar_paths = {
-        "intellij.vcs.perforce.util": "lib/intellij.vcs.perforce.util.jar",
-    },
-    module_labels = {
-        "intellij.vcs.perforce": "//contrib/PerforceIntegration:vcs-perforce",
-        "intellij.vcs.perforce.util": "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
-    },
+    module_descriptors = ["//contrib/PerforceIntegration/perforce_util:resources/intellij.vcs.perforce.util.xml"],
+    module_jar_paths = {"intellij.vcs.perforce.util": "lib/intellij.vcs.perforce.util.jar"},
+    module_labels = {"intellij.vcs.perforce": "//contrib/PerforceIntegration:vcs-perforce"},
 )
 ### auto-generated section `dev intellij.vcs.perforce` end
 

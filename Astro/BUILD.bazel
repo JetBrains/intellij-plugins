@@ -47,13 +47,9 @@ dist_plugin(
         "astro-language-server": "//contrib/Astro:dist_resources",
         "typescript-astro-plugin": "//contrib/Astro:dist_resources",
     },
-    jars = {
-        "lib/astro.jar": ["intellij.astro"],
-    },
+    jars = {"lib/astro.jar": ["intellij.astro"]},
     main_module = "intellij.astro",
-    module_labels = {
-        "intellij.astro": "//contrib/Astro:astro",
-    },
+    module_labels = {"intellij.astro": "//contrib/Astro:astro"},
 )
 ### auto-generated section `dev intellij.astro` end
 

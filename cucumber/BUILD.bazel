@@ -7,13 +7,9 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 ### auto-generated section `dev intellij.gherkin` start
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
-    jars = {
-        "lib/gherkin.jar": ["intellij.gherkin"],
-    },
+    jars = {"lib/gherkin.jar": ["intellij.gherkin"]},
     main_module = "intellij.gherkin",
-    module_labels = {
-        "intellij.gherkin": "//contrib/cucumber:gherkin",
-    },
+    module_labels = {"intellij.gherkin": "//contrib/cucumber:gherkin"},
 )
 ### auto-generated section `dev intellij.gherkin` end
 

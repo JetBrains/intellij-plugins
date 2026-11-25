@@ -6,22 +6,13 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.handlebars` start
 dist_plugin(
-    content_modules = ["intellij.handlebars.javascript"],
+    content_modules = {"intellij.handlebars.javascript": "//contrib/handlebars/javascript"},
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/handlebars/javascript:resources/intellij.handlebars.javascript.xml": "intellij.handlebars.javascript.xml",
-    },
-    jars = {
-        "lib/handlebars.jar": ["intellij.handlebars"],
-    },
+    jars = {"lib/handlebars.jar": ["intellij.handlebars"]},
     main_module = "intellij.handlebars",
-    mode_refused_content_modules = {
-        "frontend": ["intellij.handlebars.javascript"],
-    },
-    module_labels = {
-        "intellij.handlebars": "//contrib/handlebars:handlebars",
-        "intellij.handlebars.javascript": "//contrib/handlebars/javascript:javascript",
-    },
+    mode_refused_content_modules = {"frontend": ["intellij.handlebars.javascript"]},
+    module_descriptors = ["//contrib/handlebars/javascript:resources/intellij.handlebars.javascript.xml"],
+    module_labels = {"intellij.handlebars": "//contrib/handlebars"},
 )
 ### auto-generated section `dev intellij.handlebars` end
 

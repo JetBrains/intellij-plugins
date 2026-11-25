@@ -5,22 +5,13 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.clion.embedded.platformio` start
 dist_plugin(
-    content_modules = ["intellij.clion.embedded.platformio.terminal"],
+    content_modules = {"intellij.clion.embedded.platformio.terminal": "//contrib/platformio/terminal"},
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/platformio/terminal:resources/intellij.clion.embedded.platformio.terminal.xml": "intellij.clion.embedded.platformio.terminal.xml",
-    },
-    jars = {
-        "lib/clion-embedded-platformio.jar": ["intellij.clion.embedded.platformio"],
-    },
+    jars = {"lib/clion-embedded-platformio.jar": ["intellij.clion.embedded.platformio"]},
     main_module = "intellij.clion.embedded.platformio",
-    mode_refused_content_modules = {
-        "frontend": ["intellij.clion.embedded.platformio.terminal"],
-    },
-    module_labels = {
-        "intellij.clion.embedded.platformio": "//contrib/platformio:platformio",
-        "intellij.clion.embedded.platformio.terminal": "//contrib/platformio/terminal:terminal",
-    },
+    mode_refused_content_modules = {"frontend": ["intellij.clion.embedded.platformio.terminal"]},
+    module_descriptors = ["//contrib/platformio/terminal:resources/intellij.clion.embedded.platformio.terminal.xml"],
+    module_labels = {"intellij.clion.embedded.platformio": "//contrib/platformio"},
 )
 ### auto-generated section `dev intellij.clion.embedded.platformio` end
 

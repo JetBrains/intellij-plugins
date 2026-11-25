@@ -5,18 +5,12 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.clion.diagnostics` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.clion.diagnostics.core",
-        "intellij.clion.diagnostics.cmake",
-        "intellij.clion.diagnostics.docker",
-    ],
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/cpp-diagnostics/cmake:resources/intellij.clion.diagnostics.cmake.xml": "intellij.clion.diagnostics.cmake.xml",
-        "//contrib/cpp-diagnostics/core:resources/intellij.clion.diagnostics.core.xml": "intellij.clion.diagnostics.core.xml",
-        "//contrib/cpp-diagnostics/docker:resources/intellij.clion.diagnostics.docker.xml": "intellij.clion.diagnostics.docker.xml",
+    content_modules = {
+        "intellij.clion.diagnostics.core": "//contrib/cpp-diagnostics/core",
+        "intellij.clion.diagnostics.cmake": "//contrib/cpp-diagnostics/cmake",
+        "intellij.clion.diagnostics.docker": "//contrib/cpp-diagnostics/docker",
     },
+    descriptor = "resources/META-INF/plugin.xml",
     jars = {
         "lib/clion-diagnostics.jar": [
             "intellij.clion.diagnostics",
@@ -30,12 +24,12 @@ dist_plugin(
             "intellij.clion.diagnostics.docker",
         ],
     },
-    module_labels = {
-        "intellij.clion.diagnostics": "//contrib/cpp-diagnostics:clion-diagnostics",
-        "intellij.clion.diagnostics.cmake": "//contrib/cpp-diagnostics/cmake:cmake",
-        "intellij.clion.diagnostics.core": "//contrib/cpp-diagnostics/core:core",
-        "intellij.clion.diagnostics.docker": "//contrib/cpp-diagnostics/docker:docker",
-    },
+    module_descriptors = [
+        "//contrib/cpp-diagnostics/cmake:resources/intellij.clion.diagnostics.cmake.xml",
+        "//contrib/cpp-diagnostics/core:resources/intellij.clion.diagnostics.core.xml",
+        "//contrib/cpp-diagnostics/docker:resources/intellij.clion.diagnostics.docker.xml",
+    ],
+    module_labels = {"intellij.clion.diagnostics": "//contrib/cpp-diagnostics:clion-diagnostics"},
 )
 ### auto-generated section `dev intellij.clion.diagnostics` end
 

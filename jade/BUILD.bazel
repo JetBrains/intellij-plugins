@@ -6,19 +6,12 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.jade` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.jade.css",
-        "intellij.jade.watcher",
-    ],
+    content_modules = {
+        "intellij.jade.css": "//contrib/jade/css",
+        "intellij.jade.watcher": "//contrib/jade/watcher",
+    },
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/jade/css:resources/intellij.jade.css.xml": "intellij.jade.css.xml",
-        "//contrib/jade/watcher:resources/intellij.jade.watcher.xml": "intellij.jade.watcher.xml",
-    },
-    jars = {
-        "lib/jade.jar": ["intellij.jade"],
-    },
+    jars = {"lib/jade.jar": ["intellij.jade"]},
     main_module = "intellij.jade",
     mode_refused_content_modules = {
         "frontend": [
@@ -26,11 +19,11 @@ dist_plugin(
             "intellij.jade.watcher",
         ],
     },
-    module_labels = {
-        "intellij.jade": "//contrib/jade:jade",
-        "intellij.jade.css": "//contrib/jade/css:css",
-        "intellij.jade.watcher": "//contrib/jade/watcher:watcher",
-    },
+    module_descriptors = [
+        "//contrib/jade/css:resources/intellij.jade.css.xml",
+        "//contrib/jade/watcher:resources/intellij.jade.watcher.xml",
+    ],
+    module_labels = {"intellij.jade": "//contrib/jade"},
 )
 ### auto-generated section `dev intellij.jade` end
 

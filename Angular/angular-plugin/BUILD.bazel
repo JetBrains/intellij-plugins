@@ -5,18 +5,12 @@ load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_
 
 ### auto-generated section `dev intellij.angular.plugin` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.angular.backend",
-        "intellij.angular.free",
-        "intellij.angular.tslint",
-    ],
-    descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/Angular/angular-backend:resources/intellij.angular.backend.xml": "intellij.angular.backend.xml",
-        "//contrib/Angular/angular-free:resources/intellij.angular.free.xml": "intellij.angular.free.xml",
-        "//contrib/Angular/angular-tslint:resources/intellij.angular.tslint.xml": "intellij.angular.tslint.xml",
+    content_modules = {
+        "intellij.angular.backend": "//contrib/Angular/angular-backend",
+        "intellij.angular.free": "//contrib/Angular/angular-free",
+        "intellij.angular.tslint": "//contrib/Angular/angular-tslint",
     },
+    descriptor = "resources/META-INF/plugin.xml",
     file_prefixes = {
         "angular-service": "contrib/Angular/angular-backend/gen-resources/angular-service",
         "ngCli": "contrib/Angular/angular-backend/gen-resources/ngCli",
@@ -25,9 +19,7 @@ dist_plugin(
         "angular-service": "//contrib/Angular/angular-backend:dist_resources",
         "ngCli": "//contrib/Angular/angular-backend:dist_resources",
     },
-    jars = {
-        "lib/angular-plugin.jar": ["intellij.angular.plugin"],
-    },
+    jars = {"lib/angular-plugin.jar": ["intellij.angular.plugin"]},
     main_module = "intellij.angular.plugin",
     mode_refused_content_modules = {
         "frontend": [
@@ -35,12 +27,12 @@ dist_plugin(
             "intellij.angular.tslint",
         ],
     },
-    module_labels = {
-        "intellij.angular.backend": "//contrib/Angular/angular-backend:angular-backend",
-        "intellij.angular.free": "//contrib/Angular/angular-free:angular-free",
-        "intellij.angular.plugin": "//contrib/Angular/angular-plugin:angular-plugin",
-        "intellij.angular.tslint": "//contrib/Angular/angular-tslint:angular-tslint",
-    },
+    module_descriptors = [
+        "//contrib/Angular/angular-backend:resources/intellij.angular.backend.xml",
+        "//contrib/Angular/angular-free:resources/intellij.angular.free.xml",
+        "//contrib/Angular/angular-tslint:resources/intellij.angular.tslint.xml",
+    ],
+    module_labels = {"intellij.angular.plugin": "//contrib/Angular/angular-plugin"},
 )
 ### auto-generated section `dev intellij.angular.plugin` end
 

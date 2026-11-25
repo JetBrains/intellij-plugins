@@ -13,19 +13,13 @@ pkg_files(
 
 ### auto-generated section `dev intellij.flex` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.flex.css",
-        "intellij.flex.jps",
-        "intellij.flex.shared",
-    ],
-    main_module = "intellij.flex",
-    module_labels = {
-        "intellij.flex": "//contrib/flex:flex",
-        "intellij.flex.css": "//contrib/flex/css:css",
+    content_modules = {
+        "intellij.flex.css": "//contrib/flex/css",
         "intellij.flex.jps": "//contrib/flex/jps-plugin:jps",
         "intellij.flex.shared": "//contrib/flex/flex-shared:shared",
     },
+    main_module = "intellij.flex",
+    module_labels = {"intellij.flex": "//contrib/flex"},
 )
 ### auto-generated section `dev intellij.flex` end
 

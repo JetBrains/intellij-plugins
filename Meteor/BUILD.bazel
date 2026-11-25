@@ -6,17 +6,12 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.meteor` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.meteor.liveEdit",
-        "intellij.meteor.watcher",
-    ],
-    main_module = "intellij.meteor",
-    module_labels = {
-        "intellij.meteor": "//contrib/Meteor:meteor",
-        "intellij.meteor.liveEdit": "//contrib/Meteor/liveEdit:liveEdit",
-        "intellij.meteor.watcher": "//contrib/Meteor/watcher:watcher",
+    content_modules = {
+        "intellij.meteor.liveEdit": "//contrib/Meteor/liveEdit",
+        "intellij.meteor.watcher": "//contrib/Meteor/watcher",
     },
+    main_module = "intellij.meteor",
+    module_labels = {"intellij.meteor": "//contrib/Meteor:meteor"},
 )
 ### auto-generated section `dev intellij.meteor` end
 

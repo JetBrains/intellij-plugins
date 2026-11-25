@@ -6,29 +6,18 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.cucumber.java` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.libraries.junit4",
-        "intellij.cucumber.jvmFormatter",
-        "intellij.cucumber.jvmFormatter3",
-        "intellij.cucumber.jvmFormatter4",
-        "intellij.cucumber.jvmFormatter5",
-        "intellij.libraries.hamcrest",
-        "intellij.libraries.cucumber",
-        "intellij.libraries.cucumber.core1",
-    ],
-    main_module = "intellij.cucumber.java",
-    module_labels = {
-        "intellij.cucumber.java": "//contrib/cucumber-java:cucumber-java",
+    content_modules = {
+        "intellij.libraries.junit4": "@community//libraries/junit4",
         "intellij.cucumber.jvmFormatter": "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
         "intellij.cucumber.jvmFormatter3": "@community//plugins/cucumber-jvm-formatter3:cucumber-jvmFormatter3",
         "intellij.cucumber.jvmFormatter4": "@community//plugins/cucumber-jvm-formatter4:cucumber-jvmFormatter4",
         "intellij.cucumber.jvmFormatter5": "@community//plugins/cucumber-jvm-formatter5:cucumber-jvmFormatter5",
-        "intellij.libraries.cucumber": "//libraries/cucumber:cucumber",
-        "intellij.libraries.cucumber.core1": "@community//libraries/cucumber-core1:cucumber-core1",
-        "intellij.libraries.hamcrest": "@community//libraries/hamcrest:hamcrest",
-        "intellij.libraries.junit4": "@community//libraries/junit4:junit4",
+        "intellij.libraries.hamcrest": "@community//libraries/hamcrest",
+        "intellij.libraries.cucumber": "//libraries/cucumber",
+        "intellij.libraries.cucumber.core1": "@community//libraries/cucumber-core1",
     },
+    main_module = "intellij.cucumber.java",
+    module_labels = {"intellij.cucumber.java": "//contrib/cucumber-java"},
 )
 ### auto-generated section `dev intellij.cucumber.java` end
 

@@ -5,25 +5,18 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.makefile` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.makefile.spellchecker",
-        "intellij.makefile.terminal",
-    ],
+    content_modules = {
+        "intellij.makefile.spellchecker": "//contrib/makefile/spellchecker",
+        "intellij.makefile.terminal": "//contrib/makefile/terminal",
+    },
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/makefile/spellchecker:resources/intellij.makefile.spellchecker.xml": "intellij.makefile.spellchecker.xml",
-        "//contrib/makefile/terminal:resources/intellij.makefile.terminal.xml": "intellij.makefile.terminal.xml",
-    },
-    jars = {
-        "lib/makefile.jar": ["intellij.makefile"],
-    },
+    jars = {"lib/makefile.jar": ["intellij.makefile"]},
     main_module = "intellij.makefile",
-    module_labels = {
-        "intellij.makefile": "//contrib/makefile:makefile",
-        "intellij.makefile.spellchecker": "//contrib/makefile/spellchecker:spellchecker",
-        "intellij.makefile.terminal": "//contrib/makefile/terminal:terminal",
-    },
+    module_descriptors = [
+        "//contrib/makefile/spellchecker:resources/intellij.makefile.spellchecker.xml",
+        "//contrib/makefile/terminal:resources/intellij.makefile.terminal.xml",
+    ],
+    module_labels = {"intellij.makefile": "//contrib/makefile"},
 )
 ### auto-generated section `dev intellij.makefile` end
 

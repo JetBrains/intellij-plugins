@@ -7,13 +7,9 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### auto-generated section `dev intellij.javascript.jshint` start
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
-    jars = {
-        "lib/javascript-jshint.jar": ["intellij.javascript.jshint"],
-    },
+    jars = {"lib/javascript-jshint.jar": ["intellij.javascript.jshint"]},
     main_module = "intellij.javascript.jshint",
-    module_labels = {
-        "intellij.javascript.jshint": "//contrib/javascript/jshint:jshint",
-    },
+    module_labels = {"intellij.javascript.jshint": "//contrib/javascript/jshint"},
 )
 ### auto-generated section `dev intellij.javascript.jshint` end
 

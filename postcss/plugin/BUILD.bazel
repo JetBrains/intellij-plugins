@@ -5,28 +5,19 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.postcss.plugin` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.postcss.copyright",
-        "intellij.postcss.paid",
-    ],
+    content_modules = {
+        "intellij.postcss.copyright": "//contrib/postcss/copyright",
+        "intellij.postcss.paid": "//contrib/postcss/paid",
+    },
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/postcss/copyright:resources/intellij.postcss.copyright.xml": "intellij.postcss.copyright.xml",
-        "//contrib/postcss/paid:resources/intellij.postcss.paid.xml": "intellij.postcss.paid.xml",
-    },
-    jars = {
-        "lib/postcss-plugin.jar": ["intellij.postcss.plugin"],
-    },
+    jars = {"lib/postcss-plugin.jar": ["intellij.postcss.plugin"]},
     main_module = "intellij.postcss.plugin",
-    mode_refused_content_modules = {
-        "frontend": ["intellij.postcss.paid"],
-    },
-    module_labels = {
-        "intellij.postcss.copyright": "//contrib/postcss/copyright:copyright",
-        "intellij.postcss.paid": "//contrib/postcss/paid:paid",
-        "intellij.postcss.plugin": "//contrib/postcss/plugin:plugin",
-    },
+    mode_refused_content_modules = {"frontend": ["intellij.postcss.paid"]},
+    module_descriptors = [
+        "//contrib/postcss/copyright:resources/intellij.postcss.copyright.xml",
+        "//contrib/postcss/paid:resources/intellij.postcss.paid.xml",
+    ],
+    module_labels = {"intellij.postcss.plugin": "//contrib/postcss/plugin"},
 )
 ### auto-generated section `dev intellij.postcss.plugin` end
 

@@ -16,25 +16,14 @@ filegroup(
 )
 
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.javascript.karma.coverage",
-        "intellij.javascript.karma.debug",
-    ],
+    content_modules = {
+        "intellij.javascript.karma.coverage": "//contrib/js-karma/coverage",
+        "intellij.javascript.karma.debug": "//contrib/js-karma/debug",
+    },
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/js-karma/coverage:resources/intellij.javascript.karma.coverage.xml": "intellij.javascript.karma.coverage.xml",
-        "//contrib/js-karma/debug:resources/intellij.javascript.karma.debug.xml": "intellij.javascript.karma.debug.xml",
-    },
-    file_prefixes = {
-        "js_reporter": "contrib/js-karma/js_reporter",
-    },
-    files = {
-        "js_reporter": "//contrib/js-karma:dist_resources",
-    },
-    jars = {
-        "lib/karma.jar": ["intellij.karma"],
-    },
+    file_prefixes = {"js_reporter": "contrib/js-karma/js_reporter"},
+    files = {"js_reporter": "//contrib/js-karma:dist_resources"},
+    jars = {"lib/karma.jar": ["intellij.karma"]},
     main_module = "intellij.karma",
     mode_refused_content_modules = {
         "frontend": [
@@ -42,11 +31,11 @@ dist_plugin(
             "intellij.javascript.karma.debug",
         ],
     },
-    module_labels = {
-        "intellij.javascript.karma.coverage": "//contrib/js-karma/coverage:coverage",
-        "intellij.javascript.karma.debug": "//contrib/js-karma/debug:debug",
-        "intellij.karma": "//contrib/js-karma:karma",
-    },
+    module_descriptors = [
+        "//contrib/js-karma/coverage:resources/intellij.javascript.karma.coverage.xml",
+        "//contrib/js-karma/debug:resources/intellij.javascript.karma.debug.xml",
+    ],
+    module_labels = {"intellij.karma": "//contrib/js-karma:karma"},
 )
 ### auto-generated section `dev intellij.karma` end
 

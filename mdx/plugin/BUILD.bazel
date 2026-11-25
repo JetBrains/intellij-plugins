@@ -5,25 +5,16 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.mdx.plugin` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.mdx",
-        "intellij.mdx.shared",
-        "intellij.mdx.react",
-        "intellij.mdx.backend",
-        "intellij.mdx.frontend",
-        "intellij.mdx.frontend.split",
-    ],
-    main_module = "intellij.mdx.plugin",
-    module_labels = {
-        "intellij.mdx": "//contrib/mdx:mdx",
-        "intellij.mdx.backend": "//contrib/mdx/backend:backend",
-        "intellij.mdx.frontend": "//contrib/mdx/frontend:frontend",
-        "intellij.mdx.frontend.split": "//contrib/mdx/frontend.split:frontend.split",
-        "intellij.mdx.plugin": "//contrib/mdx/plugin:plugin",
-        "intellij.mdx.react": "//contrib/mdx/react:react",
-        "intellij.mdx.shared": "//contrib/mdx/shared:shared",
+    content_modules = {
+        "intellij.mdx": "//contrib/mdx",
+        "intellij.mdx.shared": "//contrib/mdx/shared",
+        "intellij.mdx.react": "//contrib/mdx/react",
+        "intellij.mdx.backend": "//contrib/mdx/backend",
+        "intellij.mdx.frontend": "//contrib/mdx/frontend",
+        "intellij.mdx.frontend.split": "//contrib/mdx/frontend.split",
     },
+    main_module = "intellij.mdx.plugin",
+    module_labels = {"intellij.mdx.plugin": "//contrib/mdx/plugin"},
 )
 ### auto-generated section `dev intellij.mdx.plugin` end
 

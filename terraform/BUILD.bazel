@@ -7,29 +7,23 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.terraform` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.terraform.watchers",
-        "intellij.terraform.copyright",
-        "intellij.terraform.template",
-    ],
-    descriptor = "res/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/terraform/copyright:resources/intellij.terraform.copyright.xml": "intellij.terraform.copyright.xml",
-        "//contrib/terraform/terraform-template:resource/intellij.terraform.template.xml": "intellij.terraform.template.xml",
-        "//contrib/terraform/watchers:resources/intellij.terraform.watchers.xml": "intellij.terraform.watchers.xml",
+    content_modules = {
+        "intellij.terraform.watchers": "//contrib/terraform/watchers",
+        "intellij.terraform.copyright": "//contrib/terraform/copyright",
+        "intellij.terraform.template": "//contrib/terraform/terraform-template:template",
     },
+    descriptor = "res/META-INF/plugin.xml",
     jars = {
         "lib/terraform.jar": ["intellij.terraform"],
         "lib/terraform-metadata.jar": ["@ultimate_lib//:terraform-terraform-metadata"],
     },
     main_module = "intellij.terraform",
-    module_labels = {
-        "intellij.terraform": "//contrib/terraform:terraform",
-        "intellij.terraform.copyright": "//contrib/terraform/copyright:copyright",
-        "intellij.terraform.template": "//contrib/terraform/terraform-template:template",
-        "intellij.terraform.watchers": "//contrib/terraform/watchers:watchers",
-    },
+    module_descriptors = [
+        "//contrib/terraform/copyright:resources/intellij.terraform.copyright.xml",
+        "//contrib/terraform/terraform-template:resource/intellij.terraform.template.xml",
+        "//contrib/terraform/watchers:resources/intellij.terraform.watchers.xml",
+    ],
+    module_labels = {"intellij.terraform": "//contrib/terraform"},
 )
 ### auto-generated section `dev intellij.terraform` end
 

@@ -5,17 +5,12 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.gauge` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.gauge.gradle",
-        "intellij.gauge.maven",
-    ],
-    main_module = "intellij.gauge",
-    module_labels = {
-        "intellij.gauge": "//contrib/gauge:gauge",
-        "intellij.gauge.gradle": "//contrib/gauge/gradle:gradle",
-        "intellij.gauge.maven": "//contrib/gauge/maven:maven",
+    content_modules = {
+        "intellij.gauge.gradle": "//contrib/gauge/gradle",
+        "intellij.gauge.maven": "//contrib/gauge/maven",
     },
+    main_module = "intellij.gauge",
+    module_labels = {"intellij.gauge": "//contrib/gauge"},
 )
 ### auto-generated section `dev intellij.gauge` end
 

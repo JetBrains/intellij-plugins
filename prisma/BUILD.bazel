@@ -18,19 +18,11 @@ filegroup(
 
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
-    file_prefixes = {
-        "language-server": "contrib/prisma/gen-resources/language-server",
-    },
-    files = {
-        "language-server": "//contrib/prisma:dist_resources",
-    },
-    jars = {
-        "lib/prisma.jar": ["intellij.prisma"],
-    },
+    file_prefixes = {"language-server": "contrib/prisma/gen-resources/language-server"},
+    files = {"language-server": "//contrib/prisma:dist_resources"},
+    jars = {"lib/prisma.jar": ["intellij.prisma"]},
     main_module = "intellij.prisma",
-    module_labels = {
-        "intellij.prisma": "//contrib/prisma:prisma",
-    },
+    module_labels = {"intellij.prisma": "//contrib/prisma"},
 )
 ### auto-generated section `dev intellij.prisma` end
 

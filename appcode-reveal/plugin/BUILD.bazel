@@ -5,12 +5,9 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.appcode.reveal.plugin` start
 dist_plugin(
-    content_modules = ["intellij.appcode.reveal"],
+    content_modules = {"intellij.appcode.reveal": "//contrib/appcode-reveal"},
     main_module = "intellij.appcode.reveal.plugin",
-    module_labels = {
-        "intellij.appcode.reveal": "//contrib/appcode-reveal:appcode-reveal",
-        "intellij.appcode.reveal.plugin": "//contrib/appcode-reveal/plugin:plugin",
-    },
+    module_labels = {"intellij.appcode.reveal.plugin": "//contrib/appcode-reveal/plugin"},
 )
 ### auto-generated section `dev intellij.appcode.reveal.plugin` end
 

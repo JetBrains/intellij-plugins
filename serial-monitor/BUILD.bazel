@@ -7,9 +7,7 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 dist_plugin(
     descriptor = "src/main/resources/META-INF/plugin.xml",
     main_module = "intellij.serial.monitor",
-    module_labels = {
-        "intellij.serial.monitor": "//contrib/serial-monitor:serial-monitor",
-    },
+    module_labels = {"intellij.serial.monitor": "//contrib/serial-monitor"},
 )
 
 dist_complex_plugin(

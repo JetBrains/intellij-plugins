@@ -5,23 +5,14 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.protoeditor` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.protoeditor.core",
-        "intellij.protoeditor.go",
-        "intellij.protoeditor.python",
-        "intellij.protoeditor.jvm",
-    ],
+    content_modules = {
+        "intellij.protoeditor.core": "//contrib/protobuf/protoeditor-core",
+        "intellij.protoeditor.go": "//contrib/protobuf/protoeditor-go",
+        "intellij.protoeditor.python": "//contrib/protobuf/protoeditor-python",
+        "intellij.protoeditor.jvm": "//contrib/protobuf/protoeditor-jvm",
+    },
     descriptor = "resources/META-INF/plugin.xml",
-    descriptors = {
-        "//contrib/protobuf/protoeditor-core:resources/intellij.protoeditor.core.xml": "intellij.protoeditor.core.xml",
-        "//contrib/protobuf/protoeditor-go:resources/intellij.protoeditor.go.xml": "intellij.protoeditor.go.xml",
-        "//contrib/protobuf/protoeditor-jvm:resources/intellij.protoeditor.jvm.xml": "intellij.protoeditor.jvm.xml",
-        "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml": "intellij.protoeditor.python.xml",
-    },
-    jars = {
-        "lib/protoeditor.jar": ["intellij.protoeditor"],
-    },
+    jars = {"lib/protoeditor.jar": ["intellij.protoeditor"]},
     main_module = "intellij.protoeditor",
     mode_refused_content_modules = {
         "frontend": [
@@ -30,13 +21,13 @@ dist_plugin(
             "intellij.protoeditor.jvm",
         ],
     },
-    module_labels = {
-        "intellij.protoeditor": "//contrib/protobuf:protoeditor",
-        "intellij.protoeditor.core": "//contrib/protobuf/protoeditor-core:protoeditor-core",
-        "intellij.protoeditor.go": "//contrib/protobuf/protoeditor-go:protoeditor-go",
-        "intellij.protoeditor.jvm": "//contrib/protobuf/protoeditor-jvm:protoeditor-jvm",
-        "intellij.protoeditor.python": "//contrib/protobuf/protoeditor-python:protoeditor-python",
-    },
+    module_descriptors = [
+        "//contrib/protobuf/protoeditor-core:resources/intellij.protoeditor.core.xml",
+        "//contrib/protobuf/protoeditor-go:resources/intellij.protoeditor.go.xml",
+        "//contrib/protobuf/protoeditor-jvm:resources/intellij.protoeditor.jvm.xml",
+        "//contrib/protobuf/protoeditor-python:resources/intellij.protoeditor.python.xml",
+    ],
+    module_labels = {"intellij.protoeditor": "//contrib/protobuf:protoeditor"},
 )
 ### auto-generated section `dev intellij.protoeditor` end
 

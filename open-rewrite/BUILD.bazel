@@ -6,23 +6,15 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.openRewrite` start
 dist_plugin(
-    content_modules = [
-        # do not sort,
-        "intellij.openRewrite.gradle",
-        "intellij.openRewrite.maven",
-        "intellij.openRewrite.micronaut",
-        "intellij.openRewrite.quarkus",
-        "intellij.openRewrite.spring.boot",
-    ],
-    main_module = "intellij.openRewrite",
-    module_labels = {
-        "intellij.openRewrite": "//contrib/open-rewrite:open-rewrite",
-        "intellij.openRewrite.gradle": "//contrib/open-rewrite/gradle:gradle",
-        "intellij.openRewrite.maven": "//contrib/open-rewrite/maven:maven",
-        "intellij.openRewrite.micronaut": "//contrib/open-rewrite/micronaut:micronaut",
-        "intellij.openRewrite.quarkus": "//contrib/open-rewrite/quarkus:quarkus",
+    content_modules = {
+        "intellij.openRewrite.gradle": "//contrib/open-rewrite/gradle",
+        "intellij.openRewrite.maven": "//contrib/open-rewrite/maven",
+        "intellij.openRewrite.micronaut": "//contrib/open-rewrite/micronaut",
+        "intellij.openRewrite.quarkus": "//contrib/open-rewrite/quarkus",
         "intellij.openRewrite.spring.boot": "//contrib/open-rewrite/spring-boot:openRewrite-spring-boot",
     },
+    main_module = "intellij.openRewrite",
+    module_labels = {"intellij.openRewrite": "//contrib/open-rewrite"},
 )
 ### auto-generated section `dev intellij.openRewrite` end
 

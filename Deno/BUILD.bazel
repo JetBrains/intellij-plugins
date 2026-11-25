@@ -24,19 +24,11 @@ filegroup(
 
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
-    file_prefixes = {
-        "deno-service": "contrib/Deno/gen-resources/deno-service",
-    },
-    files = {
-        "deno-service": "//contrib/Deno:dist_resources",
-    },
-    jars = {
-        "lib/deno.jar": ["intellij.deno"],
-    },
+    file_prefixes = {"deno-service": "contrib/Deno/gen-resources/deno-service"},
+    files = {"deno-service": "//contrib/Deno:dist_resources"},
+    jars = {"lib/deno.jar": ["intellij.deno"]},
     main_module = "intellij.deno",
-    module_labels = {
-        "intellij.deno": "//contrib/Deno:deno",
-    },
+    module_labels = {"intellij.deno": "//contrib/Deno:deno"},
 )
 ### auto-generated section `dev intellij.deno` end
 

@@ -17,19 +17,11 @@ filegroup(
 
 dist_plugin(
     descriptor = "resources/META-INF/plugin.xml",
-    file_prefixes = {
-        "js": "contrib/tslint/gen/js",
-    },
-    files = {
-        "js": "//contrib/tslint:dist_resources",
-    },
-    jars = {
-        "lib/tslint.jar": ["intellij.tslint"],
-    },
+    file_prefixes = {"js": "contrib/tslint/gen/js"},
+    files = {"js": "//contrib/tslint:dist_resources"},
+    jars = {"lib/tslint.jar": ["intellij.tslint"]},
     main_module = "intellij.tslint",
-    module_labels = {
-        "intellij.tslint": "//contrib/tslint:tslint",
-    },
+    module_labels = {"intellij.tslint": "//contrib/tslint"},
 )
 ### auto-generated section `dev intellij.tslint` end
 
