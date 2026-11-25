@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -62,11 +63,9 @@ jvm_library(
 ### auto-generated section `build intellij.javascript.karma.debug` end
 
 ### auto-generated section `iml intellij.javascript.karma.debug` start
-exports_files(
-    [
-        "intellij.javascript.karma.debug.iml",
-        "resources/intellij.javascript.karma.debug.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.javascript.karma.debug",
+    descriptors = ["resources/intellij.javascript.karma.debug.xml"],
+    target = "debug",
 )
 ### auto-generated section `iml intellij.javascript.karma.debug` end

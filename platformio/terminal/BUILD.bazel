@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -35,11 +36,9 @@ jvm_library(
 ### auto-generated section `build intellij.clion.embedded.platformio.terminal` end
 
 ### auto-generated section `iml intellij.clion.embedded.platformio.terminal` start
-exports_files(
-    [
-        "intellij.clion.embedded.platformio.terminal.iml",
-        "resources/intellij.clion.embedded.platformio.terminal.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.clion.embedded.platformio.terminal",
+    descriptors = ["resources/intellij.clion.embedded.platformio.terminal.xml"],
+    target = "terminal",
 )
 ### auto-generated section `iml intellij.clion.embedded.platformio.terminal` end

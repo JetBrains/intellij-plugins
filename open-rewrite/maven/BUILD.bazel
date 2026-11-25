@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -38,12 +39,10 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.maven` end
 
 ### auto-generated section `iml intellij.openRewrite.maven` start
-exports_files(
-    [
-        "intellij.openRewrite.maven.iml",
-        "resources/intellij.openRewrite.maven.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.maven",
+    descriptors = ["resources/intellij.openRewrite.maven.xml"],
+    target = "maven",
 )
 ### auto-generated section `iml intellij.openRewrite.maven` end
 
@@ -97,11 +96,10 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.maven.tests` end
 
 ### auto-generated section `iml intellij.openRewrite.maven.tests` start
-exports_files(
-    [
-        "intellij.openRewrite.maven.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.maven.tests",
+    resources = False,
+    target = "openRewrite-maven-tests_test_lib",
 )
 ### auto-generated section `iml intellij.openRewrite.maven.tests` end
 

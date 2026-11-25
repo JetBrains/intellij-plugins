@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -64,12 +65,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.jboss.drools` end
 
 ### auto-generated section `iml intellij.jboss.drools` start
-exports_files(
-    [
-        "intellij.jboss.drools.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.jboss.drools",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "drools",
 )
 ### auto-generated section `iml intellij.jboss.drools` end
 
@@ -124,11 +124,10 @@ jvm_library(
 ### auto-generated section `build intellij.jboss.drools.tests` end
 
 ### auto-generated section `iml intellij.jboss.drools.tests` start
-exports_files(
-    [
-        "intellij.jboss.drools.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.jboss.drools.tests",
+    resources = False,
+    target = "jboss-drools-tests_test_lib",
 )
 ### auto-generated section `iml intellij.jboss.drools.tests` end
 

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -40,11 +41,9 @@ jvm_library(
 ### auto-generated section `build intellij.jade.watcher` end
 
 ### auto-generated section `iml intellij.jade.watcher` start
-exports_files(
-    [
-        "intellij.jade.watcher.iml",
-        "resources/intellij.jade.watcher.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.jade.watcher",
+    descriptors = ["resources/intellij.jade.watcher.xml"],
+    target = "watcher",
 )
 ### auto-generated section `iml intellij.jade.watcher` end

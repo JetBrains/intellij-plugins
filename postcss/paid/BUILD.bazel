@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -69,11 +70,9 @@ jvm_library(
 ### auto-generated section `build intellij.postcss.paid` end
 
 ### auto-generated section `iml intellij.postcss.paid` start
-exports_files(
-    [
-        "intellij.postcss.paid.iml",
-        "resources/intellij.postcss.paid.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.postcss.paid",
+    descriptors = ["resources/intellij.postcss.paid.xml"],
+    target = "paid",
 )
 ### auto-generated section `iml intellij.postcss.paid` end

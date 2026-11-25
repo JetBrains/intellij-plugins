@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -59,11 +60,9 @@ jvm_library(
 ### auto-generated section `build intellij.flex.css` end
 
 ### auto-generated section `iml intellij.flex.css` start
-exports_files(
-    [
-        "intellij.flex.css.iml",
-        "resources/intellij.flex.css.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.flex.css",
+    descriptors = ["resources/intellij.flex.css.xml"],
+    target = "css",
 )
 ### auto-generated section `iml intellij.flex.css` end

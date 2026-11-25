@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -54,12 +55,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.git` end
 
 ### auto-generated section `iml intellij.qodana.git` start
-exports_files(
-    [
-        "intellij.qodana.git.iml",
-        "resources/intellij.qodana.git.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.git",
+    descriptors = ["resources/intellij.qodana.git.xml"],
+    target = "git",
 )
 ### auto-generated section `iml intellij.qodana.git` end
 
@@ -115,11 +114,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.git.tests` end
 
 ### auto-generated section `iml intellij.qodana.git.tests` start
-exports_files(
-    [
-        "intellij.qodana.git.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.git.tests",
+    resources = False,
+    target = "git-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.git.tests` end
 

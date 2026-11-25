@@ -1,5 +1,6 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.mdx.plugin` start
@@ -14,6 +15,15 @@ dist_plugin(
         "intellij.mdx.frontend.split",
     ],
     main_module = "intellij.mdx.plugin",
+    module_labels = {
+        "intellij.mdx": "//contrib/mdx:mdx",
+        "intellij.mdx.backend": "//contrib/mdx/backend:backend",
+        "intellij.mdx.frontend": "//contrib/mdx/frontend:frontend",
+        "intellij.mdx.frontend.split": "//contrib/mdx/frontend.split:frontend.split",
+        "intellij.mdx.plugin": "//contrib/mdx/plugin:plugin",
+        "intellij.mdx.react": "//contrib/mdx/react:react",
+        "intellij.mdx.shared": "//contrib/mdx/shared:shared",
+    },
 )
 ### auto-generated section `dev intellij.mdx.plugin` end
 
@@ -51,11 +61,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.mdx.plugin` end
 
 ### auto-generated section `iml intellij.mdx.plugin` start
-exports_files(
-    [
-        "intellij.mdx.plugin.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.mdx.plugin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "plugin",
 )
 ### auto-generated section `iml intellij.mdx.plugin` end

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
@@ -83,12 +84,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.yeoman` end
 
 ### auto-generated section `iml intellij.yeoman` start
-exports_files(
-    [
-        "intellij.yeoman.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.yeoman",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "yeoman",
 )
 ### auto-generated section `iml intellij.yeoman` end
 
@@ -117,11 +117,10 @@ jvm_library(
 ### auto-generated section `build intellij.yeoman.tests` end
 
 ### auto-generated section `iml intellij.yeoman.tests` start
-exports_files(
-    [
-        "intellij.yeoman.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.yeoman.tests",
+    resources = False,
+    target = "yeoman-tests_test_lib",
 )
 ### auto-generated section `iml intellij.yeoman.tests` end
 

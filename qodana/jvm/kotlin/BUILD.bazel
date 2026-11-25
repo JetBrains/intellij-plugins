@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -41,12 +42,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.kotlin` end
 
 ### auto-generated section `iml intellij.qodana.jvm.kotlin` start
-exports_files(
-    [
-        "intellij.qodana.jvm.kotlin.iml",
-        "resources/intellij.qodana.jvm.kotlin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.kotlin",
+    descriptors = ["resources/intellij.qodana.jvm.kotlin.xml"],
+    target = "kotlin",
 )
 ### auto-generated section `iml intellij.qodana.jvm.kotlin` end
 
@@ -96,11 +95,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.kotlin.tests` end
 
 ### auto-generated section `iml intellij.qodana.jvm.kotlin.tests` start
-exports_files(
-    [
-        "intellij.qodana.jvm.kotlin.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.kotlin.tests",
+    resources = False,
+    target = "qodana-jvm-kotlin-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.jvm.kotlin.tests` end
 

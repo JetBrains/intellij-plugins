@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.openRewrite.micronaut` start
@@ -29,11 +30,9 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.micronaut` end
 
 ### auto-generated section `iml intellij.openRewrite.micronaut` start
-exports_files(
-    [
-        "intellij.openRewrite.micronaut.iml",
-        "resources/intellij.openRewrite.micronaut.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.micronaut",
+    descriptors = ["resources/intellij.openRewrite.micronaut.xml"],
+    target = "micronaut",
 )
 ### auto-generated section `iml intellij.openRewrite.micronaut` end

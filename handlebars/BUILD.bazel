@@ -1,18 +1,26 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.handlebars` start
 dist_plugin(
     content_modules = ["intellij.handlebars.javascript"],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/handlebars/javascript:resources/intellij.handlebars.javascript.xml": "intellij.handlebars.javascript.xml",
+    },
     jars = {
         "lib/handlebars.jar": ["intellij.handlebars"],
     },
     main_module = "intellij.handlebars",
     mode_refused_content_modules = {
         "frontend": ["intellij.handlebars.javascript"],
+    },
+    module_labels = {
+        "intellij.handlebars": "//contrib/handlebars:handlebars",
+        "intellij.handlebars.javascript": "//contrib/handlebars/javascript:javascript",
     },
 )
 ### auto-generated section `dev intellij.handlebars` end
@@ -89,13 +97,12 @@ ij_plugin(
 ### auto-generated section `plugin intellij.handlebars` end
 
 ### auto-generated section `iml intellij.handlebars` start
-exports_files(
-    [
-        "intellij.handlebars.iml",
-        "resources/META-INF/plugin.xml",
-        "resources/liveTemplates/Handlebars.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.handlebars",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "handlebars",
+    exports = ["resources/liveTemplates/Handlebars.xml"],
 )
 ### auto-generated section `iml intellij.handlebars` end
 
@@ -163,11 +170,10 @@ jvm_library(
 ### auto-generated section `build intellij.handlebars.tests` end
 
 ### auto-generated section `iml intellij.handlebars.tests` start
-exports_files(
-    [
-        "intellij.handlebars.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.handlebars.tests",
+    resources = False,
+    target = "handlebars-tests_test_lib",
 )
 ### auto-generated section `iml intellij.handlebars.tests` end
 

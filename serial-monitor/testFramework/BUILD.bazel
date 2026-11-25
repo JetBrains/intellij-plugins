@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.serial.monitor.testFramework` start
@@ -32,11 +33,9 @@ jvm_library(
 ### auto-generated section `build intellij.serial.monitor.testFramework` end
 
 ### auto-generated section `iml intellij.serial.monitor.testFramework` start
-exports_files(
-    [
-        "intellij.serial.monitor.testFramework.iml",
-        "resources/intellij.serial.monitor.testFramework.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.serial.monitor.testFramework",
+    descriptors = ["resources/intellij.serial.monitor.testFramework.xml"],
+    target = "testFramework",
 )
 ### auto-generated section `iml intellij.serial.monitor.testFramework` end

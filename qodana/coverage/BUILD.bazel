@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -46,12 +47,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.coverage` end
 
 ### auto-generated section `iml intellij.qodana.coverage` start
-exports_files(
-    [
-        "intellij.qodana.coverage.iml",
-        "resources/intellij.qodana.coverage.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.coverage",
+    descriptors = ["resources/intellij.qodana.coverage.xml"],
+    target = "coverage",
 )
 ### auto-generated section `iml intellij.qodana.coverage` end
 
@@ -99,10 +98,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.coverage.tests` end
 
 ### auto-generated section `iml intellij.qodana.coverage.tests` start
-exports_files(
-    [
-        "intellij.qodana.coverage.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.coverage.tests",
+    resources = False,
+    target = "coverage-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.coverage.tests` end

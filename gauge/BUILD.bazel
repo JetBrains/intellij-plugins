@@ -1,5 +1,6 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.gauge` start
@@ -10,6 +11,11 @@ dist_plugin(
         "intellij.gauge.maven",
     ],
     main_module = "intellij.gauge",
+    module_labels = {
+        "intellij.gauge": "//contrib/gauge:gauge",
+        "intellij.gauge.gradle": "//contrib/gauge/gradle:gradle",
+        "intellij.gauge.maven": "//contrib/gauge/maven:maven",
+    },
 )
 ### auto-generated section `dev intellij.gauge` end
 
@@ -90,13 +96,11 @@ jvm_library(
 ### auto-generated section `build intellij.gauge` end
 
 ### auto-generated section `iml intellij.gauge` start
-exports_files(
-    [
-        "intellij.gauge.iml",
-        "resources/META-INF/plugin.xml",
-        "resources/liveTemplates/gaugeTemplates.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.gauge",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    target = "gauge",
+    exports = ["resources/liveTemplates/gaugeTemplates.xml"],
 )
 ### auto-generated section `iml intellij.gauge` end
 
@@ -157,11 +161,9 @@ jvm_library(
 ### auto-generated section `build intellij.gauge.tests` end
 
 ### auto-generated section `iml intellij.gauge.tests` start
-exports_files(
-    [
-        "intellij.gauge.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.gauge.tests",
+    target = "gauge-tests_test_lib",
 )
 ### auto-generated section `iml intellij.gauge.tests` end
 

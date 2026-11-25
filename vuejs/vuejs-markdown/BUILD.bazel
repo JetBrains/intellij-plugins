@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -38,11 +39,9 @@ jvm_library(
 ### auto-generated section `build intellij.vuejs.markdown` end
 
 ### auto-generated section `iml intellij.vuejs.markdown` start
-exports_files(
-    [
-        "intellij.vuejs.markdown.iml",
-        "resources/intellij.vuejs.markdown.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vuejs.markdown",
+    descriptors = ["resources/intellij.vuejs.markdown.xml"],
+    target = "markdown",
 )
 ### auto-generated section `iml intellij.vuejs.markdown` end

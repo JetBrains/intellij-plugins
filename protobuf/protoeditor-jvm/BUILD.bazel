@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -40,12 +41,10 @@ jvm_library(
 ### auto-generated section `build intellij.protoeditor.jvm` end
 
 ### auto-generated section `iml intellij.protoeditor.jvm` start
-exports_files(
-    [
-        "intellij.protoeditor.jvm.iml",
-        "resources/intellij.protoeditor.jvm.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.protoeditor.jvm",
+    descriptors = ["resources/intellij.protoeditor.jvm.xml"],
+    target = "protoeditor-jvm",
 )
 ### auto-generated section `iml intellij.protoeditor.jvm` end
 
@@ -100,11 +99,10 @@ jvm_library(
 ### auto-generated section `build intellij.protoeditor.jvm.tests` end
 
 ### auto-generated section `iml intellij.protoeditor.jvm.tests` start
-exports_files(
-    [
-        "intellij.protoeditor.jvm.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.protoeditor.jvm.tests",
+    resources = False,
+    target = "protoeditor-jvm-tests_test_lib",
 )
 ### auto-generated section `iml intellij.protoeditor.jvm.tests` end
 

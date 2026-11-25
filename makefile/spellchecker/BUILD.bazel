@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -34,11 +35,9 @@ jvm_library(
 ### auto-generated section `build intellij.makefile.spellchecker` end
 
 ### auto-generated section `iml intellij.makefile.spellchecker` start
-exports_files(
-    [
-        "intellij.makefile.spellchecker.iml",
-        "resources/intellij.makefile.spellchecker.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.makefile.spellchecker",
+    descriptors = ["resources/intellij.makefile.spellchecker.xml"],
+    target = "spellchecker",
 )
 ### auto-generated section `iml intellij.makefile.spellchecker` end

@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.meteor` start
@@ -11,6 +12,11 @@ dist_plugin(
         "intellij.meteor.watcher",
     ],
     main_module = "intellij.meteor",
+    module_labels = {
+        "intellij.meteor": "//contrib/Meteor:meteor",
+        "intellij.meteor.liveEdit": "//contrib/Meteor/liveEdit:liveEdit",
+        "intellij.meteor.watcher": "//contrib/Meteor/watcher:watcher",
+    },
 )
 ### auto-generated section `dev intellij.meteor` end
 
@@ -106,13 +112,12 @@ ij_plugin(
 ### auto-generated section `plugin intellij.meteor` end
 
 ### auto-generated section `iml intellij.meteor` start
-exports_files(
-    [
-        "intellij.meteor.iml",
-        "resources/META-INF/plugin.xml",
-        "resources/liveTemplates/Meteor.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.meteor",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "meteor",
+    exports = ["resources/liveTemplates/Meteor.xml"],
 )
 ### auto-generated section `iml intellij.meteor` end
 
@@ -172,11 +177,10 @@ jvm_library(
 ### auto-generated section `build intellij.meteor.tests` end
 
 ### auto-generated section `iml intellij.meteor.tests` start
-exports_files(
-    [
-        "intellij.meteor.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.meteor.tests",
+    resources = False,
+    target = "meteor-tests_test_lib",
 )
 ### auto-generated section `iml intellij.meteor.tests` end
 

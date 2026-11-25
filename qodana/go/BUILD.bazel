@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -44,12 +45,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.go` end
 
 ### auto-generated section `iml intellij.qodana.go` start
-exports_files(
-    [
-        "intellij.qodana.go.iml",
-        "resources/intellij.qodana.go.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.go",
+    descriptors = ["resources/intellij.qodana.go.xml"],
+    target = "go",
 )
 ### auto-generated section `iml intellij.qodana.go` end
 
@@ -105,11 +104,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.go.tests` end
 
 ### auto-generated section `iml intellij.qodana.go.tests` start
-exports_files(
-    [
-        "intellij.qodana.go.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.go.tests",
+    resources = False,
+    target = "go-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.go.tests` end
 

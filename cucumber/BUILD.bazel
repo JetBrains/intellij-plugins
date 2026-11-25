@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 ### auto-generated section `dev intellij.gherkin` start
@@ -10,6 +11,9 @@ dist_plugin(
         "lib/gherkin.jar": ["intellij.gherkin"],
     },
     main_module = "intellij.gherkin",
+    module_labels = {
+        "intellij.gherkin": "//contrib/cucumber:gherkin",
+    },
 )
 ### auto-generated section `dev intellij.gherkin` end
 
@@ -89,14 +93,15 @@ ij_plugin(
 ### auto-generated section `plugin intellij.gherkin` end
 
 ### auto-generated section `iml intellij.gherkin` start
-exports_files(
-    [
-        "intellij.gherkin.iml",
-        "resources/META-INF/plugin.xml",
+jps_module(
+    name = "intellij.gherkin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "gherkin",
+    exports = [
         "resources/colorSchemes/GherkinDarcula.xml",
         "resources/colorSchemes/GherkinDefault.xml",
     ],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.gherkin` end
 
@@ -159,11 +164,9 @@ jvm_library(
 ### auto-generated section `build intellij.gherkin.tests` end
 
 ### auto-generated section `iml intellij.gherkin.tests` start
-exports_files(
-    [
-        "intellij.gherkin.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.gherkin.tests",
+    target = "gherkin-tests_test_lib",
 )
 ### auto-generated section `iml intellij.gherkin.tests` end
 

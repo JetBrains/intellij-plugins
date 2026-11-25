@@ -1,11 +1,16 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.errorProne` start
 dist_plugin(
     content_modules = ["intellij.errorProne.jps"],
     main_module = "intellij.errorProne",
+    module_labels = {
+        "intellij.errorProne": "//contrib/error-prone:error-prone",
+        "intellij.errorProne.jps": "//contrib/error-prone/jps-plugin:errorProne-jps",
+    },
 )
 ### auto-generated section `dev intellij.errorProne` end
 
@@ -59,12 +64,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.errorProne` end
 
 ### auto-generated section `iml intellij.errorProne` start
-exports_files(
-    [
-        "intellij.errorProne.iml",
-        "resources/META-INF/plugin.xml",
-        "resources/library/error-prone.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.errorProne",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "error-prone",
+    exports = ["resources/library/error-prone.xml"],
 )
 ### auto-generated section `iml intellij.errorProne` end

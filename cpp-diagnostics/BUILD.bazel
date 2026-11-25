@@ -1,5 +1,6 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.clion.diagnostics` start
@@ -11,6 +12,11 @@ dist_plugin(
         "intellij.clion.diagnostics.docker",
     ],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/cpp-diagnostics/cmake:resources/intellij.clion.diagnostics.cmake.xml": "intellij.clion.diagnostics.cmake.xml",
+        "//contrib/cpp-diagnostics/core:resources/intellij.clion.diagnostics.core.xml": "intellij.clion.diagnostics.core.xml",
+        "//contrib/cpp-diagnostics/docker:resources/intellij.clion.diagnostics.docker.xml": "intellij.clion.diagnostics.docker.xml",
+    },
     jars = {
         "lib/clion-diagnostics.jar": [
             "intellij.clion.diagnostics",
@@ -23,6 +29,12 @@ dist_plugin(
             "intellij.clion.diagnostics.cmake",
             "intellij.clion.diagnostics.docker",
         ],
+    },
+    module_labels = {
+        "intellij.clion.diagnostics": "//contrib/cpp-diagnostics:clion-diagnostics",
+        "intellij.clion.diagnostics.cmake": "//contrib/cpp-diagnostics/cmake:cmake",
+        "intellij.clion.diagnostics.core": "//contrib/cpp-diagnostics/core:core",
+        "intellij.clion.diagnostics.docker": "//contrib/cpp-diagnostics/docker:docker",
     },
 )
 ### auto-generated section `dev intellij.clion.diagnostics` end
@@ -58,11 +70,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.clion.diagnostics` end
 
 ### auto-generated section `iml intellij.clion.diagnostics` start
-exports_files(
-    [
-        "intellij.clion.diagnostics.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.clion.diagnostics",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "clion-diagnostics",
 )
 ### auto-generated section `iml intellij.clion.diagnostics` end

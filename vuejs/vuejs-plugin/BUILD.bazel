@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 
 ### auto-generated section `dev intellij.vuejs.plugin` start
 dist_plugin(
@@ -17,6 +18,17 @@ dist_plugin(
         "intellij.vuejs.webpack",
     ],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/vuejs/vue-free:resources/intellij.vuejs.free.xml": "intellij.vuejs.free.xml",
+        "//contrib/vuejs/vuejs-backend:resources/intellij.vuejs.backend.xml": "intellij.vuejs.backend.xml",
+        "//contrib/vuejs/vuejs-common:resources/intellij.vuejs.common.xml": "intellij.vuejs.common.xml",
+        "//contrib/vuejs/vuejs-copyright:resources/intellij.vuejs.copyright.xml": "intellij.vuejs.copyright.xml",
+        "//contrib/vuejs/vuejs-debugger:resources/intellij.vuejs.debugger.xml": "intellij.vuejs.debugger.xml",
+        "//contrib/vuejs/vuejs-eslint:resources/intellij.vuejs.eslint.xml": "intellij.vuejs.eslint.xml",
+        "//contrib/vuejs/vuejs-markdown:resources/intellij.vuejs.markdown.xml": "intellij.vuejs.markdown.xml",
+        "//contrib/vuejs/vuejs-prettier:resources/intellij.vuejs.prettier.xml": "intellij.vuejs.prettier.xml",
+        "//contrib/vuejs/vuejs-webpack:resources/intellij.vuejs.webpack.xml": "intellij.vuejs.webpack.xml",
+    },
     file_prefixes = {
         "vue-language-tools": "contrib/vuejs/vuejs-backend/vue-language-tools",
         "vue-service": "contrib/vuejs/vuejs-backend/vue-service",
@@ -39,6 +51,18 @@ dist_plugin(
             "intellij.vuejs.eslint",
             "intellij.vuejs.webpack",
         ],
+    },
+    module_labels = {
+        "intellij.vuejs.backend": "//contrib/vuejs/vuejs-backend:backend",
+        "intellij.vuejs.common": "//contrib/vuejs/vuejs-common:common",
+        "intellij.vuejs.copyright": "//contrib/vuejs/vuejs-copyright:copyright",
+        "intellij.vuejs.debugger": "//contrib/vuejs/vuejs-debugger:debugger",
+        "intellij.vuejs.eslint": "//contrib/vuejs/vuejs-eslint:eslint",
+        "intellij.vuejs.free": "//contrib/vuejs/vue-free:free",
+        "intellij.vuejs.markdown": "//contrib/vuejs/vuejs-markdown:markdown",
+        "intellij.vuejs.plugin": "//contrib/vuejs/vuejs-plugin:plugin",
+        "intellij.vuejs.prettier": "//contrib/vuejs/vuejs-prettier:prettier",
+        "intellij.vuejs.webpack": "//contrib/vuejs/vuejs-webpack:webpack",
     },
 )
 ### auto-generated section `dev intellij.vuejs.plugin` end
@@ -97,11 +121,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.vuejs.plugin` end
 
 ### auto-generated section `iml intellij.vuejs.plugin` start
-exports_files(
-    [
-        "intellij.vuejs.plugin.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vuejs.plugin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "plugin",
 )
 ### auto-generated section `iml intellij.vuejs.plugin` end

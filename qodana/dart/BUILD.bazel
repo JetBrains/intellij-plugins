@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -53,11 +54,11 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.dart` end
 
 ### auto-generated section `iml intellij.qodana.dart` start
-exports_files(
-    [
-        "intellij.qodana.dart.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.dart",
+    descriptors = ["resources/intellij.qodana.dart.xml"],
+    hand_exports = ["resources/intellij.qodana.dart.xml"],
+    target = "dart",
 )
 ### auto-generated section `iml intellij.qodana.dart` end
 
@@ -106,11 +107,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.dart.tests` end
 
 ### auto-generated section `iml intellij.qodana.dart.tests` start
-exports_files(
-    [
-        "intellij.qodana.dart.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.dart.tests",
+    target = "dart-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.dart.tests` end
 

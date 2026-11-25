@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -41,11 +42,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.dart.integration.tests` end
 
 ### auto-generated section `iml intellij.qodana.dart.integration.tests` start
-exports_files(
-    [
-        "intellij.qodana.dart.integration.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.dart.integration.tests",
+    target = "qodana-dart-integration-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.dart.integration.tests` end
 

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.qodana.testFramework` start
@@ -49,11 +50,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.testFramework` end
 
 ### auto-generated section `iml intellij.qodana.testFramework` start
-exports_files(
-    [
-        "intellij.qodana.testFramework.iml",
-        "resources/intellij.qodana.testFramework.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.testFramework",
+    descriptors = ["resources/intellij.qodana.testFramework.xml"],
+    target = "qodana-testFramework",
 )
 ### auto-generated section `iml intellij.qodana.testFramework` end

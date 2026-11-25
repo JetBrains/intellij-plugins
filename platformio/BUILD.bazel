@@ -1,17 +1,25 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.clion.embedded.platformio` start
 dist_plugin(
     content_modules = ["intellij.clion.embedded.platformio.terminal"],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/platformio/terminal:resources/intellij.clion.embedded.platformio.terminal.xml": "intellij.clion.embedded.platformio.terminal.xml",
+    },
     jars = {
         "lib/clion-embedded-platformio.jar": ["intellij.clion.embedded.platformio"],
     },
     main_module = "intellij.clion.embedded.platformio",
     mode_refused_content_modules = {
         "frontend": ["intellij.clion.embedded.platformio.terminal"],
+    },
+    module_labels = {
+        "intellij.clion.embedded.platformio": "//contrib/platformio:platformio",
+        "intellij.clion.embedded.platformio.terminal": "//contrib/platformio/terminal:terminal",
     },
 )
 ### auto-generated section `dev intellij.clion.embedded.platformio` end
@@ -111,11 +119,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.clion.embedded.platformio` end
 
 ### auto-generated section `iml intellij.clion.embedded.platformio` start
-exports_files(
-    [
-        "intellij.clion.embedded.platformio.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.clion.embedded.platformio",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "platformio",
 )
 ### auto-generated section `iml intellij.clion.embedded.platformio` end

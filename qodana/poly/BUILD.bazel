@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -37,12 +38,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.poly` end
 
 ### auto-generated section `iml intellij.qodana.poly` start
-exports_files(
-    [
-        "intellij.qodana.poly.iml",
-        "resources/intellij.qodana.poly.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.poly",
+    descriptors = ["resources/intellij.qodana.poly.xml"],
+    target = "poly",
 )
 ### auto-generated section `iml intellij.qodana.poly` end
 
@@ -88,11 +87,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.poly.tests` end
 
 ### auto-generated section `iml intellij.qodana.poly.tests` start
-exports_files(
-    [
-        "intellij.qodana.poly.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.poly.tests",
+    target = "poly-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.poly.tests` end
 

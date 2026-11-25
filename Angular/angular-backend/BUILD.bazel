@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
@@ -125,17 +126,17 @@ jvm_library(
 ### auto-generated section `build intellij.angular.backend` end
 
 ### auto-generated section `iml intellij.angular.backend` start
-exports_files(
-    [
-        "intellij.angular.backend.iml",
+jps_module(
+    name = "intellij.angular.backend",
+    descriptors = ["resources/intellij.angular.backend.xml"],
+    target = "angular-backend",
+    exports = [
         "resources/colorSchemes/Angular2Darcula.xml",
         "resources/colorSchemes/Angular2Dark.xml",
         "resources/colorSchemes/Angular2HighContrast.xml",
         "resources/colorSchemes/Angular2IntelliJLight.xml",
         "resources/colorSchemes/Angular2Light.xml",
-        "resources/intellij.angular.backend.xml",
         "resources/liveTemplates/Angular2.xml",
     ],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.angular.backend` end

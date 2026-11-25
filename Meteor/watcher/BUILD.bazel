@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -36,11 +37,9 @@ jvm_library(
 ### auto-generated section `build intellij.meteor.watcher` end
 
 ### auto-generated section `iml intellij.meteor.watcher` start
-exports_files(
-    [
-        "intellij.meteor.watcher.iml",
-        "resources/intellij.meteor.watcher.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.meteor.watcher",
+    descriptors = ["resources/intellij.meteor.watcher.xml"],
+    target = "watcher",
 )
 ### auto-generated section `iml intellij.meteor.watcher` end

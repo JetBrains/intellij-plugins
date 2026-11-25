@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -40,12 +41,10 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.gradle` end
 
 ### auto-generated section `iml intellij.openRewrite.gradle` start
-exports_files(
-    [
-        "intellij.openRewrite.gradle.iml",
-        "resources/intellij.openRewrite.gradle.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.gradle",
+    descriptors = ["resources/intellij.openRewrite.gradle.xml"],
+    target = "gradle",
 )
 ### auto-generated section `iml intellij.openRewrite.gradle` end
 
@@ -93,11 +92,10 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.gradle.tests` end
 
 ### auto-generated section `iml intellij.openRewrite.gradle.tests` start
-exports_files(
-    [
-        "intellij.openRewrite.gradle.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.gradle.tests",
+    resources = False,
+    target = "openRewrite-gradle-tests_test_lib",
 )
 ### auto-generated section `iml intellij.openRewrite.gradle.tests` end
 

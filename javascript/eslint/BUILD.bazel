@@ -1,7 +1,8 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -26,6 +27,9 @@ dist_plugin(
         "lib/javascript-eslint.jar": ["intellij.javascript.eslint"],
     },
     main_module = "intellij.javascript.eslint",
+    module_labels = {
+        "intellij.javascript.eslint": "//contrib/javascript/eslint:eslint",
+    },
 )
 ### auto-generated section `dev intellij.javascript.eslint` end
 
@@ -111,12 +115,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.javascript.eslint` end
 
 ### auto-generated section `iml intellij.javascript.eslint` start
-exports_files(
-    [
-        "intellij.javascript.eslint.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.javascript.eslint",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "eslint",
 )
 ### auto-generated section `iml intellij.javascript.eslint` end
 
@@ -211,11 +214,9 @@ jvm_library(
 ### auto-generated section `build intellij.javascript.eslint.tests` end
 
 ### auto-generated section `iml intellij.javascript.eslint.tests` start
-exports_files(
-    [
-        "intellij.javascript.eslint.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.javascript.eslint.tests",
+    target = "eslint-tests_test_lib",
 )
 ### auto-generated section `iml intellij.javascript.eslint.tests` end
 

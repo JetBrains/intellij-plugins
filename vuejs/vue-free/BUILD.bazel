@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -53,11 +54,9 @@ jvm_library(
 ### auto-generated section `build intellij.vuejs.free` end
 
 ### auto-generated section `iml intellij.vuejs.free` start
-exports_files(
-    [
-        "intellij.vuejs.free.iml",
-        "resources/intellij.vuejs.free.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vuejs.free",
+    descriptors = ["resources/intellij.vuejs.free.xml"],
+    target = "free",
 )
 ### auto-generated section `iml intellij.vuejs.free` end

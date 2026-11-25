@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.openRewrite.quarkus` start
@@ -29,11 +30,9 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.quarkus` end
 
 ### auto-generated section `iml intellij.openRewrite.quarkus` start
-exports_files(
-    [
-        "intellij.openRewrite.quarkus.iml",
-        "resources/intellij.openRewrite.quarkus.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.quarkus",
+    descriptors = ["resources/intellij.openRewrite.quarkus.xml"],
+    target = "quarkus",
 )
 ### auto-generated section `iml intellij.openRewrite.quarkus` end

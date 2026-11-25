@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("//build:intellij_dev_ultimate.bzl", "clion_dev_test")
 
@@ -47,10 +48,8 @@ jvm_library(
 ### auto-generated section `build intellij.clion.diagnostics.cmake.tests` end
 
 ### auto-generated section `iml intellij.clion.diagnostics.cmake.tests` start
-exports_files(
-    [
-        "intellij.clion.diagnostics.cmake.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.clion.diagnostics.cmake.tests",
+    target = "tests_test_lib",
 )
 ### auto-generated section `iml intellij.clion.diagnostics.cmake.tests` end

@@ -1,5 +1,6 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.postcss.plugin` start
@@ -10,12 +11,21 @@ dist_plugin(
         "intellij.postcss.paid",
     ],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/postcss/copyright:resources/intellij.postcss.copyright.xml": "intellij.postcss.copyright.xml",
+        "//contrib/postcss/paid:resources/intellij.postcss.paid.xml": "intellij.postcss.paid.xml",
+    },
     jars = {
         "lib/postcss-plugin.jar": ["intellij.postcss.plugin"],
     },
     main_module = "intellij.postcss.plugin",
     mode_refused_content_modules = {
         "frontend": ["intellij.postcss.paid"],
+    },
+    module_labels = {
+        "intellij.postcss.copyright": "//contrib/postcss/copyright:copyright",
+        "intellij.postcss.paid": "//contrib/postcss/paid:paid",
+        "intellij.postcss.plugin": "//contrib/postcss/plugin:plugin",
     },
 )
 ### auto-generated section `dev intellij.postcss.plugin` end
@@ -55,11 +65,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.postcss.plugin` end
 
 ### auto-generated section `iml intellij.postcss.plugin` start
-exports_files(
-    [
-        "intellij.postcss.plugin.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.postcss.plugin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "plugin",
 )
 ### auto-generated section `iml intellij.postcss.plugin` end

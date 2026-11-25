@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -38,11 +39,9 @@ jvm_library(
 ### auto-generated section `build intellij.dts.cmake` end
 
 ### auto-generated section `iml intellij.dts.cmake` start
-exports_files(
-    [
-        "intellij.dts.cmake.iml",
-        "resources/intellij.dts.cmake.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.dts.cmake",
+    descriptors = ["resources/intellij.dts.cmake.xml"],
+    target = "cmake",
 )
 ### auto-generated section `iml intellij.dts.cmake` end

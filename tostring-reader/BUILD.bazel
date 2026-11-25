@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -47,12 +48,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.tsr` end
 
 ### auto-generated section `iml intellij.tsr` start
-exports_files(
-    [
-        "intellij.tsr.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.tsr",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "tsr",
 )
 ### auto-generated section `iml intellij.tsr` end
 
@@ -80,11 +80,9 @@ jvm_library(
 ### auto-generated section `build intellij.tsr.tests` end
 
 ### auto-generated section `iml intellij.tsr.tests` start
-exports_files(
-    [
-        "intellij.tsr.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.tsr.tests",
+    target = "tsr-tests_test_lib",
 )
 ### auto-generated section `iml intellij.tsr.tests` end
 

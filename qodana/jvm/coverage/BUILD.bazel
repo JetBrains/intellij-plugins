@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@community//plugins/kotlin:kotlin_test_dependencies.bzl", "all_test_dep_targets")
@@ -65,12 +66,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.coverage` end
 
 ### auto-generated section `iml intellij.qodana.jvm.coverage` start
-exports_files(
-    [
-        "intellij.qodana.jvm.coverage.iml",
-        "resources/intellij.qodana.jvm.coverage.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.coverage",
+    descriptors = ["resources/intellij.qodana.jvm.coverage.xml"],
+    target = "coverage",
 )
 ### auto-generated section `iml intellij.qodana.jvm.coverage` end
 
@@ -122,10 +121,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.coverage.tests` end
 
 ### auto-generated section `iml intellij.qodana.jvm.coverage.tests` start
-exports_files(
-    [
-        "intellij.qodana.jvm.coverage.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.coverage.tests",
+    resources = False,
+    target = "qodana-jvm-coverage-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.jvm.coverage.tests` end

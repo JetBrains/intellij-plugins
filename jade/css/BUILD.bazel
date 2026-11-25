@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -52,11 +53,9 @@ jvm_library(
 ### auto-generated section `build intellij.jade.css` end
 
 ### auto-generated section `iml intellij.jade.css` start
-exports_files(
-    [
-        "intellij.jade.css.iml",
-        "resources/intellij.jade.css.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.jade.css",
+    descriptors = ["resources/intellij.jade.css.xml"],
+    target = "css",
 )
 ### auto-generated section `iml intellij.jade.css` end

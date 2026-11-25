@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -56,11 +57,9 @@ jvm_library(
 ### auto-generated section `build intellij.javascript.karma.coverage` end
 
 ### auto-generated section `iml intellij.javascript.karma.coverage` start
-exports_files(
-    [
-        "intellij.javascript.karma.coverage.iml",
-        "resources/intellij.javascript.karma.coverage.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.javascript.karma.coverage",
+    descriptors = ["resources/intellij.javascript.karma.coverage.xml"],
+    target = "coverage",
 )
 ### auto-generated section `iml intellij.javascript.karma.coverage` end

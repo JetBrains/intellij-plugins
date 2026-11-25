@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -53,11 +54,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.javascript.bower` end
 
 ### auto-generated section `iml intellij.javascript.bower` start
-exports_files(
-    [
-        "intellij.javascript.bower.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.javascript.bower",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "bower",
 )
 ### auto-generated section `iml intellij.javascript.bower` end

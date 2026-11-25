@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("//build:intellij_dev_ultimate.bzl", "clion_dev_test")
 
@@ -40,10 +41,8 @@ jvm_library(
 ### auto-generated section `build intellij.serial.monitor.tests` end
 
 ### auto-generated section `iml intellij.serial.monitor.tests` start
-exports_files(
-    [
-        "intellij.serial.monitor.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.serial.monitor.tests",
+    target = "tests_test_lib",
 )
 ### auto-generated section `iml intellij.serial.monitor.tests` end

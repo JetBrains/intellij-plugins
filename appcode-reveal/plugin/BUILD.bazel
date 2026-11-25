@@ -1,11 +1,16 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.appcode.reveal.plugin` start
 dist_plugin(
     content_modules = ["intellij.appcode.reveal"],
     main_module = "intellij.appcode.reveal.plugin",
+    module_labels = {
+        "intellij.appcode.reveal": "//contrib/appcode-reveal:appcode-reveal",
+        "intellij.appcode.reveal.plugin": "//contrib/appcode-reveal/plugin:plugin",
+    },
 )
 ### auto-generated section `dev intellij.appcode.reveal.plugin` end
 
@@ -35,11 +40,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.appcode.reveal.plugin` end
 
 ### auto-generated section `iml intellij.appcode.reveal.plugin` start
-exports_files(
-    [
-        "intellij.appcode.reveal.plugin.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.appcode.reveal.plugin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "plugin",
 )
 ### auto-generated section `iml intellij.appcode.reveal.plugin` end

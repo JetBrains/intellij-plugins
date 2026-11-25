@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `build intellij.angular` start
@@ -17,10 +18,8 @@ jvm_library(
 ### auto-generated section `build intellij.angular` end
 
 ### auto-generated section `iml intellij.angular` start
-exports_files(
-    [
-        "intellij.angular.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.angular",
+    target = "angular",
 )
 ### auto-generated section `iml intellij.angular` end

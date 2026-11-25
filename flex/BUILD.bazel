@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 
 # the `lib` directory, which UltimateRepositoryModules.kt copies to the plugin distribution
@@ -19,6 +20,12 @@ dist_plugin(
         "intellij.flex.shared",
     ],
     main_module = "intellij.flex",
+    module_labels = {
+        "intellij.flex": "//contrib/flex:flex",
+        "intellij.flex.css": "//contrib/flex/css:css",
+        "intellij.flex.jps": "//contrib/flex/jps-plugin:jps",
+        "intellij.flex.shared": "//contrib/flex/flex-shared:shared",
+    },
 )
 ### auto-generated section `dev intellij.flex` end
 
@@ -152,19 +159,20 @@ ij_plugin(
 ### auto-generated section `plugin intellij.flex` end
 
 ### auto-generated section `iml intellij.flex` start
-exports_files(
-    [
-        "intellij.flex.iml",
+jps_module(
+    name = "intellij.flex",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "flex",
+    exports = [
         "resources/META-INF/flex-ant-support.xml",
         "resources/META-INF/flex-copyright.xml",
         "resources/META-INF/flex-duplicates.xml",
         "resources/META-INF/flex-maven-support.xml",
         "resources/META-INF/flex-uml-support.xml",
-        "resources/META-INF/plugin.xml",
         "resources/com/intellij/lang/javascript/flex/flexunit/SocketPolicyFile.xml",
         "resources/liveTemplates/actionscript_iterations.xml",
         "resources/liveTemplates/actionscript_miscellaneous.xml",
     ],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.flex` end

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -38,12 +39,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.groovy` end
 
 ### auto-generated section `iml intellij.qodana.jvm.groovy` start
-exports_files(
-    [
-        "intellij.qodana.jvm.groovy.iml",
-        "resources/intellij.qodana.jvm.groovy.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.groovy",
+    descriptors = ["resources/intellij.qodana.jvm.groovy.xml"],
+    target = "groovy",
 )
 ### auto-generated section `iml intellij.qodana.jvm.groovy` end
 
@@ -85,11 +84,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.groovy.tests` end
 
 ### auto-generated section `iml intellij.qodana.jvm.groovy.tests` start
-exports_files(
-    [
-        "intellij.qodana.jvm.groovy.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.groovy.tests",
+    resources = False,
+    target = "qodana-jvm-groovy-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.jvm.groovy.tests` end
 

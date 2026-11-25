@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -51,12 +52,10 @@ jvm_library(
 ### auto-generated section `build intellij.protoeditor.python` end
 
 ### auto-generated section `iml intellij.protoeditor.python` start
-exports_files(
-    [
-        "intellij.protoeditor.python.iml",
-        "resources/intellij.protoeditor.python.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.protoeditor.python",
+    descriptors = ["resources/intellij.protoeditor.python.xml"],
+    target = "protoeditor-python",
 )
 ### auto-generated section `iml intellij.protoeditor.python` end
 
@@ -104,11 +103,10 @@ jvm_library(
 ### auto-generated section `build intellij.protoeditor.python.tests` end
 
 ### auto-generated section `iml intellij.protoeditor.python.tests` start
-exports_files(
-    [
-        "intellij.protoeditor.python.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.protoeditor.python.tests",
+    resources = False,
+    target = "protoeditor-python-tests_test_lib",
 )
 ### auto-generated section `iml intellij.protoeditor.python.tests` end
 

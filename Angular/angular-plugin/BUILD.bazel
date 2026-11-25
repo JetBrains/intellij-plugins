@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 
 ### auto-generated section `dev intellij.angular.plugin` start
 dist_plugin(
@@ -11,6 +12,11 @@ dist_plugin(
         "intellij.angular.tslint",
     ],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/Angular/angular-backend:resources/intellij.angular.backend.xml": "intellij.angular.backend.xml",
+        "//contrib/Angular/angular-free:resources/intellij.angular.free.xml": "intellij.angular.free.xml",
+        "//contrib/Angular/angular-tslint:resources/intellij.angular.tslint.xml": "intellij.angular.tslint.xml",
+    },
     file_prefixes = {
         "angular-service": "contrib/Angular/angular-backend/gen-resources/angular-service",
         "ngCli": "contrib/Angular/angular-backend/gen-resources/ngCli",
@@ -28,6 +34,12 @@ dist_plugin(
             "intellij.angular.backend",
             "intellij.angular.tslint",
         ],
+    },
+    module_labels = {
+        "intellij.angular.backend": "//contrib/Angular/angular-backend:angular-backend",
+        "intellij.angular.free": "//contrib/Angular/angular-free:angular-free",
+        "intellij.angular.plugin": "//contrib/Angular/angular-plugin:angular-plugin",
+        "intellij.angular.tslint": "//contrib/Angular/angular-tslint:angular-tslint",
     },
 )
 ### auto-generated section `dev intellij.angular.plugin` end
@@ -75,11 +87,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.angular.plugin` end
 
 ### auto-generated section `iml intellij.angular.plugin` start
-exports_files(
-    [
-        "intellij.angular.plugin.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.angular.plugin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "angular-plugin",
 )
 ### auto-generated section `iml intellij.angular.plugin` end

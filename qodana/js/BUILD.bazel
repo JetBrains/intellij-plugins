@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -59,12 +60,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.js` end
 
 ### auto-generated section `iml intellij.qodana.js` start
-exports_files(
-    [
-        "intellij.qodana.js.iml",
-        "resources/intellij.qodana.js.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.js",
+    descriptors = ["resources/intellij.qodana.js.xml"],
+    target = "js",
 )
 ### auto-generated section `iml intellij.qodana.js` end
 
@@ -121,11 +120,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.js.tests` end
 
 ### auto-generated section `iml intellij.qodana.js.tests` start
-exports_files(
-    [
-        "intellij.qodana.js.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.js.tests",
+    resources = False,
+    target = "js-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.js.tests` end
 

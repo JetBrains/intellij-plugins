@@ -1,4 +1,5 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
@@ -156,12 +157,10 @@ jvm_library(
 ### auto-generated section `build intellij.vuejs.backend` end
 
 ### auto-generated section `iml intellij.vuejs.backend` start
-exports_files(
-    [
-        "intellij.vuejs.backend.iml",
-        "gen-resources/liveTemplates/Vue.xml",
-        "resources/intellij.vuejs.backend.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vuejs.backend",
+    descriptors = ["resources/intellij.vuejs.backend.xml"],
+    target = "backend",
+    exports = ["gen-resources/liveTemplates/Vue.xml"],
 )
 ### auto-generated section `iml intellij.vuejs.backend` end

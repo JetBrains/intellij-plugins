@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -64,12 +65,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.java` end
 
 ### auto-generated section `iml intellij.qodana.jvm.java` start
-exports_files(
-    [
-        "intellij.qodana.jvm.java.iml",
-        "resources/intellij.qodana.jvm.java.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.java",
+    descriptors = ["resources/intellij.qodana.jvm.java.xml"],
+    target = "java",
 )
 ### auto-generated section `iml intellij.qodana.jvm.java` end
 
@@ -123,11 +122,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.java.tests` end
 
 ### auto-generated section `iml intellij.qodana.jvm.java.tests` start
-exports_files(
-    [
-        "intellij.qodana.jvm.java.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.java.tests",
+    resources = False,
+    target = "qodana-jvm-java-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.jvm.java.tests` end
 

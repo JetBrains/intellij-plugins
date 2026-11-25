@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -39,11 +40,9 @@ jvm_library(
 ### auto-generated section `build intellij.vuejs.prettier` end
 
 ### auto-generated section `iml intellij.vuejs.prettier` start
-exports_files(
-    [
-        "intellij.vuejs.prettier.iml",
-        "resources/intellij.vuejs.prettier.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vuejs.prettier",
+    descriptors = ["resources/intellij.vuejs.prettier.xml"],
+    target = "prettier",
 )
 ### auto-generated section `iml intellij.vuejs.prettier` end

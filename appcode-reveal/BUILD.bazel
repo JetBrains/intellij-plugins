@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
@@ -62,11 +63,9 @@ jvm_library(
 ### auto-generated section `build intellij.appcode.reveal` end
 
 ### auto-generated section `iml intellij.appcode.reveal` start
-exports_files(
-    [
-        "intellij.appcode.reveal.iml",
-        "resources/intellij.appcode.reveal.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.appcode.reveal",
+    descriptors = ["resources/intellij.appcode.reveal.xml"],
+    target = "appcode-reveal",
 )
 ### auto-generated section `iml intellij.appcode.reveal` end

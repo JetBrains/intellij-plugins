@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
@@ -57,14 +58,15 @@ ij_plugin(
 ### auto-generated section `plugin intellij.cloudFormation` end
 
 ### auto-generated section `iml intellij.cloudFormation` start
-exports_files(
-    [
-        "intellij.cloudFormation.iml",
-        "src/main/resources/META-INF/plugin.xml",
+jps_module(
+    name = "intellij.cloudFormation",
+    descriptors = ["src/main/resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "cloudFormation",
+    exports = [
         "src/main/resources/liveTemplates/cloudformation_json.xml",
         "src/main/resources/liveTemplates/cloudformation_yaml.xml",
     ],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.cloudFormation` end
 
@@ -124,11 +126,9 @@ jvm_library(
 ### auto-generated section `build intellij.cloudFormation.tests` end
 
 ### auto-generated section `iml intellij.cloudFormation.tests` start
-exports_files(
-    [
-        "intellij.cloudFormation.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.cloudFormation.tests",
+    target = "cloudFormation-tests_test_lib",
 )
 ### auto-generated section `iml intellij.cloudFormation.tests` end
 

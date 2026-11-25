@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -38,12 +39,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.inspectionKts.js` end
 
 ### auto-generated section `iml intellij.qodana.inspectionKts.js` start
-exports_files(
-    [
-        "intellij.qodana.inspectionKts.js.iml",
-        "resources/intellij.qodana.inspectionKts.js.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.inspectionKts.js",
+    descriptors = ["resources/intellij.qodana.inspectionKts.js.xml"],
+    target = "js",
 )
 ### auto-generated section `iml intellij.qodana.inspectionKts.js` end
 
@@ -89,11 +88,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.inspectionKts.js.tests` end
 
 ### auto-generated section `iml intellij.qodana.inspectionKts.js.tests` start
-exports_files(
-    [
-        "intellij.qodana.inspectionKts.js.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.inspectionKts.js.tests",
+    resources = False,
+    target = "qodana-inspectionKts-js-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.inspectionKts.js.tests` end
 

@@ -1,7 +1,8 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -26,6 +27,9 @@ dist_plugin(
         "lib/tslint.jar": ["intellij.tslint"],
     },
     main_module = "intellij.tslint",
+    module_labels = {
+        "intellij.tslint": "//contrib/tslint:tslint",
+    },
 )
 ### auto-generated section `dev intellij.tslint` end
 
@@ -97,12 +101,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.tslint` end
 
 ### auto-generated section `iml intellij.tslint` start
-exports_files(
-    [
-        "intellij.tslint.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.tslint",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "tslint",
 )
 ### auto-generated section `iml intellij.tslint` end
 
@@ -163,11 +166,10 @@ jvm_library(
 ### auto-generated section `build intellij.tslint.tests` end
 
 ### auto-generated section `iml intellij.tslint.tests` start
-exports_files(
-    [
-        "intellij.tslint.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.tslint.tests",
+    resources = False,
+    target = "tslint-tests_test_lib",
 )
 ### auto-generated section `iml intellij.tslint.tests` end
 

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -55,11 +56,9 @@ jvm_library(
 ### auto-generated section `build intellij.deno.tests.webstorm` end
 
 ### auto-generated section `iml intellij.deno.tests.webstorm` start
-exports_files(
-    [
-        "intellij.deno.tests.webstorm.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.deno.tests.webstorm",
+    target = "webstorm_test_lib",
 )
 ### auto-generated section `iml intellij.deno.tests.webstorm` end
 

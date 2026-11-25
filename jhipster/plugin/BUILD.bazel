@@ -1,5 +1,6 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.jhipster.plugin` start
@@ -12,6 +13,13 @@ dist_plugin(
         "intellij.jhipster.frontend",
     ],
     main_module = "intellij.jhipster.plugin",
+    module_labels = {
+        "intellij.jhipster": "//contrib/jhipster:jhipster",
+        "intellij.jhipster.backend": "//contrib/jhipster/backend:backend",
+        "intellij.jhipster.frontend": "//contrib/jhipster/frontend:frontend",
+        "intellij.jhipster.plugin": "//contrib/jhipster/plugin:plugin",
+        "intellij.jhipster.uml": "//contrib/jhipster/uml:uml",
+    },
 )
 ### auto-generated section `dev intellij.jhipster.plugin` end
 
@@ -47,11 +55,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.jhipster.plugin` end
 
 ### auto-generated section `iml intellij.jhipster.plugin` start
-exports_files(
-    [
-        "intellij.jhipster.plugin.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.jhipster.plugin",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "plugin",
 )
 ### auto-generated section `iml intellij.jhipster.plugin` end

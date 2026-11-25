@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -39,12 +40,10 @@ jvm_library(
 ### auto-generated section `build intellij.flex.shared` end
 
 ### auto-generated section `iml intellij.flex.shared` start
-exports_files(
-    [
-        "intellij.flex.shared.iml",
-        "resources/com/intellij/flex/model/bc/flex-compiler-options.xml",
-        "resources/intellij.flex.shared.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.flex.shared",
+    descriptors = ["resources/intellij.flex.shared.xml"],
+    target = "shared",
+    exports = ["resources/com/intellij/flex/model/bc/flex-compiler-options.xml"],
 )
 ### auto-generated section `iml intellij.flex.shared` end

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -23,12 +24,10 @@ jvm_library(
 ### auto-generated section `build intellij.mdx` end
 
 ### auto-generated section `iml intellij.mdx` start
-exports_files(
-    [
-        "intellij.mdx.iml",
-        "src/main/resources/intellij.mdx.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.mdx",
+    descriptors = ["src/main/resources/intellij.mdx.xml"],
+    target = "mdx",
 )
 ### auto-generated section `iml intellij.mdx` end
 
@@ -130,11 +129,9 @@ jvm_library(
 ### auto-generated section `build intellij.mdx.tests` end
 
 ### auto-generated section `iml intellij.mdx.tests` start
-exports_files(
-    [
-        "intellij.mdx.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.mdx.tests",
+    target = "mdx-tests_test_lib",
 )
 ### auto-generated section `iml intellij.mdx.tests` end
 

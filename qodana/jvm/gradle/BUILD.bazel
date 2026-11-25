@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -46,11 +47,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.jvm.gradle` end
 
 ### auto-generated section `iml intellij.qodana.jvm.gradle` start
-exports_files(
-    [
-        "intellij.qodana.jvm.gradle.iml",
-        "resources/intellij.qodana.jvm.gradle.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.jvm.gradle",
+    descriptors = ["resources/intellij.qodana.jvm.gradle.xml"],
+    target = "gradle",
 )
 ### auto-generated section `iml intellij.qodana.jvm.gradle` end

@@ -1,4 +1,5 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -62,12 +63,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.rust` end
 
 ### auto-generated section `iml intellij.qodana.rust` start
-exports_files(
-    [
-        "intellij.qodana.rust.iml",
-        "resources/intellij.qodana.rust.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.rust",
+    descriptors = ["resources/intellij.qodana.rust.xml"],
+    target = "rust",
 )
 ### auto-generated section `iml intellij.qodana.rust` end
 
@@ -121,11 +120,9 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.rust.tests` end
 
 ### auto-generated section `iml intellij.qodana.rust.tests` start
-exports_files(
-    [
-        "intellij.qodana.rust.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.rust.tests",
+    target = "rust-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.rust.tests` end
 

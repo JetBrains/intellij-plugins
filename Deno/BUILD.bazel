@@ -1,7 +1,8 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -33,6 +34,9 @@ dist_plugin(
         "lib/deno.jar": ["intellij.deno"],
     },
     main_module = "intellij.deno",
+    module_labels = {
+        "intellij.deno": "//contrib/Deno:deno",
+    },
 )
 ### auto-generated section `dev intellij.deno` end
 
@@ -122,12 +126,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.deno` end
 
 ### auto-generated section `iml intellij.deno` start
-exports_files(
-    [
-        "intellij.deno.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.deno",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "deno",
 )
 ### auto-generated section `iml intellij.deno` end
 
@@ -180,11 +183,10 @@ jvm_library(
 ### auto-generated section `build intellij.deno.tests` end
 
 ### auto-generated section `iml intellij.deno.tests` start
-exports_files(
-    [
-        "intellij.deno.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.deno.tests",
+    resources = False,
+    target = "deno-tests_test_lib",
 )
 ### auto-generated section `iml intellij.deno.tests` end
 

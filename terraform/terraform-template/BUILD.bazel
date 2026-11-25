@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
@@ -46,13 +47,11 @@ jvm_library(
 ### auto-generated section `build intellij.terraform.template` end
 
 ### auto-generated section `iml intellij.terraform.template` start
-exports_files(
-    [
-        "intellij.terraform.template.iml",
-        "resource/intellij.terraform.template.xml",
-        "resource/liveTemplates/terraformTemplate.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.terraform.template",
+    descriptors = ["resource/intellij.terraform.template.xml"],
+    target = "template",
+    exports = ["resource/liveTemplates/terraformTemplate.xml"],
 )
 ### auto-generated section `iml intellij.terraform.template` end
 
@@ -114,11 +113,9 @@ jvm_library(
 ### auto-generated section `build intellij.terraform.template.tests` end
 
 ### auto-generated section `iml intellij.terraform.template.tests` start
-exports_files(
-    [
-        "intellij.terraform.template.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.terraform.template.tests",
+    target = "template-tests_test_lib",
 )
 ### auto-generated section `iml intellij.terraform.template.tests` end
 

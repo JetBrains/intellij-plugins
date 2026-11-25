@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.openRewrite` start
@@ -14,6 +15,14 @@ dist_plugin(
         "intellij.openRewrite.spring.boot",
     ],
     main_module = "intellij.openRewrite",
+    module_labels = {
+        "intellij.openRewrite": "//contrib/open-rewrite:open-rewrite",
+        "intellij.openRewrite.gradle": "//contrib/open-rewrite/gradle:gradle",
+        "intellij.openRewrite.maven": "//contrib/open-rewrite/maven:maven",
+        "intellij.openRewrite.micronaut": "//contrib/open-rewrite/micronaut:micronaut",
+        "intellij.openRewrite.quarkus": "//contrib/open-rewrite/quarkus:quarkus",
+        "intellij.openRewrite.spring.boot": "//contrib/open-rewrite/spring-boot:openRewrite-spring-boot",
+    },
 )
 ### auto-generated section `dev intellij.openRewrite` end
 
@@ -110,12 +119,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.openRewrite` end
 
 ### auto-generated section `iml intellij.openRewrite` start
-exports_files(
-    [
-        "intellij.openRewrite.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "open-rewrite",
 )
 ### auto-generated section `iml intellij.openRewrite` end
 
@@ -191,11 +199,10 @@ jvm_library(
 ### auto-generated section `build intellij.openRewrite.tests` end
 
 ### auto-generated section `iml intellij.openRewrite.tests` start
-exports_files(
-    [
-        "intellij.openRewrite.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.openRewrite.tests",
+    resources = False,
+    target = "openRewrite-tests_test_lib",
 )
 ### auto-generated section `iml intellij.openRewrite.tests` end
 

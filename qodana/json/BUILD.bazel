@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
@@ -43,12 +44,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.json` end
 
 ### auto-generated section `iml intellij.qodana.json` start
-exports_files(
-    [
-        "intellij.qodana.json.iml",
-        "resources/intellij.qodana.json.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.json",
+    descriptors = ["resources/intellij.qodana.json.xml"],
+    target = "json",
 )
 ### auto-generated section `iml intellij.qodana.json` end
 
@@ -87,11 +86,10 @@ jvm_library(
 ### auto-generated section `build intellij.qodana.json.tests` end
 
 ### auto-generated section `iml intellij.qodana.json.tests` start
-exports_files(
-    [
-        "intellij.qodana.json.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.qodana.json.tests",
+    resources = False,
+    target = "json-tests_test_lib",
 )
 ### auto-generated section `iml intellij.qodana.json.tests` end
 

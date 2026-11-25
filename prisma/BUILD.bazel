@@ -1,8 +1,9 @@
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
@@ -27,6 +28,9 @@ dist_plugin(
         "lib/prisma.jar": ["intellij.prisma"],
     },
     main_module = "intellij.prisma",
+    module_labels = {
+        "intellij.prisma": "//contrib/prisma:prisma",
+    },
 )
 ### auto-generated section `dev intellij.prisma` end
 
@@ -122,12 +126,11 @@ ij_plugin(
 ### auto-generated section `plugin intellij.prisma` end
 
 ### auto-generated section `iml intellij.prisma` start
-exports_files(
-    [
-        "intellij.prisma.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.prisma",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "prisma",
 )
 ### auto-generated section `iml intellij.prisma` end
 
@@ -216,11 +219,9 @@ jvm_library(
 ### auto-generated section `build intellij.prisma.tests` end
 
 ### auto-generated section `iml intellij.prisma.tests` start
-exports_files(
-    [
-        "intellij.prisma.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.prisma.tests",
+    target = "prisma-tests_test_lib",
 )
 ### auto-generated section `iml intellij.prisma.tests` end
 

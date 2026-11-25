@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//platform/build-scripts/bazel-rules:content_module_jar.bzl", "content_module_jar")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -51,11 +52,9 @@ jvm_library(
 ### auto-generated section `build intellij.vuejs.common` end
 
 ### auto-generated section `iml intellij.vuejs.common` start
-exports_files(
-    [
-        "intellij.vuejs.common.iml",
-        "resources/intellij.vuejs.common.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vuejs.common",
+    descriptors = ["resources/intellij.vuejs.common.xml"],
+    target = "common",
 )
 ### auto-generated section `iml intellij.vuejs.common` end

@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
@@ -89,10 +90,12 @@ ij_plugin(
 ### auto-generated section `plugin intellij.cfml` end
 
 ### auto-generated section `iml intellij.cfml` start
-exports_files(
-    [
-        "intellij.cfml.iml",
-        "resources/META-INF/plugin.xml",
+jps_module(
+    name = "intellij.cfml",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "cfml",
+    exports = [
         "resources/cfmlInjections.xml",
         "resources/com/intellij/coldFusion/model/info/Lucee_tags.xml",
         "resources/com/intellij/coldFusion/model/info/Railo_tags.xml",
@@ -102,7 +105,6 @@ exports_files(
         "resources/com/intellij/coldFusion/model/info/tags.xml",
         "resources/liveTemplates/cfml_default.xml",
     ],
-    visibility = ["//visibility:public"],
 )
 ### auto-generated section `iml intellij.cfml` end
 
@@ -185,11 +187,9 @@ jvm_library(
 ### auto-generated section `build intellij.cfml.tests` end
 
 ### auto-generated section `iml intellij.cfml.tests` start
-exports_files(
-    [
-        "intellij.cfml.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.cfml.tests",
+    target = "cfml-tests_test_lib",
 )
 ### auto-generated section `iml intellij.cfml.tests` end
 

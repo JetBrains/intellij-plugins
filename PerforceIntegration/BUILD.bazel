@@ -1,18 +1,26 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.vcs.perforce` start
 dist_plugin(
     content_modules = ["intellij.vcs.perforce.util"],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/PerforceIntegration/perforce_util:resources/intellij.vcs.perforce.util.xml": "intellij.vcs.perforce.util.xml",
+    },
     jars = {
         "lib/vcs-perforce.jar": ["intellij.vcs.perforce"],
     },
     main_module = "intellij.vcs.perforce",
     module_jar_paths = {
         "intellij.vcs.perforce.util": "lib/intellij.vcs.perforce.util.jar",
+    },
+    module_labels = {
+        "intellij.vcs.perforce": "//contrib/PerforceIntegration:vcs-perforce",
+        "intellij.vcs.perforce.util": "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
     },
 )
 ### auto-generated section `dev intellij.vcs.perforce` end
@@ -75,13 +83,12 @@ ij_plugin(
 ### auto-generated section `plugin intellij.vcs.perforce` end
 
 ### auto-generated section `iml intellij.vcs.perforce` start
-exports_files(
-    [
-        "intellij.vcs.perforce.iml",
-        "resources/META-INF/git-plugin-extensions.xml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vcs.perforce",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "vcs-perforce",
+    exports = ["resources/META-INF/git-plugin-extensions.xml"],
 )
 ### auto-generated section `iml intellij.vcs.perforce` end
 
@@ -140,11 +147,9 @@ jvm_library(
 ### auto-generated section `build intellij.vcs.perforce.tests` end
 
 ### auto-generated section `iml intellij.vcs.perforce.tests` start
-exports_files(
-    [
-        "intellij.vcs.perforce.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.vcs.perforce.tests",
+    target = "vcs-perforce-tests_test_lib",
 )
 ### auto-generated section `iml intellij.vcs.perforce.tests` end
 

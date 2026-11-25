@@ -1,6 +1,7 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.cucumber.java` start
@@ -17,6 +18,17 @@ dist_plugin(
         "intellij.libraries.cucumber.core1",
     ],
     main_module = "intellij.cucumber.java",
+    module_labels = {
+        "intellij.cucumber.java": "//contrib/cucumber-java:cucumber-java",
+        "intellij.cucumber.jvmFormatter": "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
+        "intellij.cucumber.jvmFormatter3": "@community//plugins/cucumber-jvm-formatter3:cucumber-jvmFormatter3",
+        "intellij.cucumber.jvmFormatter4": "@community//plugins/cucumber-jvm-formatter4:cucumber-jvmFormatter4",
+        "intellij.cucumber.jvmFormatter5": "@community//plugins/cucumber-jvm-formatter5:cucumber-jvmFormatter5",
+        "intellij.libraries.cucumber": "//libraries/cucumber:cucumber",
+        "intellij.libraries.cucumber.core1": "@community//libraries/cucumber-core1:cucumber-core1",
+        "intellij.libraries.hamcrest": "@community//libraries/hamcrest:hamcrest",
+        "intellij.libraries.junit4": "@community//libraries/junit4:junit4",
+    },
 )
 ### auto-generated section `dev intellij.cucumber.java` end
 
@@ -109,13 +121,12 @@ ij_plugin(
 ### auto-generated section `plugin intellij.cucumber.java` end
 
 ### auto-generated section `iml intellij.cucumber.java` start
-exports_files(
-    [
-        "intellij.cucumber.java.iml",
-        "resources/META-INF/plugin.xml",
-        "resources/library/cucumber-jvm-deps.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.cucumber.java",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "cucumber-java",
+    exports = ["resources/library/cucumber-jvm-deps.xml"],
 )
 ### auto-generated section `iml intellij.cucumber.java` end
 
@@ -220,11 +231,9 @@ jvm_library(
 ### auto-generated section `build intellij.cucumber.java.tests` end
 
 ### auto-generated section `iml intellij.cucumber.java.tests` start
-exports_files(
-    [
-        "intellij.cucumber.java.tests.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.cucumber.java.tests",
+    target = "cucumber-java-tests_test_lib",
 )
 ### auto-generated section `iml intellij.cucumber.java.tests` end
 

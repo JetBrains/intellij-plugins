@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
@@ -83,11 +84,10 @@ jvm_library(
 ### auto-generated section `build intellij.jade.tests.codeInsight` end
 
 ### auto-generated section `iml intellij.jade.tests.codeInsight` start
-exports_files(
-    [
-        "intellij.jade.tests.codeInsight.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.jade.tests.codeInsight",
+    resources = False,
+    target = "codeInsight_test_lib",
 )
 ### auto-generated section `iml intellij.jade.tests.codeInsight` end
 

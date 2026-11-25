@@ -1,3 +1,4 @@
+load("@community//build:jps_module.bzl", "jps_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
 
 ### auto-generated section `build intellij.angular.ngtools` start
@@ -44,10 +45,9 @@ jvm_library(
 ### auto-generated section `build intellij.angular.ngtools` end
 
 ### auto-generated section `iml intellij.angular.ngtools` start
-exports_files(
-    [
-        "intellij.angular.ngtools.iml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.angular.ngtools",
+    resources = False,
+    target = "ngtools",
 )
 ### auto-generated section `iml intellij.angular.ngtools` end

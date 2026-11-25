@@ -1,5 +1,6 @@
+load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
-load("@jps_dynamic_deps_ultimate//:targets.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.dts` start
@@ -11,12 +12,23 @@ dist_plugin(
         "intellij.dts.pp",
     ],
     descriptor = "resources/META-INF/plugin.xml",
+    descriptors = {
+        "//contrib/dts/cmake:resources/intellij.dts.cmake.xml": "intellij.dts.cmake.xml",
+        "//contrib/dts/core:resources/intellij.dts.core.xml": "intellij.dts.core.xml",
+        "//contrib/dts/pp:resources/intellij.dts.pp.xml": "intellij.dts.pp.xml",
+    },
     jars = {
         "lib/dts.jar": ["intellij.dts"],
     },
     main_module = "intellij.dts",
     mode_refused_content_modules = {
         "frontend": ["intellij.dts.cmake"],
+    },
+    module_labels = {
+        "intellij.dts": "//contrib/dts:dts",
+        "intellij.dts.cmake": "//contrib/dts/cmake:cmake",
+        "intellij.dts.core": "//contrib/dts/core:core",
+        "intellij.dts.pp": "//contrib/dts/pp:pp",
     },
 )
 ### auto-generated section `dev intellij.dts` end
@@ -52,11 +64,10 @@ ij_plugin(
 ### auto-generated section `plugin intellij.dts` end
 
 ### auto-generated section `iml intellij.dts` start
-exports_files(
-    [
-        "intellij.dts.iml",
-        "resources/META-INF/plugin.xml",
-    ],
-    visibility = ["//visibility:public"],
+jps_module(
+    name = "intellij.dts",
+    descriptors = ["resources/META-INF/plugin.xml"],
+    plugin = True,
+    target = "dts",
 )
 ### auto-generated section `iml intellij.dts` end
