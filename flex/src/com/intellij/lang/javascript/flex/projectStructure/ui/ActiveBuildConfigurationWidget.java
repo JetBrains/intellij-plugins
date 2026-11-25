@@ -9,6 +9,9 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
@@ -50,6 +53,7 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ActiveBuildConfigurationWidget {
   private final Project myProject;
@@ -129,6 +133,7 @@ public final class ActiveBuildConfigurationWidget {
     private final JLabel myDisabledLabel = new JLabel(FlexBundle.message("active.bc.widget.empty.text"));
     private final JPanel myPanel;
     private final JLabel myUpDownLabel = new JLabel(AllIcons.Ide.Statusbar_arrows);
+    private final AtomicBoolean myUpdateScheduled = new AtomicBoolean();
 
     private MyWidget(@NotNull Project project) {
       super(project);
@@ -136,7 +141,7 @@ public final class ActiveBuildConfigurationWidget {
       project.getMessageBus().connect(this).subscribe(ModuleRootListener.TOPIC, new ModuleRootListener() {
         @Override
         public void rootsChanged(final @NotNull ModuleRootEvent event) {
-          update();
+          requestUpdate();
         }
       });
 
@@ -204,6 +209,16 @@ public final class ActiveBuildConfigurationWidget {
     @Override
     public @Nullable WidgetPresentation getPresentation() {
       return null;
+    }
+
+    private void requestUpdate() {
+      Application application = ApplicationManager.getApplication();
+      if (myUpdateScheduled.compareAndSet(false, true)) {
+        application.invokeLater(() -> {
+          myUpdateScheduled.set(false);
+          update();
+        }, ModalityState.defaultModalityState(), _ -> isDisposed());
+      }
     }
 
     private void update() {
