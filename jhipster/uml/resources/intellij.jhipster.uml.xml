@@ -21,6 +21,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <diagram.Provider implementation="com.intellij.jhipster.uml.JdlUmlProvider"/>
 
-    <fileEditorProvider implementation="com.intellij.jhipster.uml.JdlSplitEditorProvider"/>
+    <fileEditorProvider id="split-provider[text-editor;jhipster-uml-editor]" implementation="com.intellij.jhipster.uml.JdlSplitEditorProvider"/>
   </extensions>
 </idea-plugin>
