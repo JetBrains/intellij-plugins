@@ -83,7 +83,7 @@ class VueLspClientHybridModeDescriptor(
       override val diagnosticsCustomizer: LspDiagnosticsCustomizer =
         object : LspDiagnosticsSupport() {
           override fun getMessage(diagnostic: Diagnostic): String {
-            return VueBundle.message("vue.configurable.title") + ": " + super.getTooltip(diagnostic)
+            return VueBundle.message("vue.configurable.title") + ": " + super.getMessage(diagnostic)
           }
         }
 
