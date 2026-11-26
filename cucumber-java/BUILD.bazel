@@ -174,7 +174,7 @@ jvm_library(
         "@community//libraries/objenesis",
         "@lib//:cucumber-core-2",
         "@lib//:easymock",
-        "@community//plugins/gradle:gradle-common",
+        "@community//plugins/gradle",
         "@community//plugins/gradle/plugin",
         "@community//plugins/gradle/java:java-tests_test_lib",
         "@community//plugins/gradle/testFramework",

@@ -145,7 +145,7 @@ jvm_library(
         "@ultimate_lib//:gauge-tests-com-thoughtworks-gauge-gauge-java",
         "@community//java/java-psi-api:psi",
         "@community//platform/testFramework",
-        "@community//plugins/gradle:gradle-common",
+        "@community//plugins/gradle",
         "@community//plugins/maven",
         "//contrib/gauge",
         "@community//platform/core-impl",

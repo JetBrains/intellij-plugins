@@ -1112,10 +1112,6 @@
           <module name="intellij.vcs.perforce.util" />
         </modules-set>
         <modules-set>
-          <module name="intellij.gradle.java" />
-          <module name="intellij.gradle.common" />
-        </modules-set>
-        <modules-set>
           <module name="intellij.python.community.impl" />
           <module name="intellij.python.psi" />
           <module name="intellij.pycharm.community" />
