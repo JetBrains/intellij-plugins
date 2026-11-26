@@ -14,19 +14,18 @@ import com.intellij.lang.javascript.linter.eslint.EslintInspection
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockFixture.Companion.eslintPackageLockFixture
 import com.intellij.lang.javascript.linter.eslint.EslintUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.openapi.application.edtWriteAction
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
 import com.intellij.testFramework.TrustedProjectsTestUtil
-import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 /**
  * Version-agnostic ESLint highlighting scenarios, shared by the pinned `stable` class
@@ -139,18 +138,11 @@ abstract class EslintHighlightingGenericTest {
     }
   }
 
-  @Test
-  fun testWithRulesInOptions() {
-    eslint.installEslintForTest()
-    // doEditorHighlightingTest re-copies the test dir each call, restoring the inline markers that the
-    // previous highlight stripped from the document -- required because this test highlights twice.
-    eslint.doEditorHighlightingTest<Throwable>("test.js") {
-      eslint.updateConfiguration { it.setExtraOptions("--rule 'no-console: 1'") }
-    }
-    // saveAllDocuments needs the EDT.
-    timeoutRunBlocking { edtWriteAction { FileDocumentManager.getInstance().saveAllDocuments() } }
-    eslint.doEditorHighlightingTest<Throwable>("test.js") {
-      eslint.updateConfiguration { it.setExtraOptions("--rule \"no-console: 'warn'\"") }
+  @ParameterizedTest
+  @ValueSource(strings = ["--rule 'no-console: 1'", "--rule \"no-console: 'warn'\""])
+  fun testWithRulesInOptions(options: String) {
+    eslint.doHighlightingTestWithInstallation("test.js") {
+      eslint.updateConfiguration { it.setExtraOptions(options) }
     }
   }
 
