@@ -14,18 +14,21 @@ import com.intellij.lang.javascript.linter.eslint.EslintInspection
 import com.intellij.lang.javascript.linter.eslint.EslintPackageLockFixture.Companion.eslintPackageLockFixture
 import com.intellij.lang.javascript.linter.eslint.EslintUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.runReadActionBlocking
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.testFramework.DumbModeTestUtils
+import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.TrustedProjectsTestUtil
+import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.LineSeparator
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 
 /**
  * Version-agnostic ESLint highlighting scenarios, shared by the pinned `stable` class
@@ -138,12 +141,22 @@ abstract class EslintHighlightingGenericTest {
     }
   }
 
-  @ParameterizedTest
-  @ValueSource(strings = ["--rule 'no-console: 1'", "--rule \"no-console: 'warn'\""])
-  fun testWithRulesInOptions(options: String) {
-    eslint.doHighlightingTestWithInstallation("test.js") {
-      eslint.updateConfiguration { it.setExtraOptions(options) }
+  @Test
+  fun testWithRulesInOptions() {
+    eslint.installEslintForTest()
+    val fixture = eslint.fixture as CodeInsightTestFixtureImpl
+    fixture.configureFromTempProjectFile("test.js")
+    val expected = runReadActionBlocking {
+      ExpectedHighlightingData(fixture.editor.document, true, true, false)
     }
+    expected.init()
+
+    eslint.updateConfiguration { it.setExtraOptions("--rule 'no-console: 1'") }
+    fixture.collectAndCheckHighlighting(expected)
+
+    timeoutRunBlocking { edtWriteAction { FileDocumentManager.getInstance().saveAllDocuments() } }
+    eslint.updateConfiguration { it.setExtraOptions("--rule \"no-console: 'warn'\"") }
+    fixture.collectAndCheckHighlighting(expected)
   }
 
   // Parse error (flat config with sourceType:script + ecmaVersion:5) reported as a fatal lint error;
