@@ -2,10 +2,10 @@ package com.intellij.prettier.wsl
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.prettierjs.PrettierConfiguration
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
 import com.intellij.wsl.remote.javascript.WSLTempDirWithNodeInterpreterBase
 import org.junit.Test
-import java.awt.EventQueue
 
 class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
 
@@ -23,9 +23,11 @@ class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
     prettierConfiguration.runOnSave = true
     runNpmInstall()
     fixture.configureByText("foo.js", "var  a=''")
-    fixture.type(' ')
-    fixture.performEditorAction("SaveAll")
-    EventQueue.invokeAndWait { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
+    runInEdtAndWait {
+      fixture.type(' ')
+      fixture.performEditorAction("SaveAll")
+      ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(fixture.project)
+    }
     fixture.checkResult("var a = \"\";\n")
   }
 
@@ -45,9 +47,11 @@ class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
     prettierConfiguration.runOnSave = true
     runNpmInstall()
     fixture.configureByText("foo.js", "var  a=''")
-    fixture.type(' ')
-    fixture.performEditorAction("SaveAll")
-    EventQueue.invokeAndWait { PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue() }
+    runInEdtAndWait {
+      fixture.type(' ')
+      fixture.performEditorAction("SaveAll")
+      ActionsOnSaveTestUtil.waitForActionsOnSaveToFinish(fixture.project)
+    }
     fixture.checkResult(" var  a=''")
   }
 }
