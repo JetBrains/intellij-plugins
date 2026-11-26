@@ -41,6 +41,7 @@ jvm_library(
         "@community//platform/ide-core",
         "@community//platform/testFramework",
         "@community//platform/testFramework/junit5",
+        "//platform/junit5-wsl:testFramework-junit5-wsl_test_lib",
         "@community//libraries/junit6",
         "//plugins/JavaScriptLanguage/testFramework",
         "//plugins/JavaScriptLanguage/tests/unitTests:javascript-tests_test_lib",
@@ -53,7 +54,6 @@ jvm_library(
         "//contrib/prettierJS/prettierJS-eslint:eslint",
         "//contrib/javascript/eslint:eslint-tests_test_lib",
         "//contrib/javascript/eslint",
-        "@community//libraries/junit4",
         "@community//platform/scratch/plugin",
     ],
 )

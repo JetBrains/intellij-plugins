@@ -148,6 +148,7 @@ jvm_library(
         "//plugins/JavaScriptLanguage/testFramework",
         "@community//platform/testFramework",
         "@community//platform/testFramework/junit5",
+        "//platform/junit5-wsl:testFramework-junit5-wsl_test_lib",
         "@community//platform/testFramework/junit5/codeInsight",
         "@community//libraries/junit6",
         "@community//libraries/assertj-core",

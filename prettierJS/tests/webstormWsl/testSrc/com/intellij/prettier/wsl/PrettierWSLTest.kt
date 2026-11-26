@@ -2,15 +2,24 @@ package com.intellij.prettier.wsl
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.prettierjs.PrettierConfiguration
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5wsl.wslFixture
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.testFramework.utils.ActionsOnSaveTestUtil
-import com.intellij.wsl.remote.javascript.WSLTempDirWithNodeInterpreterBase
-import org.junit.Test
+import com.intellij.wsl.remote.javascript.wslNodeInterpreterFixture
+import org.junit.jupiter.api.Test
 
-class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
+@TestApplication
+class PrettierWSLTest {
+  companion object {
+    private val wslFixture = wslFixture()
+  }
+
+  private val node by wslNodeInterpreterFixture(wslFixture)
 
   @Test
   fun testPrettierOnSave() {
+    val fixture = node.fixture
     fixture.addFileToProject("package.json", "{\n" +
                                              "  \"version\": \"1.0.0\",\n" +
                                              "  \"devDependencies\": {\n" +
@@ -21,7 +30,7 @@ class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
     val prettierConfiguration = PrettierConfiguration.getInstance(fixture.project).state
     prettierConfiguration.configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC
     prettierConfiguration.runOnSave = true
-    runNpmInstall()
+    node.runNpmInstall()
     fixture.configureByText("foo.js", "var  a=''")
     runInEdtAndWait {
       fixture.type(' ')
@@ -33,6 +42,7 @@ class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
 
   @Test
   fun testPrettierIgnoreOnSave() {
+    val fixture = node.fixture
     fixture.addFileToProject("package.json", "{\n" +
                                              "  \"version\": \"1.0.0\",\n" +
                                              "  \"devDependencies\": {\n" +
@@ -45,7 +55,7 @@ class PrettierWSLTest : WSLTempDirWithNodeInterpreterBase() {
     prettierConfiguration.configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL
     prettierConfiguration.customIgnorePath = VfsUtilCore.virtualToIoFile(ignoreFile.virtualFile).absolutePath
     prettierConfiguration.runOnSave = true
-    runNpmInstall()
+    node.runNpmInstall()
     fixture.configureByText("foo.js", "var  a=''")
     runInEdtAndWait {
       fixture.type(' ')

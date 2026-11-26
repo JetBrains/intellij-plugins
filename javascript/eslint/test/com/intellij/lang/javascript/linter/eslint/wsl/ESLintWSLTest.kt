@@ -1,18 +1,28 @@
 package com.intellij.lang.javascript.linter.eslint.wsl
 
 import com.intellij.lang.javascript.linter.eslint.EslintInspection
-import com.intellij.wsl.remote.javascript.WSLTempDirWithNodeInterpreterBase
-import org.junit.Test
+import com.intellij.testFramework.junit5.TestApplication
+import com.intellij.testFramework.junit5wsl.wslFixture
+import com.intellij.wsl.remote.javascript.wslNodeInterpreterFixture
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class ESLintWSLTest : WSLTempDirWithNodeInterpreterBase() {
+@TestApplication
+class ESLintWSLTest {
+  companion object {
+    private val wslFixture = wslFixture()
+  }
 
-  override fun setUp() {
-    super.setUp()
-    fixture.enableInspections(EslintInspection())
+  private val node by wslNodeInterpreterFixture(wslFixture)
+
+  @BeforeEach
+  fun setUp() {
+    node.fixture.enableInspections(EslintInspection())
   }
 
   @Test
   fun testEslintBasicHighlighting() {
+    val fixture = node.fixture
     fixture.addFileToProject("package.json", "{\n" +
                                              "  \"version\": \"1.0.0\",\n" +
                                              "  \"devDependencies\": {\n" +
@@ -26,12 +36,13 @@ class ESLintWSLTest : WSLTempDirWithNodeInterpreterBase() {
                                                   "  }\n" +
                                                   "}\n")
     fixture.configureByText("app.js", "<error descr=\"ESLint: Unexpected console statement. (no-console)\">console.log</error>('message'<error descr=\"ESLint: Missing semicolon. (semi)\">)</error>")
-    runNpmInstall()
+    node.runNpmInstall()
     fixture.testHighlighting()
   }
 
   @Test
   fun testEslintFixFile() {
+    val fixture = node.fixture
     fixture.addFileToProject("package.json", "{\n" +
                                              "  \"version\": \"1.0.0\",\n" +
                                              "  \"devDependencies\": {\n" +
@@ -40,7 +51,7 @@ class ESLintWSLTest : WSLTempDirWithNodeInterpreterBase() {
                                              "}\n")
     fixture.addFileToProject("eslint.config.js", "module.exports = {rules: {\"semi\": \"error\"}}")
     fixture.configureByText("foo.js", "let a = ''")
-    runNpmInstall()
+    node.runNpmInstall()
     fixture.launchAction(fixture.getAvailableIntention("ESLint: Fix current file")!!)
     fixture.checkResult("let a = '';")
   }
