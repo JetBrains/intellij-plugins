@@ -1,5 +1,6 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
@@ -11,6 +12,25 @@ pkg_files(
     prefix = "runner",
     strip_prefix = strip_prefix.from_pkg("resources/runner"),
 )
+
+### auto-generated section `dev intellij.yeoman` start
+filegroup(
+    name = "dist_resources",
+    srcs = glob(
+        ["resources/runner/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+
+dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    file_prefixes = {"runner": "contrib/Yeoman/resources/runner"},
+    files = {"runner": "//contrib/Yeoman:dist_resources"},
+    jars = {"lib/yeoman.jar": ["intellij.yeoman"]},
+    main_module = "intellij.yeoman",
+    module_labels = {"intellij.yeoman": "//contrib/Yeoman:yeoman"},
+)
+### auto-generated section `dev intellij.yeoman` end
 
 ### auto-generated section `build intellij.yeoman` start
 resourcegroup(

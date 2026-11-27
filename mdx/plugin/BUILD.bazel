@@ -13,7 +13,11 @@ dist_plugin(
         "intellij.mdx.frontend": "//contrib/mdx/frontend",
         "intellij.mdx.frontend.split": "//contrib/mdx/frontend.split",
     },
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/mdx-plugin.jar": ["intellij.mdx.plugin"]},
     main_module = "intellij.mdx.plugin",
+    mode_refused_content_modules = {"frontend": ["intellij.mdx.backend"]},
+    module_jar_paths = {"intellij.mdx": "lib/intellij.mdx.jar"},
     module_labels = {"intellij.mdx.plugin": "//contrib/mdx/plugin"},
 )
 ### auto-generated section `dev intellij.mdx.plugin` end

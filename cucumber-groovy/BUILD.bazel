@@ -1,6 +1,21 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library")
+
+### auto-generated section `dev intellij.cucumber.groovy` start
+dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/cucumber-groovy.jar": [
+            "intellij.cucumber.groovy",
+            "@ultimate_lib//:cucumber-groovy-cucumber-groovy",
+        ],
+    },
+    main_module = "intellij.cucumber.groovy",
+    module_labels = {"intellij.cucumber.groovy": "//contrib/cucumber-groovy"},
+)
+### auto-generated section `dev intellij.cucumber.groovy` end
 
 ### auto-generated section `build intellij.cucumber.groovy` start
 jvm_provided_library(

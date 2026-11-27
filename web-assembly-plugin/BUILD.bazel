@@ -1,7 +1,17 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.webassembly` start
+dist_plugin(
+    descriptor = "src/main/resources/META-INF/plugin.xml",
+    jars = {"lib/webassembly.jar": ["intellij.webassembly"]},
+    main_module = "intellij.webassembly",
+    module_labels = {"intellij.webassembly": "//contrib/web-assembly-plugin:webassembly"},
+)
+### auto-generated section `dev intellij.webassembly` end
 
 ### auto-generated section `build intellij.webassembly` start
 jvm_library(

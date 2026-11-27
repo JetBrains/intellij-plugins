@@ -1,8 +1,21 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.cloudFormation` start
+dist_plugin(
+    descriptor = "src/main/resources/META-INF/plugin.xml",
+    jars = {
+        "lib/cloudFormation.jar": ["intellij.cloudFormation"],
+        "lib/cloudformation-meta.jar": ["@ultimate_lib//:cloud_formation-cloudformation-meta"],
+    },
+    main_module = "intellij.cloudFormation",
+    module_labels = {"intellij.cloudFormation": "//contrib/CloudFormation:cloudFormation"},
+)
+### auto-generated section `dev intellij.cloudFormation` end
 
 ### auto-generated section `build intellij.cloudFormation` start
 ij_plugin_module(

@@ -1,7 +1,17 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.angularJS` start
+dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/angularJS.jar": ["intellij.angularJS"]},
+    main_module = "intellij.angularJS",
+    module_labels = {"intellij.angularJS": "//contrib/AngularJS:angularJS"},
+)
+### auto-generated section `dev intellij.angularJS` end
 
 ### auto-generated section `build intellij.angularJS` start
 jvm_library(

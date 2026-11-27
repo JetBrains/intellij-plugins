@@ -6,6 +6,24 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 
 ### auto-generated section `dev intellij.cucumber.java` start
 dist_plugin(
+    classpath_jars = [
+        # do not sort,
+        "lib/intellij.libraries.junit4.jar",
+        "lib/intellij.cucumber.jvmFormatter.jar",
+        "lib/modules/intellij.cucumber.jvmFormatter3.jar",
+        "lib/modules/intellij.cucumber.jvmFormatter4.jar",
+        "lib/modules/intellij.cucumber.jvmFormatter5.jar",
+        "lib/intellij.libraries.hamcrest.jar",
+        "lib/intellij.libraries.cucumber.jar",
+        "lib/intellij.libraries.cucumber.core1.jar",
+        "lib/cucumber-java.jar",
+    ],
+    content_module_jar_labels = {
+        "intellij.cucumber.jvmFormatter": "//build/dist-content-module-jars:intellij.cucumber.jvmFormatter_content_module_jar",
+        "intellij.cucumber.jvmFormatter3": "//build/dist-content-module-jars:intellij.cucumber.jvmFormatter3_content_module_jar",
+        "intellij.cucumber.jvmFormatter4": "//build/dist-content-module-jars:intellij.cucumber.jvmFormatter4_content_module_jar",
+        "intellij.cucumber.jvmFormatter5": "//build/dist-content-module-jars:intellij.cucumber.jvmFormatter5_content_module_jar",
+    },
     content_modules = {
         "intellij.libraries.junit4": "@community//libraries/junit4",
         "intellij.cucumber.jvmFormatter": "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
@@ -16,7 +34,25 @@ dist_plugin(
         "intellij.libraries.cucumber": "//libraries/cucumber",
         "intellij.libraries.cucumber.core1": "@community//libraries/cucumber-core1",
     },
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/intellij.libraries.cucumber.jar": [
+            "intellij.libraries.cucumber",
+            "@ultimate_lib//:libraries-cucumber-cucumber-expressions",
+            "@ultimate_lib//:libraries-cucumber-cucumber-java",
+        ],
+        "lib/intellij.libraries.cucumber.core1.jar": [
+            "intellij.libraries.cucumber.core1",
+            "@lib//:libraries-cucumber-core1-cucumber-core-1",
+        ],
+        "lib/cucumber-java.jar": ["intellij.cucumber.java"],
+    },
     main_module = "intellij.cucumber.java",
+    module_jar_paths = {
+        "intellij.libraries.junit4": "lib/intellij.libraries.junit4.jar",
+        "intellij.cucumber.jvmFormatter": "lib/intellij.cucumber.jvmFormatter.jar",
+        "intellij.libraries.hamcrest": "lib/intellij.libraries.hamcrest.jar",
+    },
     module_labels = {"intellij.cucumber.java": "//contrib/cucumber-java"},
 )
 ### auto-generated section `dev intellij.cucumber.java` end

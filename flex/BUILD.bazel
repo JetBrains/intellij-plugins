@@ -1,4 +1,5 @@
 load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dev_plugin_remainder.bzl", "dist_complex_plugin")
 load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin_module.bzl", "ij_plugin_module")
@@ -12,14 +13,53 @@ pkg_files(
 )
 
 ### auto-generated section `dev intellij.flex` start
+filegroup(
+    name = "dist_resources",
+    srcs = glob(
+        ["lib/**"],
+    ),
+    visibility = ["//visibility:public"],
+)
+
 dist_plugin(
     content_modules = {
         "intellij.flex.css": "//contrib/flex/css",
         "intellij.flex.jps": "//contrib/flex/jps-plugin:jps",
         "intellij.flex.shared": "//contrib/flex/flex-shared:shared",
     },
+    descriptor = "resources/META-INF/plugin.xml",
     main_module = "intellij.flex",
+    mode_refused_content_modules = {"frontend": ["intellij.flex.css"]},
     module_labels = {"intellij.flex": "//contrib/flex"},
+)
+
+dist_complex_plugin(
+    artifact_inputs = {
+        "//contrib/flex:flex.jar": "intellij.flex",
+    },
+    descriptor = "//contrib/flex:intellij.flex_dev_descriptor",
+    execution_version = 2,
+    independent_artifacts = [
+        "//contrib/flex/css:css_content_module_jar",
+        "//contrib/flex/jps-plugin:jps_content_module_jar",
+        "//contrib/flex/flex-shared:shared_content_module_jar",
+    ],
+    independent_destinations = {
+        "intellij.flex.jps": "lib/intellij.flex.jps.jar",
+        "intellij.flex.shared": "lib/intellij.flex.shared.jar",
+    },
+    main_module = "intellij.flex",
+    remainder_files = {
+        "lib/flex.jar": ["intellij.flex"],
+    },
+    remainder_trees = ["lib"],
+    source_tree_prefixes = {
+        "module-resource:0:source": "contrib/flex/lib",
+    },
+    source_tree_targets = {
+        "module-resource:0:source": "//contrib/flex:dist_resources",
+    },
+    stamp_class_modes = ["frontend"],
 )
 ### auto-generated section `dev intellij.flex` end
 

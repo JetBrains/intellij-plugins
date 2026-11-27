@@ -6,7 +6,10 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 ### auto-generated section `dev intellij.errorProne` start
 dist_plugin(
     content_modules = {"intellij.errorProne.jps": "//contrib/error-prone/jps-plugin:errorProne-jps"},
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/errorProne.jar": ["intellij.errorProne"]},
     main_module = "intellij.errorProne",
+    mode_refused_content_modules = {"frontend": ["intellij.errorProne.jps"]},
     module_labels = {"intellij.errorProne": "//contrib/error-prone"},
 )
 ### auto-generated section `dev intellij.errorProne` end

@@ -9,7 +9,18 @@ dist_plugin(
         "intellij.gauge.gradle": "//contrib/gauge/gradle",
         "intellij.gauge.maven": "//contrib/gauge/maven",
     },
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/gauge.jar": ["intellij.gauge"],
+        "lib/com.thoughtworks.gauge-gauge-java.jar": ["@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java"],
+    },
     main_module = "intellij.gauge",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.gauge.gradle",
+            "intellij.gauge.maven",
+        ],
+    },
     module_labels = {"intellij.gauge": "//contrib/gauge"},
 )
 ### auto-generated section `dev intellij.gauge` end

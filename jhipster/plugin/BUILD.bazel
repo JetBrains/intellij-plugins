@@ -11,7 +11,16 @@ dist_plugin(
         "intellij.jhipster.uml": "//contrib/jhipster/uml",
         "intellij.jhipster.frontend": "//contrib/jhipster/frontend",
     },
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/jhipster-plugin.jar": ["intellij.jhipster.plugin"]},
     main_module = "intellij.jhipster.plugin",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.jhipster.backend",
+            "intellij.jhipster.uml",
+        ],
+    },
+    module_jar_paths = {"intellij.jhipster": "lib/intellij.jhipster.jar"},
     module_labels = {"intellij.jhipster.plugin": "//contrib/jhipster/plugin"},
 )
 ### auto-generated section `dev intellij.jhipster.plugin` end

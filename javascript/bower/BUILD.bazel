@@ -1,6 +1,16 @@
 load("@community//build:jps_module.bzl", "jps_module")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.javascript.bower` start
+dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/javascript-bower.jar": ["intellij.javascript.bower"]},
+    main_module = "intellij.javascript.bower",
+    module_labels = {"intellij.javascript.bower": "//contrib/javascript/bower"},
+)
+### auto-generated section `dev intellij.javascript.bower` end
 
 ### auto-generated section `build intellij.javascript.bower` start
 jvm_library(

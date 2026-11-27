@@ -1,0 +1,72 @@
+{
+    "version": 2,
+    "plugin": "intellij.flex",
+    "variant": "",
+    "assets": [
+        {
+            "module": "intellij.flex.css"
+        },
+        {
+            "destination": "lib/intellij.flex.jps.jar",
+            "recipe": {
+                "sources": [
+                    {
+                        "input": "intellij.flex.jps",
+                        "kind": "module",
+                        "filter": "module-v1"
+                    }
+                ],
+                "writer": {
+                    "mergeEntities": true
+                }
+            }
+        },
+        {
+            "destination": "lib/intellij.flex.shared.jar",
+            "recipe": {
+                "sources": [
+                    {
+                        "input": "intellij.flex.shared",
+                        "kind": "module",
+                        "filter": "module-v1"
+                    }
+                ],
+                "writer": {
+                    "mergeEntities": true
+                }
+            }
+        },
+        {
+            "destination": "lib/flex.jar",
+            "recipe": {
+                "sources": [
+                    {
+                        "input": "descriptor:intellij.flex",
+                        "kind": "file",
+                        "filter": "none",
+                        "entry": "META-INF/plugin.xml",
+                        "options": [
+                            "patch"
+                        ]
+                    },
+                    {
+                        "input": "intellij.flex",
+                        "kind": "module",
+                        "filter": "module-v1"
+                    }
+                ],
+                "writer": {
+                    "mergeEntities": true
+                }
+            }
+        },
+        {
+            "destination": "lib",
+            "inputs": [
+                "module-resource:0:source"
+            ],
+            "kind": "tree",
+            "classPath": false
+        }
+    ]
+}

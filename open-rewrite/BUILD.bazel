@@ -13,7 +13,27 @@ dist_plugin(
         "intellij.openRewrite.quarkus": "//contrib/open-rewrite/quarkus",
         "intellij.openRewrite.spring.boot": "//contrib/open-rewrite/spring-boot:openRewrite-spring-boot",
     },
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {
+        "lib/openRewrite.jar": [
+            "intellij.openRewrite",
+            "intellij.openRewrite.gradle",
+            "intellij.openRewrite.maven",
+            "intellij.openRewrite.micronaut",
+            "intellij.openRewrite.quarkus",
+            "intellij.openRewrite.spring.boot",
+        ],
+    },
     main_module = "intellij.openRewrite",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.openRewrite.gradle",
+            "intellij.openRewrite.maven",
+            "intellij.openRewrite.micronaut",
+            "intellij.openRewrite.quarkus",
+            "intellij.openRewrite.spring.boot",
+        ],
+    },
     module_labels = {"intellij.openRewrite": "//contrib/open-rewrite"},
 )
 ### auto-generated section `dev intellij.openRewrite` end

@@ -10,7 +10,15 @@ dist_plugin(
         "intellij.meteor.liveEdit": "//contrib/Meteor/liveEdit",
         "intellij.meteor.watcher": "//contrib/Meteor/watcher",
     },
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/meteor.jar": ["intellij.meteor"]},
     main_module = "intellij.meteor",
+    mode_refused_content_modules = {
+        "frontend": [
+            "intellij.meteor.liveEdit",
+            "intellij.meteor.watcher",
+        ],
+    },
     module_labels = {"intellij.meteor": "//contrib/Meteor:meteor"},
 )
 ### auto-generated section `dev intellij.meteor` end

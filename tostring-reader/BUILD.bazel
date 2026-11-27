@@ -1,7 +1,17 @@
 load("@community//build:jps_module.bzl", "jps_module")
 load("@community//build:tests-options.bzl", "jps_test")
+load("@community//platform/build-scripts/bazel-rules:dist_plugin.bzl", "dist_plugin")
 load("@community//platform/build-scripts/bazel-rules:ij_plugin.bzl", "ij_plugin")
 load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+### auto-generated section `dev intellij.tsr` start
+dist_plugin(
+    descriptor = "resources/META-INF/plugin.xml",
+    jars = {"lib/tsr.jar": ["intellij.tsr"]},
+    main_module = "intellij.tsr",
+    module_labels = {"intellij.tsr": "//contrib/tostring-reader:tsr"},
+)
+### auto-generated section `dev intellij.tsr` end
 
 ### auto-generated section `build intellij.tsr` start
 jvm_library(
