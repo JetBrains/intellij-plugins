@@ -4,8 +4,6 @@ package org.angular2.lang.expr.service
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
-import com.intellij.javascript.JSTypeEngineEvaluation
-import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.javascript.types.TSType
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTokenTypes
@@ -41,7 +39,6 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
@@ -314,11 +311,6 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       val refreshableType = createRefreshableType(transpiledFile.originalFile, type, command)
       return@withServiceTraceSpan refreshableType.toTSType().asJSType()
     }
-
-    override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean =
-      JSTypeEngineEvaluation.tsKotlinEnabled
-      || !Registry.`is`("typescript.service.powered.type.engine.force.default.usage.context")
-      || super.isEnabledInUsageContext(usageContext)
 
     override val supportsTypeScriptInInjections: Boolean
       get() = true

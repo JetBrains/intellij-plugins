@@ -1,6 +1,5 @@
 package org.jetbrains.vuejs.lang.typescript.kolar
 
-import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.modules.NodeModuleUtil
@@ -19,7 +18,6 @@ import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.util.ThreeState
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -89,11 +87,6 @@ class VueKolarTranspiler(
 
       else -> false
     }
-
-  override fun isTypeEvaluationEnabledInUsageContext(
-    usageContext: JSServicePoweredTypeEngineUsageContext,
-  ): ThreeState =
-    ThreeState.YES
 }
 
 private data class VueTranspiledFile(

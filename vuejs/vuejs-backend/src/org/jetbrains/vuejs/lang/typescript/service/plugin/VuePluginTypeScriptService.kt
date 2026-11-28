@@ -6,7 +6,6 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.intellij.javascript.JSTypeEngineEvaluation.spteForJsEnabled
-import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.javascript.types.TSType
 import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.psi.JSElement
@@ -248,11 +247,6 @@ open class VuePluginTypeScriptService(
     }
 
     override val supportsTypeScriptInInjections: Boolean =
-      true
-
-    override fun isEnabledInUsageContext(
-      usageContext: JSServicePoweredTypeEngineUsageContext,
-    ): Boolean =
       true
   }
 }
