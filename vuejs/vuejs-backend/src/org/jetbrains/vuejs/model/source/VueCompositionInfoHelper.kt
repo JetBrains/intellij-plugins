@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocationForced
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -38,15 +39,20 @@ object VueCompositionInfoHelper {
 
   private const val READ_ONLY_TYPE = "ReadOnly"
 
+  /**
+   * Evaluates the types at [typeSource], whatever the type evaluation location of the caller is.
+   */
   fun <T : PsiElement> createRawBindings(context: PsiElement, typeSource: T, setupTypeProvider: (T) -> JSType?): List<VueSymbol> =
-    setupTypeProvider(typeSource)
-      ?.asRecordType()
-      ?.typeMembers
-      ?.mapNotNull {
-        mapSignatureToRawBinding(it as? JSRecordType.PropertySignature ?: return@mapNotNull null,
-                                 context, typeSource, setupTypeProvider)
-      }
-    ?: emptyList()
+    withTypeEvaluationLocationForced(typeSource) {
+      setupTypeProvider(typeSource)
+        ?.asRecordType()
+        ?.typeMembers
+        ?.mapNotNull {
+          mapSignatureToRawBinding(it as? JSRecordType.PropertySignature ?: return@mapNotNull null,
+                                   context, typeSource, setupTypeProvider)
+        }
+      ?: emptyList()
+    }
 
   fun getUnwrappedRefElement(element: PsiElement?, context: PsiElement): VueImplicitElement? {
     val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
@@ -156,11 +162,13 @@ object VueCompositionInfoHelper {
       return Pointer<Prop> {
         val setupTypeSource = setupTypeSourcePtr.dereference() ?: return@Pointer null
         val psiContext = psiContextPtr.dereference() ?: return@Pointer null
-        return@Pointer setupTypeProvider(setupTypeSource)
-          ?.asRecordType()
-          ?.findPropertySignature(name)
-          ?.let { mapSignatureToRawBinding(it, psiContext, setupTypeSource, setupTypeProvider) }
-          ?.let { cls.safeCast(it) }
+        return@Pointer withTypeEvaluationLocationForced(setupTypeSource) {
+          setupTypeProvider(setupTypeSource)
+            ?.asRecordType()
+            ?.findPropertySignature(name)
+            ?.let { mapSignatureToRawBinding(it, psiContext, setupTypeSource, setupTypeProvider) }
+            ?.let { cls.safeCast(it) }
+        }
       }
     }
   }
