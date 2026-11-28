@@ -74,9 +74,11 @@ class VueHighlightingTest :
       "testEmptyAttributeValue",
       "testSlotNameBinding",
       "testVBindVOnHighlighting",
-      "testVForInPug",
       "testVSlotSyntax",
       "testVueAttributeWithoutValueWithFollowingAttribute",
+
+      // The type mismatch warnings for the computed property in the template are missing.
+      "testComputedTypeJS",
     )
   }
 

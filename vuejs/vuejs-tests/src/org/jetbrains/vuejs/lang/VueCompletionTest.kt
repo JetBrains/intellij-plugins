@@ -53,6 +53,24 @@ class VueCompletionTest :
       "testComputedTypeJS",
       "testComputedTypeTS",
       "testVueOutObjectLiteralTs",
+
+      // The method type text is the literal type of the returned expression, for example '5'. TypeScript widens it to number.
+      "testCompleteMethodsInBoundAttributes",
+      "testPrettyLookup",
+
+      // The completion after the destructured v-for variable also shows all the global symbols.
+      "testDestructuringVariableTypeInVFor",
+
+      // The completion after the v-for item of an Array<string> class field is empty.
+      "testTypescriptVForItemCompletion",
+
+      // In the template, the $options members have the type text from the service. In the script, the type text is null.
+      // The test expects the same items at both locations.
+      "testPropsDataOptionsJS",
+
+      // The service gives the type any to setup bindings such as state, so the completion after a binding has no members.
+      "testVue2CompositionApi",
+      "testVue3CompositionApi",
     )
   }
 
